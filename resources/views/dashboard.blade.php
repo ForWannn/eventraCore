@@ -4,62 +4,7 @@
 
 @section('content')
 <style>
-    /* ═══════════════════════════════════════════════════════
-       DIRECTOR DASHBOARD — Premium Design System
-       ═══════════════════════════════════════════════════════ */
-
-    /* ── Welcome Header ─────────────────────────────────── */
-    .welcome-banner {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-        border-radius: 20px;
-        padding: 32px 36px;
-        margin-bottom: 28px;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-    }
-    .welcome-banner::before {
-        content: '';
-        position: absolute;
-        top: -60px;
-        right: -40px;
-        width: 200px;
-        height: 200px;
-        background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
-        border-radius: 50%;
-    }
-    .welcome-banner::after {
-        content: '';
-        position: absolute;
-        bottom: -40px;
-        left: 30%;
-        width: 160px;
-        height: 160px;
-        background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%);
-        border-radius: 50%;
-    }
-    .welcome-banner h3 {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: 6px;
-        position: relative;
-        z-index: 1;
-    }
-    .welcome-banner p {
-        font-size: 14px;
-        color: #94a3b8;
-        position: relative;
-        z-index: 1;
-    }
-    .welcome-banner .welcome-date {
-        font-size: 13px;
-        color: #64748b;
-        margin-top: 8px;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* ── Stat Cards Grid ────────────────────────────────── */
+   
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -136,7 +81,6 @@
         pointer-events: none;
     }
 
-    /* ── Two-Column Layout ──────────────────────────────── */
     .dashboard-cols {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -147,7 +91,6 @@
         .dashboard-cols { grid-template-columns: 1fr; }
     }
 
-    /* ── Card Sections ──────────────────────────────────── */
     .section-card {
         background: var(--sidebar-bg);
         border: 1px solid var(--border-color);
@@ -174,7 +117,6 @@
         font-weight: 500;
     }
 
-    /* ── Calendar ────────────────────────────────────────── */
     .calendar-wrapper {
         margin-bottom: 28px;
     }
@@ -186,6 +128,11 @@
         font-weight: 600 !important;
         color: var(--text-main) !important;
     }
+
+    .fc-button-group{
+        gap: 10px !important;
+    }
+
     .fc .fc-button {
         background: var(--hover-bg) !important;
         border: 1px solid var(--border-color) !important;
@@ -237,13 +184,11 @@
         background: rgba(37,99,235,0.12) !important;
     }
 
-    /* ── Chart ───────────────────────────────────────────── */
     .chart-container {
         position: relative;
         height: 280px;
     }
 
-    /* ── Event List ──────────────────────────────────────── */
     .event-list-item {
         display: flex;
         align-items: center;
@@ -295,7 +240,6 @@
         flex-shrink: 0;
     }
 
-    /* ── Status Badges ──────────────────────────────────── */
     .badge {
         display: inline-flex;
         align-items: center;
@@ -313,7 +257,6 @@
     [data-theme="dark"] .badge-upcoming { background: rgba(245,158,11,0.2); color: #fcd34d; }
     [data-theme="dark"] .badge-completed { background: rgba(16,185,129,0.2); color: #6ee7b7; }
 
-    /* ── PIC Avatar ──────────────────────────────────────── */
     .pic-avatar {
         width: 28px;
         height: 28px;
@@ -331,7 +274,6 @@
         color: var(--text-muted);
     }
 
-    /* ── Status Distribution mini-chart ──────────────────── */
     .status-bar {
         display: flex;
         height: 8px;
@@ -363,7 +305,6 @@
         border-radius: 50%;
     }
 
-    /* ── Entrance animations ────────────────────────────── */
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(16px); }
         to   { opacity: 1; transform: translateY(0); }
@@ -379,7 +320,6 @@
     .delay-6 { animation-delay: 0.3s; }
     .delay-7 { animation-delay: 0.35s; }
 
-    /* ── Responsive typography ───────────────────────────── */
     @media (max-width: 640px) {
         .stat-card .stat-value { font-size: 26px; }
         .welcome-banner { padding: 24px; }
@@ -388,18 +328,10 @@
 </style>
 
 @role('CEO|GM')
-    {{-- ═══ Welcome Banner ═══ --}}
-    <div class="welcome-banner animate-in">
-        <h3>Selamat Datang, {{ Auth::user()->name }} 👋</h3>
-        <p>Berikut ringkasan operasional <strong style="color:#e2e8f0;">eventraCore</strong> — pantau event, tim, dan biaya secara real-time.</p>
-        <div class="welcome-date">📅 {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y — H:i') }} WIB</div>
-    </div>
-
-    {{-- ═══ Stat Cards ═══ --}}
     <div class="stats-grid">
         <div class="stat-card animate-in delay-1">
             <div class="stat-glow" style="background: #2563eb;"></div>
-            <div class="stat-icon blue">📋</div>
+            <div class="stat-icon blue"><i data-feather="check"></i></div>
             <div class="stat-label">Total Event Aktif</div>
             <div class="stat-value">{{ $activeEventsCount ?? 0 }}</div>
             <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event keseluruhan</div>
@@ -407,7 +339,7 @@
 
         <div class="stat-card animate-in delay-2">
             <div class="stat-glow" style="background: #10b981;"></div>
-            <div class="stat-icon emerald">🔴</div>
+            <div class="stat-icon emerald"><i data-feather="chevrons-right"></i></div>
             <div class="stat-label">Sedang Berjalan</div>
             <div class="stat-value">{{ $ongoingEventsCount ?? 0 }}</div>
             <div class="stat-sub">event berstatus on-going</div>
@@ -415,7 +347,7 @@
 
         <div class="stat-card animate-in delay-3">
             <div class="stat-glow" style="background: #f59e0b;"></div>
-            <div class="stat-icon amber">👥</div>
+            <div class="stat-icon amber"><i data-feather="users"></i></div>
             <div class="stat-label">Staff Bertugas</div>
             <div class="stat-value">{{ $activeEmployeesCount ?? 0 }}</div>
             <div class="stat-sub">karyawan terlibat event aktif</div>
@@ -423,14 +355,13 @@
 
         <div class="stat-card animate-in delay-4">
             <div class="stat-glow" style="background: #8b5cf6;"></div>
-            <div class="stat-icon violet">💰</div>
+            <div class="stat-icon violet">$</div>
             <div class="stat-label">Est. Fee Bulan Ini</div>
             <div class="stat-value" style="font-size: 26px;">Rp {{ number_format($estimatedFee ?? 0, 0, ',', '.') }}</div>
             <div class="stat-sub">estimasi total pengeluaran fee</div>
         </div>
     </div>
 
-    {{-- ═══ Status Distribution Bar ═══ --}}
     @php
         $total = max(($statusCounts['upcoming'] ?? 0) + ($statusCounts['ongoing'] ?? 0) + ($statusCounts['completed'] ?? 0), 1);
         $pUpcoming  = (($statusCounts['upcoming']  ?? 0) / $total) * 100;
@@ -463,21 +394,18 @@
         </div>
     </div>
 
-    {{-- ═══ Calendar & Chart Row ═══ --}}
     <div class="dashboard-cols">
-        {{-- Interactive Calendar --}}
         <div class="section-card calendar-wrapper animate-in delay-5">
             <div class="section-header">
-                <span class="section-title">📅 Kalender Event</span>
+                <span class="section-title">Kalender Event</span>
                 <span class="section-badge">Interaktif</span>
             </div>
             <div id="eventCalendar"></div>
         </div>
 
-        {{-- Monthly Trend Chart --}}
         <div class="section-card animate-in delay-6">
             <div class="section-header">
-                <span class="section-title">📊 Tren Event Bulanan</span>
+                <span class="section-title">Tren Event Bulanan</span>
                 <span class="section-badge">12 Bulan Terakhir</span>
             </div>
             <div class="chart-container">
@@ -486,10 +414,9 @@
         </div>
     </div>
 
-    {{-- ═══ Upcoming Events List ═══ --}}
     <div class="section-card animate-in delay-7">
         <div class="section-header">
-            <span class="section-title">🗓️ 5 Event Terdekat</span>
+            <span class="section-title">Event Terdekat</span>
             <a href="{{ route('events.index') }}" style="font-size: 13px; color: var(--text-muted); text-decoration: none; font-weight: 500;">
                 Lihat Semua →
             </a>
@@ -525,15 +452,13 @@
         @endif
     </div>
 @else
-    {{-- ═══ Non-Director Welcome ═══ --}}
     <div class="welcome-banner animate-in" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
         <h3>Selamat Datang, {{ Auth::user()->name }} 👋</h3>
         <p>Dashboard karyawan akan segera tersedia. Silakan cek <strong style="color:#e2e8f0;">Daftar Event</strong> untuk jadwal penugasan Anda.</p>
-        <div class="welcome-date">📅 {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y — H:i') }} WIB</div>
+        <div class="welcome-date">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y — H:i') }} WIB</div>
     </div>
 @endrole
 
-{{-- ═══ External Libraries (CDN) ═══ --}}
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -542,7 +467,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ── Calendar ────────────────────────────────────────────
     const calendarEl = document.getElementById('eventCalendar');
     if (calendarEl) {
         const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -572,7 +496,6 @@ document.addEventListener('DOMContentLoaded', function () {
         calendar.render();
     }
 
-    // ── Trend Chart ─────────────────────────────────────────
     const trendData = {!! $monthlyTrend ?? '[]' !!};
     const ctx = document.getElementById('eventTrendChart');
     if (ctx && trendData.length) {

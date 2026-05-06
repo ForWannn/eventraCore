@@ -526,7 +526,6 @@
             <hr class="section-divider">
             @endrole
 
-            {{-- POSITIONS --}}
             <div class="section-label">Partisipan Event</div>
             <p style="font-size:13px;color:var(--text-muted);margin:-8px 0 20px;">
             </p>
