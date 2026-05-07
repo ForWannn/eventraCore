@@ -43,11 +43,11 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             transition: background-color 0.15s, color 0.15s;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 250px;
             background-color: var(--sidebar-bg);
@@ -283,5 +283,4 @@
       feather.replace();
     </script>
 </body>
-
 </html>

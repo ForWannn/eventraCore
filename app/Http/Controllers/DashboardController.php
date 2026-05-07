@@ -11,20 +11,20 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         
         $data = [];
         
         if ($user->hasRole(['CEO', 'GM'])) {
-            $data = $this->getDirectorData();
+            $data = $this->getDirectorData($request);
         }
 
         return view('dashboard', $data);
     }
 
-    private function getDirectorData(): array
+    private function getDirectorData(Request $request): array
     {
         $now = Carbon::now();
         $events = Event::with(['participants', 'positions.members'])->get();
@@ -109,22 +109,42 @@ class DashboardController extends Controller
             ];
         }
 
-        // ── 3. Monthly Event Trend (last 12 months) ────────
+        // ── 3. Monthly Event Trend (last 12 months or by year) ────────
+        $filterYear = $request->query('year');
         $monthlyTrend = [];
-        for ($i = 11; $i >= 0; $i--) {
-            $month = $now->copy()->subMonths($i);
-            $label = $month->translatedFormat('M Y');
-            $count = $events->filter(function ($event) use ($month) {
-                $dates = $event->event_dates ?? [];
-                foreach ($dates as $d) {
-                    $dt = Carbon::parse($d);
-                    if ($dt->month === $month->month && $dt->year === $month->year) {
-                        return true;
+        
+        if ($filterYear) {
+            // Trend for a specific year
+            for ($i = 1; $i <= 12; $i++) {
+                $monthDate = Carbon::createFromDate($filterYear, $i, 1);
+                $label = $monthDate->translatedFormat('M Y');
+                $count = $events->filter(function ($event) use ($filterYear, $i) {
+                    $dates = $event->event_dates ?? [];
+                    foreach ($dates as $d) {
+                        $dt = Carbon::parse($d);
+                        if ($dt->month === $i && $dt->year == $filterYear) return true;
                     }
-                }
-                return false;
-            })->count();
-            $monthlyTrend[] = ['label' => $label, 'count' => $count];
+                    return false;
+                })->count();
+                $monthlyTrend[] = ['label' => $label, 'count' => $count];
+            }
+        } else {
+            // Default: last 12 months
+            for ($i = 11; $i >= 0; $i--) {
+                $month = $now->copy()->subMonths($i);
+                $label = $month->translatedFormat('M Y');
+                $count = $events->filter(function ($event) use ($month) {
+                    $dates = $event->event_dates ?? [];
+                    foreach ($dates as $d) {
+                        $dt = Carbon::parse($d);
+                        if ($dt->month === $month->month && $dt->year === $month->year) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })->count();
+                $monthlyTrend[] = ['label' => $label, 'count' => $count];
+            }
         }
 
         // ── 4. Upcoming Events List (top 5, nearest first) ─
@@ -159,6 +179,44 @@ class DashboardController extends Controller
             'completed' => $events->filter(fn($e) => $e->status === 'completed')->count(),
         ];
 
+        // ── 6. Top 3 Employees ─────────────────────────────
+        $employeeEventCounts = [];
+        foreach ($events as $event) {
+            $countedUsersForEvent = [];
+            
+            // Add PICs
+            foreach ($event->participants as $participant) {
+                if ($participant->pivot->is_pic && !isset($countedUsersForEvent[$participant->id])) {
+                    $employeeEventCounts[$participant->id] = ($employeeEventCounts[$participant->id] ?? 0) + 1;
+                    $countedUsersForEvent[$participant->id] = true;
+                }
+            }
+
+            // Add role members
+            foreach ($event->positions as $pos) {
+                foreach ($pos->members as $member) {
+                    if (!isset($countedUsersForEvent[$member->id])) {
+                        $employeeEventCounts[$member->id] = ($employeeEventCounts[$member->id] ?? 0) + 1;
+                        $countedUsersForEvent[$member->id] = true;
+                    }
+                }
+            }
+        }
+        
+        arsort($employeeEventCounts);
+        $topEmployeeIds = array_slice(array_keys($employeeEventCounts), 0, 3);
+        $topEmployeesRaw = User::whereIn('id', $topEmployeeIds)->get()->keyBy('id');
+        
+        $topEmployees = [];
+        foreach ($topEmployeeIds as $id) {
+            if (isset($topEmployeesRaw[$id])) {
+                $topEmployees[] = [
+                    'user'  => $topEmployeesRaw[$id],
+                    'count' => $employeeEventCounts[$id]
+                ];
+            }
+        }
+
         return [
             'totalEvents'         => $events->count(),
             'activeEventsCount'   => $activeEvents->count(),
@@ -169,6 +227,7 @@ class DashboardController extends Controller
             'monthlyTrend'        => json_encode($monthlyTrend),
             'upcomingEventsList'  => $upcomingEventsList,
             'statusCounts'        => $statusCounts,
+            'topEmployees'        => $topEmployees,
         ];
     }
 }

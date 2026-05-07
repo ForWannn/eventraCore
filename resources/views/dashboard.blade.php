@@ -395,21 +395,66 @@
     </div>
 
     <div class="dashboard-cols">
-        <div class="section-card calendar-wrapper animate-in delay-5">
-            <div class="section-header">
+        <div class="section-card calendar-wrapper animate-in delay-5" style="display: flex; flex-direction: column;">
+            <div class="section-header" style="flex: none;">
                 <span class="section-title">Kalender Event</span>
                 <span class="section-badge">Interaktif</span>
             </div>
-            <div id="eventCalendar"></div>
+            <div id="eventCalendar" style="flex: 1; min-height: 0;"></div>
         </div>
 
-        <div class="section-card animate-in delay-6">
-            <div class="section-header">
-                <span class="section-title">Tren Event Bulanan</span>
-                <span class="section-badge">12 Bulan Terakhir</span>
+        <div class="section-card animate-in delay-6" style="display: flex; flex-direction: column;">
+            <div class="section-header" style="align-items: center;">
+                <div>
+                    <span class="section-title">Tren Event Bulanan</span>
+                    <span class="section-badge" style="margin-left: 6px;">Tahunan</span>
+                </div>
+                <select id="trendYearSelect" style="padding: 4px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--hover-bg); color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; outline: none;">
+                    @php $currentYear = request('year', date('Y')); @endphp
+                    @for($y = date('Y') + 1; $y >= date('Y') - 4; $y--)
+                        <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
             </div>
-            <div class="chart-container">
+            <div class="chart-container" style="flex: none; height: 280px; margin-bottom: 24px;">
                 <canvas id="eventTrendChart"></canvas>
+            </div>
+            
+            <div class="top-employees-box" style="flex: 1; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; background: var(--hover-bg); display: flex; flex-direction: column; justify-content: flex-start;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: var(--text-main); margin: 0;">Top Karyawan</h5>
+                </div>
+                
+                @if(isset($topEmployees) && count($topEmployees) > 0)
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        @foreach($topEmployees as $index => $emp)
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 10px; background: var(--sidebar-bg); border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                                <div style="width: 24px; height: 24px; border-radius: 50%; background: {{ $index == 0 ? '#fef08a' : ($index == 1 ? '#e5e7eb' : '#ffedd5') }}; color: {{ $index == 0 ? '#854d0e' : ($index == 1 ? '#374151' : '#9a3412') }}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">
+                                    {{ $index + 1 }}
+                                </div>
+                                @if(isset($emp['user']->photo_url) && $emp['user']->photo_url)
+                                    <img src="{{ $emp['user']->photo_url }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color);" alt="Avatar">
+                                @else
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--hover-bg); display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid var(--border-color);">👤</div>
+                                @endif
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $emp['user']->name }}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">
+                                        {{ $emp['user']->roles->first() ? \Illuminate\Support\Str::ucfirst($emp['user']->roles->first()->name) : 'Staff' }}
+                                    </div>
+                                </div>
+                                <div style="font-size: 12px; font-weight: 600; color: var(--text-main); background: var(--hover-bg); padding: 4px 10px; border-radius: 999px;">
+                                    {{ $emp['count'] }} Event
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-muted);">
+                        <div style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;">👥</div>
+                        <p style="font-size: 12px; margin: 0;">Belum ada data partisipasi karyawan aktif.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -489,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.location.href = info.event.url;
                 }
             },
-            height: 'auto',
+            height: '100%',
             dayMaxEvents: 3,
             eventDisplay: 'block',
         });
@@ -566,6 +611,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             }
+        });
+    }
+    // Handle year change
+    const trendYearSelect = document.getElementById('trendYearSelect');
+    if (trendYearSelect) {
+        trendYearSelect.addEventListener('change', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('year', this.value);
+            window.location.search = urlParams.toString();
         });
     }
 });
