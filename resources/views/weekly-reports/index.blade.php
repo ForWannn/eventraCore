@@ -266,10 +266,14 @@
                 {{ strtoupper($report->status) }}
             </div>
             
-            @if($report->status !== 'submitted')
+            @if(!$report->plan_submitted_at && $report->status !== 'submitted')
                 <button type="submit" form="planForm" class="btn-primary">
                     Simpan Plan & Deadline
                 </button>
+            @elseif($report->plan_submitted_at && $report->status !== 'submitted')
+                <div style="font-size: 11px; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 6px 12px;">
+                    <i data-feather="lock" style="width: 12px; height: 12px;"></i> Plan Disimpan
+                </div>
             @endif
         </div>
     </div>
