@@ -202,12 +202,17 @@
         <div class="nav-links">
             <a href="{{ route('dashboard') }}"
                 class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">Dasbor Utama</a>
+            
             @role('CEO|GM')
             <a href="{{ route('users.index') }}"
                 class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">Manajemen Karyawan</a>
             @endrole
+            
             <a href="{{ route('events.index') }}"
                 class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">Daftar Event</a>
+
+            <a href="{{ route('weekly.index') }}"
+                class="nav-link {{ request()->routeIs('weekly.*') ? 'active' : '' }}">Weekly Report</a>
 
             @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
                 <a href="#" class="nav-link">Rekapitulasi Event</a>

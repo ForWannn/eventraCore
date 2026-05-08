@@ -7,7 +7,7 @@ use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\WeeklyReportController;
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/', [AuthController::class, 'processLogin']);
 
@@ -23,4 +23,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/events/{event}/attend',        [AttendanceController::class, 'store'])->name('attendances.store');
     Route::post('/events/{event}/attend-manual', [AttendanceController::class, 'storeManual'])->name('attendances.store.manual');
+    Route::get('/weekly-report', [WeeklyReportController::class, 'index'])->name('weekly.index');
+    Route::post('/weekly-report/{report}/plan', [WeeklyReportController::class, 'updatePlan'])->name('weekly.plan');
+    Route::post('/weekly-report/{report}/final', [WeeklyReportController::class, 'submitFinal'])->name('weekly.final');
 });
