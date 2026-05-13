@@ -117,4 +117,21 @@ public function submitFinal(Request $request, WeeklyReport $report)
 
     return back()->with('success', 'Final Report berhasil terkirim.');
 }
+public function autoSaveLog(Request $request)
+    {
+        $request->validate([
+            'log_id' => 'required|exists:daily_logs,id',
+            'tasks'  => 'array'
+        ]);
+
+        // Bersihkan array dari baris kosong, lalu gabungkan dengan Enter (\n)
+        $desc = is_array($request->tasks) 
+            ? implode("\n", array_filter($request->tasks, fn($val) => !is_null($val) && trim($val) !== '')) 
+            : null;
+
+        // Update langsung ke database secara diam-diam
+        \App\Models\DailyLog::where('id', $request->log_id)->update(['description' => $desc]);
+
+        return response()->json(['success' => true]);
+    }
 }

@@ -262,6 +262,9 @@
         </div>
         
         <div style="display: flex; align-items: center; gap: 12px;">
+            <div id="autosave-indicator" style="font-size: 11px; color: var(--text-muted); opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 4px;">
+                <i data-feather="save" style="width: 12px; height: 12px;"></i> <span id="autosave-text">Menyimpan...</span>
+            </div>
             <div style="font-size: 11px; padding: 6px 12px; border-radius: 20px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 600;">
                 {{ strtoupper($report->status) }}
             </div>
@@ -366,6 +369,7 @@
                                 @foreach($tasks as $task)
                                     <input type="text" name="logs[{{ $log->id }}][]" class="input-line" 
                                            value="{{ $task }}" placeholder="" 
+                                           oninput="triggerAutosave({{ $log->id }})"
                                            {{ $report->status === 'submitted' ? 'readonly' : '' }}>
                                 @endforeach
                             </div>
@@ -400,34 +404,67 @@
 </div>
 
 <script>
+    // 1. Fungsi untuk menambah baris input baru
     function addTaskRow(logId) {
         const container = document.getElementById('task-container-' + logId);
         const input = document.createElement('input');
         input.type = 'text';
         input.name = `logs[${logId}][]`;
         input.className = 'input-line';
-        input.placeholder = '';
+        input.placeholder = 'Rincian pekerjaan tambahan...';
+        
+        // Pastikan baris baru juga memicu autosave saat diketik
+        input.oninput = function() { triggerAutosave(logId); };
+        
         container.appendChild(input);
         input.focus();
     }
-    function toggleStatus(itemId, isCompleted) {
-    const input = document.getElementById('status-' + itemId);
-    const parent = input.parentElement;
-    const btns = parent.querySelectorAll('.status-btn');
+
+    // 2. Fungsi Autosave menggunakan AJAX
+    let autosaveTimer;
     
-    // Set value ke hidden input
-    input.value = isCompleted;
-    
-    // Reset classes
-    btns[0].classList.remove('active-check');
-    btns[1].classList.remove('active-cross');
-    
-    // Aktifkan salah satu
-    if (isCompleted === 1) {
-        btns[0].classList.add('active-check');
-    } else {
-        btns[1].classList.add('active-cross');
+    function triggerAutosave(logId) {
+        clearTimeout(autosaveTimer);
+        
+        const indicator = document.getElementById('autosave-indicator');
+        const indicatorText = document.getElementById('autosave-text');
+        
+        // Tampilkan status "Menyimpan..."
+        indicator.style.opacity = '1';
+        indicatorText.textContent = 'Menyimpan...';
+
+        // Ambil semua data input pada hari yang sedang diketik
+        const container = document.getElementById('task-container-' + logId);
+        const inputs = container.querySelectorAll('input');
+        const tasks = Array.from(inputs).map(input => input.value);
+
+        // Tunggu 1 detik setelah user BERHENTI mengetik, baru kirim ke database (Mencegah spam ke server)
+        autosaveTimer = setTimeout(() => {
+            fetch('{{ route('weekly.autosave') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    log_id: logId, 
+                    tasks: tasks 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    indicatorText.textContent = 'Draft Tersimpan';
+                    // Sembunyikan indikator setelah 2 detik
+                    setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
+                }
+            })
+            .catch(error => {
+                indicatorText.textContent = 'Koneksi error';
+                console.error('Autosave error:', error);
+            });
+        }, 1000); 
     }
-}
 </script>
 @endsection

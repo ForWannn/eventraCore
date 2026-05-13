@@ -26,4 +26,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/weekly-report', [WeeklyReportController::class, 'index'])->name('weekly.index');
     Route::post('/weekly-report/{report}/plan', [WeeklyReportController::class, 'updatePlan'])->name('weekly.plan');
     Route::post('/weekly-report/{report}/final', [WeeklyReportController::class, 'submitFinal'])->name('weekly.final');
+    Route::post('/weekly-report/autosave', [WeeklyReportController::class, 'autoSaveLog'])->name('weekly.autosave');
 });
