@@ -27,4 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/weekly-report/{report}/plan', [WeeklyReportController::class, 'updatePlan'])->name('weekly.plan');
     Route::post('/weekly-report/{report}/final', [WeeklyReportController::class, 'submitFinal'])->name('weekly.final');
     Route::post('/weekly-report/autosave', [WeeklyReportController::class, 'autoSaveLog'])->name('weekly.autosave');
+    Route::middleware(['role:CEO|GM'])->group(function () {
+        Route::get('/weekly-recap', [WeeklyReportController::class, 'recap'])->name('weekly.recap');
+        Route::get('/weekly-recap/user/{user}/{week}', [WeeklyReportController::class, 'showUserReport'])->name('weekly.show_user');
+    });
 });

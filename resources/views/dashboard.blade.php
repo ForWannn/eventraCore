@@ -334,7 +334,7 @@
             <div class="stat-icon blue"><i data-feather="check"></i></div>
             <div class="stat-label">Total Event Aktif</div>
             <div class="stat-value">{{ $activeEventsCount ?? 0 }}</div>
-            <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event keseluruhan</div>
+            <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event</div>
         </div>
 
         <div class="stat-card animate-in delay-2">
@@ -342,7 +342,7 @@
             <div class="stat-icon emerald"><i data-feather="chevrons-right"></i></div>
             <div class="stat-label">Sedang Berjalan</div>
             <div class="stat-value">{{ $ongoingEventsCount ?? 0 }}</div>
-            <div class="stat-sub">event berstatus on-going</div>
+            <div class="stat-sub">event on-going</div>
         </div>
 
         <div class="stat-card animate-in delay-3">
@@ -350,7 +350,7 @@
             <div class="stat-icon amber"><i data-feather="users"></i></div>
             <div class="stat-label">Staff Bertugas</div>
             <div class="stat-value">{{ $activeEmployeesCount ?? 0 }}</div>
-            <div class="stat-sub">karyawan terlibat event aktif</div>
+            <div class="stat-sub">karyawan bertugas event</div>
         </div>
 
         <div class="stat-card animate-in delay-4">
@@ -474,8 +474,8 @@
                     <div class="event-info">
                         <div class="event-name">{{ $event['name'] }}</div>
                         <div class="event-meta">
-                            <span>🗓 {{ $event['date_start'] }}{{ $event['date_end'] ? ' — '.$event['date_end'] : '' }}</span>
-                            <span>👥 {{ $event['members_count'] }} staff · {{ $event['positions_count'] }} posisi</span>
+                            <span>{{ $event['date_start'] }}{{ $event['date_end'] ? ' — '.$event['date_end'] : '' }}</span>
+                            <span>{{ $event['members_count'] }} staff · {{ $event['positions_count'] }} posisi</span>
                         </div>
                     </div>
                     <div class="event-right">
@@ -491,14 +491,13 @@
             @endforeach
         @else
             <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
-                <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.3;">📋</div>
+                <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.3;"></div>
                 <p style="font-size: 14px;">Belum ada event yang dijadwalkan.</p>
             </div>
         @endif
     </div>
 @else
     <div class="welcome-banner animate-in" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
-        <h3>Selamat Datang, {{ Auth::user()->name }} 👋</h3>
         <p>Dashboard karyawan akan segera tersedia. Silakan cek <strong style="color:#e2e8f0;">Daftar Event</strong> untuk jadwal penugasan Anda.</p>
         <div class="welcome-date">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y — H:i') }} WIB</div>
     </div>
@@ -613,7 +612,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-    // Handle year change
     const trendYearSelect = document.getElementById('trendYearSelect');
     if (trendYearSelect) {
         trendYearSelect.addEventListener('change', function() {

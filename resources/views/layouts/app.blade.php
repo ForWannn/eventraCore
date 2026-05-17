@@ -213,7 +213,10 @@
 
             <a href="{{ route('weekly.index') }}"
                 class="nav-link {{ request()->routeIs('weekly.*') ? 'active' : '' }}">Weekly Report</a>
-
+            @role('CEO|GM')
+                <a href="{{ route('weekly.recap') }}"
+                    class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">Rekap Weekly Report</a>
+            @endrole
             @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
                 <a href="#" class="nav-link">Rekapitulasi Event</a>
             @endif

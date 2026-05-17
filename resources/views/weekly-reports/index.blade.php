@@ -233,7 +233,8 @@
 
 <div class="card">
     @php
-        $isFinalPhase = !$now->isWeekend() && $now->format('H:i') >= '17:00';
+        $isFinalPhase = true;
+        // $isFinalPhase = !$now->isWeekend() && $now->format('H:i') >= '17:00';
     @endphp
     @if($report->is_late_plan)
         <div class="alert-late">
@@ -252,7 +253,17 @@
             {{ session('error') }}
         </div>
     @endif
-
+    @if($report->status === 'submitted')
+        <div style="background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 14px 20px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i data-feather="check-circle" style="width: 16px; height: 16px;"></i>
+                Laporan Mingguan resmi diserahkan pada {{ \Carbon\Carbon::parse($report->final_submitted_at)->format('d/m/Y H:i') }}
+            </div>
+        <div style="font-weight: 700; background: #166534; color: white; padding: 4px 12px; border-radius: 8px;">
+        Penyelesaian: {{ $report->completion_percentage }}%
+        </div>
+            </div>
+        @endif
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
         <div>
             <h3 style="margin-bottom: 4px;">Weekly Schedule Planner</h3>
@@ -261,7 +272,7 @@
             </p>
         </div>
         
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <!-- <div style="display: flex; align-items: center; gap: 12px;">
             <div id="autosave-indicator" style="font-size: 11px; color: var(--text-muted); opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 4px;">
                 <i data-feather="save" style="width: 12px; height: 12px;"></i> <span id="autosave-text">Menyimpan...</span>
             </div>
@@ -278,6 +289,16 @@
                     <i data-feather="lock" style="width: 12px; height: 12px;"></i> Plan Disimpan
                 </div>
             @endif
+        </div> -->
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 11px; padding: 6px 12px; border-radius: 20px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 600;">
+                {{ strtoupper($report->status) }}
+            </div>
+            
+            <button type="submit" form="planForm" class="btn-primary">
+                Simpan Plan & Deadline (Test)
+            </button>
         </div>
     </div>
 
@@ -309,7 +330,7 @@
                                 </div>
                             @endif
                             <input type="text" name="objectives[]" value="{{ $item->content ?? '' }}" 
-                                class="input-line" placeholder="..." {{ $report->plan_submitted_at ? 'readonly' : '' }}>
+                                class="input-line" placeholder="..." {{ $report->plan_submitted_at ?  : '' }}>
                         </div>
                     @endfor
                 </div>
@@ -338,7 +359,7 @@
                 </div>
             @endif
             <input type="text" name="deadlines[]" value="{{ $item->content ?? '' }}" 
-                class="input-line" placeholder="..." {{ $report->plan_submitted_at ? 'readonly' : '' }}>
+                class="input-line" placeholder="..." {{ $report->plan_submitted_at ?  : '' }}>
         </div>
     @endfor
 </div>
@@ -390,7 +411,7 @@
             <textarea name="notes" style="width: 100%; height: 80px; border: none; background: transparent; color: var(--text-main); font-size: 13px; padding: 16px; outline: none; resize: none;" {{ $report->status === 'submitted' ? 'readonly' : '' }}>{{ $report->notes }}</textarea>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px;">
+        <!-- <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px;">
             @if($report->status !== 'submitted')
                 <button type="submit" class="btn-primary">Submit Final Report</button>
             @else
@@ -399,12 +420,23 @@
                     Laporan disubmit pada {{ \Carbon\Carbon::parse($report->final_submitted_at)->format('d/m/Y H:i') }}
                 </div>
             @endif
+        </div> -->
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px;">
+            @if($report->status !== 'submitted')
+                <button type="submit" class="btn-success">
+                    Submit Final Report (Test)
+                </button>
+            @else
+                <div style="color: #10b981; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i data-feather="check-circle" style="width: 16px; height: 16px;"></i>
+                    Laporan Selesai ({{ \Carbon\Carbon::parse($report->final_submitted_at)->format('d/m/Y H:i') }})
+                </div>
+            @endif
         </div>
     </form>
 </div>
 
 <script>
-    // 1. Fungsi untuk menambah baris input baru
     function addTaskRow(logId) {
         const container = document.getElementById('task-container-' + logId);
         const input = document.createElement('input');
@@ -413,14 +445,12 @@
         input.className = 'input-line';
         input.placeholder = 'Rincian pekerjaan tambahan...';
         
-        // Pastikan baris baru juga memicu autosave saat diketik
         input.oninput = function() { triggerAutosave(logId); };
         
         container.appendChild(input);
         input.focus();
     }
 
-    // 2. Fungsi Autosave menggunakan AJAX
     let autosaveTimer;
     
     function triggerAutosave(logId) {
@@ -429,11 +459,9 @@
         const indicator = document.getElementById('autosave-indicator');
         const indicatorText = document.getElementById('autosave-text');
         
-        // Tampilkan status "Menyimpan..."
         indicator.style.opacity = '1';
         indicatorText.textContent = 'Menyimpan...';
 
-        // Ambil semua data input pada hari yang sedang diketik
         const container = document.getElementById('task-container-' + logId);
         const inputs = container.querySelectorAll('input');
         const tasks = Array.from(inputs).map(input => input.value);

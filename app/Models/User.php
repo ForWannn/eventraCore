@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-
+use App\Models\WeeklyReport;
 class User extends Authenticatable
 {
     /**
@@ -85,5 +85,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Event::class, 'event_participants')
                     ->withPivot('is_pic')
                     ->withTimestamps();
+    }
+    public function weeklyReports()
+    {
+        return $this->hasMany(WeeklyReport::class);
     }
 }

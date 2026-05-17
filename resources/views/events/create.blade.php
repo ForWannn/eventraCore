@@ -555,7 +555,6 @@
         let posCount = 0;
         let currentPic = null;
 
-        // PIC Dropdown logic
         document.getElementById('picBtn').addEventListener('click', e => {
             e.stopPropagation();
             document.getElementById('picOpts').classList.toggle('open');
