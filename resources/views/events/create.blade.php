@@ -466,7 +466,14 @@
 
             <hr class="section-divider">
 
-            <div class="section-label">PIC Event</div>
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+                <div class="section-label" style="margin-bottom:0;">PIC Event</div>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+                    <span style="font-size: 13px; font-weight: 500; color: var(--text-muted);">Perlu Absen?</span>
+                    <input type="checkbox" name="needs_attendance" value="1" checked 
+                           style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
+                </label>
+            </div>
             <div style="display:grid;grid-template-columns:1fr @role('CEO') 200px @endrole;gap:16px;align-items:start;">
                 <div class="form-group" style="margin-bottom:0;">
                     <label>Pilih PIC</label>

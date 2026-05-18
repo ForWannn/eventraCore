@@ -481,7 +481,7 @@
 
         <hr style="border:0;border-top:1px dashed var(--border-color);margin:32px 0;">
 
-        @if($isAssigned)
+        @if($isAssigned && $event->needs_attendance)
             <div class="att-section" id="attendanceSection">
                 <h4>Absensi Kehadiran</h4>
 
@@ -717,7 +717,7 @@
         });
     </script>
 
-    @if($isAssigned && !$myAttendance && $event->status === 'ongoing' && $attendanceOpen)
+    @if($isAssigned && $event->needs_attendance && !$myAttendance && $event->status === 'ongoing' && $attendanceOpen)
         <script>
             const video = document.getElementById('videoElement');
             const canvas = document.getElementById('canvasElement');

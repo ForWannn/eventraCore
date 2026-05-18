@@ -21,10 +21,12 @@ class Event extends Model
         'pic_fee',
         'loading_fee',
         'unloading_fee',
+        'needs_attendance',
     ];
 
     protected $casts = [
         'event_dates' => 'array',
+        'needs_attendance' => 'boolean',
     ];
 
     /**

@@ -55,7 +55,7 @@
                 @endforeach
             </select>
 
-            @role('CEO|GM')
+            @role('CEO')
             <a href="{{ route('events.create') }}" class="btn-create" style="margin-left: 10px;">+ Buat Event Baru</a>
             @endrole
         </form>

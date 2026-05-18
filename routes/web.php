@@ -19,7 +19,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('divisions', DivisionController::class);
 
-    Route::resource('events', EventController::class);
+    Route::middleware(['role:CEO'])->group(function () {
+        Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+        Route::post('/events', [EventController::class, 'store'])->name('events.store');
+        Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+    });
+
+    Route::resource('events', EventController::class)->only(['index', 'show']);
 
     Route::post('/events/{event}/attend',        [AttendanceController::class, 'store'])->name('attendances.store');
     Route::post('/events/{event}/attend-manual', [AttendanceController::class, 'storeManual'])->name('attendances.store.manual');
@@ -29,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/weekly-report/autosave', [WeeklyReportController::class, 'autoSaveLog'])->name('weekly.autosave');
     Route::middleware(['role:CEO|GM'])->group(function () {
         Route::get('/weekly-recap', [WeeklyReportController::class, 'recap'])->name('weekly.recap');
+        Route::get('/weekly-history', [WeeklyReportController::class, 'history'])->name('weekly.history');
         Route::get('/weekly-recap/user/{user}/{week}', [WeeklyReportController::class, 'showUserReport'])->name('weekly.show_user');
     });
 });

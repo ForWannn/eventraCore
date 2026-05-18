@@ -35,7 +35,7 @@ class WeeklyReportController extends Controller
 
         if ($report->items()->where('type', 'deadline')->count() == 0) {
             $previousReport = WeeklyReport::where('user_id', $user->id)
-                ->where('week_start_date', '<', $report->week_start_date->format('Y-m-d'))
+                ->where('week_start_date', '<', $report->week_start_date->toDateString())
                 ->orderBy('week_start_date', 'desc')
                 ->first();
 
@@ -83,6 +83,19 @@ class WeeklyReportController extends Controller
         }, 'division'])->orderBy('name')->get();
 
         return view('weekly-reports.recap', compact('users', 'weekStart', 'now'));
+    }
+
+    public function history()
+    {
+        if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);
+
+        $reports = WeeklyReport::with(['user', 'user.division'])
+            ->where('status', 'submitted')
+            ->orderBy('week_start_date', 'desc')
+            ->orderBy('user_id')
+            ->get();
+
+        return view('weekly-reports.history', compact('reports'));
     }
 
     // ── FITUR BARU: DETAIL REVIEW LAPORAN KARYAWAN ────────────────────
@@ -136,7 +149,16 @@ class WeeklyReportController extends Controller
             }
         }
         
-        $report->update(['notes' => $request->notes, 'status' => 'submitted', 'final_submitted_at' => now()]);
+        $total = $report->items()->where('type', 'objective')->count();
+        $completed = $report->items()->where('type', 'objective')->where('is_completed', true)->count();
+        $percentage = $total > 0 ? round(($completed / $total) * 100) : 0;
+
+        $report->update([
+            'notes' => $request->notes, 
+            'status' => 'submitted', 
+            'final_submitted_at' => now(),
+            'completion_percentage' => $percentage
+        ]);
         return back()->with('success', 'Final Report berhasil dikirim.');
     }
 

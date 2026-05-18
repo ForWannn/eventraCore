@@ -216,6 +216,8 @@
             @role('CEO|GM')
                 <a href="{{ route('weekly.recap') }}"
                     class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">Rekap Weekly Report</a>
+                <a href="{{ route('weekly.history') }}"
+                    class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">Riwayat Weekly Report</a>
             @endrole
             @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
                 <a href="#" class="nav-link">Rekapitulasi Event</a>

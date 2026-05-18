@@ -22,6 +22,11 @@ class AttendanceController extends Controller
             return response()->json(['error' => 'Absensi hanya bisa dilakukan saat event berlangsung.'], 422);
         }
 
+        // Must require attendance
+        if (!$event->needs_attendance) {
+            return response()->json(['error' => 'Event ini tidak memerlukan absensi.'], 422);
+        }
+
         // Must be assigned
         if (!$this->isAssigned($user, $event)) {
             return response()->json(['error' => 'Anda tidak ditugaskan pada event ini.'], 403);

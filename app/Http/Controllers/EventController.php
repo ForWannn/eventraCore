@@ -93,6 +93,7 @@ class EventController extends Controller
             'pic_fee' => $request->pic_fee ?? 0,
             'loading_fee' => $request->loading_fee ?? 0,
             'unloading_fee' => $request->unloading_fee ?? 0,
+            'needs_attendance' => $request->has('needs_attendance'),
         ]);
 
         // Attach PIC

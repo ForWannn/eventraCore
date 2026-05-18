@@ -296,13 +296,13 @@
                 {{ strtoupper($report->status) }}
             </div>
             
-            <button type="submit" form="planForm" class="btn-primary">
+            <button type="submit" form="mainReportForm" formaction="{{ route('weekly.plan', $report->id) }}" class="btn-primary">
                 Simpan Plan & Deadline (Test)
             </button>
         </div>
     </div>
 
-    <form id="planForm" action="{{ route('weekly.plan', $report->id) }}" method="POST">
+    <form id="mainReportForm" action="{{ route('weekly.final', $report->id) }}" method="POST">
         @csrf
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;" class="top-responsive">
             <style>@media (max-width: 768px) { .top-responsive { grid-template-columns: 1fr !important; } }</style>
@@ -365,10 +365,6 @@
 </div>
             </div>
         </div>
-    </form>
-
-    <form action="{{ route('weekly.final', $report->id) }}" method="POST">
-        @csrf
         <div class="section-box">
             <div class="days-grid">
                 @foreach($report->dailyLogs as $log)
@@ -411,16 +407,6 @@
             <textarea name="notes" style="width: 100%; height: 80px; border: none; background: transparent; color: var(--text-main); font-size: 13px; padding: 16px; outline: none; resize: none;" {{ $report->status === 'submitted' ? 'readonly' : '' }}>{{ $report->notes }}</textarea>
         </div>
 
-        <!-- <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px;">
-            @if($report->status !== 'submitted')
-                <button type="submit" class="btn-primary">Submit Final Report</button>
-            @else
-                <div style="color: #10b981; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px;">
-                    <i data-feather="check-circle" style="width: 16px; height: 16px;"></i>
-                    Laporan disubmit pada {{ \Carbon\Carbon::parse($report->final_submitted_at)->format('d/m/Y H:i') }}
-                </div>
-            @endif
-        </div> -->
         <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px;">
             @if($report->status !== 'submitted')
                 <button type="submit" class="btn-success">
@@ -437,6 +423,19 @@
 </div>
 
 <script>
+    function toggleStatus(itemId, status) {
+        const input = document.getElementById('status-' + itemId);
+        if (!input) return;
+        
+        input.value = status;
+        
+        const btnCheck = input.nextElementSibling;
+        const btnCross = btnCheck.nextElementSibling;
+        
+        btnCheck.classList.toggle('active-check', status == 1);
+        btnCross.classList.toggle('active-cross', status == 0);
+    }
+
     function addTaskRow(logId) {
         const container = document.getElementById('task-container-' + logId);
         const input = document.createElement('input');
