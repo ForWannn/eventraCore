@@ -160,14 +160,12 @@
             </div>
         </div>
     </div>
-
+ 
     <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        {{-- Hidden file input for photo --}}
         <input type="file" id="photoInput" name="photo" accept="image/png,image/jpeg" onchange="previewPhoto(event)">
 
-        {{-- Row 1: NIK & Nama --}}
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label for="nik">No. Induk Karyawan (NIK)</label>

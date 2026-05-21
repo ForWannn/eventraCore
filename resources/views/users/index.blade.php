@@ -41,7 +41,7 @@
                     <th>NIK</th>
                     <th>Nama Pengguna</th>
                     <th>Email</th>
-                    <th>Hak Akses (Role)</th>
+                    <th>Role</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
