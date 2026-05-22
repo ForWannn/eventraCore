@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Riwayat Laporan Mingguan')
+@section('title', 'History Weekly Report')
 
 @section('content')
 <style>
@@ -20,6 +20,20 @@
             <h3 style="margin-bottom: 4px;">Riwayat Seluruh Laporan Mingguan</h3>
             <p style="font-size: 13px; color: var(--text-muted);">Daftar seluruh laporan kerja mingguan yang telah diserahkan oleh staf.</p>
         </div>
+        
+        <form method="GET" action="{{ route('weekly.history') }}" style="display: flex; gap: 12px; align-items: center;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Filter Minggu</label>
+                <select name="week" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; background: var(--bg-color); color: var(--text-main); min-width: 200px;">
+                    <option value="">Semua Minggu</option>
+                    @foreach($availableWeeks as $week)
+                        <option value="{{ $week->format('Y-m-d') }}" {{ $selectedWeek == $week->format('Y-m-d') ? 'selected' : '' }}>
+                            Minggu {{ $week->format('d M Y') }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </form>
     </div>
 
     <div class="table-container">
@@ -78,5 +92,34 @@
             </tbody>
         </table>
     </div>
+
+    @if($targetWeek && count($nonSubmitters) > 0)
+    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px dashed var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <div style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></div>
+            <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #ef4444;">Belum Mengumpulkan Weekly Report, {{ \Carbon\Carbon::parse($targetWeek)->format('d M Y') }}</h4>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+            @foreach($nonSubmitters as $user)
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 12px;">
+                <img src="{{ $user->photo_url }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">{{ $user->name }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">{{ $user->division->name ?? 'Tanpa Divisi' }}</div>
+                </div>
+                <div style="margin-left: auto; font-size: 10px; font-weight: 700; color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 4px 8px; border-radius: 6px; text-transform: uppercase;">Belum</div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @elseif($targetWeek)
+    <div style="margin-top: 32px; padding: 16px; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.15); border-radius: 12px; display: flex; align-items: center; gap: 10px;">
+        <svg style="width: 20px; height: 20px; color: #22c55e;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span style="font-size: 13px; font-weight: 500; color: #166534;">Luar biasa! Seluruh staf telah mengumpulkan laporan untuk minggu ini.</span>
+    </div>
+    @endif
 </div>
 @endsection

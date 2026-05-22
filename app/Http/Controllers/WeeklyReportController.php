@@ -85,20 +85,48 @@ class WeeklyReportController extends Controller
         return view('weekly-reports.recap', compact('users', 'weekStart', 'now'));
     }
 
-    public function history()
+    public function history(Request $request)
     {
         if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);
 
-        $reports = WeeklyReport::with(['user', 'user.division'])
-            ->where('status', 'submitted')
+        $selectedWeek = $request->week;
+        
+        // Ambil semua daftar minggu yang tersedia (yang sudah ada report disubmit)
+        $availableWeeks = WeeklyReport::where('status', 'submitted')
+            ->select('week_start_date')
+            ->distinct()
             ->orderBy('week_start_date', 'desc')
+            ->pluck('week_start_date');
+
+        $query = WeeklyReport::with(['user', 'user.division'])
+            ->where('status', 'submitted');
+
+        if ($selectedWeek) {
+            $query->whereDate('week_start_date', $selectedWeek);
+        }
+
+        $reports = $query->orderBy('week_start_date', 'desc')
             ->orderBy('user_id')
             ->get();
 
-        return view('weekly-reports.history', compact('reports'));
+        // ── FITUR BARU: LIST USER BELUM SUBMIT ──
+        $targetWeek = $selectedWeek ?: ($availableWeeks->first() ? $availableWeeks->first()->toDateString() : null);
+        $nonSubmitters = [];
+        
+        if ($targetWeek) {
+            $submitterIds = WeeklyReport::whereDate('week_start_date', $targetWeek)
+                ->where('status', 'submitted')
+                ->pluck('user_id');
+
+            $nonSubmitters = User::role(['Employee', 'Head', 'Intern'])
+                ->whereNotIn('id', $submitterIds)
+                ->with('division')
+                ->get();
+        }
+
+        return view('weekly-reports.history', compact('reports', 'availableWeeks', 'selectedWeek', 'nonSubmitters', 'targetWeek'));
     }
 
-    // ── FITUR BARU: DETAIL REVIEW LAPORAN KARYAWAN ────────────────────
     public function showUserReport($userId, $weekStart)
     {
         if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);

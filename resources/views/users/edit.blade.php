@@ -168,32 +168,30 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label for="nik">No. Induk Karyawan (NIK)</label>
+                <label for="nik">No Karyawan</label>
                 <input type="text" id="nik" name="nik" class="form-control"
                     value="{{ old('nik', $user->nik) }}" required placeholder="Contoh: CRE-008">
                 @error('nik')<div class="error-text">{{ $message }}</div>@enderror
             </div>
             <div class="form-group">
-                <label for="name">Nama Lengkap</label>
+                <label for="name">Nama</label>
                 <input type="text" id="name" name="name" class="form-control"
                     value="{{ old('name', $user->name) }}" required>
                 @error('name')<div class="error-text">{{ $message }}</div>@enderror
             </div>
         </div>
 
-        {{-- Row 2: Email --}}
         <div class="form-group">
-            <label for="email">Alamat Email</label>
+            <label for="email">Email</label>
             <input type="email" id="email" name="email" class="form-control"
                 value="{{ old('email', $user->email) }}" required>
             @error('email')<div class="error-text">{{ $message }}</div>@enderror
         </div>
 
-        {{-- Row 3: Divisi & Gaji --}}
             <div class="form-group" style="grid-column: 1 / -1;">
-                <label for="division_id">Divisi / Departemen</label>
+                <label for="division_id">Divisi</label>
                 <select id="division_id" name="division_id" class="form-control" required>
-                    <option value="">-- Pilih Divisi --</option>
+                    <option value="">Divisi</option>
                     @foreach($divisions as $division)
                         <option value="{{ $division->id }}"
                             {{ old('division_id', $user->division_id) == $division->id ? 'selected' : '' }}>
@@ -207,7 +205,6 @@
 
         <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 24px 0;">
 
-        {{-- Role Selection --}}
         <div class="form-group">
             <label>Role</label>
             <div class="role-grid">
@@ -243,12 +240,11 @@
     @endif
 </div>
 
-{{-- Delete Confirmation Modal --}}
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
-        <h4>Konfirmasi Hapus Karyawan</h4>
+        <h4>Konfirmasi Hapus</h4>
         <p>
-            Anda akan menghapus data <strong>{{ $user->name }}</strong> (NIK: {{ $user->nik ?? '-' }}) secara permanen.
+            Anda akan menghapus data <strong>{{ $user->name }}</strong> (No: {{ $user->nik ?? '-' }}) secara permanen.
             Semua data terkait akan ikut terhapus. Lanjutkan?
         </p>
         <div class="modal-actions">

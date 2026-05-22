@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WeeklyReportController;
+use App\Http\Controllers\EventTaskController;
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/', [AuthController::class, 'processLogin']);
 
@@ -38,4 +39,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/weekly-history', [WeeklyReportController::class, 'history'])->name('weekly.history');
         Route::get('/weekly-recap/user/{user}/{week}', [WeeklyReportController::class, 'showUserReport'])->name('weekly.show_user');
     });
+
+    Route::post('/events/{event}/tasks', [EventTaskController::class, 'store'])->name('events.tasks.store');
+    Route::post('/event-tasks/{task}/toggle', [EventTaskController::class, 'toggleComplete'])->name('events.tasks.toggle');
+    Route::delete('/event-tasks/{task}', [EventTaskController::class, 'destroy'])->name('events.tasks.destroy');
 });

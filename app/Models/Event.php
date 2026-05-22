@@ -75,4 +75,19 @@ class Event extends Model
     {
         return $this->hasMany(Attendance::class);
     }
+
+    /** Tasks (official & personal) for this event */
+    public function tasks()
+    {
+        return $this->hasMany(EventTask::class);
+    }
+
+    public function getOfficialTasksPercentageAttribute(): int
+    {
+        $total = $this->tasks()->where('type', 'official')->count();
+        if ($total === 0) return 0;
+        
+        $completed = $this->tasks()->where('type', 'official')->where('is_completed', true)->count();
+        return round(($completed / $total) * 100);
+    }
 }
