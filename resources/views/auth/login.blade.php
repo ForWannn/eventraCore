@@ -211,6 +211,13 @@
         <form action="" method="POST">
             @csrf
 
+            @if (session('status'))
+                <div
+                    style="background-color: #ecfdf5; color: #059669; padding: 12px; border-radius: 12px; font-size: 13px; margin-bottom: 20px;">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             @if($errors->any())
                 <div
                     style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 12px; font-size: 13px; margin-bottom: 20px;">
@@ -233,7 +240,7 @@
                     <input type="checkbox" name="remember" id="remember">
                     <span>Remember Me</span>
                 </label>
-                <a href="#" class="link">Forgot Password?</a>
+                <a href="{{ route('password.request') }}" class="link">Forgot Password?</a>
             </div>
 
             <button type="submit" class="btn">Masuk</button>
