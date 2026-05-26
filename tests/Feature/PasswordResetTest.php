@@ -84,7 +84,7 @@ class PasswordResetTest extends TestCase
 
         $response = $this->post('/reset-password', [
             'email' => 'ichwan.r7@gmail.com',
-            'code' => '654321', // Wrong code
+            'code' => '654321', 
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
         ]);

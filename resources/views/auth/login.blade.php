@@ -133,20 +133,25 @@
 
         .btn {
             width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: var(--primary-text);
+            padding: 14px;
+            background-color: #000000;
+            color: #ffffff;
             border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             transition: background-color 0.15s;
             margin-bottom: 12px;
         }
 
+        [data-theme="dark"] .btn {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
         .btn:hover {
-            background-color: var(--hover-primary);
+            opacity: 0.9;
         }
 
         .footer {
@@ -156,7 +161,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
@@ -227,12 +232,12 @@
 
             <div class="form-group">
                 <label for="username">Email</label>
-                <input type="text" id="username" name="username" required autocomplete="username">
+                <input type="text" id="username" name="username" required autocomplete="username" style="border-radius: 20px; padding: 12px 16px;">
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <input type="password" id="password" name="password" required autocomplete="current-password" style="border-radius: 20px; padding: 12px 16px;">
             </div>
 
             <div class="form-options">

@@ -101,22 +101,58 @@
             border-color: var(--primary);
         }
 
+        .code-inputs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .code-inputs input {
+            width: 100%;
+            height: 48px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .code-inputs input:focus {
+            border-color: var(--primary);
+        }
+
+        .code-divider {
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 0 2px;
+        }
+
         .btn {
             width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: var(--primary-text);
+            padding: 14px;
+            background-color: #000000;
+            color: #ffffff;
             border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             transition: background-color 0.15s;
             margin-top: 10px;
         }
 
+        [data-theme="dark"] .btn {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
         .btn:hover {
-            background-color: var(--hover-primary);
+            opacity: 0.9;
         }
 
         .alert {
@@ -135,7 +171,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
@@ -149,7 +185,7 @@
             gap: 6px;
         }
 
-        .theme-toggle svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .theme-toggle svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
         .sun-icon { display: none; }
         [data-theme="dark"] .sun-icon { display: block; }
         [data-theme="dark"] .moon-icon { display: none; }
@@ -169,27 +205,36 @@
             </div>
         @endif
 
-        <form action="{{ route('password.update') }}" method="POST">
+        <form action="{{ route('password.update') }}" method="POST" id="resetForm">
             @csrf
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ $email ?? old('email') }}" required readonly>
+                <input type="email" id="email" name="email" value="{{ $email ?? old('email') }}" required readonly style="border-radius: 20px; padding: 12px 16px;">
             </div>
 
             <div class="form-group">
-                <label for="code">Kode Reset (6 Digit)</label>
-                <input type="text" id="code" name="code" required autofocus placeholder="123456" maxlength="6" pattern="\d{6}" style="letter-spacing: 0.5em; text-align: center; font-weight: 600; font-size: 18px;">
+                <label>Kode reset</label>
+                <div class="code-inputs" id="codeInputContainer">
+                    <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                    <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                    <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                    <span class="code-divider">-</span>
+                    <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                    <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                    <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                </div>
+                <input type="hidden" name="code" id="hiddenCode">
             </div>
 
             <div class="form-group">
                 <label for="password">Password Baru</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required style="border-radius: 20px; padding: 12px 16px;">
             </div>
 
             <div class="form-group">
                 <label for="password_confirmation">Konfirmasi Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required>
+                <input type="password" id="password_confirmation" name="password_confirmation" required style="border-radius: 20px; padding: 12px 16px;">
             </div>
 
             <button type="submit" class="btn">Update Password</button>
@@ -197,7 +242,7 @@
 
         <div class="footer">
             <span>Powered by ReelSeven</span>
-            <button class="theme-toggle" id="themeToggle">
+            <button class="theme-toggle" id="themeToggle" aria-label="Ganti Tema">
                 <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             </button>
@@ -205,6 +250,7 @@
     </div>
 
     <script>
+        // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
         const updateThemeUI = (theme) => {
             if (theme === 'dark') document.body.setAttribute('data-theme', 'dark');
@@ -216,6 +262,60 @@
             const newTheme = document.body.hasAttribute('data-theme') ? 'light' : 'dark';
             updateThemeUI(newTheme);
             localStorage.setItem('theme', newTheme);
+        });
+
+        // Code Inputs logic
+        const container = document.getElementById('codeInputContainer');
+        const inputs = container.querySelectorAll('input');
+        const hiddenCode = document.getElementById('hiddenCode');
+        const form = document.getElementById('resetForm');
+
+        inputs.forEach((input, index) => {
+            // Auto focus next or previous
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length > 0 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+                updateHiddenCode();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            // Handle paste
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text');
+                const digits = paste.replace(/\D/g, '').split('');
+                digits.forEach((digit, i) => {
+                    if (index + i < inputs.length) {
+                        inputs[index + i].value = digit;
+                    }
+                });
+                if (index + digits.length < inputs.length) {
+                    inputs[index + digits.length].focus();
+                } else {
+                    inputs[inputs.length - 1].focus();
+                }
+                updateHiddenCode();
+            });
+        });
+
+        function updateHiddenCode() {
+            let code = '';
+            inputs.forEach(input => code += input.value);
+            hiddenCode.value = code;
+        }
+
+        form.addEventListener('submit', (e) => {
+            updateHiddenCode();
+            if (hiddenCode.value.length !== 6) {
+                e.preventDefault();
+                alert('Silakan masukkan keseluruhan 6 digit kode reset.');
+            }
         });
     </script>
 </body>

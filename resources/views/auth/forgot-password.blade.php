@@ -104,20 +104,25 @@
 
         .btn {
             width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: var(--primary-text);
+            padding: 14px;
+            background-color: #000000;
+            color: #ffffff;
             border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             transition: background-color 0.15s;
             margin-bottom: 12px;
         }
 
+        [data-theme="dark"] .btn {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
         .btn:hover {
-            background-color: var(--hover-primary);
+            opacity: 0.9;
         }
 
         .back-link {
@@ -158,7 +163,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
@@ -167,7 +172,6 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 12px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -180,13 +184,11 @@
         }
 
         .theme-toggle svg {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             fill: none;
             stroke: currentColor;
             stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
         }
 
         .sun-icon { display: none; }
@@ -218,8 +220,8 @@
             @csrf
 
             <div class="form-group">
-                <label for="email">Alamat Email</label>
-                <input type="email" id="email" name="email" required autofocus placeholder="nama@email.com">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autofocus placeholder="nama@email.com" style="border-radius: 20px; padding: 12px 16px;">
             </div>
 
             <button type="submit" class="btn">Kirim Link Reset</button>
@@ -229,10 +231,9 @@
 
         <div class="footer">
             <span>Powered by ReelSeven</span>
-            <button class="theme-toggle" id="themeToggle">
+            <button class="theme-toggle" id="themeToggle" aria-label="Ganti Tema">
                 <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <span id="themeText"></span>
             </button>
         </div>
     </div>
