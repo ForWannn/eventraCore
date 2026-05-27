@@ -305,21 +305,6 @@
         border-radius: 50%;
     }
 
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(16px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .animate-in {
-        animation: fadeInUp 0.5s cubic-bezier(.4,0,.2,1) both;
-    }
-    .delay-1 { animation-delay: 0.05s; }
-    .delay-2 { animation-delay: 0.1s; }
-    .delay-3 { animation-delay: 0.15s; }
-    .delay-4 { animation-delay: 0.2s; }
-    .delay-5 { animation-delay: 0.25s; }
-    .delay-6 { animation-delay: 0.3s; }
-    .delay-7 { animation-delay: 0.35s; }
-
     @media (max-width: 640px) {
         .stat-card .stat-value { font-size: 26px; }
         .welcome-banner { padding: 24px; }
@@ -329,7 +314,7 @@
 
 @role('CEO|GM')
     <div class="stats-grid">
-        <div class="stat-card animate-in delay-1">
+        <div class="stat-card">
             <div class="stat-glow" style="background: #2563eb;"></div>
             <div class="stat-icon blue"><i data-feather="check"></i></div>
             <div class="stat-label">Total Event Aktif</div>
@@ -337,7 +322,7 @@
             <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event</div>
         </div>
 
-        <div class="stat-card animate-in delay-2">
+        <div class="stat-card">
             <div class="stat-glow" style="background: #10b981;"></div>
             <div class="stat-icon emerald"><i data-feather="chevrons-right"></i></div>
             <div class="stat-label">Sedang Berjalan</div>
@@ -345,7 +330,7 @@
             <div class="stat-sub">event on-going</div>
         </div>
 
-        <div class="stat-card animate-in delay-3">
+        <div class="stat-card">
             <div class="stat-glow" style="background: #f59e0b;"></div>
             <div class="stat-icon amber"><i data-feather="users"></i></div>
             <div class="stat-label">Staff Bertugas</div>
@@ -353,7 +338,7 @@
             <div class="stat-sub">karyawan bertugas event</div>
         </div>
 
-        <div class="stat-card animate-in delay-4">
+        <div class="stat-card">
             <div class="stat-glow" style="background: #8b5cf6;"></div>
             <div class="stat-icon violet">$</div>
             <div class="stat-label">Est. Fee Bulan Ini</div>
@@ -368,7 +353,7 @@
         $pOngoing   = (($statusCounts['ongoing']   ?? 0) / $total) * 100;
         $pCompleted = (($statusCounts['completed'] ?? 0) / $total) * 100;
     @endphp
-    <div class="section-card animate-in delay-5" style="margin-bottom: 28px;">
+    <div class="section-card" style="margin-bottom: 28px;">
         <div class="section-header">
             <span class="section-title">Distribusi Status Event</span>
             <span class="section-badge">{{ $totalEvents ?? 0 }} Total</span>
@@ -395,7 +380,7 @@
     </div>
 
     <div class="dashboard-cols">
-        <div class="section-card calendar-wrapper animate-in delay-5" style="display: flex; flex-direction: column;">
+        <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
             <div class="section-header" style="flex: none;">
                 <span class="section-title">Kalender Event</span>
                 <span class="section-badge">Interaktif</span>
@@ -403,7 +388,7 @@
             <div id="eventCalendar" style="flex: 1; min-height: 0;"></div>
         </div>
 
-        <div class="section-card animate-in delay-6" style="display: flex; flex-direction: column;">
+        <div class="section-card" style="display: flex; flex-direction: column;">
             <div class="section-header" style="align-items: center;">
                 <div>
                     <span class="section-title">Tren Event Bulanan</span>
@@ -459,7 +444,7 @@
         </div>
     </div>
 
-    <div class="section-card animate-in delay-7">
+    <div class="section-card">
         <div class="section-header">
             <span class="section-title">Event Terdekat</span>
             <a href="{{ route('events.index') }}" style="font-size: 13px; color: var(--text-muted); text-decoration: none; font-weight: 500;">
@@ -497,9 +482,143 @@
         @endif
     </div>
 @else
-    <div class="welcome-banner animate-in" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
-        <p>Dashboard karyawan akan segera tersedia. Silakan cek <strong style="color:#e2e8f0;">Daftar Event</strong> untuk jadwal penugasan Anda.</p>
-        <div class="welcome-date">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y — H:i') }} WIB</div>
+    <div class="welcome-banner" style="background: linear-gradient(135deg, var(--primary) 0%, var(--hover-primary) 100%); margin-bottom: 28px;">
+        <div style="flex: 1;">
+            <h3 style="font-size: 24px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Halo, {{ Auth::user()->name }}! 👋</h3>
+            <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 4px;">Selamat datang di dasbor personal Anda. Pantau tugas dan jadwal event Anda di sini.</p>
+        </div>
+        <div class="welcome-date" style="color: #ffffff; opacity: 0.9;">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-glow" style="background: #2563eb;"></div>
+            <div class="stat-icon blue"><i data-feather="calendar"></i></div>
+            <div class="stat-label">Total Penugasan</div>
+            <div class="stat-value">{{ $totalAssignments ?? 0 }}</div>
+            <div class="stat-sub">event yang pernah diikuti</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-glow" style="background: #10b981;"></div>
+            <div class="stat-icon emerald"><i data-feather="activity"></i></div>
+            <div class="stat-label">Penugasan Aktif</div>
+            <div class="stat-value">{{ $activeCount ?? 0 }}</div>
+            <div class="stat-sub">sedang/akan bertugas</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-glow" style="background: #f59e0b;"></div>
+            <div class="stat-icon amber"><i data-feather="user-check"></i></div>
+            <div class="stat-label">Absensi Masuk</div>
+            <div class="stat-value">{{ $attendanceCount ?? 0 }}</div>
+            <div class="stat-sub">total tercatat di sistem</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-glow" style="background: #8b5cf6;"></div>
+            <div class="stat-icon violet"><i data-feather="file-text"></i></div>
+            <div class="stat-label">Laporan Minggu Ini</div>
+            <div class="stat-value" style="font-size: 20px;">{{ $reportStatus ?? '-' }}</div>
+            <div class="stat-sub">status pengisian log</div>
+        </div>
+    </div>
+
+    <div class="dashboard-cols">
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            {{-- Panel Absensi Hari Ini --}}
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-title">Absensi Hari Ini</span>
+                    <span id="digitalClock" style="font-size: 14px; font-weight: 700; color: var(--primary);">00:00:00</span>
+                </div>
+
+                @if($todayAttendance)
+                    <div style="background: rgba(16,185,129,0.1); border: 1px solid #10b981; border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">✅</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #065f46;">Sudah Absen pada {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }}</div>
+                        <div style="font-size: 11px; color: #059669; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Metode: {{ $todayAttendance->attendance_type === 'kantor' ? 'Biometrik Kantor' : 'Geotagging Luar' }}</div>
+                    </div>
+                @else
+                    <div id="attendancePanel">
+                        <div style="position: relative; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 4/3; margin-bottom: 16px; border: 1px solid var(--border-color);">
+                            <video id="webcam" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                            <canvas id="photoCanvas" style="display: none;"></canvas>
+                            <div style="position: absolute; bottom: 12px; left: 12px; right: 12px; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 8px; color: #fff; font-size: 10px; backdrop-filter: blur(4px);">
+                                <div id="locationStatus">🛰️ Mendeteksi lokasi...</div>
+                            </div>
+                        </div>
+                        <button id="btnSubmitAbsen" class="btn" style="margin-bottom: 0;">
+                            <i data-feather="camera" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                            Kirim Absen Luar Kantor
+                        </button>
+                    </div>
+                @endif
+            </div>
+
+            <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
+                <div class="section-header" style="flex: none;">
+                    <span class="section-title">Kalender Penugasan</span>
+                    <span class="section-badge">Jadwal Saya</span>
+                </div>
+                <div id="eventCalendar" style="flex: 1; min-height: 400px;"></div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-title">Event Mendatang</span>
+                </div>
+                
+                @if(isset($upcomingList) && count($upcomingList) > 0)
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        @foreach($upcomingList as $event)
+                            <div class="event-list-item" style="padding: 12px 0;">
+                                <div class="event-indicator {{ $event['status'] }}"></div>
+                                <div class="event-info">
+                                    <div class="event-name" style="font-size: 14px;">{{ $event['name'] }}</div>
+                                    <div class="event-meta" style="font-size: 11px;">
+                                        <span>{{ $event['date_start'] }}</span>
+                                        <span>Peran: <strong>{{ $event['role'] }}</strong></span>
+                                    </div>
+                                </div>
+                                <span class="badge badge-{{ $event['status'] }}" style="font-size: 9px; padding: 2px 8px;">{{ strtoupper($event['status']) }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="text-align: center; padding: 30px 20px; color: var(--text-muted);">
+                        <p style="font-size: 13px;">Belum ada penugasan baru.</p>
+                    </div>
+                @endif
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-title">Tugas Saya</span>
+                    <span class="section-badge">To-Do</span>
+                </div>
+
+                @if(isset($personalTasks) && count($personalTasks) > 0)
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        @foreach($personalTasks as $task)
+                            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 10px; border-radius: 10px; background: var(--hover-bg); border: 1px solid var(--border-color);">
+                                <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--text-muted); flex-shrink: 0; margin-top: 2px;"></div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 13px; font-weight: 500; color: var(--text-main);">{{ $task->title }}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Event: {{ $task->event->name ?? 'Unknown' }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="text-align: center; padding: 30px 20px; color: var(--text-muted);">
+                        <p style="font-size: 13px;">Tidak ada tugas tertunda.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 @endrole
 
@@ -509,8 +628,23 @@
 
 @role('CEO|GM')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    // ... (existing CEO script) ...
+</script>
+@else
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Digital Clock
+    function updateClock() {
+        const now = new Date();
+        const clockEl = document.getElementById('digitalClock');
+        if (clockEl) {
+            clockEl.textContent = now.toLocaleTimeString('id-ID', { hour12: false });
+        }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
+    // 2. Personal Calendar
     const calendarEl = document.getElementById('eventCalendar');
     if (calendarEl) {
         const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -521,103 +655,94 @@ document.addEventListener('DOMContentLoaded', function () {
                 center: 'title',
                 right: 'dayGridMonth,listMonth'
             },
-            buttonText: {
-                today: 'Hari Ini',
-                month: 'Bulan',
-                list: 'Daftar'
-            },
+            buttonText: { today: 'Hari Ini', month: 'Bulan', list: 'Daftar' },
             events: {!! $calendarEvents ?? '[]' !!},
-            eventClick: function (info) {
+            eventClick: function(info) {
                 if (info.event.url) {
                     info.jsEvent.preventDefault();
                     window.location.href = info.event.url;
                 }
             },
-            height: '100%',
+            height: 'auto',
             dayMaxEvents: 3,
             eventDisplay: 'block',
         });
         calendar.render();
     }
 
-    const trendData = {!! $monthlyTrend ?? '[]' !!};
-    const ctx = document.getElementById('eventTrendChart');
-    if (ctx && trendData.length) {
-        const isDark = document.body.hasAttribute('data-theme');
-        const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-        const textColor = isDark ? '#9ca3af' : '#6b7280';
+    // 3. Camera & Location
+    const video = document.getElementById('webcam');
+    const btnSubmit = document.getElementById('btnSubmitAbsen');
+    const locationStatus = document.getElementById('locationStatus');
+    let userCoords = null;
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: trendData.map(d => d.label),
-                datasets: [{
-                    label: 'Jumlah Event',
-                    data: trendData.map(d => d.count),
-                    backgroundColor: function(context) {
-                        const chart = context.chart;
-                        const {ctx: c, chartArea} = chart;
-                        if (!chartArea) return '#2563eb';
-                        const gradient = c.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                        gradient.addColorStop(0, 'rgba(37,99,235,0.3)');
-                        gradient.addColorStop(1, 'rgba(99,102,241,0.8)');
-                        return gradient;
-                    },
-                    borderRadius: 8,
-                    borderSkipped: false,
-                    maxBarThickness: 36,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: isDark ? '#1f2937' : '#0f172a',
-                        titleFont: { family: 'Inter', size: 12 },
-                        bodyFont: { family: 'Inter', size: 13, weight: '600' },
-                        padding: 12,
-                        cornerRadius: 10,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(ctx) {
-                                return ctx.parsed.y + ' Event';
-                            }
-                        }
-                    }
+    if (video) {
+        // Start Camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => { 
+                console.error("Camera Error:", err);
+                locationStatus.textContent = "❌ Gagal mengakses kamera.";
+            });
+
+        // Get Location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                    locationStatus.textContent = `📍 Terdeteksi: ${userCoords.lat.toFixed(4)}, ${userCoords.lng.toFixed(4)}`;
                 },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: {
-                            color: textColor,
-                            font: { family: 'Inter', size: 11, weight: '500' },
-                            maxRotation: 45,
-                        },
-                        border: { display: false }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: gridColor },
-                        ticks: {
-                            color: textColor,
-                            font: { family: 'Inter', size: 11 },
-                            stepSize: 1,
-                            precision: 0,
-                        },
-                        border: { display: false }
-                    }
+                err => {
+                    locationStatus.textContent = "❌ Gagal mendeteksi lokasi.";
+                    console.error("Geo Error:", err);
                 }
-            }
-        });
+            );
+        }
     }
-    const trendYearSelect = document.getElementById('trendYearSelect');
-    if (trendYearSelect) {
-        trendYearSelect.addEventListener('change', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            urlParams.set('year', this.value);
-            window.location.search = urlParams.toString();
+
+    if (btnSubmit) {
+        btnSubmit.addEventListener('click', function() {
+            if (!userCoords) {
+                alert("Tunggu hingga lokasi terdeteksi.");
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="spinner"></i> Mengirim...';
+
+            // Capture Frame
+            const canvas = document.getElementById('photoCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            const photoBase64 = canvas.toDataURL('image/png');
+
+            // Send to Server
+            fetch('{{ route("attendance.storeLuar") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    photo: photoBase64,
+                    latitude: userCoords.lat,
+                    longitude: userCoords.lng
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    location.reload();
+                }
+            })
+            .catch(err => {
+                alert("Terjadi kesalahan saat mengirim absensi.");
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = "Kirim Absen Luar Kantor";
+            });
         });
     }
 });

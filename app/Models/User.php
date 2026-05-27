@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-use App\Models\WeeklyReport;
+use Laravel\Sanctum\HasApiTokens;
+
 class User extends Authenticatable
 {
+    use HasFactory, Notifiable, HasRoles, HasApiTokens;
+
     /**
      * Get the URL for the user's profile photo.
      * Maps the first word of the user's name (lowercased) to /assets/Images/{name}.png
@@ -24,7 +27,7 @@ class User extends Authenticatable
 
         // Priority 2: seeded photo by first name (agus.png, angel.png, etc.)
         $firstName = strtolower(explode(' ', trim($this->name))[0]);
-        $seedPath = public_path('assets/Images/' . $firstName . '.png');
+        $seedPath = public_path('assets/Images/' . $firstName). '.png';
         if (file_exists($seedPath)) {
             return asset('assets/Images/' . $firstName . '.png');
         }
@@ -33,10 +36,6 @@ class User extends Authenticatable
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff';
     }
 
-
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -44,6 +43,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nik',
+        'employee_id',
         'division_id',
         'name',
         'email',
@@ -89,5 +89,10 @@ class User extends Authenticatable
     public function weeklyReports()
     {
         return $this->hasMany(WeeklyReport::class);
+    }
+
+    public function dailyAttendances()
+    {
+        return $this->hasMany(DailyAttendance::class);
     }
 }

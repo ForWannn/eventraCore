@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\User;
 use App\Models\EventPosition;
+use App\Models\DailyAttendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -19,9 +20,123 @@ class DashboardController extends Controller
         
         if ($user->hasRole(['CEO', 'GM'])) {
             $data = $this->getDirectorData($request);
+        } else {
+            $data = $this->getEmployeeData();
         }
 
         return view('dashboard', $data);
+    }
+
+    private function getEmployeeData(): array
+    {
+        $user = Auth::user();
+        $now = Carbon::now();
+
+        // ── 1. Personal Assignments ────────────────────────
+        // Get all events where user is PIC or a Position Member
+        $allAssignedEvents = Event::whereHas('participants', function($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->orWhereHas('positions.members', function($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->with(['participants', 'positions.members'])->get();
+
+        $activeAssignments = $allAssignedEvents->filter(fn($e) => in_array($e->status, ['ongoing', 'upcoming']));
+        
+        // ── 2. Stat Cards ─────────────────────────────────
+        $totalAssignments = $allAssignedEvents->count();
+        $activeCount = $activeAssignments->count();
+        
+        // Attendance count (total clock-ins)
+        $attendanceCount = \App\Models\Attendance::where('user_id', $user->id)->count();
+
+        // Weekly Report Status for current week
+        $startOfWeek = $now->copy()->startOfWeek();
+        $currentReport = \App\Models\WeeklyReport::where('user_id', $user->id)
+            ->where('week_start_date', $startOfWeek->format('Y-m-d'))
+            ->first();
+        
+        $reportStatus = 'Belum Dibuat';
+        if ($currentReport) {
+            if ($currentReport->final_submitted_at) $reportStatus = 'Selesai';
+            elseif ($currentReport->plan_submitted_at) $reportStatus = 'On-Progress (Plan OK)';
+            else $reportStatus = 'Drafting';
+        }
+
+        // ── 3. Personal Calendar ──────────────────────────
+        $calendarEvents = [];
+        foreach ($allAssignedEvents as $event) {
+            $dates = $event->event_dates ?? [];
+            if (empty($dates)) continue;
+            sort($dates);
+
+            $calendarEvents[] = [
+                'title' => $event->name,
+                'start' => $dates[0],
+                'end'   => Carbon::parse(end($dates))->addDay()->format('Y-m-d'),
+                'color' => match ($event->status) {
+                    'ongoing'   => '#2563eb',
+                    'upcoming'  => '#f59e0b',
+                    'completed' => '#10b981',
+                    default     => '#6b7280',
+                },
+                'url'   => route('events.show', $event->id),
+            ];
+        }
+
+        // ── 4. Upcoming Assignments List ──────────────────
+        $upcomingList = $activeAssignments
+            ->sortBy(function ($e) {
+                $dates = $e->event_dates ?? [];
+                return empty($dates) ? '9999-12-31' : min($dates);
+            })
+            ->take(5)
+            ->map(function ($event) use ($user) {
+                // Find user's role in this event
+                $role = 'Staff';
+                $pic = $event->participants->where('id', $user->id)->where('pivot.is_pic', true)->first();
+                if ($pic) $role = 'PIC';
+                else {
+                    $pos = $event->positions->filter(function($p) use ($user) {
+                        return $p->members->contains($user->id);
+                    })->first();
+                    if ($pos) $role = $pos->name;
+                }
+
+                $dates = $event->event_dates ?? [];
+                sort($dates);
+
+                return [
+                    'id'        => $event->id,
+                    'name'      => $event->name,
+                    'status'    => $event->status,
+                    'role'      => $role,
+                    'date_start' => !empty($dates) ? Carbon::parse($dates[0])->translatedFormat('d M Y') : 'TBA',
+                ];
+            })->values();
+
+        // ── 5. Personal Tasks ─────────────────────────────
+        // Fetch tasks from active events that are NOT completed
+        $personalTasks = \App\Models\EventTask::whereIn('event_id', $activeAssignments->pluck('id'))
+            ->where('is_completed', false)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Daily Attendance Status for TODAY
+        $todayAttendance = DailyAttendance::where('user_id', $user->id)
+            ->where('date', $now->format('Y-m-d'))
+            ->first();
+
+        return [
+            'totalAssignments'   => $totalAssignments,
+            'activeCount'        => $activeCount,
+            'attendanceCount'    => $attendanceCount,
+            'reportStatus'       => $reportStatus,
+            'calendarEvents'     => json_encode($calendarEvents),
+            'upcomingList'       => $upcomingList,
+            'personalTasks'      => $personalTasks,
+            'todayAttendance'    => $todayAttendance,
+        ];
     }
 
     private function getDirectorData(Request $request): array
