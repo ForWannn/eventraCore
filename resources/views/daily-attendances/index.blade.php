@@ -125,7 +125,7 @@
         background: var(--hover-bg);
         color: var(--text-main);
         font-size: 13px;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Google Sans Flex', sans-serif;
         font-weight: 500;
         outline: none;
         transition: border-color 0.2s, box-shadow 0.2s;
@@ -145,7 +145,7 @@
         color: var(--primary-text);
         font-size: 13px;
         font-weight: 600;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Google Sans Flex', sans-serif;
         cursor: pointer;
         transition: opacity 0.2s, transform 0.15s;
     }
@@ -346,7 +346,7 @@
         color: var(--text-main);
         font-size: 12px;
         font-weight: 500;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Google Sans Flex', sans-serif;
         cursor: pointer;
         transition: all 0.2s;
     }

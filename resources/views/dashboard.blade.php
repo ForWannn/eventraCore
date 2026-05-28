@@ -32,7 +32,7 @@
     }
 
     .stat-card {
-        background: var(--sidebar-bg);
+        background: var(--card-bg);
         border: 1px solid var(--border-color);
         border-radius: 18px;
         padding: 24px;
@@ -40,10 +40,10 @@
         overflow: hidden;
         transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
     }
-    .stat-card:hover {
+    /* .stat-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 12px 40px -8px rgba(0,0,0,0.1);
-    }
+    } */
     .stat-card .stat-icon {
         width: 44px;
         height: 44px;
@@ -54,7 +54,7 @@
         margin-bottom: 16px;
         font-size: 20px;
     }
-    .stat-card .stat-icon.blue    { background: rgba(37,99,235,0.1);  color: #2563eb; }
+    .stat-card .stat-icon.blue    { background: rgba(132, 171, 255, 0.1);  color: var(--primary); }
     .stat-card .stat-icon.emerald { background: rgba(16,185,129,0.1); color: #10b981; }
     .stat-card .stat-icon.amber   { background: rgba(245,158,11,0.1); color: #f59e0b; }
     .stat-card .stat-icon.violet  { background: rgba(139,92,246,0.1); color: #8b5cf6; }
@@ -105,7 +105,7 @@
     }
 
     .section-card {
-        background: var(--sidebar-bg);
+        background: var(--card-bg);
         border: 1px solid var(--border-color);
         border-radius: 20px;
         padding: 28px;
@@ -134,7 +134,7 @@
         margin-bottom: 28px;
     }
     .fc {
-        font-family: 'Inter', sans-serif !important;
+        font-family: 'Google Sans Flex', sans-serif !important;
     }
     .fc .fc-toolbar-title {
         font-size: 16px !important;
@@ -223,8 +223,8 @@
         border-radius: 4px;
         flex-shrink: 0;
     }
-    .event-list-item .event-indicator.ongoing  { background: #2563eb; }
-    .event-list-item .event-indicator.upcoming { background: #f59e0b; }
+    .event-list-item .event-indicator.ongoing  { background: var(--primary); }
+    .event-list-item .event-indicator.upcoming { background: var(--warning); }
     .event-list-item .event-info {
         flex: 1;
         min-width: 0;
@@ -263,12 +263,12 @@
         letter-spacing: 0.3px;
         text-transform: uppercase;
     }
-    .badge-ongoing  { background: #dbeafe; color: #1e40af; }
-    .badge-upcoming { background: #fef3c7; color: #92400e; }
+    .badge-ongoing  { background: var(--primary-soft); color: #2b55cc; }
+    .badge-upcoming { background: #fff1d6; color: #b27300; }
     .badge-completed { background: #d1fae5; color: #065f46; }
-    [data-theme="dark"] .badge-ongoing  { background: rgba(37,99,235,0.2); color: #93c5fd; }
-    [data-theme="dark"] .badge-upcoming { background: rgba(245,158,11,0.2); color: #fcd34d; }
-    [data-theme="dark"] .badge-completed { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+    [data-theme="dark"] .badge-ongoing  { background: var(--primary-soft); color: #8aafff; }
+    [data-theme="dark"] .badge-upcoming { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    [data-theme="dark"] .badge-completed { background: rgba(52,211,153,0.15); color: #34d399; }
 
     .pic-avatar {
         width: 28px;
@@ -298,9 +298,9 @@
     .status-bar div {
         transition: width 0.6s cubic-bezier(.4,0,.2,1);
     }
-    .status-bar .s-ongoing  { background: #2563eb; }
-    .status-bar .s-upcoming { background: #f59e0b; }
-    .status-bar .s-completed { background: #10b981; }
+    .status-bar .s-ongoing  { background: var(--primary); }
+    .status-bar .s-upcoming { background: var(--warning); }
+    .status-bar .s-completed { background: var(--success); }
     .status-legend {
         display: flex;
         gap: 20px;
@@ -348,7 +348,7 @@
         text-align: center;
         padding: 32px 24px;
         border-radius: 20px;
-        background: var(--sidebar-bg);
+        background: var(--card-bg);
         border: 1px solid var(--border-color);
         position: relative;
     }
@@ -375,7 +375,7 @@
         transition: background 0.2s;
         cursor: pointer;
     }
-    .task-list-item:hover { background: var(--hover-bg); }
+    /* .task-list-item:hover { background: var(--hover-bg); } */
     .task-checkbox-btn {
         width: 20px;
         height: 20px;
@@ -474,15 +474,15 @@
         </div>
         <div class="status-legend">
             <div class="status-legend-item">
-                <div class="dot" style="background: #f59e0b;"></div>
+                <div class="dot" style="background: var(--warning);"></div>
                 Upcoming ({{ $statusCounts['upcoming'] ?? 0 }})
             </div>
             <div class="status-legend-item">
-                <div class="dot" style="background: #2563eb;"></div>
+                <div class="dot" style="background: var(--primary);"></div>
                 On-Going ({{ $statusCounts['ongoing'] ?? 0 }})
             </div>
             <div class="status-legend-item">
-                <div class="dot" style="background: #10b981;"></div>
+                <div class="dot" style="background: var(--success);"></div>
                 Completed ({{ $statusCounts['completed'] ?? 0 }})
             </div>
         </div>
@@ -611,7 +611,7 @@
     <div class="stats-grid-3">
         <!-- Card 1: Total Event -->
         <div class="stat-card">
-            <div class="stat-glow" style="background: #2563eb;"></div>
+            <!-- <div class="stat-glow" style="background: var(--primary);"></div> -->
             <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px;">
                 <div class="stat-icon blue" style="margin-bottom: 0;"><i data-feather="calendar"></i></div>
                 <div>
@@ -621,7 +621,7 @@
                 </div>
             </div>
             <hr style="border: none; border-top: 1px solid var(--border-color); margin: 0 -24px 16px -24px;">
-            <a href="{{ route('events.index') }}" style="display: flex; justify-content: space-between; align-items: center; text-decoration: none; font-size: 13px; font-weight: 600; color: #2563eb;">
+            <a href="{{ route('events.index') }}" style="display: flex; justify-content: space-between; align-items: center; text-decoration: none; font-size: 13px; font-weight: 600; color: var(--primary);">
                 <span>Lihat Semua</span>
                 <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
             </a>
@@ -633,7 +633,7 @@
             <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px;">
                 <div class="stat-icon emerald" style="margin-bottom: 0;"><i data-feather="user-check"></i></div>
                 <div>
-                    <div class="stat-label" style="margin-bottom: 4px;">Kehadiran Bulan Ini</div>
+                    <div class="stat-label" style="margin-bottom: 4px;">Absensi Bulan Ini</div>
                     <div class="stat-value">{{ $attendanceCountThisMonth }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Hari</span></div>
                     <div class="stat-sub" style="margin-top: 2px;">dari {{ $workDays }} hari kerja</div>
                 </div>
@@ -651,8 +651,8 @@
             <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px;">
                 <div class="stat-icon violet" style="margin-bottom: 0; background: rgba(236, 72, 153, 0.1); color: #ec4899;"><i data-feather="clipboard"></i></div>
                 <div>
-                    <div class="stat-label" style="margin-bottom: 4px;">To Do Belum Selesai</div>
-                    <div class="stat-value">{{ $pendingTasksCount }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Tugas</span></div>
+                    <div class="stat-label" style="margin-bottom: 4px;">To Do</div>
+                    <div class="stat-value">{{ $pendingTasksCount }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Jobdesk</span></div>
                     <div class="stat-sub" style="margin-top: 2px;">Perlu diselesaikan</div>
                 </div>
             </div>
@@ -669,7 +669,7 @@
         <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
             <div class="section-header" style="flex: none; align-items: center; margin-bottom: 20px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <i data-feather="calendar" style="color: #2563eb; width: 20px; height: 20px;"></i>
+                    <i data-feather="calendar" style="color: var(--primary); width: 20px; height: 20px;"></i>
                     <span class="section-title">Kalender Event</span>
                 </div>
                 <a href="{{ route('events.index') }}" class="btn btn-sm" style="font-size: 12px; padding: 6px 12px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 4px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);">
@@ -698,8 +698,8 @@
             <div class="section-card" style="position: relative;">
                 <div class="section-header" style="margin-bottom: 20px; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <i data-feather="map-pin" style="color: #ec4899; width: 20px; height: 20px;"></i>
-                        <span class="section-title">Absen Hari Ini</span>
+                        <i data-feather="map-pin" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                        <span class="section-title">Absen</span>
                     </div>
                     @if($todayAttendance)
                         <span class="badge badge-completed" style="text-transform: none; font-size: 11px;">Sudah Absen</span>
@@ -791,7 +791,7 @@
         </div>
 
     <div id="attendanceModal" style="display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); padding: 20px; flex-direction: column; align-items: center; justify-content: center;">
-        <div style="background: var(--sidebar-bg); width: 100%; max-width: 500px; border-radius: 20px; overflow: hidden; position: relative;">
+        <div style="background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; overflow: hidden; position: relative;">
             <button onclick="closeAttendanceModal()" style="position: absolute; top: 12px; right: 12px; z-index: 110; background: rgba(0,0,0,0.5); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
             
             <div style="position: relative; aspect-ratio: 4/3; background: #000;">
