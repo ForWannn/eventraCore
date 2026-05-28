@@ -151,17 +151,56 @@ class DashboardController extends Controller
             ->where('date', $now->format('Y-m-d'))
             ->first();
 
+        // Total events assigned to the employee for the current month
+        $totalEventsThisMonth = $allAssignedEvents->filter(function($event) use ($now) {
+            $dates = $event->event_dates ?? [];
+            foreach ($dates as $d) {
+                $dt = Carbon::parse($d);
+                if ($dt->month === $now->month && $dt->year === $now->year) return true;
+            }
+            return false;
+        })->count();
+
+        // Attendance count this month
+        $attendanceCountThisMonth = DailyAttendance::where('user_id', $user->id)
+            ->whereMonth('date', $now->month)
+            ->whereYear('date', $now->year)
+            ->count();
+
+        // Calculate weekdays (Monday to Friday) in the current month
+        $startOfMonth = $now->copy()->startOfMonth();
+        $endOfMonth = $now->copy()->endOfMonth();
+        $workDays = 0;
+        $temp = $startOfMonth->copy();
+        while ($temp->lte($endOfMonth)) {
+            if ($temp->dayOfWeek !== Carbon::SATURDAY && $temp->dayOfWeek !== Carbon::SUNDAY) {
+                $workDays++;
+            }
+            $temp->addDay();
+        }
+
+        // Recent 3 daily attendances
+        $recentAttendances = DailyAttendance::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->take(3)
+            ->get();
+
         return [
-            'totalAssignments'   => $totalAssignments,
-            'activeCount'        => $activeCount,
-            'attendanceCount'    => $attendanceCount,
-            'reportStatus'       => $reportStatus,
-            'calendarEvents'     => json_encode($calendarEvents),
-            'upcomingList'       => $upcomingList,
-            'personalTasks'      => $personalTasks,
-            'todayAttendance'    => $todayAttendance,
-            'showBanner'         => $showBanner,
-            'bannerType'         => $bannerType,
+            'totalAssignments'         => $totalAssignments,
+            'totalEventsThisMonth'     => $totalEventsThisMonth,
+            'activeCount'              => $activeCount,
+            'attendanceCount'          => $attendanceCount,
+            'attendanceCountThisMonth' => $attendanceCountThisMonth,
+            'workDays'                 => $workDays,
+            'recentAttendances'        => $recentAttendances,
+            'reportStatus'             => $reportStatus,
+            'calendarEvents'           => json_encode($calendarEvents),
+            'upcomingList'             => $upcomingList,
+            'personalTasks'            => $personalTasks,
+            'pendingTasksCount'        => $personalTasks->count(),
+            'todayAttendance'          => $todayAttendance,
+            'showBanner'               => $showBanner,
+            'bannerType'               => $bannerType,
         ];
     }
 
