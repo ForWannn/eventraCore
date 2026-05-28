@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Event Baru')
+@section('title', 'Buat Event')
 
 @section('content')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -69,7 +69,7 @@
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-muted);
-            margin-bottom: 16px;
+            margin: 16px 0px;
         }
 
         /* PIC Dropdown */
@@ -395,7 +395,7 @@
             </div>
 
             <div class="form-group">
-                <label for="description">Deskripsi (Opsional)</label>
+                <label for="description">Deskripsi</label>
                 <textarea id="description" name="description" class="form-control"
                     rows="2">{{ old('description') }}</textarea>
             </div>
@@ -421,7 +421,7 @@
                 </div>
             </div>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <!-- <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
                 <div class="form-group">
                     <label for="attendance_start">Absensi Dibuka (Jam)</label>
                     <input type="time" id="attendance_start" name="attendance_start" class="form-control"
@@ -432,19 +432,19 @@
                     <input type="time" id="attendance_end" name="attendance_end" class="form-control"
                         value="{{ old('attendance_end') }}">
                 </div>
-            </div>
+            </div> -->
 
             <hr class="section-divider">
 
-            <div style="display:flex; justify-content: space-between; align-items: center;">
+            <!-- <div style="display:flex; justify-content: space-between; align-items: center;">
                 <div class="section-label" style="margin-bottom:0;">PIC Event</div>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
                     <span style="font-size: 13px; font-weight: 500; color: var(--text-muted);">Perlu Absen?</span>
-                    <input type="checkbox" name="needs_attendance" value="1" checked 
+                    <input type="checkbox" name="needs_attendance" value="0" checked 
                            style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
                 </label>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr;gap:16px;align-items:start;">
+            </div> -->
+            <div style="display:grid;grid-template-columns:1fr;gap:16px;align-items:start;margin-top:8px">
                 <div class="form-group" style="margin-bottom:0;">
                     <label>Pilih PIC</label>
                     <div class="custom-select-wrapper" id="picWrap">
@@ -467,7 +467,7 @@
             </div>
 
 
-            <div class="section-label">Partisipan Event</div>
+            <div class="section-label">Runner Event</div>
             <p style="font-size:13px;color:var(--text-muted);margin:-8px 0 20px;">
             </p>
 
@@ -537,26 +537,24 @@
             if (checked) {
                 const row = document.createElement('div');
                 row.className = 'date-row'; row.dataset.uid = userId;
-                row.innerHTML = `
-                                                                                    <div class="date-row-user">
-                                                                                        <img src="${user.photo}" alt="${user.name}">
-                                                                                        <span>${user.name}</span>
-                                                                                    </div>
-                                                                                    <div class="date-row-inputs">
-                                                                                        <input type="text" name="positions[${posIdx}][member_dates][${userId}][work_dates]" class="date-input-sm multi-date" placeholder="Multi tanggal">
-                                                                                        <button type="button" class="btn-full-event" onclick="setFullEvent(${posIdx},${userId})">Full Event</button>
-
-                                                                                        <div style="margin-left: 8px; display:flex; gap:6px;">
-                                                                                            <label class="toggle-btn" title="Tugas Loading">
-                                                                                                <input type="checkbox" name="positions[${posIdx}][member_loading][${userId}]">
-                                                                                                <span class="badge-opt ld">LD</span>
-                                                                                            </label>
-                                                                                            <label class="toggle-btn" title="Tugas Unloading">
-                                                                                                <input type="checkbox" name="positions[${posIdx}][member_unloading][${userId}]">
-                                                                                                <span class="badge-opt uld">ULD</span>
-                                                                                            </label>
-                                                                                        </div>
-                                                                                    </div>`;
+                row.innerHTML = `<div class="date-row-user">
+                                    <img src="${user.photo}" alt="${user.name}">
+                                    <span>${user.name}</span>
+                                </div>
+                                <div class="date-row-inputs">
+                                    <input type="text" name="positions[${posIdx}][member_dates][${userId}][work_dates]" class="date-input-sm multi-date" placeholder="Multi tanggal">
+                                    <button type="button" class="btn-full-event" onclick="setFullEvent(${posIdx},${userId})">Full Event</button>
+                                    <div style="margin-left: 8px; display:flex; gap:6px;">
+                                        <label class="toggle-btn" title="Tugas Loading">
+                                            <input type="checkbox" name="positions[${posIdx}][member_loading][${userId}]">
+                                            <span class="badge-opt ld">LD</span>
+                                        </label>
+                                        <label class="toggle-btn" title="Tugas Unloading">
+                                            <input type="checkbox" name="positions[${posIdx}][member_unloading][${userId}]">
+                                            <span class="badge-opt uld">ULD</span>
+                                        </label>
+                                    </div>
+                                </div>`;
                 container.appendChild(row);
                 flatpickr(row.querySelector('.multi-date'), {
                     mode: "multiple",
@@ -578,15 +576,14 @@
         }
 
         function buildGrid(idx) {
-            return ALL_USERS.map(u => `
-                                                                                <label class="emp-lbl ${currentPic && String(u.id) === String(currentPic) ? 'pic-hidden' : ''}" data-uid="${u.id}">
-                                                                                    <input type="checkbox" name="positions[${idx}][members][]" value="${u.id}" class="emp-cb">
-                                                                                    <div class="emp-inner">
-                                                                                        <img src="${u.photo}" class="emp-avatar" alt="${u.name}">
-                                                                                        <div class="emp-name">${u.name}</div>
-                                                                                        <div class="emp-div">${u.division}</div>
-                                                                                    </div>
-                                                                                </label>`).join('');
+            return ALL_USERS.map(u => `<label class="emp-lbl ${currentPic && String(u.id) === String(currentPic) ? 'pic-hidden' : ''}" data-uid="${u.id}">
+                                        <input type="checkbox" name="positions[${idx}][members][]" value="${u.id}" class="emp-cb">
+                                        <div class="emp-inner">
+                                            <img src="${u.photo}" class="emp-avatar" alt="${u.name}">
+                                            <div class="emp-name">${u.name}</div>
+                                            <div class="emp-div">${u.division}</div>
+                                        </div>
+                                    </label>`).join('');
         }
 
         function addPos() {
@@ -597,20 +594,19 @@
 
             const feeHtml = ``;
 
-            block.innerHTML = `
-                                                                                <div class="pos-header" style="grid-template-columns: 1fr auto;">
-                                                                                    <div>
-                                                                                        <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;">Nama Posisi</label>
-                                                                                        <input type="text" name="positions[${idx}][name]" class="form-control"  required>
-                                                                                    </div>
-                                                                                    ${feeHtml}
-                                                                                    <div><button type="button" class="btn-remove-pos" onclick="removePos(this)">✕ Hapus</button></div>
-                                                                                </div>
-                                                                                <div class="emp-grid">${buildGrid(idx)}</div>
-                                                                                <div class="dates-wrap">
-                                                                                    <div class="dates-header" id="dates-header-${idx}">Detail Tugas</div>
-                                                                                    <div id="dates-${idx}"></div>
-                                                                                </div>`;
+            block.innerHTML = ` <div class="pos-header" style="grid-template-columns: 1fr auto;">
+                                <div>
+                                    <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;">Nama Posisi</label>
+                                    <input type="text" name="positions[${idx}][name]" class="form-control"  required>
+                                </div>
+                                ${feeHtml}
+                                <div><button type="button" class="btn-remove-pos" onclick="removePos(this)">✕ Hapus</button></div>
+                                </div>
+                                <div class="emp-grid">${buildGrid(idx)}</div>
+                                <div class="dates-wrap">
+                                    <div class="dates-header" id="dates-header-${idx}">Detail Tugas</div>
+                                    <div id="dates-${idx}"></div>
+                                </div>`;
             document.getElementById('posContainer').appendChild(block);
             syncRemoveButtons();
         }
@@ -621,12 +617,9 @@
             blocks.forEach(b => { b.querySelector('.btn-remove-pos').style.display = blocks.length > 1 ? 'block' : 'none'; });
         }
 
-        // Strip dots on submit
         document.getElementById('eventForm').addEventListener('submit', function () {
-            // No fee inputs to process
         });
 
-        // Init 1st position & flatpickr
         window.addEventListener('DOMContentLoaded', () => {
             flatpickr("#event_dates", {
                 mode: "multiple",

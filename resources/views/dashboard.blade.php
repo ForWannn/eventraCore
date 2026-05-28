@@ -452,7 +452,7 @@
     <div class="section-card" style="margin-bottom: 28px;">
         <div class="section-header">
             <span class="section-title">Status Event</span>
-            <span class="section-badge">{{ $totalEvents ?? 0 }} Total</span>
+            <span class="section-badge">{{ $totalEvents ?? 0 }} Event</span>
         </div>
         <div class="status-bar">
             <div class="s-upcoming"  style="width: {{ $pUpcoming }}%;"></div>
@@ -479,7 +479,6 @@
         <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
             <div class="section-header" style="flex: none;">
                 <span class="section-title">Kalender Event</span>
-                <span class="section-badge">Interaktif</span>
             </div>
             <div id="eventCalendar" style="flex: 1; min-height: 0;"></div>
         </div>
