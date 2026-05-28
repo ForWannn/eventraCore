@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('users', UserController::class);
     Route::resource('divisions', DivisionController::class);
+    Route::get('/attendance-history', [DailyAttendanceController::class, 'myHistory'])->name('attendance.history');
 
     Route::middleware(['role:CEO'])->group(function () {
         Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
@@ -44,10 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/weekly-report/{report}/plan', [WeeklyReportController::class, 'updatePlan'])->name('weekly.plan');
     Route::post('/weekly-report/{report}/final', [WeeklyReportController::class, 'submitFinal'])->name('weekly.final');
     Route::post('/weekly-report/autosave', [WeeklyReportController::class, 'autoSaveLog'])->name('weekly.autosave');
+    Route::get('/weekly-history', [WeeklyReportController::class, 'history'])->name('weekly.history');
     Route::middleware(['role:CEO|GM'])->group(function () {
         Route::get('/daily-attendance-recap', [DailyAttendanceController::class, 'recap'])->name('attendance.recap');
         Route::get('/weekly-recap', [WeeklyReportController::class, 'recap'])->name('weekly.recap');
-        Route::get('/weekly-history', [WeeklyReportController::class, 'history'])->name('weekly.history');
         Route::get('/weekly-recap/user/{user}/{week}', [WeeklyReportController::class, 'showUserReport'])->name('weekly.show_user');
     });
 

@@ -38,7 +38,6 @@ class AttendanceApiController extends Controller
         $checkInTime = $timeString ? Carbon::parse($timeString) : Carbon::now();
         $date = $checkInTime->format('Y-m-d');
 
-        // Prevent double entry for the same date
         $exists = DailyAttendance::where('user_id', $user->id)
                                   ->where('date', $date)
                                   ->exists();
@@ -47,7 +46,6 @@ class AttendanceApiController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Attendance already recorded for today'], 200);
         }
 
-        // Logic Status: Terlambat jika lewat threshold
         $limit = config('attendance.checkout_threshold', '09:00:00');
         $threshold = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' ' . $limit);
         $status = $checkInTime->gt($threshold) ? 'terlambat' : 'tepat_waktu';

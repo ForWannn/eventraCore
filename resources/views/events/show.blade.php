@@ -79,14 +79,6 @@
             font-weight: 700;
         }
 
-        .fee-pill {
-            padding: 6px 14px;
-            background: #dcfce7;
-            color: #166534;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-        }
 
         /* Position blocks */
         .position-section {
@@ -109,14 +101,6 @@
             font-weight: 700;
         }
 
-        .position-fee {
-            font-size: 13px;
-            font-weight: 600;
-            color: #166534;
-            background: #dcfce7;
-            padding: 4px 12px;
-            border-radius: 8px;
-        }
 
         .position-members {
             border: 1px solid var(--border-color);
@@ -676,18 +660,6 @@
             </div>
         </div>
 
-        @if($isLeader)
-            <div class="detail-grid" style="margin-top: 16px;">
-                <div class="info-box" style="background: #fffbeb; border-color: #fde68a;">
-                    <div class="info-label" style="color: #92400e;">Fee Loading (Global)</div>
-                    <div class="info-value">Rp {{ number_format($event->loading_fee, 0, ',', '.') }}</div>
-                </div>
-                <div class="info-box" style="background: #eef2ff; border-color: #c7d2fe;">
-                    <div class="info-label" style="color: #3730a3;">Fee Unloading (Global)</div>
-                    <div class="info-value">Rp {{ number_format($event->unloading_fee, 0, ',', '.') }}</div>
-                </div>
-            </div>
-        @endif
 
         <hr style="border:0;border-top:1px dashed var(--border-color);margin:32px 0;">
 
@@ -768,9 +740,6 @@
                                 class="badge-pic">PIC</span></div>
                     </div>
                 </div>
-                @if($isLeader)
-                    <div class="fee-pill">Fee: Rp {{ number_format($event->pic_fee, 0, ',', '.') }}</div>
-                @endif
             </div>
         @endif
 
@@ -786,9 +755,6 @@
                             style="font-weight:400; color:var(--text-muted); margin-left:8px;">({{ $position->members->count() }}
                             orang)</span></div>
 
-                    @if($isLeader)
-                        <div class="position-fee">Fee: Rp {{ number_format($position->fee, 0, ',', '.') }} / orang</div>
-                    @endif
                 </div>
                 <div class="position-members">
                     @forelse($position->members as $member)

@@ -56,10 +56,27 @@ class DashboardController extends Controller
             ->first();
         
         $reportStatus = 'Belum Dibuat';
+        $showBanner = false;
+        $bannerType = null; // 'plan' or 'final'
+        
         if ($currentReport) {
             if ($currentReport->final_submitted_at) $reportStatus = 'Selesai';
             elseif ($currentReport->plan_submitted_at) $reportStatus = 'On-Progress (Plan OK)';
             else $reportStatus = 'Drafting';
+        }
+
+        // Smart Banner Logic
+        $dayOfWeek = $now->dayOfWeek; // 0 (Sun) to 6 (Sat). 1=Mon, 2=Tue, 5=Fri
+        if (in_array($dayOfWeek, [1, 2])) {
+            if (!$currentReport || !$currentReport->plan_submitted_at) {
+                $showBanner = true;
+                $bannerType = 'plan';
+            }
+        } elseif ($dayOfWeek === 5) {
+            if (!$currentReport || !$currentReport->final_submitted_at) {
+                $showBanner = true;
+                $bannerType = 'final';
+            }
         }
 
         // ── 3. Personal Calendar ──────────────────────────
@@ -89,7 +106,7 @@ class DashboardController extends Controller
                 $dates = $e->event_dates ?? [];
                 return empty($dates) ? '9999-12-31' : min($dates);
             })
-            ->take(5)
+            ->take(3)
             ->map(function ($event) use ($user) {
                 // Find user's role in this event
                 $role = 'Staff';
@@ -116,10 +133,17 @@ class DashboardController extends Controller
 
         // ── 5. Personal Tasks ─────────────────────────────
         // Fetch tasks from active events that are NOT completed
+        // Fetch tasks from active events:
+        // 1. Assigned specifically to user
+        // 2. OR Assigned to NULL (Umum) AND user is part of the event
         $personalTasks = \App\Models\EventTask::whereIn('event_id', $activeAssignments->pluck('id'))
             ->where('is_completed', false)
+            ->where(function($q) use ($user) {
+                $q->where('assigned_to', $user->id)
+                  ->orWhereNull('assigned_to');
+            })
+            ->with('event')
             ->latest()
-            ->take(6)
             ->get();
 
         // Daily Attendance Status for TODAY
@@ -136,6 +160,8 @@ class DashboardController extends Controller
             'upcomingList'       => $upcomingList,
             'personalTasks'      => $personalTasks,
             'todayAttendance'    => $todayAttendance,
+            'showBanner'         => $showBanner,
+            'bannerType'         => $bannerType,
         ];
     }
 
@@ -162,40 +188,8 @@ class DashboardController extends Controller
         }
         $activeEmployeesCount = $activeEmployeeIds->unique()->count();
 
-        // Estimated fee for current month
-        $currentMonthEvents = $events->filter(function ($event) use ($now) {
-            $dates = $event->event_dates ?? [];
-            foreach ($dates as $d) {
-                $dt = Carbon::parse($d);
-                if ($dt->month === $now->month && $dt->year === $now->year) {
-                    return true;
-                }
-            }
-            return false;
-        });
-
-        $estimatedFee = 0;
-        foreach ($currentMonthEvents as $event) {
-            // PIC fee
-            $picCount = $event->participants->where('pivot.is_pic', true)->count();
-            $estimatedFee += ($event->pic_fee ?? 0) * max($picCount, 1);
-
-            // Position fees (per member)
-            foreach ($event->positions as $pos) {
-                $memberCount = $pos->members->count();
-                $estimatedFee += ($pos->fee ?? 0) * $memberCount;
-
-                // Loading / Unloading fee per member
-                foreach ($pos->members as $member) {
-                    if ($member->pivot->is_loading) {
-                        $estimatedFee += $event->loading_fee ?? 0;
-                    }
-                    if ($member->pivot->is_unloading) {
-                        $estimatedFee += $event->unloading_fee ?? 0;
-                    }
-                }
-            }
-        }
+        // Total unique employees attended today
+        $todayAttendancesCount = DailyAttendance::whereDate('date', $now->toDateString())->distinct('user_id')->count();
 
         // ── 2. Calendar Events (JSON) ──────────────────────
         $calendarEvents = [];
@@ -283,7 +277,7 @@ class DashboardController extends Controller
                     'date_start' => !empty($dates) ? Carbon::parse($dates[0])->translatedFormat('d M Y') : 'TBA',
                     'date_end'   => count($dates) > 1 ? Carbon::parse(end($dates))->translatedFormat('d M Y') : null,
                     'positions_count' => $event->positions->count(),
-                    'members_count'   => $event->positions->sum(fn($p) => $p->members->count()),
+                    'members_count'   => $event->positions->map(fn($p) => $p->members->count())->sum(),
                 ];
             })->values();
 
@@ -337,12 +331,15 @@ class DashboardController extends Controller
             'activeEventsCount'   => $activeEvents->count(),
             'ongoingEventsCount'  => $ongoingEventsCount,
             'activeEmployeesCount'=> $activeEmployeesCount,
-            'estimatedFee'        => $estimatedFee,
+            'todayAttendancesCount' => $todayAttendancesCount,
             'calendarEvents'      => json_encode($calendarEvents),
             'monthlyTrend'        => json_encode($monthlyTrend),
             'upcomingEventsList'  => $upcomingEventsList,
             'statusCounts'        => $statusCounts,
             'topEmployees'        => $topEmployees,
+            'todayAttendance'     => DailyAttendance::where('user_id', Auth::id())
+                                        ->where('date', Carbon::now()->format('Y-m-d'))
+                                        ->first(),
         ];
     }
 }

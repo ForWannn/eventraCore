@@ -70,12 +70,8 @@ class EventController extends Controller
             'attendance_start' => 'nullable|date_format:H:i',
             'attendance_end' => 'nullable|date_format:H:i',
             'pic_id' => 'required|exists:users,id',
-            'pic_fee' => 'nullable|numeric|min:0',
-            'loading_fee' => 'nullable|numeric|min:0',
-            'unloading_fee' => 'nullable|numeric|min:0',
             'positions' => 'nullable|array',
             'positions.*.name' => 'required_with:positions|string|max:100',
-            'positions.*.fee' => 'nullable|numeric|min:0',
             'positions.*.members' => 'nullable|array',
             'positions.*.member_dates' => 'nullable|array',
         ]);
@@ -90,9 +86,6 @@ class EventController extends Controller
             'end_time' => $request->end_time,
             'attendance_start' => $request->attendance_start,
             'attendance_end' => $request->attendance_end,
-            'pic_fee' => $request->pic_fee ?? 0,
-            'loading_fee' => $request->loading_fee ?? 0,
-            'unloading_fee' => $request->unloading_fee ?? 0,
             'needs_attendance' => $request->has('needs_attendance'),
         ]);
 
@@ -116,7 +109,6 @@ class EventController extends Controller
                 $position = EventPosition::create([
                     'event_id' => $event->id,
                     'name' => $posData['name'],
-                    'fee' => $posData['fee'] ?? 0,
                 ]);
 
                 if (!empty($posData['members'])) {

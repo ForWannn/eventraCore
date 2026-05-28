@@ -18,9 +18,6 @@ class Event extends Model
         'attendance_start',
         'attendance_end',
         'status',
-        'pic_fee',
-        'loading_fee',
-        'unloading_fee',
         'needs_attendance',
     ];
 

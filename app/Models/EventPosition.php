@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventPosition extends Model
 {
-    protected $fillable = ['event_id', 'name', 'fee'];
+    protected $fillable = ['event_id', 'name'];
 
     public function event()
     {

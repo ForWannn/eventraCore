@@ -61,15 +61,36 @@ class DailyAttendanceController extends Controller
         ]);
     }
 
+    public function myHistory()
+    {
+        $user = Auth::user();
+        $attendances = DailyAttendance::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->paginate(15);
+
+        return view('daily-attendances.history', compact('attendances'));
+    }
+
     public function recap(Request $request)
     {
         $date = $request->input('date', Carbon::now()->format('Y-m-d'));
-        
-        $attendances = DailyAttendance::with('user')
-            ->where('date', $date)
-            ->orderBy('check_in_time', 'asc')
+
+        // Query ALL active users with their division & attendance for the selected date
+        $users = \App\Models\User::with(['division'])
+            ->with(['dailyAttendances' => function ($q) use ($date) {
+                $q->where('date', $date);
+            }])
+            ->orderBy('name', 'asc')
             ->get();
 
-        return view('daily-attendances.index', compact('attendances', 'date'));
+        // Compute summary statistics
+        $totalStaff = $users->count();
+        $presentCount = $users->filter(fn($u) => $u->dailyAttendances->isNotEmpty())->count();
+        $lateCount = $users->filter(fn($u) => $u->dailyAttendances->where('status', 'terlambat')->isNotEmpty())->count();
+        $remoteCount = $users->filter(fn($u) => $u->dailyAttendances->where('attendance_type', 'luar')->isNotEmpty())->count();
+
+        return view('daily-attendances.index', compact(
+            'users', 'date', 'totalStaff', 'presentCount', 'lateCount', 'remoteCount'
+        ));
     }
 }

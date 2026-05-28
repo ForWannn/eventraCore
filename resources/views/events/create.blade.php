@@ -138,36 +138,6 @@
             background: var(--hover-bg);
         }
 
-        /* Fee prefix input */
-        .fee-prefix {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            background: var(--bg-color);
-        }
-
-        .fee-prefix span {
-            padding: 10px 12px;
-            background: var(--hover-bg);
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 500;
-            border-right: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-
-        .fee-prefix input {
-            flex: 1;
-            padding: 10px 12px;
-            border: none;
-            background: transparent;
-            font-size: 14px;
-            color: var(--text-main);
-            outline: none;
-            min-width: 0;
-        }
 
         /* Position block */
         .position-block {
@@ -474,7 +444,7 @@
                            style="width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;">
                 </label>
             </div>
-            <div style="display:grid;grid-template-columns:1fr @role('CEO') 200px @endrole;gap:16px;align-items:start;">
+            <div style="display:grid;grid-template-columns:1fr;gap:16px;align-items:start;">
                 <div class="form-group" style="margin-bottom:0;">
                     <label>Pilih PIC</label>
                     <div class="custom-select-wrapper" id="picWrap">
@@ -494,44 +464,8 @@
                     </div>
                 </div>
 
-                @role('CEO|GM')
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>Fee PIC</label>
-                    <input type="hidden" id="pic_fee" name="pic_fee" value="{{ old('pic_fee', 0) }}" placeholder="0">
-                    <div class="fee-prefix">
-                        <span>Rp</span>
-                        <input type="text" id="pic_fee_d" placeholder="0"
-                            value="{{ number_format(old('pic_fee', 0), 0, ',', '.') }}" oninput="fmtFee(this,'pic_fee')"
-                            autocomplete="off">
-                    </div>
-                </div>
-                @endrole
             </div>
 
-            <hr class="section-divider">
-
-            {{-- TARIF OPERASIONAL (KHUSUS CEO & GM) --}}
-            @role('CEO|GM')
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom: 24px;">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>Fee Loading</label>
-                    <div class="fee-prefix">
-                        <span>Rp</span>
-                        <input type="text" class="form-control" oninput="fmtFee(this, 'loading_fee_hid')" placeholder="0">
-                        <input type="hidden" name="loading_fee" id="loading_fee_hid" value="0">
-                    </div>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>Fee Unloading</label>
-                    <div class="fee-prefix">
-                        <span>Rp</span>
-                        <input type="text" class="form-control" oninput="fmtFee(this, 'unloading_fee_hid')" placeholder="0">
-                        <input type="hidden" name="unloading_fee" id="unloading_fee_hid" value="0">
-                    </div>
-                </div>
-            </div>
-            <hr class="section-divider">
-            @endrole
 
             <div class="section-label">Partisipan Event</div>
             <p style="font-size:13px;color:var(--text-muted);margin:-8px 0 20px;">
@@ -586,17 +520,6 @@
             });
         }
 
-        function fmtFee(inp, hidId) {
-            const raw = inp.value.replace(/\D/g, '');
-            inp.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            document.getElementById(hidId).value = raw;
-        }
-
-        function fmtFeePos(d) {
-            const raw = d.value.replace(/\D/g, '');
-            d.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            d.closest('.pos-header').querySelector('.fee-h').value = raw;
-        }
 
         document.getElementById('posContainer').addEventListener('change', function (e) {
             if (!e.target.classList.contains('emp-cb')) return;
@@ -672,15 +595,10 @@
             block.className = 'position-block';
             block.dataset.pos = idx;
 
-            const feeHtml = IS_CEO ? `
-                                                                                <div>
-                                                                                    <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;">Fee / Orang (Rp)</label>
-                                                                                    <input type="hidden" name="positions[${idx}][fee]" class="fee-h" value="0">
-                                                                                    <div class="fee-prefix"><span>Rp</span><input type="text" class="fee-d" placeholder="0" oninput="fmtFeePos(this)" autocomplete="off"></div>
-                                                                                </div>` : `<input type="hidden" name="positions[${idx}][fee]" value="0">`;
+            const feeHtml = ``;
 
             block.innerHTML = `
-                                                                                <div class="pos-header" style="grid-template-columns: 1fr ${IS_CEO ? '1fr' : ''} auto;">
+                                                                                <div class="pos-header" style="grid-template-columns: 1fr auto;">
                                                                                     <div>
                                                                                         <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;">Nama Posisi</label>
                                                                                         <input type="text" name="positions[${idx}][name]" class="form-control"  required>
@@ -705,13 +623,7 @@
 
         // Strip dots on submit
         document.getElementById('eventForm').addEventListener('submit', function () {
-            document.querySelectorAll('.fee-h').forEach(h => { h.value = h.value.replace(/\./g, ''); });
-            const picFee = document.getElementById('pic_fee');
-            if (picFee) picFee.value = picFee.value.replace(/\./g, '');
-            const ldFee = document.getElementById('loading_fee_hid');
-            if (ldFee) ldFee.value = ldFee.value.replace(/\./g, '');
-            const uldFee = document.getElementById('unloading_fee_hid');
-            if (uldFee) uldFee.value = uldFee.value.replace(/\./g, '');
+            // No fee inputs to process
         });
 
         // Init 1st position & flatpickr
