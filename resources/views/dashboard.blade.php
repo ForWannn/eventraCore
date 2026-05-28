@@ -4,7 +4,11 @@
 
 @section('content')
 <style>
-   
+    .page-title {
+        display: none;
+    }
+    
+    /* Stats Grid & Cards */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -35,68 +39,116 @@
         background: var(--card-bg);
         border: 1px solid var(--border-color);
         border-radius: 18px;
-        padding: 24px;
+        padding: 20px 24px;
         position: relative;
         overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        min-height: 144px;
         transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
     }
-    /* .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 40px -8px rgba(0,0,0,0.1);
-    } */
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+    }
+    .stat-card-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        z-index: 2;
+        flex: 1;
+    }
+    .stat-card-right {
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        z-index: 1;
+        width: 100px;
+        flex-shrink: 0;
+    }
+    .stat-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
     .stat-card .stat-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 16px;
-        font-size: 20px;
+        font-size: 18px;
+        flex-shrink: 0;
     }
-    .stat-card .stat-icon.blue    { background: rgba(132, 171, 255, 0.1);  color: var(--primary); }
-    .stat-card .stat-icon.emerald { background: rgba(16,185,129,0.1); color: #10b981; }
-    .stat-card .stat-icon.amber   { background: rgba(245,158,11,0.1); color: #f59e0b; }
-    .stat-card .stat-icon.violet  { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+    .stat-card .stat-icon.blue    { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+    .stat-card .stat-icon.emerald { background: #ecfdf5; color: #10b981; border: 1px solid #d1fae5; }
+    .stat-card .stat-icon.amber   { background: #fff7ed; color: #f59e0b; border: 1px solid #fed7aa; }
+    .stat-card .stat-icon.violet  { background: #faf5ff; color: #8b5cf6; border: 1px solid #f3e8ff; }
 
-    [data-theme="dark"] .stat-card .stat-icon.blue    { background: rgba(37,99,235,0.2); }
-    [data-theme="dark"] .stat-card .stat-icon.emerald { background: rgba(16,185,129,0.2); }
-    [data-theme="dark"] .stat-card .stat-icon.amber   { background: rgba(245,158,11,0.2); }
-    [data-theme="dark"] .stat-card .stat-icon.violet  { background: rgba(139,92,246,0.2); }
+    [data-theme="dark"] .stat-card .stat-icon.blue    { background: rgba(37,99,235,0.15); color: #60a5fa; border-color: rgba(37,99,235,0.2); }
+    [data-theme="dark"] .stat-card .stat-icon.emerald { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.2); }
+    [data-theme="dark"] .stat-card .stat-icon.amber   { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.2); }
+    [data-theme="dark"] .stat-card .stat-icon.violet  { background: rgba(139,92,246,0.15); color: #a78bfa; border-color: rgba(139,92,246,0.2); }
 
     .stat-card .stat-label {
         font-size: 13px;
         color: var(--text-muted);
-        font-weight: 500;
-        margin-bottom: 8px;
+        font-weight: 600;
     }
     .stat-card .stat-value {
         font-size: 32px;
         font-weight: 700;
         color: var(--text-main);
         letter-spacing: -1px;
-        line-height: 1;
+        margin-top: 4px;
+        line-height: 1.1;
     }
     .stat-card .stat-sub {
         font-size: 12px;
         color: var(--text-muted);
-        margin-top: 6px;
-        font-weight: 400;
+        margin-top: 2px;
+        font-weight: 500;
     }
-    .stat-card .stat-glow {
-        position: absolute;
-        top: -20px;
-        right: -20px;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        opacity: 0.08;
-        pointer-events: none;
+    .stat-card .stat-trend-container {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+    }
+    .stat-trend-badge {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+    }
+    .stat-trend-badge.blue    { background: #eff6ff; color: #1e40af; }
+    .stat-trend-badge.emerald { background: #ecfdf5; color: #065f46; }
+    .stat-trend-badge.amber   { background: #fff7ed; color: #9a3412; }
+    .stat-trend-badge.violet  { background: #faf5ff; color: #5b21b6; }
+
+    [data-theme="dark"] .stat-trend-badge.blue    { background: rgba(37,99,235,0.2); color: #93c5fd; }
+    [data-theme="dark"] .stat-trend-badge.emerald { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+    [data-theme="dark"] .stat-trend-badge.amber   { background: rgba(245,158,11,0.2); color: #fde047; }
+    [data-theme="dark"] .stat-trend-badge.violet  { background: rgba(139,92,246,0.2); color: #c084fc; }
+
+    .stat-trend-text {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
     }
 
     .dashboard-cols {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.2fr 1fr;
         gap: 24px;
         margin-bottom: 28px;
     }
@@ -130,6 +182,78 @@
         font-weight: 500;
     }
 
+    /* Status Section horizontal layout & donut chart */
+    .status-section-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 40px;
+        align-items: center;
+    }
+    @media (max-width: 768px) {
+        .status-section-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+    }
+    .status-summary-cols {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    @media (max-width: 480px) {
+        .status-summary-cols {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+    .status-col-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .status-col-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    .status-col-header .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+    .status-col-value-group {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+    }
+    .status-col-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1;
+    }
+    .status-col-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .status-donut-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .donut-chart-svg {
+        transform: rotate(-90deg);
+        border-radius: 50%;
+    }
+    .donut-segment {
+        transition: stroke-dashoffset 0.3s ease;
+    }
+
+    /* Calendar Wrapper and Custom Buttons */
     .calendar-wrapper {
         margin-bottom: 28px;
     }
@@ -138,31 +262,32 @@
     }
     .fc .fc-toolbar-title {
         font-size: 16px !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         color: var(--text-main) !important;
+        text-transform: capitalize;
     }
-
-    .fc-button-group{
-        gap: 10px !important;
+    .fc-button-group {
+        gap: 8px !important;
     }
-
     .fc .fc-button {
-        background: var(--hover-bg) !important;
+        background: var(--card-bg) !important;
         border: 1px solid var(--border-color) !important;
         color: var(--text-main) !important;
         font-size: 12px !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         border-radius: 10px !important;
         padding: 6px 14px !important;
         box-shadow: none !important;
         text-transform: capitalize !important;
+        transition: all 0.2s;
     }
     .fc .fc-button:hover {
-        background: var(--border-color) !important;
+        background: var(--hover-bg) !important;
     }
     .fc .fc-button-active {
-        background: var(--primary) !important;
-        color: var(--primary-text) !important;
+        background: #2563eb !important;
+        color: white !important;
+        border-color: #2563eb !important;
     }
     .fc .fc-daygrid-day-number {
         font-size: 13px;
@@ -179,11 +304,39 @@
     }
     .fc .fc-daygrid-event {
         border-radius: 6px !important;
-        padding: 2px 6px !important;
+        padding: 3px 6px !important;
         font-size: 11px !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         border: none !important;
     }
+    .fc-event-ongoing {
+        background-color: rgba(37, 99, 235, 0.1) !important;
+        color: #1e40af !important;
+        border-left: 3px solid #2563eb !important;
+    }
+    .fc-event-upcoming {
+        background-color: rgba(245, 158, 11, 0.1) !important;
+        color: #b27300 !important;
+        border-left: 3px solid #f59e0b !important;
+    }
+    .fc-event-completed {
+        background-color: rgba(16, 185, 129, 0.1) !important;
+        color: #065f46 !important;
+        border-left: 3px solid #10b981 !important;
+    }
+    [data-theme="dark"] .fc-event-ongoing {
+        background-color: rgba(37, 99, 235, 0.2) !important;
+        color: #93c5fd !important;
+    }
+    [data-theme="dark"] .fc-event-upcoming {
+        background-color: rgba(245, 158, 11, 0.2) !important;
+        color: #fde047 !important;
+    }
+    [data-theme="dark"] .fc-event-completed {
+        background-color: rgba(16, 185, 129, 0.2) !important;
+        color: #6ee7b7 !important;
+    }
+
     .fc td, .fc th {
         border-color: var(--border-color) !important;
     }
@@ -202,6 +355,107 @@
         height: 280px;
     }
 
+    /* Event Mendatang Section styling (Horizontal cards) */
+    .upcoming-event-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    @media (max-width: 1024px) {
+        .upcoming-event-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+        .upcoming-event-grid { grid-template-columns: 1fr; }
+    }
+    .upcoming-event-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .upcoming-event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .upcoming-event-date-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .upcoming-event-date-box.ongoing   { background: #eff6ff; color: #2563eb; }
+    .upcoming-event-date-box.upcoming  { background: #fff7ed; color: #f59e0b; }
+    .upcoming-event-date-box.completed { background: #f0fdf4; color: #10b981; }
+
+    [data-theme="dark"] .upcoming-event-date-box.ongoing   { background: rgba(37,99,235,0.15); color: #60a5fa; }
+    [data-theme="dark"] .upcoming-event-date-box.upcoming  { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    [data-theme="dark"] .upcoming-event-date-box.completed { background: rgba(16,185,129,0.15); color: #34d399; }
+
+    .upcoming-event-date-day {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1;
+    }
+    .upcoming-event-date-month {
+        font-size: 9px;
+        font-weight: 700;
+        margin-top: 2px;
+        letter-spacing: 0.5px;
+    }
+    .upcoming-event-details {
+        flex: 1;
+        padding: 0 16px;
+        min-width: 0;
+    }
+    .upcoming-event-name-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .upcoming-event-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .upcoming-event-dot.ongoing  { background: #2563eb; }
+    .upcoming-event-dot.upcoming { background: #f59e0b; }
+    .upcoming-event-dot.completed { background: #10b981; }
+
+    .upcoming-event-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .upcoming-event-time, .upcoming-event-loc {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .upcoming-event-chevron {
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* Original Styles to preserve */
     .event-list-item {
         display: flex;
         align-items: center;
@@ -318,13 +572,12 @@
         border-radius: 50%;
     }
 
-        @media (max-width: 640px) {
+    @media (max-width: 640px) {
         .stat-card .stat-value { font-size: 26px; }
         .welcome-banner { padding: 24px; }
         .welcome-banner h3 { font-size: 18px; }
     }
 
-    /* New Dashboard Widget Styles */
     .widget-container {
         display: flex;
         flex-direction: column;
@@ -375,7 +628,6 @@
         transition: background 0.2s;
         cursor: pointer;
     }
-    /* .task-list-item:hover { background: var(--hover-bg); } */
     .task-checkbox-btn {
         width: 20px;
         height: 20px;
@@ -401,7 +653,6 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Overlay styles */
     #gpsOverlay {
         position: absolute;
         bottom: 14px;
@@ -415,179 +666,309 @@
         border: 1.5px solid rgba(255, 255, 255, 0.55);
         border-radius: 12px;
         padding: 9px 14px 9px 9px;
-        /* box-shadow: 0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3); */
         max-width: 68%;
         z-index: 10;
     }
 </style>
 
 @role('CEO|GM')
+    <!-- Custom Dashboard Header -->
+    <div class="dashboard-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
+        <div>
+            <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Dasbor Utama</h1>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 500;">Ringkasan performa event dan aktivitas perusahaan secara real-time.</p>
+        </div>
+        <div>
+            <button class="btn-filter" style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: background 0.2s;">
+                <i data-feather="calendar" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
+                <span>12 - 18 Mei 2026</span>
+                <i data-feather="chevron-down" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Redesigned Stats Grid with Sparklines -->
     <div class="stats-grid">
+        <!-- Card 1: Total Event Aktif -->
         <div class="stat-card">
-            <div class="stat-glow" style="background: #2563eb;"></div>
-            <div class="stat-icon blue"><i data-feather="check"></i></div>
-            <div class="stat-label">Total Event Aktif</div>
-            <div class="stat-value">{{ $activeEventsCount ?? 0 }}</div>
-            <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event</div>
+            <div class="stat-card-left">
+                <div class="stat-card-header">
+                    <div class="stat-icon blue"><i data-feather="calendar"></i></div>
+                    <span class="stat-label">Total Event Aktif</span>
+                </div>
+                <div>
+                    <div class="stat-value">{{ $activeEventsCount ?? 0 }}</div>
+                    <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event</div>
+                </div>
+                <div class="stat-trend-container">
+                    <span class="stat-trend-badge blue"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 20%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span>
+                </div>
+            </div>
+            <div class="stat-card-right">
+                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
+                    <defs>
+                        <linearGradient id="sparkline-grad-blue" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#2563eb" stop-opacity="0.15"></stop>
+                            <stop offset="100%" stop-color="#2563eb" stop-opacity="0"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,32 Q15,10 30,28 T60,20 T90,35 T100,12" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M0,32 Q15,10 30,28 T60,20 T90,35 T100,12 L100,40 L0,40 Z" fill="url(#sparkline-grad-blue)"></path>
+                </svg>
+            </div>
         </div>
 
+        <!-- Card 2: Sedang Berjalan -->
         <div class="stat-card">
-            <div class="stat-glow" style="background: #10b981;"></div>
-            <div class="stat-icon emerald"><i data-feather="chevrons-right"></i></div>
-            <div class="stat-label">Sedang Berjalan</div>
-            <div class="stat-value">{{ $ongoingEventsCount ?? 0 }}</div>
-            <div class="stat-sub">event on-going</div>
+            <div class="stat-card-left">
+                <div class="stat-card-header">
+                    <div class="stat-icon emerald"><i data-feather="chevrons-right"></i></div>
+                    <span class="stat-label">Sedang Berjalan</span>
+                </div>
+                <div>
+                    <div class="stat-value">{{ $ongoingEventsCount ?? 0 }}</div>
+                    <div class="stat-sub">event on-going</div>
+                </div>
+                <div class="stat-trend-container">
+                    <span class="stat-trend-badge emerald"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 50%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span>
+                </div>
+            </div>
+            <div class="stat-card-right">
+                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
+                    <defs>
+                        <linearGradient id="sparkline-grad-emerald" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#10b981" stop-opacity="0.15"></stop>
+                            <stop offset="100%" stop-color="#10b981" stop-opacity="0"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,30 Q15,20 30,35 T60,18 T90,15 T100,8" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M0,30 Q15,20 30,35 T60,18 T90,15 T100,8 L100,40 L0,40 Z" fill="url(#sparkline-grad-emerald)"></path>
+                </svg>
+            </div>
         </div>
 
+        <!-- Card 3: Runner Event -->
         <div class="stat-card">
-            <div class="stat-glow" style="background: #f59e0b;"></div>
-            <div class="stat-icon amber"><i data-feather="users"></i></div>
-            <div class="stat-label">Runner Event</div>
-            <div class="stat-value">{{ $activeEmployeesCount ?? 0 }}</div>
-            <div class="stat-sub">karyawan bertugas event</div>
+            <div class="stat-card-left">
+                <div class="stat-card-header">
+                    <div class="stat-icon amber"><i data-feather="users"></i></div>
+                    <span class="stat-label">Runner Event</span>
+                </div>
+                <div>
+                    <div class="stat-value">{{ $activeEmployeesCount ?? 0 }}</div>
+                    <div class="stat-sub">karyawan bertugas event</div>
+                </div>
+                <div class="stat-trend-container">
+                    <span class="stat-trend-badge amber"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 12%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span>
+                </div>
+            </div>
+            <div class="stat-card-right">
+                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
+                    <defs>
+                        <linearGradient id="sparkline-grad-amber" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.15"></stop>
+                            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,32 Q15,25 30,15 T60,35 T90,20 T100,28" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M0,32 Q15,25 30,15 T60,35 T90,20 T100,28 L100,40 L0,40 Z" fill="url(#sparkline-grad-amber)"></path>
+                </svg>
+            </div>
         </div>
         
+        <!-- Card 4: Kehadiran Hari Ini -->
         <div class="stat-card">
-            <div class="stat-glow" style="background: #8b5cf6;"></div>
-            <div class="stat-icon violet"><i data-feather="user-check"></i></div>
-            <div class="stat-label">Kehadiran Hari Ini</div>
-            <div class="stat-value">{{ $todayAttendancesCount ?? 0 }}</div>
-            <div class="stat-sub">karyawan sudah absen</div>
+            <div class="stat-card-left">
+                <div class="stat-card-header">
+                    <div class="stat-icon violet"><i data-feather="user-check"></i></div>
+                    <span class="stat-label">Kehadiran Hari Ini</span>
+                </div>
+                <div>
+                    <div class="stat-value">{{ $attendanceRate ?? 0 }}%</div>
+                    <div class="stat-sub">karyawan sudah absen</div>
+                </div>
+                <div class="stat-trend-container">
+                    <span class="stat-trend-badge violet"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 8%</span>
+                    <span class="stat-trend-text">vs kemarin</span>
+                </div>
+            </div>
+            <div class="stat-card-right">
+                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
+                    <defs>
+                        <linearGradient id="sparkline-grad-violet" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.15"></stop>
+                            <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,32 Q15,15 30,30 T60,18 T90,32 T100,25" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M0,32 Q15,15 30,30 T60,18 T90,32 T100,25 L100,40 L0,40 Z" fill="url(#sparkline-grad-violet)"></path>
+                </svg>
+            </div>
         </div>
     </div>
 
+    <!-- Redesigned Status Event horizontal bar & Donut Chart -->
     @php
-        $total = max(($statusCounts['upcoming'] ?? 0) + ($statusCounts['ongoing'] ?? 0) + ($statusCounts['completed'] ?? 0), 1);
-        $pUpcoming  = (($statusCounts['upcoming']  ?? 0) / $total) * 100;
-        $pOngoing   = (($statusCounts['ongoing']   ?? 0) / $total) * 100;
-        $pCompleted = (($statusCounts['completed'] ?? 0) / $total) * 100;
+        $totalStatus = max(($statusCounts['upcoming'] ?? 0) + ($statusCounts['ongoing'] ?? 0) + ($statusCounts['completed'] ?? 0), 1);
+        $pUpcoming  = (($statusCounts['upcoming']  ?? 0) / $totalStatus) * 100;
+        $pOngoing   = (($statusCounts['ongoing']   ?? 0) / $totalStatus) * 100;
+        $pCompleted = (($statusCounts['completed'] ?? 0) / $totalStatus) * 100;
+
+        $offsetCompleted = 100;
+        $offsetOngoing = 100 - $pCompleted;
+        $offsetUpcoming = 100 - $pCompleted - $pOngoing;
     @endphp
     <div class="section-card" style="margin-bottom: 28px;">
-        <div class="section-header">
+        <div class="section-header" style="margin-bottom: 20px;">
             <span class="section-title">Status Event</span>
-            <span class="section-badge">{{ $totalEvents ?? 0 }} Event</span>
         </div>
-        <div class="status-bar">
-            <div class="s-upcoming"  style="width: {{ $pUpcoming }}%;"></div>
-            <div class="s-ongoing"   style="width: {{ $pOngoing }}%;"></div>
-            <div class="s-completed" style="width: {{ $pCompleted }}%;"></div>
-        </div>
-        <div class="status-legend">
-            <div class="status-legend-item">
-                <div class="dot" style="background: var(--warning);"></div>
-                Upcoming ({{ $statusCounts['upcoming'] ?? 0 }})
+        <div class="status-section-grid">
+            <div class="status-summary-cols">
+                <div class="status-col-item">
+                    <div class="status-col-header">
+                        <span class="dot" style="background: #f59e0b;"></span>
+                        <span>Upcoming</span>
+                    </div>
+                    <div class="status-col-value-group">
+                        <span class="status-col-value">{{ $statusCounts['upcoming'] ?? 0 }}</span>
+                        <span class="status-col-label">event akan datang</span>
+                    </div>
+                </div>
+                <div class="status-col-item">
+                    <div class="status-col-header">
+                        <span class="dot" style="background: #2563eb;"></span>
+                        <span>On-Going</span>
+                    </div>
+                    <div class="status-col-value-group">
+                        <span class="status-col-value">{{ $statusCounts['ongoing'] ?? 0 }}</span>
+                        <span class="status-col-label">sedang berjalan</span>
+                    </div>
+                </div>
+                <div class="status-col-item">
+                    <div class="status-col-header">
+                        <span class="dot" style="background: #10b981;"></span>
+                        <span>Completed</span>
+                    </div>
+                    <div class="status-col-value-group">
+                        <span class="status-col-value">{{ $statusCounts['completed'] ?? 0 }}</span>
+                        <span class="status-col-label">selesai</span>
+                    </div>
+                </div>
             </div>
-            <div class="status-legend-item">
-                <div class="dot" style="background: var(--primary);"></div>
-                On-Going ({{ $statusCounts['ongoing'] ?? 0 }})
-            </div>
-            <div class="status-legend-item">
-                <div class="dot" style="background: var(--success);"></div>
-                Completed ({{ $statusCounts['completed'] ?? 0 }})
+
+            <div class="status-donut-wrapper">
+                <div class="donut-chart-container" style="position: relative; width: 64px; height: 64px;">
+                    <svg width="64" height="64" viewBox="0 0 36 36" class="donut-chart-svg" style="width: 100%; height: 100%;">
+                        <circle cx="18" cy="18" r="15.915" fill="none" stroke="var(--border-color)" stroke-width="3"></circle>
+                        
+                        @if($pCompleted > 0)
+                        <circle class="donut-segment completed" cx="18" cy="18" r="15.915" fill="none" stroke="#10b981" stroke-width="3.2" stroke-dasharray="{{ $pCompleted }} {{ 100 - $pCompleted }}" stroke-dashoffset="{{ $offsetCompleted }}"></circle>
+                        @endif
+                        
+                        @if($pOngoing > 0)
+                        <circle class="donut-segment ongoing" cx="18" cy="18" r="15.915" fill="none" stroke="#2563eb" stroke-width="3.2" stroke-dasharray="{{ $pOngoing }} {{ 100 - $pOngoing }}" stroke-dashoffset="{{ $offsetOngoing }}"></circle>
+                        @endif
+                        
+                        @if($pUpcoming > 0)
+                        <circle class="donut-segment upcoming" cx="18" cy="18" r="15.915" fill="none" stroke="#f59e0b" stroke-width="3.2" stroke-dasharray="{{ $pUpcoming }} {{ 100 - $pUpcoming }}" stroke-dashoffset="{{ $offsetUpcoming }}"></circle>
+                        @endif
+                    </svg>
+                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 15px; font-weight: 700; color: var(--text-main);">{{ $totalEvents ?? 0 }}</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Total Event</span>
+                    <span style="font-size: 12px; color: var(--text-muted); margin-top: 1px;">dari {{ $totalEvents ?? 0 }} event</span>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Main Columns: Calendar & Comparison Trend + Upcoming Events List -->
     <div class="dashboard-cols">
+        <!-- Column 1: Kalender Event -->
         <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
-            <div class="section-header" style="flex: none;">
-                <span class="section-title">Kalender Event</span>
+            <div class="section-header" style="flex: none; margin-bottom: 20px;">
+                <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
+                    <i data-feather="calendar" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
+                    Kalender Event
+                </span>
             </div>
             <div id="eventCalendar" style="flex: 1; min-height: 0;"></div>
         </div>
 
-        <div class="section-card" style="display: flex; flex-direction: column;">
-            <div class="section-header" style="align-items: center;">
-                <div>
-                    <span class="section-title">Tren Event Bulanan</span>
-                    <span class="section-badge" style="margin-left: 6px;">Tahunan</span>
+        <!-- Column 2: Comparison Trend Chart & Horizontal Upcoming Events -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- Comparison Trend Card -->
+            <div class="section-card" style="display: flex; flex-direction: column;">
+                <div class="section-header" style="align-items: center; margin-bottom: 20px;">
+                    <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
+                        <i data-feather="trending-up" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
+                        Tren Event Bulanan
+                    </span>
+                    <select id="trendYearSelect" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--hover-bg); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; outline: none; transition: all 0.2s;">
+                        @php $currentYear = request('year', date('Y')); @endphp
+                        @for($y = date('Y') + 1; $y >= date('Y') - 4; $y--)
+                            <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
                 </div>
-                <select id="trendYearSelect" style="padding: 4px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--hover-bg); color: var(--text-main); font-size: 13px; font-weight: 500; cursor: pointer; outline: none;">
-                    @php $currentYear = request('year', date('Y')); @endphp
-                    @for($y = date('Y') + 1; $y >= date('Y') - 4; $y--)
-                        <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
-                    @endfor
-                </select>
-            </div>
-            <div class="chart-container" style="flex: none; height: 280px; margin-bottom: 24px;">
-                <canvas id="eventTrendChart"></canvas>
-            </div>
-            
-            <div class="top-employees-box" style="flex: 1; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; background: var(--hover-bg); display: flex; flex-direction: column; justify-content: flex-start;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                    <h5 style="font-size: 14px; font-weight: 600; color: var(--text-main); margin: 0;">Top Karyawan</h5>
+                <div class="chart-container" style="flex: none; height: 280px; margin-bottom: 12px;">
+                    <canvas id="eventTrendChart"></canvas>
                 </div>
-                
-                @if(isset($topEmployees) && count($topEmployees) > 0)
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        @foreach($topEmployees as $index => $emp)
-                            <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 10px; background: var(--sidebar-bg); border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                                <div style="width: 24px; height: 24px; border-radius: 50%; background: {{ $index == 0 ? '#fef08a' : ($index == 1 ? '#e5e7eb' : '#ffedd5') }}; color: {{ $index == 0 ? '#854d0e' : ($index == 1 ? '#374151' : '#9a3412') }}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">
-                                    {{ $index + 1 }}
-                                </div>
-                                @if(isset($emp['user']->photo_url) && $emp['user']->photo_url)
-                                    <img src="{{ $emp['user']->photo_url }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color);" alt="Avatar">
-                                @else
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--hover-bg); display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid var(--border-color);">👤</div>
-                                @endif
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $emp['user']->name }}</div>
-                                    <div style="font-size: 11px; color: var(--text-muted);">
-                                        {{ $emp['user']->roles->first() ? \Illuminate\Support\Str::ucfirst($emp['user']->roles->first()->name) : 'Staff' }}
-                                    </div>
-                                </div>
-                                <div style="font-size: 12px; font-weight: 600; color: var(--text-main); background: var(--hover-bg); padding: 4px 10px; border-radius: 999px;">
-                                    {{ $emp['count'] }} Event
-                                </div>
+                <!-- Custom Legend -->
+                <div style="display: flex; justify-content: center; gap: 24px; margin-top: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted);">
+                        <span style="width: 12px; height: 3px; background: #2563eb; border-radius: 2px; display: inline-block;"></span>
+                        <span>{{ $trendYear }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted);">
+                        <span style="width: 12px; height: 3px; background: #94a3b8; border-radius: 2px; display: inline-block; opacity: 0.7;"></span>
+                        <span>{{ $trendYear - 1 }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Redesigned Horizontal Upcoming Events -->
+            <div class="section-card">
+                <div class="section-header" style="margin-bottom: 20px; align-items: center;">
+                    <span class="section-title">Event Mendatang</span>
+                    <a href="{{ route('events.index') }}" style="font-size: 12px; color: #2563eb; text-decoration: none; font-weight: 600; transition: color 0.2s;">
+                        Lihat Semua
+                    </a>
+                </div>
+
+                <div class="upcoming-event-grid">
+                    @forelse($upcomingEventsList as $event)
+                        <a href="{{ route('events.show', $event['id']) }}" class="upcoming-event-card">
+                            <div class="upcoming-event-date-box {{ $event['status'] }}">
+                                <span class="upcoming-event-date-day">{{ $event['day_num'] }}</span>
+                                <span class="upcoming-event-date-month">{{ $event['month_str'] }}</span>
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-muted);">
-                        <div style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;">👥</div>
-                        <p style="font-size: 12px; margin: 0;">Belum ada data partisipasi karyawan aktif.</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <div class="section-card">
-        <div class="section-header">
-            <span class="section-title">Event Terdekat</span>
-            <a href="{{ route('events.index') }}" style="font-size: 13px; color: var(--text-muted); text-decoration: none; font-weight: 500;">
-                Lihat Semua →
-            </a>
-        </div>
-
-        @if(isset($upcomingEventsList) && $upcomingEventsList->count() > 0)
-            @foreach($upcomingEventsList as $event)
-                <div class="event-list-item">
-                    <div class="event-indicator {{ $event['status'] }}"></div>
-                    <div class="event-info">
-                        <div class="event-name">{{ $event['name'] }}</div>
-                        <div class="event-meta">
-                            <span>{{ $event['date_start'] }}{{ $event['date_end'] ? ' — '.$event['date_end'] : '' }}</span>
-                            <span>{{ $event['members_count'] }} staff · {{ $event['positions_count'] }} posisi</span>
+                            <div class="upcoming-event-details">
+                                <div class="upcoming-event-name-group">
+                                    <span class="upcoming-event-dot {{ $event['status'] }}"></span>
+                                    <span class="upcoming-event-name">{{ $event['name'] }}</span>
+                                </div>
+                                <div class="upcoming-event-time">{{ $event['time_range'] }}</div>
+                                <div class="upcoming-event-loc">{{ $event['location'] }}</div>
+                            </div>
+                            <div class="upcoming-event-chevron">
+                                <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                            </div>
+                        </a>
+                    @empty
+                        <div style="grid-column: span 3; text-align: center; padding: 32px 0; color: var(--text-muted);">
+                            <p style="font-size: 13px;">Belum ada event mendatang.</p>
                         </div>
-                    </div>
-                    <div class="event-right">
-                        <span class="badge badge-{{ $event['status'] }}">{{ strtoupper($event['status']) }}</span>
-                        <div class="pic-info">
-                            @if($event['pic_photo'])
-                                <img src="{{ $event['pic_photo'] }}" class="pic-avatar" alt="PIC">
-                            @endif
-                            <span>{{ $event['pic_name'] }}</span>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
-            @endforeach
-        @else
-            <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
-                <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.3;"></div>
-                <p style="font-size: 14px;">Belum ada event yang dijadwalkan.</p>
             </div>
-        @endif
+        </div>
     </div>
 @else
     @if($showBanner)
@@ -595,14 +976,14 @@
             <div class="smart-banner warning" style="margin-bottom: 20px;">
                 <i data-feather="alert-triangle"></i>
                 <div style="font-size: 13px; font-weight: 500;">
-                    Anda belum mengisi Target Mingguan. Segera buat Rencana Kerja Anda sebelum Selasa sore!
+                    Kamu belum mengisi Weekly Report nih!
                 </div>
             </div>
         @elseif($bannerType === 'final')
             <div class="smart-banner info" style="margin-bottom: 20px;">
                 <i data-feather="bell"></i>
                 <div style="font-size: 13px; font-weight: 500;">
-                    Waktunya evaluasi! Jangan lupa submit laporan final Weekly Report Anda hari ini.
+                    Waktunya evaluasi! Jangan lupa submit laporan final Weekly Report kamu hari ini ya.
                 </div>
             </div>
         @endif
@@ -621,7 +1002,7 @@
                 </div>
             </div>
             <hr style="border: none; border-top: 1px solid var(--border-color); margin: 0 -24px 16px -24px;">
-            <a href="{{ route('events.index') }}" style="display: flex; justify-content: space-between; align-items: center; text-decoration: none; font-size: 13px; font-weight: 600; color: var(--primary);">
+            <a href="{{ route('events.index') }}" style="display: flex; justify-content: space-between; align-items: center; text-decoration: none; font-size: 13px; font-weight: 600; color: #1e40af;">
                 <span>Lihat Semua</span>
                 <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
             </a>
@@ -631,7 +1012,7 @@
         <div class="stat-card">
             <!-- <div class="stat-glow" style="background: #10b981;"></div> -->
             <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px;">
-                <div class="stat-icon emerald" style="margin-bottom: 0;"><i data-feather="user-check"></i></div>
+                <div class="stat-icon emerald" style="margin-bottom: 0;"><i data-feather="user"></i></div>
                 <div>
                     <div class="stat-label" style="margin-bottom: 4px;">Absensi Bulan Ini</div>
                     <div class="stat-value">{{ $attendanceCountThisMonth }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Hari</span></div>
@@ -647,9 +1028,9 @@
 
         <!-- Card 3: To Do Belum Selesai -->
         <div class="stat-card">
-            <div class="stat-glow" style="background: #ec4899;"></div>
+            <!-- <div class="stat-glow" style="background: #ec4899;"></div> -->
             <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px;">
-                <div class="stat-icon violet" style="margin-bottom: 0; background: rgba(236, 72, 153, 0.1); color: #ec4899;"><i data-feather="clipboard"></i></div>
+                <div class="stat-icon violet" style="margin-bottom: 0; background: rgba(236, 72, 153, 0.1); color: var(--danger);"><i data-feather="clipboard"></i></div>
                 <div>
                     <div class="stat-label" style="margin-bottom: 4px;">To Do</div>
                     <div class="stat-value">{{ $pendingTasksCount }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Jobdesk</span></div>
@@ -701,27 +1082,19 @@
                         <i data-feather="map-pin" style="color: var(--primary); width: 20px; height: 20px;"></i>
                         <span class="section-title">Absen</span>
                     </div>
-                    @if($todayAttendance)
-                        <span class="badge badge-completed" style="text-transform: none; font-size: 11px;">Sudah Absen</span>
-                    @else
-                        <span class="badge badge-upcoming" style="background: #ffe4e6; color: #be123c; text-transform: none; font-size: 11px;">Belum Absen</span>
-                    @endif
+                    
                 </div>
 
                 @if($todayAttendance)
                     <div style="text-align: center; padding: 24px 0;">
-                        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
-                        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #065f46;">
-                            Sudah Absen Masuk
-                        </h3>
                         <p style="font-size: 14px; color: #059669; margin-bottom: 24px;">
-                            Anda telah absen masuk pada pukul {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }} WIB.
+                            Kamu sudah absen hari ini jam {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }} WIB.
                         </p>
                         <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(16,185,129,0.1); border-radius: 99px; color: #065f46; font-size: 12px; font-weight: 600; text-transform: uppercase;">
                             @if($todayAttendance->attendance_type === 'kantor')
                                 <i data-feather="home" style="width: 14px; height: 14px;"></i> Gedung
                             @else
-                                <i data-feather="map-pin" style="width: 14px; height: 14px;"></i> Map Pin
+                                <i data-feather="map-pin" style="width: 14px; height: 14px;"></i> Web Absen
                             @endif
                         </div>
                     </div>
@@ -836,30 +1209,61 @@
                 type: 'line',
                 data: {
                     labels: {!! json_encode($months ?? []) !!},
-                    datasets: [{
-                        label: 'Total Event',
-                        data: {!! json_encode($trends ?? []) !!},
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37,99,235,0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#2563eb',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }]
+                    datasets: [
+                        {
+                            label: '{{ $trendYear }}',
+                            data: {!! json_encode($trendsCurrent ?? []) !!},
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37,99,235,0.08)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#2563eb',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: '{{ $trendYear - 1 }}',
+                            data: {!! json_encode($trendsPrevious ?? []) !!},
+                            borderColor: '#94a3b8',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: false,
+                            pointBackgroundColor: '#94a3b8',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' } },
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' },
+                            ticks: { stepSize: 5 }
+                        },
                         x: { grid: { display: false } }
                     }
                 }
+            });
+        }
+
+        // Year select listener
+        const yearSelect = document.getElementById('trendYearSelect');
+        if (yearSelect) {
+            yearSelect.addEventListener('change', function() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('year', this.value);
+                window.location.href = url.toString();
             });
         }
 

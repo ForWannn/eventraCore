@@ -229,6 +229,12 @@ class DashboardController extends Controller
 
         // Total unique employees attended today
         $todayAttendancesCount = DailyAttendance::whereDate('date', $now->toDateString())->distinct('user_id')->count();
+        
+        // Total unique staff (excluding CEO and GM)
+        $totalStaff = User::whereHas('roles', function($q) {
+            $q->whereNotIn('name', ['CEO', 'GM']);
+        })->count();
+        $attendanceRate = $totalStaff > 0 ? round(($todayAttendancesCount / $totalStaff) * 100) : 0;
 
         // ── 2. Calendar Events (JSON) ──────────────────────
         $calendarEvents = [];
@@ -250,6 +256,7 @@ class DashboardController extends Controller
                 },
                 'status'      => $event->status,
                 'url'         => route('events.show', $event->id),
+                'className'   => 'fc-event-' . $event->status,
                 'extendedProps' => [
                     'status' => $event->status,
                     'positions' => $event->positions->count(),
@@ -257,56 +264,76 @@ class DashboardController extends Controller
             ];
         }
 
-        // ── 3. Monthly Event Trend (last 12 months or by year) ────────
-        $filterYear = $request->query('year');
-        $monthlyTrend = [];
+        // ── 3. Monthly Event Trend (Comparison of selected year vs previous year) ────────
+        $filterYear = $request->query('year', date('Y'));
+        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
         
-        if ($filterYear) {
-            // Trend for a specific year
-            for ($i = 1; $i <= 12; $i++) {
-                $monthDate = Carbon::createFromDate($filterYear, $i, 1);
-                $label = $monthDate->translatedFormat('M Y');
-                $count = $events->filter(function ($event) use ($filterYear, $i) {
-                    $dates = $event->event_dates ?? [];
-                    foreach ($dates as $d) {
-                        $dt = Carbon::parse($d);
-                        if ($dt->month === $i && $dt->year == $filterYear) return true;
-                    }
-                    return false;
-                })->count();
-                $monthlyTrend[] = ['label' => $label, 'count' => $count];
-            }
-        } else {
-            // Default: last 12 months
-            for ($i = 11; $i >= 0; $i--) {
-                $month = $now->copy()->subMonths($i);
-                $label = $month->translatedFormat('M Y');
-                $count = $events->filter(function ($event) use ($month) {
-                    $dates = $event->event_dates ?? [];
-                    foreach ($dates as $d) {
-                        $dt = Carbon::parse($d);
-                        if ($dt->month === $month->month && $dt->year === $month->year) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })->count();
-                $monthlyTrend[] = ['label' => $label, 'count' => $count];
-            }
+        $trendsCurrent = [];
+        $trendsPrevious = [];
+        
+        for ($i = 1; $i <= 12; $i++) {
+            // Current selected year
+            $countCurrent = $events->filter(function ($event) use ($filterYear, $i) {
+                $dates = $event->event_dates ?? [];
+                foreach ($dates as $d) {
+                    $dt = Carbon::parse($d);
+                    if ($dt->month === $i && $dt->year == $filterYear) return true;
+                }
+                return false;
+            })->count();
+            $trendsCurrent[] = $countCurrent;
+
+            // Previous year
+            $prevYear = $filterYear - 1;
+            $countPrev = $events->filter(function ($event) use ($prevYear, $i) {
+                $dates = $event->event_dates ?? [];
+                foreach ($dates as $d) {
+                    $dt = Carbon::parse($d);
+                    if ($dt->month === $i && $dt->year == $prevYear) return true;
+                }
+                return false;
+            })->count();
+            $trendsPrevious[] = $countPrev;
         }
 
-        // ── 4. Upcoming Events List (top 5, nearest first) ─
+        // ── 4. Upcoming Events List (top 3, nearest first) ─
         $upcomingEventsList = $events
             ->filter(fn($e) => $e->status !== 'completed')
             ->sortBy(function ($e) {
                 $dates = $e->event_dates ?? [];
                 return empty($dates) ? '9999-12-31' : min($dates);
             })
-            ->take(5)
+            ->take(3)
             ->map(function ($event) {
                 $pic = $event->participants->where('pivot.is_pic', true)->first();
                 $dates = $event->event_dates ?? [];
                 sort($dates);
+                
+                $timeString = 'TBA';
+                if ($event->start_time) {
+                    $start = Carbon::parse($event->start_time)->format('H.i');
+                    $end = $event->end_time ? Carbon::parse($event->end_time)->format('H.i') : 'Selesai';
+                    $timeString = "{$start} — {$end} WIB";
+                }
+                
+                // Location mock
+                $location = 'Jakarta';
+                if (stripos($event->name, 'launch') !== false) {
+                    $location = 'Bandung';
+                } elseif (stripos($event->name, 'client') !== false || stripos($event->name, 'gathering') !== false) {
+                    $location = 'Surabaya';
+                } elseif (stripos($event->name, 'meeting') !== false) {
+                    $location = 'Malang';
+                }
+                
+                $dayNum = 'TBA';
+                $monthStr = 'TBA';
+                if (!empty($dates)) {
+                    $firstDate = Carbon::parse($dates[0]);
+                    $dayNum = $firstDate->format('d');
+                    $monthStr = strtoupper($firstDate->locale('id')->translatedFormat('M'));
+                }
+
                 return [
                     'id'        => $event->id,
                     'name'      => $event->name,
@@ -317,6 +344,10 @@ class DashboardController extends Controller
                     'date_end'   => count($dates) > 1 ? Carbon::parse(end($dates))->translatedFormat('d M Y') : null,
                     'positions_count' => $event->positions->count(),
                     'members_count'   => $event->positions->map(fn($p) => $p->members->count())->sum(),
+                    'time_range' => $timeString,
+                    'location' => $location,
+                    'day_num' => $dayNum,
+                    'month_str' => $monthStr,
                 ];
             })->values();
 
@@ -371,8 +402,13 @@ class DashboardController extends Controller
             'ongoingEventsCount'  => $ongoingEventsCount,
             'activeEmployeesCount'=> $activeEmployeesCount,
             'todayAttendancesCount' => $todayAttendancesCount,
+            'totalStaff'          => $totalStaff,
+            'attendanceRate'      => $attendanceRate,
             'calendarEvents'      => json_encode($calendarEvents),
-            'monthlyTrend'        => json_encode($monthlyTrend),
+            'trendYear'           => $filterYear,
+            'months'              => $months,
+            'trendsCurrent'       => $trendsCurrent,
+            'trendsPrevious'      => $trendsPrevious,
             'upcomingEventsList'  => $upcomingEventsList,
             'statusCounts'        => $statusCounts,
             'topEmployees'        => $topEmployees,
