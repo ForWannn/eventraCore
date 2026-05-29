@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - eventraCore</title>
     <script src="https://unpkg.com/feather-icons"></script>
-   <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="icon" href="{{ asset('assets/images/Logor7web.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
     <style>
@@ -32,9 +33,9 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #0F172A;
-            --sidebar-bg: #111827;
-            --card-bg: #1E293B;
+            --bg-color: #121923ff;
+            --sidebar-bg: #121923ff;
+            --card-bg: #121822ff;
             --text-main: #F8FAFC;
             --text-muted: #94A3B8;
             --border-color: #334155;
@@ -280,7 +281,7 @@
                  <span>{{ Auth::user()->hasRole(['CEO', 'GM']) ? 'Daftar Event' : 'My Events' }}</span>
              </a>
  
-             <div class="nav-section-label" style="margin-top: 16px;">LAPORAN & RIWAYAT</div>
+             <div class="nav-section-label" style="margin-top: 16px;">REPORT & HISTORY</div>
              <a href="{{ route('weekly.index') }}"
                  class="nav-link {{ request()->routeIs('weekly.index') ? 'active' : '' }}">
                  <i data-feather="file-text"></i> <span>Weekly Report</span>

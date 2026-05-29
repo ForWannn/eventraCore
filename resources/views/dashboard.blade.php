@@ -48,10 +48,10 @@
         min-height: 144px;
         transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1);
     }
-    .stat-card:hover {
+    /* .stat-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(0,0,0,0.03);
-    }
+    } */
     .stat-card-left {
         display: flex;
         flex-direction: column;
@@ -593,9 +593,9 @@
         animation: slideIn 0.3s ease-out;
     }
     .smart-banner.warning { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; }
-    .smart-banner.info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .smart-banner.info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #2563eb; }
     [data-theme="dark"] .smart-banner.warning { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); }
-    [data-theme="dark"] .smart-banner.info    { background: rgba(37,99,235,0.1); border-color: rgba(37,99,235,0.3); }
+    [data-theme="dark"] .smart-banner.info    { background: rgba(37,99,235,0.1); border-color: rgba(37,99,235,0.3); color: #60a5fa;}
 
     .attendance-panel {
         text-align: center;
@@ -661,8 +661,8 @@
         align-items: flex-start;
         gap: 10px;
         background: rgba(255, 255, 255, 0.20);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         border: 1.5px solid rgba(255, 255, 255, 0.55);
         border-radius: 12px;
         padding: 9px 14px 9px 9px;
@@ -1092,7 +1092,7 @@
                         </p>
                         <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(16,185,129,0.1); border-radius: 99px; color: #065f46; font-size: 12px; font-weight: 600; text-transform: uppercase;">
                             @if($todayAttendance->attendance_type === 'kantor')
-                                <i data-feather="home" style="width: 14px; height: 14px;"></i> Gedung
+                                <i data-feather="home" style="width: 14px; height: 14px;"></i> Kantor
                             @else
                                 <i data-feather="map-pin" style="width: 14px; height: 14px;"></i> Web Absen
                             @endif
@@ -1104,8 +1104,8 @@
                         <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">
                             Silakan lakukan absensi untuk hari ini.
                         </p>
-                        <button class="btn" style="width: 100%; justify-content: center; height: 50px; border-radius: 14px; font-weight: 700; background: #ec4899; color: white; border: none; transition: background 0.2s;" onclick="openAttendanceModal()">
-                            📍 Absen Sekarang
+                        <button class="btn" style="width: 100%; justify-content: center; height: 50px; border-radius: 14px; font-weight: 700; background: var(--primary); color: white; border: none; transition: background 0.2s;" onclick="openAttendanceModal()">
+                            Absen Sekarang
                         </button>
                     </div>
                 @endif
@@ -1116,7 +1116,7 @@
                 <div class="section-header" style="margin-bottom: 16px; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <i data-feather="clock" style="color: #2563eb; width: 20px; height: 20px;"></i>
-                        <span class="section-title">Riwayat Absen Terbaru</span>
+                        <span class="section-title">History Absen</span>
                     </div>
                     <a href="{{ route('attendance.history') }}" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 600;">
                         Lihat Semua Riwayat
