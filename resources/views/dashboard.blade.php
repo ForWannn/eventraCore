@@ -1125,7 +1125,7 @@
 
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     @forelse($recentAttendances as $att)
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--hover-bg); border: 1px solid var(--border-color); border-radius: 12px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16,185,129,0.1); color: #10b981; display: flex; align-items: center; justify-content: center;">
                                     <i data-feather="check" style="width: 18px; height: 18px;"></i>
@@ -1171,14 +1171,14 @@
                 <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
                 <canvas id="photoCanvas" style="display:none;"></canvas>
 
-                <div id="gpsOverlay">
-                    <div style="width: 48px; height: 48px; border-radius: 8px; overflow: hidden; border: 1.5px solid white;">
+                <div id="gpsOverlay" style="position: absolute; bottom: 20px; left: 20px; right: 20px; display: flex; align-items: center; gap: 16px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.55); border-radius: 16px; padding: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 10; max-width: none;">
+                    <div style="width: 72px; height: 72px; border-radius: 10px; overflow: hidden; border: 1.5px solid rgba(255,255,255,0.6); flex-shrink: 0;">
                         <div id="miniMap" style="width: 100%; height: 100%;"></div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 2px;">
-                        <div id="gpsAddress" style="font-size: 10px; font-weight: 700; color: #fff; line-height: 1.2;">Proses Lokasi</div>
-                        <div id="gpsCoords" style="font-size: 9px; font-family: monospace; color: rgba(255,255,255,0.8);">—</div>
-                        <div id="gpsClock" style="font-size: 9px; color: rgba(255,255,255,0.7);">00:00 WIB</div>
+                    <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; text-align: left;">
+                        <div id="gpsAddress" style="font-size: 11px; font-weight: 700; color: #fff; line-height: 1.3; overflow-wrap: break-word; word-wrap: break-word; white-space: normal;">Proses Lokasi...</div>
+                        <div id="gpsCoords" style="font-size: 9px; font-family: monospace; color: rgba(255,255,255,0.9); font-weight: 500;">—</div>
+                        <div id="gpsClock" style="font-size: 9px; color: rgba(255,255,255,0.8); font-weight: 500;">00:00 WIB</div>
                     </div>
                 </div>
             </div>
@@ -1187,6 +1187,11 @@
                 <button id="btnSubmitAbsen" class="btn" style="width:100%; justify-content:center; height: 48px; border-radius: 12px; font-weight: 600;">
                     <i data-feather="camera" style="width:16px; margin-right:8px;"></i> Ambil Foto & Absen
                 </button>
+                <div style="text-align: center; margin-top: 10px;">
+                    <span id="mockLocationBtn" style="font-size: 11px; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-weight: 600;">
+                        📍 Simulasikan Jalan Swadaya (Kenten)
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -1338,6 +1343,53 @@ function initCameraAndGps() {
     let addressCache = '';
     let coordsCache  = '';
 
+    // Helper to format decimal degrees to DMS
+    function toDMS(val, isLat) {
+        const absolute = Math.abs(val);
+        const degrees = Math.floor(absolute);
+        const minutesNotTruncated = (absolute - degrees) * 60;
+        const minutes = Math.floor(minutesNotTruncated);
+        const seconds = ((minutesNotTruncated - minutes) * 60).toFixed(1);
+        const direction = isLat ? (val >= 0 ? 'N' : 'S') : (val >= 0 ? 'E' : 'W');
+        return `${degrees}°${minutes}'${seconds}"${direction}`;
+    }
+
+    // Helper to wrap text on canvas
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        let currentY = y;
+        for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = ctx.measureText(testLine);
+            let testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                ctx.fillText(line, x, currentY);
+                line = words[n] + ' ';
+                currentY += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, x, currentY);
+        return currentY;
+    }
+
+    // Helper to draw rounded rectangle
+    function drawRoundedRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+    }
+
     // ── Live clock ──
     setInterval(() => {
         const now = new Date();
@@ -1352,7 +1404,7 @@ function initCameraAndGps() {
         })
         .catch(err => {
             console.error('Camera:', err);
-            if(gpsAddress) gpsAddress.textContent = '❌ Kamera tidak dapat diakses.';
+            if(gpsAddress) gpsAddress.textContent = 'Kamera tidak dapat diakses.';
         });
 
     // ── Geolocation ──
@@ -1361,15 +1413,21 @@ function initCameraAndGps() {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
             userCoords = { lat, lng };
-            coordsCache = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            
+            // Format to DMS for UI
+            coordsCache = `${toDMS(lat, true)} ${toDMS(lng, false)}`;
             if(gpsCoords) gpsCoords.textContent = coordsCache;
 
-            // Reverse Geocode
+            // Reverse Geocode (longer address details without the country name at the end)
             fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
                 .then(r => r.json())
                 .then(d => {
-                    addressCache = d.display_name.split(',').slice(0,2).join(',');
-                    if(gpsAddress) gpsAddress.textContent = '📍 ' + addressCache;
+                    const parts = d.display_name.split(', ');
+                    if (parts.length > 1) {
+                        parts.pop(); // Remove the country name at the end
+                    }
+                    addressCache = parts.join(', ');
+                    if(gpsAddress) gpsAddress.textContent = addressCache;
                 });
 
             // Mini Map
@@ -1378,6 +1436,44 @@ function initCameraAndGps() {
                 miniMapInst = L.map(mapEl, {zoomControl:false, attributionControl:false}).setView([lat, lng], 15);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMapInst);
                 L.marker([lat, lng]).addTo(miniMapInst);
+            }
+        });
+    }
+    // Developer helper: Mock Location to test named road geocoding
+    const mockBtn = document.getElementById('mockLocationBtn');
+    if (mockBtn) {
+        mockBtn.addEventListener('click', function() {
+            // Coordinates of Jalan Swadaya, Palembang
+            const mockLat = -2.9507;
+            const mockLng = 104.7454;
+            userCoords = { lat: mockLat, lng: mockLng };
+            
+            coordsCache = `${toDMS(mockLat, true)} ${toDMS(mockLng, false)}`;
+            if(gpsCoords) gpsCoords.textContent = coordsCache;
+            
+            if(gpsAddress) gpsAddress.textContent = 'Menghubungkan Lokasi Simulasi (Jalan Swadaya)...';
+            
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${mockLat}&lon=${mockLng}&format=json`)
+                .then(r => r.json())
+                .then(d => {
+                    const parts = d.display_name.split(', ');
+                    if (parts.length > 1) {
+                        parts.pop(); // Remove country
+                    }
+                    addressCache = parts.join(', ');
+                    if(gpsAddress) gpsAddress.textContent = addressCache;
+                });
+                
+            // Update Mini Map
+            if (miniMapInst) {
+                miniMapInst.setView([mockLat, mockLng], 15);
+                // Clear existing markers and place a new one
+                miniMapInst.eachLayer(layer => {
+                    if (layer instanceof L.Marker) {
+                        miniMapInst.removeLayer(layer);
+                    }
+                });
+                L.marker([mockLat, mockLng]).addTo(miniMapInst);
             }
         });
     }
@@ -1393,24 +1489,170 @@ function initCameraAndGps() {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0);
         
-        // Simple watermark
-        ctx.fillStyle = 'rgba(0,0,0,0.5)';
-        ctx.fillRect(0, canvas.height - 60, canvas.width, 60);
-        ctx.fillStyle = 'white';
-        ctx.font = '14px sans-serif';
-        ctx.fillText(addressCache, 20, canvas.height - 35);
-        ctx.fillText(new Date().toLocaleString(), 20, canvas.height - 15);
+        // Dimensions of overlay box
+        const boxWidth = canvas.width - 40;
+        const boxHeight = 110;
+        const boxX = 20;
+        const boxY = canvas.height - boxHeight - 20;
+        const borderRadius = 14;
 
-        const photo = canvas.toDataURL('image/png');
+        // Draw backdrop blur effect on canvas
+        ctx.save();
+        drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, borderRadius);
+        ctx.clip();
         
-        fetch('{{ route("attendance.storeLuar") }}', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ photo, latitude: userCoords.lat, longitude: userCoords.lng })
-        })
-        .then(r => r.json())
-        .then(d => { alert(d.message); location.reload(); })
-        .catch(() => { alert('Gagal absen.'); btnSubmit.disabled = false; btnSubmit.innerHTML = 'Ambil Foto & Absen'; });
+        // Apply blur to clipped area (backdrop blur)
+        ctx.filter = 'blur(12px)';
+        ctx.drawImage(video, 0, 0);
+        ctx.filter = 'none'; // reset filter
+        
+        // Translucent overlay
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+        ctx.restore();
+        
+        // Overlay stroke border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+        ctx.lineWidth = 1.5;
+        drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, borderRadius);
+        ctx.stroke();
+
+        const dmsCoords = `${toDMS(userCoords.lat, true)} ${toDMS(userCoords.lng, false)}`;
+
+        // Draw Map Tile on Canvas (crop and draw Leaflet OSM tile)
+        const mapImg = new Image();
+        mapImg.crossOrigin = "Anonymous";
+        const zoom = 15;
+        const tileX = Math.floor((userCoords.lng + 180) / 360 * Math.pow(2, zoom));
+        const tileY = Math.floor((1 - Math.log(Math.tan(userCoords.lat * Math.PI / 180) + 1 / Math.cos(userCoords.lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
+        
+        mapImg.onload = function() {
+            // Map box dims
+            const mapSize = 72;
+            const mapX = boxX + 14;
+            const mapY = boxY + (boxHeight - mapSize) / 2;
+            
+            // OSM tiles are 256x256
+            function getTilePercentX(lon, zoom) {
+                const a = (lon + 180) / 360 * Math.pow(2, zoom);
+                return a - Math.floor(a);
+            }
+            function getTilePercentY(lat, zoom) {
+                const a = (1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom);
+                return a - Math.floor(a);
+            }
+            const px = getTilePercentX(userCoords.lng, zoom) * 256;
+            const py = getTilePercentY(userCoords.lat, zoom) * 256;
+            
+            // Source crop centered
+            const srcSize = 120;
+            const srcX = Math.max(0, Math.min(256 - srcSize, px - srcSize/2));
+            const srcY = Math.max(0, Math.min(256 - srcSize, py - srcSize/2));
+
+            // Draw map image
+            ctx.save();
+            // Rounded corners for map
+            ctx.beginPath();
+            ctx.arc(mapX + 8, mapY + 8, 8, Math.PI, 1.5 * Math.PI);
+            ctx.arc(mapX + mapSize - 8, mapY + 8, 8, 1.5 * Math.PI, 2 * Math.PI);
+            ctx.arc(mapX + mapSize - 8, mapY + mapSize - 8, 8, 0, 0.5 * Math.PI);
+            ctx.arc(mapX + 8, mapY + mapSize - 8, 8, 0.5 * Math.PI, Math.PI);
+            ctx.closePath();
+            ctx.clip();
+            
+            ctx.drawImage(mapImg, srcX, srcY, srcSize, srcSize, mapX, mapY, mapSize, mapSize);
+            
+            // Draw marker dot in center of map
+            ctx.beginPath();
+            ctx.arc(mapX + mapSize/2, mapY + mapSize/2, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ef4444';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            ctx.restore();
+
+            // Draw map border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(mapX + 8, mapY + 8, 8, Math.PI, 1.5 * Math.PI);
+            ctx.arc(mapX + mapSize - 8, mapY + 8, 8, 1.5 * Math.PI, 2 * Math.PI);
+            ctx.arc(mapX + mapSize - 8, mapY + mapSize - 8, 8, 0, 0.5 * Math.PI);
+            ctx.arc(mapX + 8, mapY + mapSize - 8, 8, 0.5 * Math.PI, Math.PI);
+            ctx.closePath();
+            ctx.stroke();
+
+            // Draw text overlay
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = 4;
+            
+            const textX = mapX + mapSize + 16;
+            let textY = boxY + 24;
+            
+            // Address
+            ctx.font = 'bold 11px sans-serif';
+            const nextY = wrapText(ctx, addressCache || 'Lokasi Absen', textX, textY, boxWidth - mapSize - 40, 15);
+            
+            // Coordinates
+            ctx.font = 'normal 9px monospace';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            textY = nextY + 14;
+            ctx.fillText(dmsCoords, textX, textY);
+            
+            // Time
+            ctx.font = 'normal 9px sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            textY += 12;
+            ctx.fillText(new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB', textX, textY);
+
+            submitPhotoAndCoords();
+        };
+
+        // Fallback if map loading fails
+        mapImg.onerror = function() {
+            const mapSize = 72;
+            const mapX = boxX + 14;
+            const mapY = boxY + (boxHeight - mapSize) / 2;
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(mapX, mapY, mapSize, mapSize);
+
+            ctx.fillStyle = '#ffffff';
+            const textX = mapX + mapSize + 16;
+            let textY = boxY + 24;
+            ctx.font = 'bold 11px sans-serif';
+            const nextY = wrapText(ctx, addressCache || 'Lokasi Absen', textX, textY, boxWidth - mapSize - 40, 15);
+            
+            ctx.font = 'normal 9px monospace';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            textY = nextY + 14;
+            ctx.fillText(dmsCoords, textX, textY);
+            
+            ctx.font = 'normal 9px sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            textY += 12;
+            ctx.fillText(new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB', textX, textY);
+
+            submitPhotoAndCoords();
+        };
+
+        mapImg.src = `https://a.tile.openstreetmap.org/${zoom}/${tileX}/${tileY}.png`;
+
+        function submitPhotoAndCoords() {
+            const photo = canvas.toDataURL('image/png');
+            
+            fetch('{{ route("attendance.storeLuar") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ photo, latitude: userCoords.lat, longitude: userCoords.lng })
+            })
+            .then(r => r.json())
+            .then(d => { alert(d.message); location.reload(); })
+            .catch(() => { alert('Gagal absen.'); btnSubmit.disabled = false; btnSubmit.innerHTML = 'Ambil Foto & Absen'; });
+        }
     };
 }
 
