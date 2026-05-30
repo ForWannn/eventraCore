@@ -81,10 +81,10 @@ class Event extends Model
 
     public function getOfficialTasksPercentageAttribute(): int
     {
-        $total = $this->tasks()->where('type', 'official')->count();
+        $total = $this->tasks()->count();
         if ($total === 0) return 0;
         
-        $completed = $this->tasks()->where('type', 'official')->where('is_completed', true)->count();
+        $completed = $this->tasks()->where('is_completed', true)->count();
         return round(($completed / $total) * 100);
     }
 }

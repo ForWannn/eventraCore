@@ -4,44 +4,285 @@
 
 @section('content')
 <style>
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
-    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
-    th { color: var(--text-muted); font-weight: 500; font-size: 13px; }
-    .btn-create { display: inline-block; padding: 10px 16px; background: var(--primary); color: var(--primary-text); text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 500; transition: opacity 0.2s; }
-    .btn-create:hover { opacity: 0.9; }
-    .badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; }
-    .badge-upcoming  { background: #dbeafe; color: #1e3a8a; }
-    .badge-ongoing   { background: #fef08a; color: #854d0e; }
-    .badge-completed { background: #dcfce7; color: #166534; }
-    .pic-cell { display: flex; align-items: center; gap: 8px; }
-    .avatar-xs { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color); flex-shrink: 0; }
-    .alert-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; }
+    /* Stats Cards Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+    @media (max-width: 1200px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+        .stats-grid { grid-template-columns: 1fr; }
+    }
 
+    .stat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-height: 108px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+    }
+    .stat-card-content {
+        display: flex;
+        flex-direction: column;
+    }
+    .stat-card .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    .stat-card .stat-icon.blue    { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+    .stat-card .stat-icon.emerald { background: #ecfdf5; color: #10b981; border: 1px solid #d1fae5; }
+    .stat-card .stat-icon.amber   { background: #fff7ed; color: #f59e0b; border: 1px solid #fed7aa; }
+    .stat-card .stat-icon.violet  { background: #faf5ff; color: #8b5cf6; border: 1px solid #f3e8ff; }
+
+    [data-theme="dark"] .stat-card .stat-icon.blue    { background: rgba(37,99,235,0.15); color: #60a5fa; border-color: rgba(37,99,235,0.2); }
+    [data-theme="dark"] .stat-card .stat-icon.emerald { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.2); }
+    [data-theme="dark"] .stat-card .stat-icon.amber   { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.2); }
+    [data-theme="dark"] .stat-card .stat-icon.violet  { background: rgba(139,92,246,0.15); color: #a78bfa; border-color: rgba(139,92,246,0.2); }
+
+    .stat-card .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .stat-card .stat-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-top: 4px;
+        line-height: 1.1;
+    }
+    .stat-card .stat-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* Controls Dropdowns & Filters */
+    .filter-select {
+        padding: 10px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background: var(--bg-color);
+        color: var(--text-main);
+        font-size: 13.5px;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .filter-select:focus {
+        border-color: #2563eb;
+        background: var(--card-bg);
+    }
+
+    /* Table styling */
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { color: var(--text-muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .btn-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: #2563eb;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: opacity 0.2s;
+    }
+    .btn-create:hover { opacity: 0.9; }
+
+    .pic-cell { display: flex; align-items: center; gap: 12px; }
+    .avatar-xs { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--border-color); flex-shrink: 0; }
+
+    /* Badges */
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 11.5px;
+        font-weight: 600;
+        width: fit-content;
+    }
+    .badge-status.success {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+    .badge-status.success .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #10b981;
+    }
+    .badge-status.warning {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+    .badge-status.warning .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #f59e0b;
+    }
+    .badge-status.info {
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+    }
+    .badge-status.info .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #3b82f6;
+    }
+
+    /* Pagination controls */
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .pagination-info {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .pagination-buttons {
+        display: flex;
+        gap: 6px;
+    }
+    .pagination-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 34px;
+        padding: 0 8px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .pagination-btn:hover:not(:disabled) {
+        background: var(--hover-bg);
+        border-color: var(--text-muted);
+    }
+    .pagination-btn.active {
+        background: #2563eb;
+        color: #fff;
+        border-color: #2563eb;
+    }
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
     .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
     .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
-    .empty-state p { font-size: 14px; }
 </style>
 
-<div class="card">
+<!-- 4 Top KPI Cards -->
+<div class="stats-grid">
+    <!-- Card 1: Total Event -->
+    <div class="stat-card">
+        <div class="stat-icon blue"><i data-feather="calendar"></i></div>
+        <div class="stat-card-content">
+            <span class="stat-label">Total Event</span>
+            <span class="stat-value">{{ $events->count() }}</span>
+            <span class="stat-sub">event bulan ini</span>
+        </div>
+    </div>
+
+    <!-- Card 2: Ongoing -->
+    <div class="stat-card">
+        <div class="stat-icon amber"><i data-feather="play-circle"></i></div>
+        <div class="stat-card-content">
+            <span class="stat-label">Ongoing</span>
+            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'ongoing')->count() }}</span>
+            <span class="stat-sub">sedang berjalan</span>
+        </div>
+    </div>
+
+    <!-- Card 3: Upcoming -->
+    <div class="stat-card">
+        <div class="stat-icon violet"><i data-feather="clock"></i></div>
+        <div class="stat-card-content">
+            <span class="stat-label">Upcoming</span>
+            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'upcoming')->count() }}</span>
+            <span class="stat-sub">akan datang</span>
+        </div>
+    </div>
+
+    <!-- Card 4: Completed -->
+    <div class="stat-card">
+        <div class="stat-icon emerald"><i data-feather="check-circle"></i></div>
+        <div class="stat-card-content">
+            <span class="stat-label">Completed</span>
+            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'completed')->count() }}</span>
+            <span class="stat-sub">telah selesai</span>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px;">
     @if(session('success'))
-        <div class="alert-success">{{ session('success') }}</div>
+        <div style="background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; font-weight: 500;">
+            {{ session('success') }}
+        </div>
     @endif
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
-        <div style="flex:1;">
-            <h3 style="margin-bottom: 4px;">Daftar Event</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin: 0;">Daftar Event</h2>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px; font-weight: 500; margin-bottom: 0;">
                 @role('CEO|GM')
-                    Daftar event berdasarkan bulan yang diplih.
+                    Daftar event berdasarkan bulan yang dipilih.
                 @else
                     Event yang Anda ditugaskan pada bulan ini.
                 @endrole
             </p>
         </div>
         
-        <form method="GET" action="{{ route('events.index') }}" style="display: flex; gap: 10px; align-items: center;">
-            <select name="month" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; background: var(--bg-color); color: var(--text-main);">
+        <form method="GET" action="{{ route('events.index') }}" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <select name="month" onchange="this.form.submit()" class="filter-select">
                 @foreach(range(1, 12) as $m)
                     <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $month == str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' }}>
                         {{ date('F', mktime(0, 0, 0, $m, 10)) }}
@@ -49,26 +290,25 @@
                 @endforeach
             </select>
             
-            <select name="year" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; background: var(--bg-color); color: var(--text-main);">
+            <select name="year" onchange="this.form.submit()" class="filter-select">
                 @foreach(range(date('Y') - 2, date('Y') + 2) as $y)
                     <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
                 @endforeach
             </select>
 
             @role('CEO')
-            <a href="{{ route('events.create') }}" class="btn-create" style="margin-left: 10px;">+ Buat Event Baru</a>
+            <a href="{{ route('events.create') }}" class="btn-create">
+                <i data-feather="plus" style="width: 16px; height: 16px;"></i>
+                <span>Buat Event Baru</span>
+            </a>
             @endrole
         </form>
     </div>
 
     @if($events->isEmpty())
         <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            <p>
+            <i data-feather="calendar" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; color: var(--text-muted);"></i>
+            <p style="font-size: 13.5px; font-weight: 500; color: var(--text-muted);">
                 @role('CEO|GM')
                     Belum ada event. Mulai dengan membuat event baru.
                 @else
@@ -80,29 +320,28 @@
     <div class="table-container">
         <table>
             <thead>
-                <tr>
-                    <th>Nama Event</th>
-                    <th>Jadwal</th>
-                    <th>PIC Event</th>
-                    <th>Posisi</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                <tr style="border-bottom: 1.5px solid var(--border-color);">
+                    <th style="width: 25%;">Nama Event</th>
+                    <th style="width: 25%;">Jadwal</th>
+                    <th style="width: 20%;">PIC Event</th>
+                    <th style="width: 12%;">Posisi</th>
+                    <th style="width: 10%;">Status</th>
+                    <th style="width: 8%;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($events as $event)
                 @php
                     $pic = $event->participants->where('pivot.is_pic', true)->first();
-                    $totalMembers = $event->positions->sum(fn($p) => $p->members_count ?? 0);
                 @endphp
-                <tr>
-                    <td style="font-weight: 500;">
-                        {{ $event->name }}
+                <tr class="event-row" style="border-bottom: 1px solid var(--border-color);">
+                    <td>
+                        <span style="font-weight: 600; color: var(--text-main); font-size: 14.5px;">{{ $event->name }}</span>
                         @if($event->description)
-                            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">{{ Str::limit($event->description, 50) }}</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 500;">{{ Str::limit($event->description, 60) }}</div>
                         @endif
                     </td>
-                    <td style="color: var(--text-muted); font-size: 13px;">
+                    <td>
                         @php
                             $dates = $event->event_dates ?? [];
                             $count = count($dates);
@@ -110,37 +349,52 @@
                         @if($count > 0)
                             @php
                                 sort($dates);
-                                $displayDates = collect($dates)->map(fn($d) => \Carbon\Carbon::parse($d)->format('d M'));
-                                $year = \Carbon\Carbon::parse($dates[0])->format('Y');
+                                $displayDates = collect($dates)->map(fn($d) => \Carbon\Carbon::parse($d)->translatedFormat('d M'));
+                                $yearStr = \Carbon\Carbon::parse($dates[0])->format('Y');
                             @endphp
-                            {{ $displayDates->implode(', ') }} {{ $year }}
+                            <span style="font-weight: 600; color: var(--text-main);">{{ $displayDates->implode(', ') }} {{ $yearStr }}</span>
                         @else
-                            -
+                            <span style="color: var(--text-muted);">-</span>
                         @endif
                         @if($event->start_time && $event->end_time)
-                            <br><span style="font-size:11px;">Jam: {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 500;">Jam: {{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</div>
                         @endif
                     </td>
                     <td>
                         @if($pic)
                             <div class="pic-cell">
                                 <img src="{{ $pic->photo_url }}" class="avatar-xs" alt="{{ $pic->name }}">
-                                <span>{{ $pic->name }}</span>
+                                <span style="font-weight: 600; color: var(--text-main);">{{ $pic->name }}</span>
                             </div>
                         @else
-                            <span style="color:var(--text-muted);font-size:12px;">Belum ditentukan</span>
+                            <span style="color: var(--text-muted); font-size: 12.5px; font-weight: 500;">Belum ditentukan</span>
                         @endif
                     </td>
-                    <td style="color: var(--text-muted); font-size: 13px;">
-                        {{ $event->positions->count() }} posisi
+                    <td>
+                        <span style="font-weight: 600; color: var(--text-main);">{{ $event->positions->count() }} posisi</span>
                     </td>
                     <td>
-                        <span class="badge badge-{{ $event->status }}">{{ ucfirst($event->status) }}</span>
+                        @if($event->status === 'completed')
+                            <span class="badge-status success">
+                                <span class="dot"></span>
+                                <span>Completed</span>
+                            </span>
+                        @elseif($event->status === 'ongoing')
+                            <span class="badge-status warning">
+                                <span class="dot"></span>
+                                <span>Ongoing</span>
+                            </span>
+                        @else
+                            <span class="badge-status info">
+                                <span class="dot"></span>
+                                <span>Upcoming</span>
+                            </span>
+                        @endif
                     </td>
                     <td>
-                        <a href="{{ route('events.show', $event->id) }}"
-                           style="color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;">
-                            Detail →
+                        <a href="{{ route('events.show', $event->id) }}" style="color: #2563eb; text-decoration: none; font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                            <span>Detail</span>
+                            <span>→</span>
                         </a>
                     </td>
                 </tr>
@@ -148,6 +402,114 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-container">
+        <div class="pagination-info" id="paginationInfo">
+            Menampilkan 1 - 10 dari {{ $events->count() }} event
+        </div>
+        <div class="pagination-buttons" id="paginationButtons">
+            <!-- Dynamically populated via JS -->
+        </div>
+    </div>
     @endif
 </div>
+
+<script>
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let eventRows = [];
+
+    function initTable() {
+        eventRows = Array.from(document.querySelectorAll('.event-row'));
+        renderTable();
+    }
+
+    function renderTable() {
+        // Hide all rows
+        eventRows.forEach(r => r.style.display = 'none');
+
+        const totalItems = eventRows.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIdx = (currentPage - 1) * itemsPerPage;
+        const endIdx = Math.min(startIdx + itemsPerPage, totalItems);
+
+        // Show only matching rows on the current page
+        for (let i = startIdx; i < endIdx; i++) {
+            eventRows[i].style.display = 'table-row';
+        }
+
+        renderPagination(totalItems, totalPages, startIdx + 1, endIdx);
+    }
+
+    function renderPagination(totalItems, totalPages, displayStart, displayEnd) {
+        const info = document.getElementById('paginationInfo');
+        const buttonsContainer = document.getElementById('paginationButtons');
+        if (!info || !buttonsContainer) return;
+
+        if (totalItems === 0) {
+            info.textContent = 'Tidak ada data event yang cocok';
+            buttonsContainer.innerHTML = '';
+            buttonsContainer.style.display = 'none';
+            if (typeof feather !== 'undefined') feather.replace();
+            return;
+        } else {
+            info.textContent = `Menampilkan ${displayStart} - ${displayEnd} dari ${totalItems} event`;
+            buttonsContainer.style.display = 'flex';
+        }
+
+        buttonsContainer.innerHTML = '';
+
+        // Prev Button
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'pagination-btn';
+        prevBtn.innerHTML = '<i data-feather="chevron-left" style="width: 14px; height: 14px;"></i>';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+            currentPage--;
+            renderTable();
+        };
+        buttonsContainer.appendChild(prevBtn);
+
+        // Page Number Buttons
+        let startPage = Math.max(1, currentPage - 1);
+        let endPage = Math.min(totalPages, currentPage + 1);
+
+        if (currentPage === 1) {
+            endPage = Math.min(totalPages, 3);
+        } else if (currentPage === totalPages) {
+            startPage = Math.max(1, totalPages - 2);
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
+            const pBtn = document.createElement('button');
+            pBtn.className = `pagination-btn ${p === currentPage ? 'active' : ''}`;
+            pBtn.textContent = p;
+            pBtn.onclick = () => {
+                currentPage = p;
+                renderTable();
+            };
+            buttonsContainer.appendChild(pBtn);
+        }
+
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'pagination-btn';
+        nextBtn.innerHTML = '<i data-feather="chevron-right" style="width: 14px; height: 14px;"></i>';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => {
+            currentPage++;
+            renderTable();
+        };
+        buttonsContainer.appendChild(nextBtn);
+
+        if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    document.addEventListener('DOMContentLoaded', initTable);
+</script>
 @endsection

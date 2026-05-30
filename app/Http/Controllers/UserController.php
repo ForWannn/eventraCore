@@ -70,14 +70,21 @@ class UserController extends Controller
             'division_id' => 'required|exists:divisions,id',
             'role'        => 'required|exists:roles,name',
             'photo'       => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'password'    => 'nullable|string|min:6|confirmed',
         ]);
 
-        $user->update([
+        $updateData = [
             'name'        => $request->name,
             'email'       => $request->email,
             'nik'         => $request->nik,
             'division_id' => $request->division_id,
-        ]);
+        ];
+
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($updateData);
 
         // Handle photo upload — saved as user_{id}.png
         if ($request->hasFile('photo')) {

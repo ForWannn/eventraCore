@@ -288,14 +288,14 @@
              </a>
  
              @role('CEO|GM')
-                 <a href="{{ route('attendance.recap') }}"
-                     class="nav-link {{ request()->routeIs('attendance.recap') ? 'active' : '' }}">
-                     <i data-feather="clipboard"></i> <span>Rekap Absensi Harian</span>
-                 </a>
-                 <a href="{{ route('weekly.recap') }}"
-                     class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">
-                     <i data-feather="layers"></i> <span>Rekap Weekly Report</span>
-                 </a>
+                <a href="{{ route('weekly.recap') }}"
+                    class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">
+                    <i data-feather="layers"></i> <span>Rekap Weekly Report</span>
+                </a>
+                <a href="{{ route('attendance.recap') }}"
+                    class="nav-link {{ request()->routeIs('attendance.recap') ? 'active' : '' }}">
+                    <i data-feather="clipboard"></i> <span>Rekap Absensi Harian</span>
+                </a>
                  <a href="{{ route('weekly.history') }}"
                      class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
                      <i data-feather="archive"></i> <span>Riwayat Weekly Report</span>
@@ -356,7 +356,7 @@
  
          <div class="content">
             @auth
-             <h1 class="page-title">@yield('title', 'Dasbor')</h1>
+             <!-- <h1 class="page-title">@yield('title', 'Dasbor')</h1> -->
             @endauth
              @yield('content')
          </div>

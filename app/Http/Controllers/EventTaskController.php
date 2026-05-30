@@ -14,33 +14,24 @@ class EventTaskController extends Controller
         $request->validate([
             'task_name' => 'required|string|max:255',
             'category' => 'required|in:pre,dday,post',
-            'type' => 'required|in:official,personal',
-            'assigned_to' => 'nullable|exists:users,id' // Validasi ID user
+            'assigned_to' => 'required|exists:users,id'
         ]);
 
         $user = Auth::user();
         $isPic = $event->participants()->where('user_id', $user->id)->where('is_pic', true)->exists();
         $isAdmin = $user->hasRole(['CEO', 'GM']);
 
-        if ($request->type === 'official' && !$isPic && !$isAdmin) {
-            return response()->json(['error' => 'Hanya PIC atau Manajemen yang bisa membuat To Do event.'], 403);
+        if ($request->assigned_to != $user->id && !$isPic && !$isAdmin) {
+            return response()->json(['error' => 'Anda hanya bisa menambahkan To Do untuk diri sendiri.'], 403);
         }
 
         $task = new EventTask();
         $task->event_id = $event->id;
         $task->task_name = $request->task_name;
         $task->category = $request->category;
-        $task->type = $request->type;
+        $task->type = 'official';
         $task->created_by = $user->id;
-        
-        // PERBAIKAN LOGIKA PENUGASAN:
-        if ($request->type === 'personal') {
-            $task->assigned_to = $user->id;
-        } else {
-            // Cek apakah ada assigned_to yang dikirim, jika ada simpan, jika tidak (Umum) biarkan null
-            $task->assigned_to = $request->filled('assigned_to') ? $request->assigned_to : null;
-        }
-        
+        $task->assigned_to = $request->assigned_to;
         $task->save();
 
         $task->load('assignee');
@@ -81,7 +72,7 @@ class EventTaskController extends Controller
         $isPic = $event->participants()->where('user_id', $user->id)->where('is_pic', true)->exists();
         $isAdmin = $user->hasRole(['CEO', 'GM']);
 
-        if ($task->created_by !== $user->id && !$isPic && !$isAdmin) {
+        if ($task->created_by !== $user->id && $task->assigned_to !== $user->id && !$isPic && !$isAdmin) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 

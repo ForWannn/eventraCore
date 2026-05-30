@@ -4,492 +4,116 @@
 
 @section('content')
     <style>
-        .detail-grid {
+        /* Modern layouts */
+        .info-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 28px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+        @media (max-width: 1024px) {
+            .info-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 640px) {
+            .info-grid { grid-template-columns: 1fr; }
         }
 
-        .info-box {
-            padding: 14px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            background: var(--hover-bg);
-        }
-
-        .info-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-value {
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        /* PIC hero */
-        .pic-section {
+        .info-box-new {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: var(--hover-bg);
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--bg-color);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            margin-bottom: 24px;
-        }
-
-        .pic-profile {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .pic-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--border-color);
-        }
-
-        .pic-name {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .pic-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .badge-pic {
-            display: inline-block;
-            padding: 4px 10px;
-            background: #fef08a;
-            color: #854d0e;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-
-        /* Position blocks */
-        .position-section {
-            margin-bottom: 20px;
-        }
-
-        .position-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background: var(--sidebar-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px 14px 0 0;
-            border-bottom: none;
-        }
-
-        .position-name {
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-
-        .position-members {
-            border: 1px solid var(--border-color);
-            border-radius: 0 0 14px 14px;
             padding: 16px;
-            background: var(--hover-bg);
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
-        }
-
-        .member-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 16px 12px;
-            border: 1px solid var(--border-color);
             border-radius: 14px;
-            background: var(--sidebar-bg);
         }
 
-        .member-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 10px;
-            border: 2px solid var(--border-color);
-        }
-
-        .member-name {
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1.3;
-            margin-bottom: 2px;
-        }
-
-        .member-div {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .work-dates {
-            font-size: 10px;
-            font-weight: 600;
-            padding: 4px 8px;
-            background: var(--hover-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-main);
-            display: inline-block;
-        }
-
-        /* Danger Zone & Modal */
-        .danger-zone {
-            margin-top: 40px;
-            padding: 24px;
-            border: 1px dashed #fca5a5;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(254, 226, 226, 0.2);
-        }
-
-        .danger-zone-text h5 {
-            font-size: 15px;
-            font-weight: 700;
-            color: #b91c1c;
-            margin-bottom: 4px;
-        }
-
-        .danger-zone-text p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .btn-danger {
-            padding: 10px 20px;
-            background: #fee2e2;
-            color: #b91c1c;
-            border: 1px solid #fca5a5;
+        .info-icon-wrapper {
+            width: 36px;
+            height: 36px;
             border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .btn-danger:hover {
-            background: #fecaca;
-            border-color: #f87171;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(4px);
+            background: rgba(37, 99, 235, 0.06);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            color: #2563eb;
+            flex-shrink: 0;
         }
 
-        .modal-overlay.open {
-            display: flex;
+        /* Accordion row styling */
+        .member-row-header {
+            cursor: pointer;
+            transition: background 0.15s;
         }
-
-        .modal-box {
-            background: var(--sidebar-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 32px;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .modal-box h4 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .modal-box p {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 28px;
-            line-height: 1.6;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-
-        .btn-secondary {
-            padding: 10px 20px;
+        .member-row-header:hover {
             background: var(--hover-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
         }
-
-        .btn-confirm-delete {
-            padding: 10px 20px;
-            background: #b91c1c;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Absensi WebRTC */
-        .att-section {
-            background: var(--hover-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 32px 24px;
-            margin-bottom: 32px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .att-section h4 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .att-section p {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 24px;
-        }
-
-        .camera-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 280px;
-            aspect-ratio: 3/4;
-            border-radius: 16px;
-            overflow: hidden;
-            background: var(--sidebar-bg);
-            border: 1px solid var(--border-color);
-            margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        #videoElement {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transform: scaleX(-1);
-        }
-
-        #photoPreview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-            transform: scaleX(-1);
-        }
-
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 28px;
-            background: var(--text-main);
-            color: var(--bg-color);
-            border: none;
-            border-radius: 99px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-action:hover {
-            opacity: 0.85;
-            transform: translateY(-1px);
-        }
-
-        .btn-action:disabled {
-            background: var(--border-color);
-            color: var(--text-muted);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-outline {
-            background: var(--sidebar-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-outline:hover {
-            background: var(--border-color);
-        }
-
-        .attendance-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .attendance-table th,
-        .attendance-table td {
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .attendance-table th {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .att-photo-sm {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
+        .chevron-icon {
             transition: transform 0.2s;
         }
-
-        .att-photo-sm:hover {
-            transform: scale(1.5);
-            position: relative;
-            z-index: 10;
+        .member-row-header.expanded .chevron-icon {
+            transform: rotate(180deg);
         }
 
-        /* Task Management Styles - Optimized Typography & Spacing */
-        .task-card {
-            margin-top: 24px;
-            padding: 20px;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-        }
-
-        .task-progress-container {
-            margin-bottom: 20px;
-            background: var(--hover-bg);
-            padding: 14px 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .task-progress-header {
+        /* Checklist boxes */
+        .checklist-box {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .task-progress-bar {
-            height: 8px;
-            background: var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .task-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4f46e5, #818cf8);
-            transition: width 0.6s ease;
-        }
-
-        .task-section-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        @media (max-width: 1024px) {
-            .task-section-grid { grid-template-columns: 1fr; }
-        }
-
-        .task-column {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .task-column-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 2px 0;
-        }
-
-        .task-column-header h5 {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             padding: 8px 12px;
-            background: #fff;
-            border: 1px solid var(--border-color);
             border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 38px;
             transition: all 0.2s;
         }
+        .checklist-box.pre {
+            background: rgba(37, 99, 235, 0.03);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            color: #2563eb;
+        }
+        .checklist-box.pre:hover {
+            background: rgba(37, 99, 235, 0.07);
+        }
+        .checklist-box.dday {
+            background: rgba(245, 158, 11, 0.03);
+            border: 1px solid rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+        .checklist-box.dday:hover {
+            background: rgba(245, 158, 11, 0.07);
+        }
+        .checklist-box.post {
+            background: rgba(139, 92, 246, 0.03);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+        .checklist-box.post:hover {
+            background: rgba(139, 92, 246, 0.07);
+        }
 
-        .task-item:hover { 
-            border-color: #4f46e5; 
+        /* Task items */
+        .task-item-new {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            background: var(--card-bg);
+            transition: all 0.2s;
         }
-        
-        .task-item.completed { 
-            background: var(--hover-bg); 
-            opacity: 0.7; 
+        .task-item-new:hover {
+            border-color: #4f46e5;
         }
-        
-        .task-item.completed .task-text { 
-            text-decoration: line-through; 
-            color: var(--text-muted); 
+        .task-item-new.completed {
+            background: var(--hover-bg);
+            opacity: 0.7;
         }
-
-        .task-checkbox {
+        .task-checkbox-new {
             width: 18px;
             height: 18px;
             border-radius: 4px;
@@ -499,488 +123,655 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-        }
-
-        .task-checkbox.checked { 
-            background: #4f46e5; 
-            border-color: #4f46e5; 
-            color: #fff; 
-        }
-
-        .task-text {
-            font-size: 12.5px;
-            font-weight: 500;
-            flex: 1;
-            line-height: 1.4;
-        }
-
-        .task-type-badge {
-            font-size: 9px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-        .task-official { background: #e0f2fe; color: #0369a1; }
-        .task-personal { background: #f3f4f6; color: #374151; }
-
-        .task-assignee {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-        }
-
-        .quick-add-container { 
-            position: relative; 
-            margin-top: 4px; 
-        }
-        
-        .quick-add-input {
-            width: 100%;
-            padding: 8px 12px 8px 32px;
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
-            font-size: 12.5px;
-            background: transparent;
             transition: all 0.2s;
         }
-        
-        .quick-add-input:focus {
-            border-style: solid;
+        .task-checkbox-new.checked {
+            background: #4f46e5;
             border-color: #4f46e5;
-            background: #fff;
-            outline: none;
-        }
-        
-        .quick-add-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: bold;
+            color: white;
         }
 
-        .task-delete-btn { 
-            opacity: 0; 
-            color: #ef4444; 
-            cursor: pointer; 
-            padding: 2px; 
+        /* Danger zone box */
+        .danger-card {
             display: flex;
             align-items: center;
-        }
-        
-        .task-item:hover .task-delete-btn { 
-            opacity: 1; 
+            justify-content: space-between;
+            padding: 20px;
+            border: 1px dashed #fca5a5;
+            border-radius: 16px;
+            background: rgba(254, 226, 226, 0.15);
+            margin-top: 32px;
         }
 
-        .btn-add-official {
+        /* Webcam Absensi Section */
+        .att-section-new {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+            text-align: center;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .camera-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
+            aspect-ratio: 3/4;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--sidebar-bg);
+            border: 1.5px solid var(--border-color);
+            margin: 16px 0;
+        }
+        #videoElement, #photoPreview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        .btn-action {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            width: 100%;
-            padding: 8px;
-            background: rgba(79, 70, 229, 0.05);
-            color: #4f46e5;
-            border: 1px dashed #4f46e5;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
+            gap: 8px;
+            padding: 10px 24px;
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 4px;
         }
-        .btn-add-official:hover { 
-            background: rgba(79, 70, 229, 0.1); 
+        .btn-action:hover { opacity: 0.85; }
+        .btn-action:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
+
+        /* Modals styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal-box {
+            background: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .modal-box h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .modal-box p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .btn-secondary {
+            padding: 10px 20px;
+            background: var(--hover-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+        .btn-confirm-delete {
+            padding: 10px 20px;
+            background: #b91c1c;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-confirm-delete:hover {
+            opacity: 0.9;
         }
     </style>
 
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-            <div>
-                <h3 style="margin-bottom: 6px;">{{ $event->name }}</h3>
-                @if($event->description)
-                    <p style="color: var(--text-muted); font-size: 13px;">{{ $event->description }}</p>
-                @endif
+    <!-- Header Section -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Detail Event</h1>
+        </div>
+        <a href="{{ route('events.index') }}" style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); text-decoration: none; transition: background 0.2s;">
+            <i data-feather="arrow-left" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+            <span>Kembali</span>
+        </a>
+    </div>
+
+    <!-- 1. Top Card: Event Main Info -->
+    <div class="card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; margin-bottom: 28px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(37,99,235,0.06); border: 1.5px solid rgba(37,99,235,0.15); color: #2563eb; flex-shrink: 0;">
+                    <i data-feather="calendar" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Nama Event</span>
+                    <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $event->name }}</h2>
+                </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span class="badge-{{ $event->status }}" style="padding:6px 14px;border-radius:10px;font-size:12px;font-weight:700; text-transform: uppercase;
-                                                  @if($event->status === 'upcoming') background:#dbeafe;color:#1e3a8a;
-                                                  @elseif($event->status === 'ongoing') background:#fef08a;color:#854d0e;
-                                                  @else background:#dcfce7;color:#166534; @endif">
+            <div>
+                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+                    @if($event->status === 'upcoming') background: #eff6ff; border: 1px solid #dbeafe; color: #2563eb;
+                    @elseif($event->status === 'ongoing') background: #fffbeb; border: 1px solid #fef3c7; color: #d97706;
+                    @else background: #ecfdf5; border: 1px solid #d1fae5; color: #10b981; @endif">
                     {{ $event->status }}
                 </span>
-                <a href="{{ route('events.index') }}"
-                    style="color:var(--text-muted);text-decoration:none;font-size:13px; font-weight: 500;">← Kembali</a>
             </div>
         </div>
 
-        <div class="detail-grid">
-            <div class="info-box" style="grid-column: 1 / -1;">
-                <div class="info-label">Tanggal Event</div>
-                <div class="info-value">
-                    @php
-                        $dates = $event->event_dates ?? [];
-                        if (count($dates) > 0) {
-                            sort($dates);
-                            $displayDates = collect($dates)->map(fn($d) => \Carbon\Carbon::parse($d)->format('d M Y'))->implode(', ');
-                            echo $displayDates;
-                        } else {
-                            echo '-';
-                        }
-                    @endphp
-                </div>
-            </div>
-            @if($event->start_time && $event->end_time)
-                <div class="info-box">
-                    <div class="info-label">Jam Mulai</div>
-                    <div class="info-value">{{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }}</div>
-                </div>
-                <div class="info-box">
-                    <div class="info-label">Jam Selesai</div>
-                    <div class="info-value">{{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</div>
-                </div>
-            @endif
-            <div class="info-box">
-                <div class="info-label">Absensi Dibuka</div>
-                <div class="info-value">
-                    {{ $event->attendance_start ? \Carbon\Carbon::parse($event->attendance_start)->format('H:i') : 'Otomatis' }}
-                </div>
-            </div>
-            <div class="info-box">
-                <div class="info-label">Absensi Ditutup</div>
-                <div class="info-value">
-                    {{ $event->attendance_end ? \Carbon\Carbon::parse($event->attendance_end)->format('H:i') : 'Selesai Event' }}
-                </div>
-            </div>
-        </div>
-
-
-        <hr style="border:0;border-top:1px dashed var(--border-color);margin:32px 0;">
-
-        @if($isAssigned && $event->needs_attendance)
-            <div class="att-section" id="attendanceSection">
-                <h4>Absensi Kehadiran</h4>
-
-                @if($myAttendance)
-                    <p style="margin-bottom: 16px;">Sistem telah mencatat kehadiran Anda.</p>
-                    <div
-                        style="display: inline-flex; align-items: center; gap: 8px; background: #dcfce7; color: #166534; padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; margin-bottom: 20px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        Hadir pada {{ $myAttendance->attended_at->format('H:i - d M Y') }}
-                    </div>
-                    @if($myAttendance->photo_path)
-                        <img src="{{ asset($myAttendance->photo_path) }}" alt="Bukti Absen"
-                            style="width: 140px; height: 140px; object-fit: cover; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                    @endif
-                @else
-                    @if($event->status === 'ongoing')
-                        @if($attendanceOpen)
-                            <p>Pastikan Anda telah mengizinkan akses kamera dan lokasi, posisikan wajah di area kamera lalu tekan tombol ambil foto.</p>
-                            <div class="camera-wrapper" id="cameraWrapper">
-                                <video id="videoElement" autoplay playsinline></video>
-                                <img id="photoPreview" alt="Preview Absen">
-                                <canvas id="canvasElement" style="display: none;"></canvas>
-                            </div>
-                            <div id="locStatus" style="font-size: 13px; color: #b91c1c; margin-bottom: 16px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                                    <circle cx="12" cy="10" r="3" />
-                                </svg>
-                                <span id="locText">Meminta akses lokasi GPS...</span>
-                            </div>
-                            <div id="cameraControls">
-                                <button class="btn-action" id="btnCapture" onclick="takePhoto()" disabled style="opacity: 0.6; cursor: not-allowed;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="13" r="4" />
-                                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                                    </svg>
-                                    Ambil Foto
-                                </button>
-                            </div>
-                            <div id="submitControls" style="display: none; gap: 12px; justify-content: center;">
-                                <button class="btn-action btn-outline" onclick="retakePhoto()">Ulangi</button>
-                                <button class="btn-action" id="btnSubmitAtt" onclick="submitAttendance()">Kirim Data</button>
-                            </div>
-                        @else
-                            <p style="color: #b91c1c; font-weight: 500;">Masa absensi saat ini ditutup. Sistem absensi hari ini hanya dibuka
-                                pada jam {{ \Carbon\Carbon::parse($event->attendance_start)->format('H:i') }} -
-                                {{ \Carbon\Carbon::parse($event->attendance_end)->format('H:i') }}.
-                            </p>
-                        @endif
-                    @elseif($event->status === 'upcoming')
-                        <p>Kamera absensi akan otomatis aktif saat status event berubah menjadi <strong>Ongoing</strong>.</p>
-                    @else
-                        <p style="color: #b91c1c;">Event telah selesai. Periode absensi telah ditutup.</p>
-                    @endif
-                @endif
-            </div>
-            <hr style="border:0;border-top:1px dashed var(--border-color);margin:32px 0;">
-        @endif
-
-        @php $pic = $event->participants->where('pivot.is_pic', true)->first(); @endphp
-        @if($pic)
-            <div
-                style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:16px;">
-                PIC Event</div>
-            <div class="pic-section">
-                <div class="pic-profile">
-                    <img src="{{ $pic->photo_url }}" class="pic-avatar" alt="{{ $pic->name }}">
-                    <div>
-                        <div class="pic-name">{{ $pic->name }}</div>
-                        <div class="pic-label">{{ $pic->division->name ?? 'Internal' }} &nbsp;·&nbsp; <span
-                                class="badge-pic">PIC</span></div>
-                    </div>
-                </div>
+        @if($event->description)
+            <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; font-size: 13px; color: var(--text-muted); font-weight: 500; line-height: 1.5;">
+                {{ $event->description }}
             </div>
         @endif
 
-        <div
-            style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-top:40px;margin-bottom:20px;">
-            Struktur Tim & Penugasan
-        </div>
+        @php
+            $dates = $event->event_dates ?? [];
+            $dateValue = '-';
+            $dateSub = '';
+            if (count($dates) > 0) {
+                sort($dates);
+                $firstDate = \Carbon\Carbon::parse($dates[0]);
+                if (count($dates) === 1) {
+                    $dateValue = $firstDate->locale('id')->translatedFormat('d F Y');
+                    $dateSub = $firstDate->locale('id')->translatedFormat('l');
+                } else {
+                    $lastDate = \Carbon\Carbon::parse(end($dates));
+                    $dateValue = $firstDate->locale('id')->translatedFormat('d M') . ' - ' . $lastDate->locale('id')->translatedFormat('d M Y');
+                    $dateSub = $firstDate->locale('id')->translatedFormat('D') . ' - ' . $lastDate->locale('id')->translatedFormat('D');
+                }
+            }
 
-        @forelse($event->positions as $position)
-            <div class="position-section">
-                <div class="position-header">
-                    <div class="position-name">{{ $position->name }} <span
-                            style="font-weight:400; color:var(--text-muted); margin-left:8px;">({{ $position->members->count() }}
-                            orang)</span></div>
-
-                </div>
-                <div class="position-members">
-                    @forelse($position->members as $member)
-                        <div class="member-card">
-                            <img src="{{ $member->photo_url }}" class="member-avatar" alt="{{ $member->name }}">
-                            <div class="member-name">{{ $member->name }}</div>
-
-                            <div style="display: flex; gap: 4px; margin-top: 4px; margin-bottom: 8px;">
-                                @if($member->pivot->is_loading)
-                                    <span
-                                        style="font-size: 10px; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 700;"
-                                        title="Bertugas Loading">Load</span>
-                                @endif
-                                @if($member->pivot->is_unloading)
-                                    <span
-                                        style="font-size: 10px; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-weight: 700;"
-                                        title="Bertugas Unloading">Unload</span>
-                                @endif
-                            </div>
-
-                            @php
-                                $wDates = is_string($member->pivot->work_dates) ? json_decode($member->pivot->work_dates, true) : ($member->pivot->work_dates ?? []);
-                            @endphp
-                            @if(is_array($wDates) && count($wDates) > 0)
-                                <div class="work-dates">
-                                    {{ collect($wDates)->map(fn($d) => \Carbon\Carbon::parse($d)->format('d M'))->implode(', ') }}
-                                </div>
-                            @else
-                                <div class="work-dates" style="opacity: 0.5;">Full Event</div>
-                            @endif
-                        </div>
-                    @empty
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 13px;">Belum ada
-                            anggota yang ditugaskan.</div>
-                    @endforelse
-                </div>
-            </div>
-        @empty
-            <div class="info-box" style="text-align:center; padding: 40px;">
-                <p style="color:var(--text-muted);">Belum ada posisi tim yang dibuat untuk event ini.</p>
-            </div>
-        @endforelse
-
-        @if($isLeader || $isPic)
-            <div style="margin-top: 40px; margin-bottom: 20px;">
-                <div
-                    style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:16px;">
-                    Rekapitulasi Kehadiran
-                </div>
-                <div style="border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
-                    <table class="attendance-table">
-                        <thead style="background: var(--hover-bg);">
-                            <tr>
-                                <th>Karyawan</th>
-                                <th>Waktu Hadir</th>
-                                <th>Metode</th>
-                                <th>Bukti / Catatan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($event->attendances as $att)
-                                <tr>
-                                    <td style="font-weight: 500;">
-                                        <div style="display: flex; align-items: center; gap: 8px;">
-                                            <img src="{{ $att->user->photo_url }}"
-                                                style="width: 28px; height: 28px; border-radius: 50%; object-fit:cover;">
-                                            {{ $att->user->name }}
-                                        </div>
-                                    </td>
-                                    <td>{{ $att->attended_at->format('d M Y, H:i') }}</td>
-                                    <td>
-                                        @if($att->method === 'camera')
-                                            <span
-                                                style="background: #e0f2fe; color: #0284c7; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                                                Kamera</span>
-                                        @else
-                                            <span
-                                                style="background: #f3f4f6; color: #4b5563; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">Manual
-                                                oleh PIC</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($att->method === 'camera' && $att->photo_path)
-                                            <a href="{{ asset($att->photo_path) }}" target="_blank">
-                                                <img src="{{ asset($att->photo_path) }}" class="att-photo-sm" alt="Bukti Absen">
-                                            </a>
-                                        @else
-                                            <span style="color: var(--text-muted); font-size: 12px;">{{ $att->notes ?? '-' }}</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 24px;">Belum ada
-                                        data absensi.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        @endif
-
-        {{-- TASK MANAGEMENT SECTION --}}
-        @if($isAssigned || $isLeader)
-        <div class="task-card">
-            <div class="task-progress-container">
-                <div class="task-progress-header">
-                    <div>
-                        <h4 style="margin:0; font-size: 16px;">Checklist Event</h4>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="font-size: 20px; font-weight: 800; color: #4f46e5;" id="progress-percentage">{{ $event->official_tasks_percentage }}%</span>
-                    </div>
-                </div>
-                <div class="task-progress-bar">
-                    <div class="task-progress-fill" id="progress-fill" style="width: {{ $event->official_tasks_percentage }}%"></div>
-                </div>
-            </div>
-
-            <div class="task-section-grid">
-                @php
-                    $categories = [
-                        'pre' => ['label' => 'Pre Event', 'icon' => '📝', 'bg' => 'transparent'],
-                        'dday' => ['label' => 'Day', 'icon' => '⚡', 'bg' => 'transparent'],
-                        'post' => ['label' => 'Post Event', 'icon' => '🏁', 'bg' => 'transparent']
-                    ];
-                @endphp
-
-                @foreach($categories as $catKey => $catInfo)
-                <div class="task-column">
-                    <div class="task-column-header">
-                        <span style="font-size: 14px;">{{ $catInfo['icon'] }}</span>
-                        <h5 style="margin:0; font-size: 14px; font-weight: 700;">{{ $catInfo['label'] }}</h5>
-                    </div>
-
-                    <div class="task-list" id="task-list-{{ $catKey }}">
-                        {{-- Official Tasks first --}}
-                        @foreach($event->tasks->where('category', $catKey)->where('type', 'official')->sortBy('is_completed') as $task)
-                            @include('events.partials.task_item', ['task' => $task])
-                        @endforeach
-
-                        {{-- Personal Tasks (only for the current user) --}}
-                        @php
-                            $personalTasks = $event->tasks->where('category', $catKey)->where('type', 'personal')->sortBy('is_completed');
-                            if (!$isLeader && !$isPic) {
-                                $personalTasks = $personalTasks->where('assigned_to', auth()->id());
-                            }
-                        @endphp
-
-                        @foreach($personalTasks as $task)
-                            @include('events.partials.task_item', ['task' => $task])
-                        @endforeach
-                    </div>
-
-                    <div class="quick-add-container">
-                        <span class="quick-add-icon">+</span>
-                        <input type="text" 
-                               class="quick-add-input" 
-                               placeholder="Tambah To Do" 
-                               onkeypress="handleQuickAdd(event, '{{ $catKey }}', 'personal')">
-                    </div>
-                    
-                    @if($isPic || $isLeader)
-                    <div>
-                        <button onclick="openOfficialTaskModal('{{ $catKey }}')" class="btn-add-official">
-                            <i data-feather="plus" style="width: 12px; height: 12px;"></i> Buat To Do Resmi
-                        </button>
-                    </div>
-                    @endif
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
-
-        @if($isLeader)
-            <div class="danger-zone">
-                <div class="danger-zone-text">
-                    <h5>Hapus Seluruh Data Event</h5>
-                    <p>Menghapus event akan membatalkan seluruh jadwal penugasan dan riwayat absensi terkait.</p>
-                </div>
-                <button type="button" class="btn-danger" onclick="openDeleteModal()">Hapus Event</button>
-            </div>
-        @endif
-    </div>
-
-    <div class="modal-overlay" id="officialTaskModal">
-        <div class="modal-box" style="max-width: 450px;">
-            <h4 id="official-modal-title">Tambah To Do</h4>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">To Do ini merupakan target utama dan akan mempengaruhi progres indikator event.</p>
-            
-            <form id="officialTaskForm">
-                <input type="hidden" id="official-category" name="category">
-                <input type="hidden" name="type" value="official">
+            $durationStr = '-';
+            $durationSub = '';
+            if ($event->start_time && $event->end_time) {
+                $start = \Carbon\Carbon::parse($event->start_time);
+                $end = \Carbon\Carbon::parse($event->end_time);
+                $diff = $start->diffInMinutes($end);
+                $hours = floor($diff / 60);
+                $minutes = $diff % 60;
                 
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:8px;">NAMA TO DO</label>
-                    <input type="text" name="task_name" required 
-                           style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:12px; font-size:14px;"
-                           placeholder="Contoh: Dokumentasi Hari Event">
-                </div>
+                $durationStr = $hours . ' Jam';
+                $durationSub = $minutes . ' Menit';
+            }
+        @endphp
 
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:8px;">TUGASKAN KE (OPSIONAL)</label>
-                    <select name="assigned_to" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:12px; font-size:14px; background:var(--bg-color);">
-                        <option value="">-- Umum / Seluruh Tim --</option>
-                        @foreach($assignedUsers as $participant)
-                            <option value="{{ $participant->id }}">{{ $participant->name }}</option>
-                        @endforeach
-                    </select>
+        <!-- Grid Event Details -->
+        <div class="info-grid">
+            <div class="info-box-new">
+                <div class="info-icon-wrapper"><i data-feather="calendar" style="width: 16px; height: 16px;"></i></div>
+                <div>
+                    <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Tanggal Event</span>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $dateValue }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">{{ $dateSub }}</div>
                 </div>
+            </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="closeOfficialTaskModal()">Batal</button>
-                    <button type="submit" class="btn-primary" style="padding: 10px 24px; border-radius: 12px; border:none; background:#4f46e5; color:#fff; font-weight:600; cursor:pointer;">Simpan To Do</button>
+            <div class="info-box-new">
+                <div class="info-icon-wrapper"><i data-feather="clock" style="width: 16px; height: 16px;"></i></div>
+                <div>
+                    <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Jam Mulai</span>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">
+                        {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('H:i') : '-' }}
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">WIB</div>
                 </div>
-            </form>
+            </div>
+
+            <div class="info-box-new">
+                <div class="info-icon-wrapper"><i data-feather="clock" style="width: 16px; height: 16px;"></i></div>
+                <div>
+                    <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Jam Selesai</span>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">
+                        {{ $event->end_time ? \Carbon\Carbon::parse($event->end_time)->format('H:i') : '-' }}
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">WIB</div>
+                </div>
+            </div>
+
+            <div class="info-box-new">
+                <div class="info-icon-wrapper"><i data-feather="watch" style="width: 16px; height: 16px;"></i></div>
+                <div>
+                    <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Durasi</span>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $durationStr }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">{{ $durationSub }}</div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Geotag Absensi Camera Card (Only when assigned, needs attendance, not checked in, ongoing, and attendance open) -->
+    @if($isAssigned && $event->needs_attendance && !$myAttendance && $event->status === 'ongoing' && $attendanceOpen)
+        <div class="att-section-new" id="attendanceSection" style="margin-bottom: 28px; border: 1.5px solid var(--border-color); border-radius: 20px;">
+            <h4 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Absensi Kehadiran Geotag</h4>
+            <p style="font-size: 12px; color: var(--text-muted); max-width: 480px; margin-bottom: 16px;">
+                Pastikan Anda telah mengizinkan akses kamera dan lokasi browser, posisikan wajah di area kamera lalu tekan tombol ambil foto.
+            </p>
+            <div class="camera-wrapper">
+                <video id="videoElement" autoplay playsinline></video>
+                <img id="photoPreview" alt="Preview Absen" style="display: none;">
+                <canvas id="canvasElement" style="display: none;"></canvas>
+            </div>
+            <div id="locStatus" style="font-size: 13px; color: #b91c1c; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i data-feather="map-pin" style="width: 16px; height: 16px;"></i>
+                <span id="locText">Meminta akses lokasi GPS...</span>
+            </div>
+            <div id="cameraControls">
+                <button class="btn-action" id="btnCapture" onclick="takePhoto()" disabled style="opacity: 0.6; cursor: not-allowed;">
+                    <i data-feather="camera" style="width: 16px; height: 16px;"></i> Ambil Foto
+                </button>
+            </div>
+            <div id="submitControls" style="display: none; gap: 12px; justify-content: center;">
+                <button class="btn-action btn-outline" onclick="retakePhoto()" style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main);">Ulangi</button>
+                <button class="btn-action" id="btnSubmitAtt" onclick="submitAttendance()" style="background: #10b981; color: white;">Kirim Absensi</button>
+            </div>
+        </div>
+    @elseif($isAssigned && $event->needs_attendance && $myAttendance)
+        <div class="att-section-new" style="margin-bottom: 28px; border: 1px solid var(--border-color); border-radius: 20px;">
+            <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Absensi Kehadiran</h4>
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; margin-bottom: 16px;">
+                <i data-feather="check" style="width: 16px; height: 16px;"></i>
+                Hadir pada {{ $myAttendance->attended_at->locale('id')->format('H:i - d M Y') }}
+            </div>
+            @if($myAttendance->photo_path)
+                <img src="{{ asset($myAttendance->photo_path) }}" alt="Bukti Absen" style="width: 110px; height: 110px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;" onclick="viewFullImage('{{ asset($myAttendance->photo_path) }}')">
+            @endif
+        </div>
+    @endif
+
+    <!-- 2. PIC Event -->
+    @if($pic)
+        <div style="margin-bottom: 28px;">
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 16px;">PIC Event</h3>
+            <div class="card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 16px 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <img src="{{ $pic->photo_url }}" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--border-color);" alt="{{ $pic->name }}">
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">{{ $pic->name }}</div>
+                            <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">{{ $pic->division->name ?? 'Internal' }}</span>
+                                <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--border-color);"></span>
+                                <span style="display: inline-block; padding: 2px 8px; background: #fef3c7; color: #d97706; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase;">PIC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @php
+        // Construct Crew list
+        $crewMembers = collect();
+        if ($pic) {
+            $crewMembers->push([
+                'user' => $pic,
+                'role' => 'PIC',
+                'pivot' => $pic->pivot
+            ]);
+        }
+        foreach ($event->positions as $position) {
+            foreach ($position->members as $member) {
+                if ($pic && $member->id == $pic->id) continue; // avoid duplication of PIC
+                $crewMembers->push([
+                    'user' => $member,
+                    'role' => $position->name,
+                    'pivot' => $member->pivot
+                ]);
+            }
+        }
+        // Unique crew
+        $crewMembers = $crewMembers->unique(fn($c) => $c['user']->id);
+    @endphp
+
+    <!-- 3. Struktur Tim & Penugasan -->
+    <div style="margin-bottom: 28px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0;">Tim</h3>
+            <span style="background: rgba(37,99,235,0.08); color: #2563eb; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px;">
+                Jumlah Crew &nbsp;·&nbsp; {{ $crewMembers->count() }} orang
+            </span>
+        </div>
+
+        <div class="card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+                        <th style="padding: 12px 16px; font-weight: 600;">Nama Crew</th>
+                        <th style="padding: 12px 16px; font-weight: 600;">Peran</th>
+                        <th style="padding: 12px 16px; font-weight: 600;">Tanggal Event</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($crewMembers as $crew)
+                        @php
+                            $member = $crew['user'];
+                            $role = $crew['role'];
+                            $pivot = $crew['pivot'];
+                            $wDates = is_string($pivot->work_dates) ? json_decode($pivot->work_dates, true) : ($pivot->work_dates ?? []);
+                        @endphp
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
+                                <img src="{{ $member->photo_url }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--border-color);">
+                                <span style="font-weight: 600; color: var(--text-main);">{{ $member->name }}</span>
+                            </td>
+                            <td style="padding: 14px 16px; color: var(--text-muted); font-weight: 500;">
+                                {{ $role }}
+                            </td>
+                            <td style="padding: 14px 16px; color: var(--text-main); font-weight: 500;">
+                                <span style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <i data-feather="calendar" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                                    @if(is_array($wDates) && count($wDates) > 0)
+                                        {{ collect($wDates)->map(fn($d) => \Carbon\Carbon::parse($d)->locale('id')->translatedFormat('d M Y'))->implode(', ') }}
+                                    @else
+                                        Full Event
+                                    @endif
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 24px; color: var(--text-muted);">Belum ada crew bertugas.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. Checklist Event (Accordion) -->
+    @if($isAssigned || $isLeader)
+        <div style="margin-bottom: 28px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0;">Checklist Event</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Catatan tugas per penanggung jawab.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Completion</span>
+                    <span style="font-size: 16px; font-weight: 800; color: #2563eb;" id="progress-percentage">{{ $event->official_tasks_percentage }}%</span>
+                    <div style="width: 100px; height: 6px; border-radius: 99px; background: var(--border-color); overflow: hidden;">
+                        <div id="progress-fill" style="height: 100%; background: #2563eb; width: {{ $event->official_tasks_percentage }}%; transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div style="display: flex; gap: 16px; font-size: 12px; font-weight: 600; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
+                    Pre Event
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+                    Day
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #8b5cf6; display: inline-block;"></span>
+                    Post Event
+                </div>
+            </div>
+
+            <div class="card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <thead>
+                        <tr style="text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+                            <th style="padding: 12px 16px; font-weight: 600; width: 35%;">Posisi</th>
+                            <th style="padding: 12px 16px; font-weight: 600; width: 21%;">H-</th>
+                            <th style="padding: 12px 16px; font-weight: 600; width: 21%;">H</th>
+                            <th style="padding: 12px 16px; font-weight: 600; width: 21%;">H+</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($crewMembers as $crew)
+                            @php
+                                $member = $crew['user'];
+                                $role = $crew['role'];
+
+                                // Filter tasks per member
+                                $memberPreTasks = $event->tasks->where('category', 'pre')->filter(function($t) use ($member, $pic) {
+                                    if ($t->assigned_to !== null) return $t->assigned_to == $member->id;
+                                    return $pic && $member->id == $pic->id;
+                                });
+                                $memberPreCompleted = $memberPreTasks->where('is_completed', true)->count();
+                                $memberPreTotal = $memberPreTasks->count();
+
+                                $memberDdayTasks = $event->tasks->where('category', 'dday')->filter(function($t) use ($member, $pic) {
+                                    if ($t->assigned_to !== null) return $t->assigned_to == $member->id;
+                                    return $pic && $member->id == $pic->id;
+                                });
+                                $memberDdayCompleted = $memberDdayTasks->where('is_completed', true)->count();
+                                $memberDdayTotal = $memberDdayTasks->count();
+
+                                $memberPostTasks = $event->tasks->where('category', 'post')->filter(function($t) use ($member, $pic) {
+                                    if ($t->assigned_to !== null) return $t->assigned_to == $member->id;
+                                    return $pic && $member->id == $pic->id;
+                                });
+                                $memberPostCompleted = $memberPostTasks->where('is_completed', true)->count();
+                                $memberPostTotal = $memberPostTasks->count();
+                            @endphp
+                            <tr class="member-row-header" id="member-header-{{ $member->id }}" onclick="toggleMemberRow('{{ $member->id }}')" style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 16px; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <img src="{{ $member->photo_url }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--border-color);">
+                                        <div>
+                                            <span style="font-weight: 600; color: var(--text-main);">{{ $member->name }}</span>
+                                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 2px;">{{ $role }}</div>
+                                        </div>
+                                    </div>
+                                    <i data-feather="chevron-down" class="chevron-icon" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+                                </td>
+                                <td style="padding: 16px;">
+                                    <div class="checklist-box pre">
+                                        <span style="display: flex; align-items: center; gap: 6px;">
+                                            <i data-feather="check-square" style="width: 14px; height: 14px;"></i>
+                                            <span id="count-{{ $member->id }}-pre" data-completed="{{ $memberPreCompleted }}" data-total="{{ $memberPreTotal }}">{{ $memberPreCompleted }} / {{ $memberPreTotal }} tugas</span>
+                                        </span>
+                                        <i data-feather="chevron-right" style="width: 12px; height: 12px;"></i>
+                                    </div>
+                                </td>
+                                <td style="padding: 16px;">
+                                    <div class="checklist-box dday">
+                                        <span style="display: flex; align-items: center; gap: 6px;">
+                                            <i data-feather="check-square" style="width: 14px; height: 14px;"></i>
+                                            <span id="count-{{ $member->id }}-dday" data-completed="{{ $memberDdayCompleted }}" data-total="{{ $memberDdayTotal }}">{{ $memberDdayCompleted }} / {{ $memberDdayTotal }} tugas</span>
+                                        </span>
+                                        <i data-feather="chevron-right" style="width: 12px; height: 12px;"></i>
+                                    </div>
+                                </td>
+                                <td style="padding: 16px;">
+                                    <div class="checklist-box post">
+                                        <span style="display: flex; align-items: center; gap: 6px;">
+                                            <i data-feather="check-square" style="width: 14px; height: 14px;"></i>
+                                            <span id="count-{{ $member->id }}-post" data-completed="{{ $memberPostCompleted }}" data-total="{{ $memberPostTotal }}">{{ $memberPostCompleted }} / {{ $memberPostTotal }} tugas</span>
+                                        </span>
+                                        <i data-feather="chevron-right" style="width: 12px; height: 12px;"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Accordion Panel row -->                            <tr class="expanded-row-panel" id="expanded-row-{{ $member->id }}" style="display: none; background: var(--bg-color);">
+                                <td colspan="4" style="padding: 24px; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+                                        
+                                        <!-- Column Pre Event -->
+                                        <div>
+                                            <h5 style="font-size: 13px; font-weight: 700; color: #2563eb; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Pre Event</h5>
+                                            <div id="task-list-{{ $member->id }}-pre" style="display: flex; flex-direction: column; gap: 6px;">
+                                                @forelse($memberPreTasks as $task)
+                                                    <div class="task-item-new {{ $task->is_completed ? 'completed' : '' }}" id="task-item-{{ $task->id }}">
+                                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                            <div class="task-checkbox-new {{ $task->is_completed ? 'checked' : '' }}" onclick="toggleTask('{{ $task->id }}', '{{ $member->id }}', 'pre')" id="checkbox-{{ $task->id }}">
+                                                                @if($task->is_completed)
+                                                                    <i data-feather="check" style="width: 12px; height: 12px; color: white;"></i>
+                                                                @endif
+                                                            </div>
+                                                            <span class="task-text-span" style="font-size: 13px; font-weight: 500; color: var(--text-main); text-decoration: {{ $task->is_completed ? 'line-through' : 'none' }}; line-height: 1.3;">{{ $task->task_name }}</span>
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px;">
+                                                            @if($task->created_by === auth()->id() || $task->assigned_to === auth()->id() || $isPic || $isLeader)
+                                                                <span onclick="deleteTask('{{ $task->id }}', '{{ $member->id }}', 'pre', {{ $task->is_completed ? 'true' : 'false' }})" style="color: #ef4444; cursor: pointer; padding: 2px; display: inline-flex; align-items: center;">
+                                                                    <i data-feather="trash-2" style="width: 13px; height: 13px;"></i>
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @empty
+                                                    <div class="empty-state" style="font-size: 12px; color: var(--text-muted); font-weight: 500; padding: 8px 0;">Tidak ada tugas.</div>
+                                                @endforelse
+                                            </div>
+ 
+                                            <!-- Create Task Input (Role Restricted: CEO/GM/PIC can add for anyone, Crew for self) -->
+                                            @if($isLeader || $isPic || auth()->id() == $member->id)
+                                                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                                    <div style="position: relative;">
+                                                        <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; font-weight: bold; pointer-events: none;">+</span>
+                                                        <input type="text" class="quick-add-input" placeholder="Tambah To Do" onkeypress="handleQuickAddInput(event, 'pre', '{{ $member->id }}')" style="width: 100%; padding: 8px 12px 8px 30px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 12.5px; background: transparent; outline: none; transition: border 0.2s;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+ 
+                                        <!-- Column Day Event -->
+                                        <div>
+                                            <h5 style="font-size: 13px; font-weight: 700; color: #f59e0b; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Day</h5>
+                                            <div id="task-list-{{ $member->id }}-dday" style="display: flex; flex-direction: column; gap: 6px;">
+                                                @forelse($memberDdayTasks as $task)
+                                                    <div class="task-item-new {{ $task->is_completed ? 'completed' : '' }}" id="task-item-{{ $task->id }}">
+                                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                            <div class="task-checkbox-new {{ $task->is_completed ? 'checked' : '' }}" onclick="toggleTask('{{ $task->id }}', '{{ $member->id }}', 'dday')" id="checkbox-{{ $task->id }}">
+                                                                @if($task->is_completed)
+                                                                    <i data-feather="check" style="width: 12px; height: 12px; color: white;"></i>
+                                                                @endif
+                                                            </div>
+                                                            <span class="task-text-span" style="font-size: 13px; font-weight: 500; color: var(--text-main); text-decoration: {{ $task->is_completed ? 'line-through' : 'none' }}; line-height: 1.3;">{{ $task->task_name }}</span>
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px;">
+                                                            @if($task->created_by === auth()->id() || $task->assigned_to === auth()->id() || $isPic || $isLeader)
+                                                                <span onclick="deleteTask('{{ $task->id }}', '{{ $member->id }}', 'dday', {{ $task->is_completed ? 'true' : 'false' }})" style="color: #ef4444; cursor: pointer; padding: 2px; display: inline-flex; align-items: center;">
+                                                                    <i data-feather="trash-2" style="width: 13px; height: 13px;"></i>
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @empty
+                                                    <div class="empty-state" style="font-size: 12px; color: var(--text-muted); font-weight: 500; padding: 8px 0;">Tidak ada tugas.</div>
+                                                @endforelse
+                                            </div>
+ 
+                                            @if($isLeader || $isPic || auth()->id() == $member->id)
+                                                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                                    <div style="position: relative;">
+                                                        <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; font-weight: bold; pointer-events: none;">+</span>
+                                                        <input type="text" class="quick-add-input" placeholder="Tambah To Do" onkeypress="handleQuickAddInput(event, 'dday', '{{ $member->id }}')" style="width: 100%; padding: 8px 12px 8px 30px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 12.5px; background: transparent; outline: none; transition: border 0.2s;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+ 
+                                        <!-- Column Post Event -->
+                                        <div>
+                                            <h5 style="font-size: 13px; font-weight: 700; color: #8b5cf6; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Post Event</h5>
+                                            <div id="task-list-{{ $member->id }}-post" style="display: flex; flex-direction: column; gap: 6px;">
+                                                @forelse($memberPostTasks as $task)
+                                                    <div class="task-item-new {{ $task->is_completed ? 'completed' : '' }}" id="task-item-{{ $task->id }}">
+                                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                            <div class="task-checkbox-new {{ $task->is_completed ? 'checked' : '' }}" onclick="toggleTask('{{ $task->id }}', '{{ $member->id }}', 'post')" id="checkbox-{{ $task->id }}">
+                                                                @if($task->is_completed)
+                                                                    <i data-feather="check" style="width: 12px; height: 12px; color: white;"></i>
+                                                                @endif
+                                                            </div>
+                                                            <span class="task-text-span" style="font-size: 13px; font-weight: 500; color: var(--text-main); text-decoration: {{ $task->is_completed ? 'line-through' : 'none' }}; line-height: 1.3;">{{ $task->task_name }}</span>
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px;">
+                                                            @if($task->created_by === auth()->id() || $task->assigned_to === auth()->id() || $isPic || $isLeader)
+                                                                <span onclick="deleteTask('{{ $task->id }}', '{{ $member->id }}', 'post', {{ $task->is_completed ? 'true' : 'false' }})" style="color: #ef4444; cursor: pointer; padding: 2px; display: inline-flex; align-items: center;">
+                                                                    <i data-feather="trash-2" style="width: 13px; height: 13px;"></i>
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @empty
+                                                    <div class="empty-state" style="font-size: 12px; color: var(--text-muted); font-weight: 500; padding: 8px 0;">Tidak ada tugas.</div>
+                                                @endforelse
+                                            </div>
+ 
+                                            @if($isLeader || $isPic || auth()->id() == $member->id)
+                                                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                                    <div style="position: relative;">
+                                                        <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; font-weight: bold; pointer-events: none;">+</span>
+                                                        <input type="text" class="quick-add-input" placeholder="Tambah To Do" onkeypress="handleQuickAddInput(event, 'post', '{{ $member->id }}')" style="width: 100%; padding: 8px 12px 8px 30px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 12.5px; background: transparent; outline: none; transition: border 0.2s;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+ 
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
+    <!-- 5. Danger Zone: Hapus Event -->
+    @if($isLeader)
+        <div class="danger-card">
+            <div>
+                <h4 style="font-size: 15px; font-weight: 700; color: #b91c1c; margin: 0;">Hapus Event</h4>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px; margin-bottom: 0;">
+                    Menghapus event akan membatalkan seluruh jadwal penugasan dan riwayat terkait secara permanen.
+                </p>
+            </div>
+            <button type="button" class="btn-danger" onclick="openDeleteModal()" style="background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; font-weight: 700; padding: 10px 20px; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                Hapus Event
+            </button>
+        </div>
+    @endif
+
+    <!-- Modals -->
+    <!-- Confirm Delete Modal -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal-box">
-            <h4>Konfirmasi Penghapusan</h4>
-            <p>Apakah Anda yakin ingin menghapus event <strong>{{ $event->name }}</strong>? Data yang sudah dihapus tidak
-                dapat dipulihkan kembali.</p>
+            <h4 style="color:#b91c1c;">Konfirmasi Penghapusan</h4>
+            <p>Apakah Anda yakin ingin menghapus event <strong>{{ $event->name }}</strong>? Data yang sudah dihapus tidak dapat dipulihkan kembali.</p>
             <div class="modal-actions">
                 <button class="btn-secondary" onclick="closeDeleteModal()">Batal</button>
                 <form action="{{ route('events.destroy', $event->id) }}" method="POST" style="margin:0;">
@@ -992,23 +783,136 @@
         </div>
     </div>
 
+    <!-- Full Image Viewer Modal -->
+    <div id="fullImageModal" style="display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px;" onclick="closeFullImageModal()">
+        <div style="position: relative; max-width: 90%; max-height: 90%;" onclick="event.stopPropagation()">
+            <button onclick="closeFullImageModal()" style="position: absolute; top: -35px; right: 0; background: none; border: none; color: white; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                <i data-feather="x" style="width: 16px; height: 16px;"></i> Tutup
+            </button>
+            <img id="modalImg" src="" style="max-width: 100%; max-height: 80vh; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); object-fit: contain;">
+        </div>
+    </div>
+
     <script>
         function openDeleteModal() { document.getElementById('deleteModal').classList.add('open'); }
         function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('open'); }
-        
-        function openOfficialTaskModal(category) {
-            const labels = { 'pre': 'Pre-Event', 'dday': 'D-Day', 'post': 'Post-Event' };
-            document.getElementById('official-modal-title').innerText = 'Tambah To Do - ' + labels[category];
-            document.getElementById('official-category').value = category;
-            document.getElementById('officialTaskModal').classList.add('open');
+
+        // Accordion toggle helper
+        function toggleMemberRow(memberId) {
+            const header = document.getElementById(`member-header-${memberId}`);
+            const panel = document.getElementById(`expanded-row-${memberId}`);
+            
+            if (header.classList.contains('expanded')) {
+                header.classList.remove('expanded');
+                panel.style.display = 'none';
+                sessionStorage.removeItem('expanded_member_row');
+            } else {
+                // Collapse any active row first to keep it clean (optional, but let's just close others)
+                document.querySelectorAll('.member-row-header').forEach(h => {
+                    h.classList.remove('expanded');
+                });
+                document.querySelectorAll('.expanded-row-panel').forEach(p => {
+                    p.style.display = 'none';
+                });
+
+                header.classList.add('expanded');
+                panel.style.display = 'table-row';
+                sessionStorage.setItem('expanded_member_row', memberId);
+            }
+        }
+        // Re-expand stored row after DOM load
+        document.addEventListener("DOMContentLoaded", function() {
+            feather.replace();
+            
+            const expandedMemberId = sessionStorage.getItem('expanded_member_row');
+            if (expandedMemberId) {
+                const header = document.getElementById(`member-header-${expandedMemberId}`);
+                const panel = document.getElementById(`expanded-row-${expandedMemberId}`);
+                if (header && panel) {
+                    header.classList.add('expanded');
+                    panel.style.display = 'table-row';
+                }
+            }
+        });
+
+        // Helper to update the global progress bar
+        function updateGlobalProgressBar(percentage) {
+            const percentageSpan = document.getElementById('progress-percentage');
+            const progressFill = document.getElementById('progress-fill');
+            if (percentageSpan) {
+                percentageSpan.innerText = `${percentage}%`;
+            }
+            if (progressFill) {
+                progressFill.style.width = `${percentage}%`;
+            }
         }
 
-        function closeOfficialTaskModal() {
-            document.getElementById('officialTaskModal').classList.remove('open');
-            document.getElementById('officialTaskForm').reset();
+        // Helper to render task HTML dynamically
+        function renderTaskItem(task, isPicOrLeader, currentUserId) {
+            const isCompleted = task.is_completed;
+            
+            const div = document.createElement('div');
+            div.className = `task-item-new ${isCompleted ? 'completed' : ''}`;
+            div.id = `task-item-${task.id}`;
+            
+            // Left content wrapper
+            const leftContainer = document.createElement('div');
+            leftContainer.style.display = 'flex';
+            leftContainer.style.alignItems = 'center';
+            leftContainer.style.gap = '10px';
+            leftContainer.style.flex = '1';
+            leftContainer.style.minWidth = '0';
+            
+            // Checkbox
+            const checkboxDiv = document.createElement('div');
+            checkboxDiv.className = `task-checkbox-new ${isCompleted ? 'checked' : ''}`;
+            checkboxDiv.id = `checkbox-${task.id}`;
+            checkboxDiv.setAttribute('onclick', `toggleTask('${task.id}', '${task.assigned_to}', '${task.category}')`);
+            if (isCompleted) {
+                checkboxDiv.innerHTML = `<i data-feather="check" style="width: 12px; height: 12px; color: white;"></i>`;
+            }
+            leftContainer.appendChild(checkboxDiv);
+            
+            // Text
+            const textSpan = document.createElement('span');
+            textSpan.className = 'task-text-span';
+            textSpan.style.fontSize = '13px';
+            textSpan.style.fontWeight = '500';
+            textSpan.style.color = 'var(--text-main)';
+            textSpan.style.textDecoration = isCompleted ? 'line-through' : 'none';
+            textSpan.style.lineHeight = '1.3';
+            textSpan.textContent = task.task_name;
+            leftContainer.appendChild(textSpan);
+            
+            div.appendChild(leftContainer);
+            
+            // Right actions wrapper
+            const actionsDiv = document.createElement('div');
+            actionsDiv.style.display = 'flex';
+            actionsDiv.style.alignItems = 'center';
+            actionsDiv.style.gap = '6px';
+            actionsDiv.style.flexShrink = '0';
+            actionsDiv.style.marginLeft = '8px';
+            
+            // Delete button
+            if (task.created_by == currentUserId || task.assigned_to == currentUserId || isPicOrLeader) {
+                const deleteSpan = document.createElement('span');
+                deleteSpan.setAttribute('onclick', `deleteTask('${task.id}', '${task.assigned_to}', '${task.category}', ${isCompleted})`);
+                deleteSpan.style.color = '#ef4444';
+                deleteSpan.style.cursor = 'pointer';
+                deleteSpan.style.padding = '2px';
+                deleteSpan.style.display = 'inline-flex';
+                deleteSpan.style.alignItems = 'center';
+                deleteSpan.innerHTML = `<i data-feather="trash-2" style="width: 13px; height: 13px;"></i>`;
+                actionsDiv.appendChild(deleteSpan);
+            }
+            
+            div.appendChild(actionsDiv);
+            return div;
         }
 
-        async function handleQuickAdd(event, category, type) {
+        // Quick add for specific user
+        async function handleQuickAddInput(event, category, assignedTo) {
             if (event.key === 'Enter' && event.target.value.trim() !== '') {
                 const name = event.target.value.trim();
                 event.target.disabled = true;
@@ -1020,14 +924,47 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({ task_name: name, category, type })
+                        body: JSON.stringify({ task_name: name, category, assigned_to: assignedTo })
                     });
                     
                     const data = await response.json();
                     if (data.success) {
                         event.target.value = '';
-                        appendTaskToUI(data.task, category);
-                        updateProgressBar(data.completion_percentage);
+                        
+                        // Append new task to DOM
+                        const taskList = document.getElementById(`task-list-${assignedTo}-${category}`);
+                        if (taskList) {
+                            const emptyState = taskList.querySelector('.empty-state');
+                            if (emptyState) {
+                                emptyState.remove();
+                            }
+                            
+                            const isPicOrLeader = {{ ($isPic || $isLeader) ? 'true' : 'false' }};
+                            const currentUserId = {{ auth()->id() }};
+                            
+                            const taskEl = renderTaskItem(data.task, isPicOrLeader, currentUserId);
+                            taskList.appendChild(taskEl);
+                            
+                            // Initialize feather icons
+                            feather.replace();
+                        }
+                        
+                        // Update checklist count bubble
+                        const countSpan = document.getElementById(`count-${assignedTo}-${category}`);
+                        if (countSpan) {
+                            let completed = parseInt(countSpan.getAttribute('data-completed'), 10);
+                            let total = parseInt(countSpan.getAttribute('data-total'), 10);
+                            
+                            total++;
+                            
+                            countSpan.setAttribute('data-total', total);
+                            countSpan.innerText = `${completed} / ${total} tugas`;
+                        }
+                        
+                        // Update global progress bar
+                        updateGlobalProgressBar(data.completion_percentage);
+                    } else {
+                        alert(data.error || "Gagal menyimpan To Do");
                     }
                 } catch (err) {
                     console.error("Gagal menambah tugas:", err);
@@ -1038,122 +975,122 @@
             }
         }
 
-        document.getElementById('officialTaskForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const body = Object.fromEntries(formData.entries());
-            
-            if (!body.assigned_to) {
-                body.assigned_to = null;
-            }
-            
-            try {
-                const response = await fetch(`{{ route('events.tasks.store', $event->id) }}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(body)
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    appendTaskToUI(data.task, body.category);
-                    updateProgressBar(data.completion_percentage);
-                    closeOfficialTaskModal();
-                } else {
-                    alert(data.error || "Gagal menyimpan To Do");
-                }
-            } catch (err) {
-                console.error("Gagal menambah To Do resmi:", err);
-            }
-        };
-
-        async function toggleTask(taskId) {
-            const checkbox = document.getElementById(`checkbox-${taskId}`);
-            const item = document.getElementById(`task-item-${taskId}`);
-            
+        async function toggleTask(taskId, memberId, category) {
             try {
                 const response = await fetch(`/event-tasks/${taskId}/toggle`, {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                    }
                 });
                 const data = await response.json();
-                
                 if (data.success) {
-                    checkbox.classList.toggle('checked');
-                    item.classList.toggle('completed');
-                    checkbox.innerHTML = data.is_completed ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` : '';
-                    updateProgressBar(data.completion_percentage);
+                    const checkbox = document.getElementById(`checkbox-${taskId}`);
+                    const taskItem = document.getElementById(`task-item-${taskId}`);
+                    const taskTextSpan = taskItem.querySelector('.task-text-span');
+                    
+                    const isCompletedNow = data.is_completed;
+                    
+                    if (isCompletedNow) {
+                        checkbox.classList.add('checked');
+                        checkbox.innerHTML = `<i data-feather="check" style="width: 12px; height: 12px; color: white;"></i>`;
+                        taskItem.classList.add('completed');
+                        taskTextSpan.style.textDecoration = 'line-through';
+                    } else {
+                        checkbox.classList.remove('checked');
+                        checkbox.innerHTML = '';
+                        taskItem.classList.remove('completed');
+                        taskTextSpan.style.textDecoration = 'none';
+                    }
+                    
+                    feather.replace();
+                    
+                    // Update checklist count bubble
+                    const countSpan = document.getElementById(`count-${memberId}-${category}`);
+                    if (countSpan) {
+                        let completed = parseInt(countSpan.getAttribute('data-completed'), 10);
+                        let total = parseInt(countSpan.getAttribute('data-total'), 10);
+                        
+                        if (isCompletedNow) {
+                            completed++;
+                        } else {
+                            completed--;
+                        }
+                        
+                        countSpan.setAttribute('data-completed', completed);
+                        countSpan.innerText = `${completed} / ${total} tugas`;
+                    }
+                    
+                    // Update global progress bar
+                    updateGlobalProgressBar(data.completion_percentage);
                 }
             } catch (err) {
                 console.error("Gagal toggle tugas:", err);
             }
         }
 
-        async function deleteTask(taskId) {
+        async function deleteTask(taskId, memberId, category, wasCompleted) {
             if (!confirm('Hapus tugas ini?')) return;
-            
             try {
                 const response = await fetch(`/event-tasks/${taskId}`, {
                     method: 'DELETE',
                     headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
                 });
                 const data = await response.json();
-                
                 if (data.success) {
-                    document.getElementById(`task-item-${taskId}`).remove();
-                    updateProgressBar(data.completion_percentage);
+                    const taskItem = document.getElementById(`task-item-${taskId}`);
+                    if (taskItem) {
+                        taskItem.remove();
+                    }
+                    
+                    // Update checklist count bubble
+                    const countSpan = document.getElementById(`count-${memberId}-${category}`);
+                    if (countSpan) {
+                        let completed = parseInt(countSpan.getAttribute('data-completed'), 10);
+                        let total = parseInt(countSpan.getAttribute('data-total'), 10);
+                        
+                        total--;
+                        if (wasCompleted) {
+                            completed--;
+                        }
+                        
+                        countSpan.setAttribute('data-completed', completed);
+                        countSpan.setAttribute('data-total', total);
+                        countSpan.innerText = `${completed} / ${total} tugas`;
+                    }
+                    
+                    const taskList = document.getElementById(`task-list-${memberId}-${category}`);
+                    if (taskList && taskList.children.length === 0) {
+                        taskList.innerHTML = `<div class="empty-state" style="font-size: 12px; color: var(--text-muted); font-weight: 500; padding: 8px 0;">Tidak ada tugas.</div>`;
+                    }
+                    
+                    // Update global progress bar
+                    updateGlobalProgressBar(data.completion_percentage);
                 }
             } catch (err) {
                 console.error("Gagal menghapus tugas:", err);
             }
         }
 
-        function appendTaskToUI(task, category) {
-            const list = document.getElementById(`task-list-${category}`);
-            const div = document.createElement('div');
-            div.id = `task-item-${task.id}`;
-            div.className = `task-item ${task.is_completed ? 'completed' : ''}`;
-            
-            const assigneeHtml = task.assignee ? `<img src="${task.assignee.photo_url}" class="task-assignee" title="Tugas: ${task.assignee.name}">` : '';
-            const typeLabel = task.type === 'official' ? 'To Do' : 'Personal';
-            
-            div.innerHTML = `
-                <div class="task-checkbox ${task.is_completed ? 'checked' : ''}" onclick="toggleTask('${task.id}')" id="checkbox-${task.id}">
-                    ${task.is_completed ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` : ''}
-                </div>
-                <div class="task-text">${task.task_name}</div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="task-type-badge task-${task.type}">${typeLabel}</span>
-                    ${assigneeHtml}
-                    <span class="task-delete-btn" onclick="deleteTask('${task.id}')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                    </span>
-                </div>
-            `;
-            list.appendChild(div);
+        function viewFullImage(src) {
+            const modal = document.getElementById('fullImageModal');
+            const img = document.getElementById('modalImg');
+            img.src = src;
+            modal.style.display = 'flex';
         }
 
-        function updateProgressBar(percentage) {
-            const fill = document.getElementById('progress-fill');
-            const text = document.getElementById('progress-percentage');
-            if (fill) fill.style.width = percentage + '%';
-            if (text) text.innerText = percentage + '%';
+        function closeFullImageModal() {
+            document.getElementById('fullImageModal').style.display = 'none';
         }
 
         window.addEventListener('click', function (event) {
             const delModal = document.getElementById('deleteModal');
-            const offModal = document.getElementById('officialTaskModal');
             if (event.target == delModal) closeDeleteModal();
-            if (event.target == offModal) closeOfficialTaskModal();
         });
     </script>
 
+    <!-- Webcam Geotag Absensi Script -->
     @if($isAssigned && $event->needs_attendance && !$myAttendance && $event->status === 'ongoing' && $attendanceOpen)
         <script>
             const video = document.getElementById('videoElement');
@@ -1178,7 +1115,7 @@
                     getLocation();
                 } catch (err) {
                     console.error("Akses kamera ditolak / error:", err);
-                    document.getElementById('cameraWrapper').innerHTML = `<p style="color:#b91c1c; padding:40px 20px;">Gagal mengakses kamera. Pastikan memberikan izin pada browser.</p>`;
+                    document.getElementById('cameraWrapper').innerHTML = `<p style="color:#b91c1c; padding:40px 20px; font-weight:600;">Gagal mengakses kamera. Mohon izinkan akses kamera pada peramban Anda.</p>`;
                     btnCapture.disabled = true;
                     locStatus.style.display = 'none';
                 }
@@ -1199,7 +1136,9 @@
                             const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&zoom=18&addressdetails=1`);
                             const data = await res.json();
                             if(data && data.display_name) {
-                                currentAddress = data.display_name;
+                                const parts = data.display_name.split(', ');
+                                if (parts.length > 1) parts.pop(); // remove country
+                                currentAddress = parts.join(', ');
                             } else {
                                 currentAddress = `Lat: ${currentLat.toFixed(5)}, Lon: ${currentLon.toFixed(5)}`;
                             }
@@ -1207,7 +1146,7 @@
                             currentAddress = `Lat: ${currentLat.toFixed(5)}, Lon: ${currentLon.toFixed(5)}`;
                         }
 
-                        locStatus.style.color = "#166534";
+                        locStatus.style.color = "#10b981";
                         locText.innerText = currentAddress;
                         btnCapture.disabled = false;
                         btnCapture.style.opacity = 1;
@@ -1215,7 +1154,7 @@
                     },
                     (error) => {
                         let msg = "Gagal mengakses lokasi.";
-                        if (error.code === error.PERMISSION_DENIED) msg = "Akses lokasi ditolak! Anda WAJIB menyalakan GPS untuk absen.";
+                        if (error.code === error.PERMISSION_DENIED) msg = "Akses lokasi ditolak! Anda WAJIB mengaktifkan GPS untuk absensi.";
                         locText.innerText = msg;
                     },
                     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -1259,47 +1198,46 @@
                 canvas.height = vH;
 
                 const ctx = canvas.getContext('2d');
-                
                 ctx.translate(canvas.width, 0);
                 ctx.scale(-1, 1);
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
                 ctx.translate(canvas.width, 0);
                 ctx.scale(-1, 1);
 
-                const rectHeight = 150;
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                // Backdrop glass overlay on photo bottom
+                const rectHeight = 130;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
                 ctx.fillRect(0, canvas.height - rectHeight, canvas.width, rectHeight);
 
                 ctx.fillStyle = '#ffffff';
                 ctx.textBaseline = 'top';
                 
-                const paddingX = 16;
-                const startY = canvas.height - rectHeight + 12;
+                const paddingX = 20;
+                const startY = canvas.height - rectHeight + 14;
 
-                ctx.font = 'bold 16px sans-serif';
+                ctx.font = 'bold 15px sans-serif';
                 ctx.fillText('{{ config("app.name") }} Geotag Absensi', paddingX, startY);
 
-                ctx.font = 'bold 14px monospace';
-                ctx.fillStyle = '#fef08a';
+                ctx.font = 'bold 13px monospace';
+                ctx.fillStyle = '#fbbf24';
                 const dateTimeStr = formatLocalDate();
-                ctx.fillText(dateTimeStr, paddingX, startY + 24);
+                ctx.fillText(dateTimeStr, paddingX, startY + 22);
 
-                ctx.font = '13px sans-serif';
+                ctx.font = '12px sans-serif';
                 ctx.fillStyle = '#ffffff';
                 const maxWidth = canvas.width - (paddingX * 2);
-                const addressLines = wrapText(ctx, currentAddress, paddingX, startY + 46, maxWidth, 18);
+                const addressLines = wrapText(ctx, currentAddress, paddingX, startY + 42, maxWidth, 16);
                 
-                let curY = startY + 46;
+                let curY = startY + 42;
                 for (let i = 0; i < addressLines.length; i++) {
                     ctx.fillText(addressLines[i], paddingX, curY);
-                    curY += 18;
+                    curY += 16;
                     if(i === 3) break; 
                 }
 
                 if (currentLat !== null) {
-                    ctx.font = '11px monospace';
-                    ctx.fillStyle = '#d1d5db';
+                    ctx.font = '10px monospace';
+                    ctx.fillStyle = '#94a3b8';
                     ctx.fillText(`${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}`, paddingX, curY + 2);
                 }
 
@@ -1337,23 +1275,23 @@
                     body: formData,
                     headers: { 'Accept': 'application/json' }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (stream) stream.getTracks().forEach(track => track.stop());
-                            window.location.reload();
-                        } else {
-                            alert(data.error || "Terjadi kesalahan.");
-                            btnSubmit.disabled = false;
-                            btnSubmit.innerText = "Kirim Data";
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Gagal mengirim data. Coba lagi.');
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (stream) stream.getTracks().forEach(track => track.stop());
+                        window.location.reload();
+                    } else {
+                        alert(data.error || "Terjadi kesalahan.");
                         btnSubmit.disabled = false;
-                        btnSubmit.innerText = "Kirim Data";
-                    });
+                        btnSubmit.innerText = "Kirim Absensi";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal mengirim data. Coba lagi.');
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerText = "Kirim Absensi";
+                });
             }
 
             window.addEventListener('load', startCamera);
