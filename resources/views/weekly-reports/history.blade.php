@@ -3,123 +3,573 @@
 @section('title', 'History Weekly Report')
 
 @section('content')
+@php
+    $months = [
+        1 => 'Januari',
+        2 => 'Februari',
+        3 => 'Maret',
+        4 => 'April',
+        5 => 'Mei',
+        6 => 'Juni',
+        7 => 'Juli',
+        8 => 'Agustus',
+        9 => 'September',
+        10 => 'Oktober',
+        11 => 'November',
+        12 => 'Desember'
+    ];
+@endphp
+
 <style>
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
-    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
-    th { color: var(--text-muted); font-weight: 500; font-size: 13px; }
-    .badge { padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 500; }
-    .badge-submitted { background: #dcfce7; color: #166534; }
-    .user-cell { display: flex; align-items: center; gap: 10px; }
-    .avatar-table { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color); }
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card {
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    /* .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    } */
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .icon-submitted { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .icon-late { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    .icon-ontime { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
+    .icon-average { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+    .stat-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .stat-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+    .stat-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .stat-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    /* Filters block */
+    .filters-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+    .filters-left {
+        display: flex;
+        flex-direction: column;
+    }
+    .filters-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .search-container {
+        position: relative;
+        min-width: 260px;
+    }
+    .search-container input {
+        width: 100%;
+        padding: 9px 12px 9px 38px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 13px;
+        background: var(--bg-color);
+        color: var(--text-main);
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .search-container input:focus {
+        border-color: #2563eb;
+    }
+    .search-container i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        width: 16px;
+        height: 16px;
+    }
+    .filter-select {
+        padding: 9px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 13px;
+        background: var(--bg-color);
+        color: var(--text-main);
+        outline: none;
+        min-width: 130px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+    .filter-select:focus {
+        border-color: #2563eb;
+    }
+
+    /* Card list row */
+    .report-card-row {
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
+    /* .report-card-row:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    } */
+    .report-card-row::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+    }
+    
+
+    /* Left section */
+    .row-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1.2;
+        min-width: 240px;
+    }
+    .status-icon-wrapper {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .status-icon-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .status-icon-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .status-icon-info { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .status-icon-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+    .week-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .week-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 2px;
+    }
+    .week-date {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+    }
+    .badge-status {
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        width: max-content;
+    }
+    .badge-status-submitted { background: #dcfce7; color: #166534; }
+    .badge-status-draft { background: #eff6ff; color: #1e40af; }
+    .badge-status-late { background: #fee2e2; color: #991b1b; }
+
+    /* Middle section */
+    .row-middle {
+        flex: 2;
+        min-width: 300px;
+        padding-right: 16px;
+    }
+    .section-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .objective-text {
+        font-size: 13px;
+        color: var(--text-main);
+        line-height: 1.5;
+    }
+
+    /* Right section */
+    .row-right {
+        flex: 1.5;
+        min-width: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .progress-bar-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+    .progress-track {
+        flex: 1;
+        height: 6px;
+        background: var(--hover-bg);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+    }
+    .fill-success { background: #10b981; }
+    .fill-warning { background: #f59e0b; }
+    .fill-info { background: #3b82f6; }
+    .fill-danger { background: #ef4444; }
+
+    .progress-percent {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-main);
+        width: 32px;
+        text-align: right;
+    }
+    .meta-details {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 11px;
+        color: var(--text-muted);
+    }
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .meta-item i {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Detail button */
+    .btn-detail-cta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #2563eb;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s;
+        white-space: nowrap;
+    }
+    .btn-detail-cta:hover {
+        background: #dbeafe;
+        border-color: #93c5fd;
+    }
 </style>
 
+<!-- Top Statistics Dashboard -->
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <div class="stat-icon icon-submitted">
+            <i data-feather="file-text"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-label">Submitted</span>
+            <span class="stat-value">{{ $totalSubmitted }}</span>
+            <span class="stat-desc">Total laporan diserahkan</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-late">
+            <i data-feather="alert-triangle"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-label">Terlambat Submit</span>
+            <span class="stat-value">{{ $totalLate }}</span>
+            <span class="stat-desc">Melewati batas waktu</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-ontime">
+            <i data-feather="check-circle"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-label">Tepat Waktu</span>
+            <span class="stat-value">{{ $totalOnTime }}</span>
+            <span class="stat-desc">Diserahkan tepat waktu</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-average">
+            <i data-feather="trending-up"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-label">Rata-rata Progress</span>
+            <span class="stat-value">{{ $averageCompletion }}%</span>
+            <span class="stat-desc">Tingkat penyelesaian</span>
+        </div>
+    </div>
+</div>
+
 <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <div>
-            <h3 style="margin-bottom: 4px;">Riwayat Seluruh Laporan Mingguan</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Daftar seluruh laporan kerja mingguan yang telah diserahkan oleh staf.</p>
+    <div class="filters-wrapper">
+        <div class="filters-left">
+            <h3 style="margin-bottom: 4px;">{{ $isDirector ? 'Riwayat Laporan Mingguan Seluruh Staf' : 'Riwayat Laporan Mingguan Saya' }}</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">{{ $isDirector ? 'Manajemen dan peninjauan riwayat laporan mingguan yang diserahkan staf.' : 'Daftar riwayat plan, progress, dan pencapaian laporan kerja mingguan Anda.' }}</p>
         </div>
         
-        <form method="GET" action="{{ route('weekly.history') }}" style="display: flex; gap: 12px; align-items: center;">
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Filter Minggu</label>
-                <select name="week" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; background: var(--bg-color); color: var(--text-main); min-width: 200px;">
-                    <option value="">Semua Minggu</option>
-                    @foreach($availableWeeks as $week)
-                        <option value="{{ $week->format('Y-m-d') }}" {{ $selectedWeek == $week->format('Y-m-d') ? 'selected' : '' }}>
-                            Minggu {{ $week->format('d M Y') }}
-                        </option>
-                    @endforeach
-                </select>
+        <form method="GET" action="{{ route('weekly.history') }}" class="filters-right">
+            <div class="search-container">
+                <input type="text" name="search" value="{{ $search }}" placeholder="{{ $isDirector ? 'Cari nama, divisi, atau isi...' : 'Cari isi Weekly Report' }}" onkeydown="if(event.key === 'Enter') this.form.submit()">
             </div>
+
+            @if(!$isDirector)
+                <select name="status" class="filter-select" onchange="this.form.submit()">
+                    <option value="">Semua Status</option>
+                    <option value="submitted" {{ $status == 'submitted' ? 'selected' : '' }}>Submitted</option>
+                    <option value="draft" {{ $status == 'draft' ? 'selected' : '' }}>Draft</option>
+                </select>
+            @endif
+
+            <select name="month" class="filter-select" onchange="this.form.submit()">
+                <option value="">Semua Bulan</option>
+                @foreach($months as $mNum => $mName)
+                    <option value="{{ $mNum }}" {{ $month == $mNum ? 'selected' : '' }}>{{ $mName }}</option>
+                @endforeach
+            </select>
+
+            <select name="year" class="filter-select" onchange="this.form.submit()">
+                <option value="">Semua Tahun</option>
+                @foreach($availableYears as $yr)
+                    <option value="{{ $yr }}" {{ $year == $yr ? 'selected' : '' }}>{{ $yr }}</option>
+                @endforeach
+            </select>
         </form>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Minggu</th>
-                    <th>Nama Karyawan</th>
-                    <th>Divisi</th>
-                    <th>Tingkat Penyelesaian</th>
-                    <th>Tanggal Penyerahan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($reports as $r)
-                <tr>
-                    <td style="font-weight: 600;">
-                        {{ \Carbon\Carbon::parse($r->week_start_date)->translatedFormat('d M Y') }}
-                    </td>
-                    <td>
-                        <div class="user-cell">
-                            <img src="{{ $r->user->photo_url }}" class="avatar-table" alt="{{ $r->user->name }}">
-                            <div>
-                                <span style="font-weight: 500; display: block;">{{ $r->user->name }}</span>
-                                <span style="font-size: 11px; color: var(--text-muted);">NIK: {{ $r->user->nik ?? '-' }}</span>
+    <!-- Weekly Report Stack List -->
+    <div style="margin-top: 16px;">
+        @forelse($reports as $r)
+            @php
+                $totalObjs = $r->items->where('type', 'objective')->count();
+                $completedObjs = $r->items->where('type', 'objective')->where('is_completed', true)->count();
+                $progressPercent = $r->completion_percentage;
+                
+                // Determine border and colors based on status and completion
+                if ($r->status === 'draft') {
+                    $borderClass = 'border-info';
+                    $iconClass = 'status-icon-info';
+                    $iconName = 'edit-3';
+                    $badgeClass = 'badge-status-draft';
+                    $badgeText = 'Draft';
+                    $fillClass = 'fill-info';
+                } elseif ($r->is_late_plan) {
+                    $borderClass = 'border-danger';
+                    $iconClass = 'status-icon-danger';
+                    $iconName = 'alert-circle';
+                    $badgeClass = 'badge-status-late';
+                    $badgeText = 'Terlambat';
+                    $fillClass = 'fill-danger';
+                } else {
+                    if ($progressPercent >= 90) {
+                        $borderClass = 'border-success';
+                        $iconClass = 'status-icon-success';
+                        $iconName = 'check-circle';
+                        $badgeClass = 'badge-status-submitted';
+                        $badgeText = 'Submitted';
+                        $fillClass = 'fill-success';
+                    } elseif ($progressPercent >= 70) {
+                        $borderClass = 'border-warning';
+                        $iconClass = 'status-icon-warning';
+                        $iconName = 'alert-circle';
+                        $badgeClass = 'badge-status-submitted';
+                        $badgeText = 'Submitted';
+                        $fillClass = 'fill-warning';
+                    } else {
+                        $borderClass = 'border-danger';
+                        $iconClass = 'status-icon-danger';
+                        $iconName = 'alert-circle';
+                        $badgeClass = 'badge-status-late';
+                        $badgeText = 'Submitted';
+                        $fillClass = 'fill-danger';
+                    }
+                }
+
+                $weekStartDate = \Carbon\Carbon::parse($r->week_start_date);
+                $weekEndDate = $weekStartDate->copy()->addDays(4);
+            @endphp
+            
+            <div class="report-card-row {{ $borderClass }}">
+                <!-- Left Section (Week Details) -->
+                <div class="row-left">
+                    
+                    <div class="week-info">
+                        <span class="week-title">Week {{ ceil($weekStartDate->day / 7) }}</span>
+                        <span class="week-date">{{ $weekStartDate->translatedFormat('d') }} - {{ $weekEndDate->translatedFormat('d M Y') }}</span>
+                        <span class="badge-status {{ $badgeClass }}">{{ $badgeText }}</span>
+                        
+                        @if($isDirector)
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+                                <img src="{{ $r->user->photo_url }}" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--border-color);">
+                                <div>
+                                    <span style="font-size: 11px; font-weight: 700; color: var(--text-main); display: block; line-height: 1.2;">{{ $r->user->name }}</span>
+                                    <span style="font-size: 9px; color: var(--text-muted);">{{ optional($r->user->division)->name ?? '-' }}</span>
+                                </div>
                             </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Middle Section (Objective Summary) -->
+                <div class="row-middle">
+                    <span class="section-label">Objective</span>
+                    <div class="objective-text">
+                        {{ Str::limit($r->items->where('type', 'objective')->pluck('content')->implode(', '), 110, '...') ?: 'Belum mengisi target utama.' }}
+                    </div>
+                </div>
+
+                <!-- Right Section (Progress Track & Completion Details) -->
+                <div class="row-right">
+                    <span class="section-label">Progress</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-track">
+                            <div class="progress-fill {{ $fillClass }}" style="width: {{ $progressPercent }}%;"></div>
                         </div>
-                    </td>
-                    <td style="color: var(--text-muted);">{{ optional($r->user->division)->name ?? '-' }}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="flex: 1; background: var(--hover-bg); height: 6px; width: 80px; border-radius: 999px; overflow: hidden;">
-                                <div style="background: #10b981; height: 100%; width: {{ $r->completion_percentage }}%;"></div>
-                            </div>
-                            <span style="font-weight: 600; font-size: 12px;">{{ $r->completion_percentage }}%</span>
+                        <span class="progress-percent">{{ $progressPercent }}%</span>
+                    </div>
+                    <div class="meta-details">
+                        <div class="meta-item">
+                            <i data-feather="check-square"></i>
+                            <span>Tasks {{ $completedObjs }} / {{ $totalObjs }}</span>
                         </div>
-                    </td>
-                    <td style="font-size: 13px; color: var(--text-muted);">
-                        {{ $r->final_submitted_at ? $r->final_submitted_at->translatedFormat('d/m/Y H:i') : '-' }}
-                    </td>
-                    <td>
-                        <a href="{{ route('weekly.show_user', [$r->user_id, $r->week_start_date->format('Y-m-d')]) }}" 
-                           style="color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; background: var(--hover-bg); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
-                           Lihat Detail →
-                        </a>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                        Belum ada laporan yang diserahkan.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        <div class="meta-item">
+                            @if($r->status === 'submitted')
+                                <i data-feather="calendar"></i>
+                                <span>Submitted {{ $r->final_submitted_at ? $r->final_submitted_at->translatedFormat('d M Y, H:i') : '-' }}</span>
+                            @else
+                                <i data-feather="clock"></i>
+                                <span>Updated {{ $r->updated_at ? $r->updated_at->translatedFormat('d M Y, H:i') : '-' }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div style="margin-left: 12px;">
+                    <a href="{{ route('weekly.show_user', [$r->user_id, $r->week_start_date->format('Y-m-d')]) }}" class="btn-detail-cta">
+                        <i data-feather="eye" style="width: 14px; height: 14px;"></i>
+                        <span>Lihat Detail</span>
+                        <i data-feather="chevron-right" style="width: 14px; height: 14px;"></i>
+                    </a>
+                </div>
+            </div>
+        @empty
+            <div style="text-align: center; padding: 60px 40px; color: var(--text-muted); background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 16px;">
+                <i data-feather="inbox" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5;"></i>
+                <h4 style="margin-bottom: 4px; font-weight: 600; color: var(--text-main);">Tidak Ada Laporan</h4>
+                <p style="font-size: 13px;">Tidak ada laporan mingguan yang sesuai dengan filter pencarian Anda.</p>
+            </div>
+        @endforelse
     </div>
 
-    @if($targetWeek && count($nonSubmitters) > 0)
-    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px dashed var(--border-color);">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
-            <div style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></div>
-            <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #ef4444;">Belum Mengumpulkan Weekly Report, {{ \Carbon\Carbon::parse($targetWeek)->format('d M Y') }}</h4>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
-            @foreach($nonSubmitters as $user)
-            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 12px;">
-                <img src="{{ $user->photo_url }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <div>
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">{{ $user->name }}</div>
-                    <div style="font-size: 11px; color: var(--text-muted);">{{ $user->division->name ?? 'Tanpa Divisi' }}</div>
-                </div>
-                <div style="margin-left: auto; font-size: 10px; font-weight: 700; color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 4px 8px; border-radius: 6px; text-transform: uppercase;">Belum</div>
+    <!-- Custom Pagination Section -->
+    @if($reports->total() > 0)
+        <div class="custom-pagination-container" style="display: flex; align-items: center; justify-content: space-between; margin-top: 24px; flex-wrap: wrap; gap: 16px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <!-- Records Count -->
+            <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                Menampilkan {{ $reports->firstItem() ?? 0 }} - {{ $reports->lastItem() ?? 0 }} dari {{ $reports->total() }} laporan
             </div>
-            @endforeach
+
+            <!-- Page Links -->
+            <div class="pagination-buttons" style="display: flex; align-items: center; gap: 8px;">
+                @if ($reports->onFirstPage())
+                    <span class="page-btn disabled" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-muted); cursor: not-allowed; opacity: 0.5;">
+                        <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
+                    </span>
+                @else
+                    <a href="{{ $reports->previousPageUrl() }}" class="page-btn" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; transition: all 0.2s;">
+                        <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
+                    </a>
+                @endif
+
+                @foreach ($reports->getUrlRange(max(1, $reports->currentPage() - 2), min($reports->lastPage(), $reports->currentPage() + 2)) as $page => $url)
+                    @if ($page == $reports->currentPage())
+                        <span class="page-btn active" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: #2563eb; color: white; font-weight: 600; font-size: 13px;">
+                            {{ $page }}
+                        </span>
+                    @else
+                        <a href="{{ $url }}" class="page-btn" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s;">
+                            {{ $page }}
+                        </a>
+                    @endif
+                @endforeach
+
+                @if ($reports->hasMorePages())
+                    <a href="{{ $reports->nextPageUrl() }}" class="page-btn" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; transition: all 0.2s;">
+                        <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                    </a>
+                @else
+                    <span class="page-btn disabled" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-muted); cursor: not-allowed; opacity: 0.5;">
+                        <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                    </span>
+                @endif
+            </div>
         </div>
-    </div>
-    @elseif($targetWeek)
-    <div style="margin-top: 32px; padding: 16px; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.15); border-radius: 12px; display: flex; align-items: center; gap: 10px;">
-        <svg style="width: 20px; height: 20px; color: #22c55e;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-        </svg>
-        <span style="font-size: 13px; font-weight: 500; color: #166534;">Luar biasa! Seluruh staf telah mengumpulkan laporan untuk minggu ini.</span>
-    </div>
     @endif
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    });
+</script>
 @endsection

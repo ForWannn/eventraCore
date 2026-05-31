@@ -4,81 +4,183 @@
 
 @section('content')
 <style>
+    /* Card Stack */
+    .create-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 24px;
+    }
+    
+    .create-card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .create-card-title svg {
+        width: 18px;
+        height: 18px;
+        color: var(--text-muted);
+    }
+
+    /* Form Layout */
     .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-    .form-control { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background: var(--bg-color); color: var(--text-main); transition: border-color 0.15s; }
-    .form-control:focus { outline: none; border-color: #9ca3af; }
-    .btn-submit { display: inline-block; padding: 10px 24px; background: var(--primary); color: var(--primary-text); text-decoration: none; border-radius: 12px; border: none; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
-    .btn-submit:hover { opacity: 0.85; }
+    .form-group label { display: block; margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--text-main); }
+    .form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background: var(--bg-color); color: var(--text-main); transition: border-color 0.15s; outline: none; }
+    .form-control:focus { border-color: #2563eb; background-color: var(--card-bg); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08); }
     .error-text { color: #b91c1c; font-size: 12px; margin-top: 4px; }
     .alert-error { background: #fee2e2; color: #b91c1c; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; }
 
-    /* Role radio cards — sama persis dengan edit.blade */
-    .role-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
-    .role-card { position: relative; }
-    .role-card input[type="radio"] { display: none; }
-    .role-label {
-        display: block;
-        padding: 8px 16px;
-        border: 2px solid var(--border-color);
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 500;
+    /* Photo Upload Box (Left Side) */
+    .photo-upload-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .photo-upload-area {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        border: 2px dashed var(--border-color);
+        border-radius: 16px;
+        /* background: var(--hover-bg); */
         cursor: pointer;
-        transition: all 0.15s;
-        color: var(--text-muted);
+        text-align: center;
+        transition: all 0.2s;
     }
-    .role-card input[type="radio"]:checked + .role-label {
-        border-color: var(--primary);
-        color: var(--text-main);
-        background: var(--hover-bg);
+    .photo-upload-area:hover { border-color: #9ca3af; }
+    .photo-avatar-preview {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+        border-radius: 14px;
     }
-    .role-label:hover { border-color: #9ca3af; color: var(--text-main); }
+    .photo-upload-area.has-image {
+        border-style: solid;
+        border-color: var(--border-color);
+    }
+    .photo-upload-area.has-image .photo-avatar-preview {
+        display: block;
+    }
+    .photo-upload-area.has-image .photo-upload-content {
+        display: none;
+    }
+    #photoInputCreate { display: none; }
 
-    /* Password toggle */
-    .input-wrapper { position: relative; }
+    /* Password field with eye icon */
+    .input-wrapper { position: relative; display: flex; align-items: center; }
     .input-wrapper .form-control { padding-right: 44px; }
     .toggle-eye {
         position: absolute;
         right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: var(--text-muted);
         background: none;
         border: none;
-        padding: 0;
-        display: flex;
-        align-items: center;
-    }
-    .toggle-eye svg { width: 18px; height: 18px; }
-
-    /* Photo upload */
-    .photo-upload-area {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding: 16px 20px;
-        border: 1.5px dashed var(--border-color);
-        border-radius: 16px;
-        background: var(--hover-bg);
-        margin-bottom: 24px;
+        color: var(--text-muted);
         cursor: pointer;
-        transition: border-color 0.15s;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
     }
-    .photo-upload-area:hover { border-color: #9ca3af; }
-    .photo-preview-wrap { position: relative; }
-    .photo-avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--border-color);
-        display: block;
+    .toggle-eye:hover { color: var(--text-main); }
+    .toggle-eye svg { width: 16px; height: 16px; stroke-width: 2; }
+
+    /* Roles Selection Grid */
+    .role-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
     }
-    .photo-upload-text h5 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
-    .photo-upload-text p { font-size: 12px; color: var(--text-muted); }
-    #photoInputCreate { display: none; }
+    
+    .role-selection-card {
+        position: relative;
+    }
+    
+    .role-selection-card input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .role-selection-label {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        background: var(--bg-color);
+        color: var(--text-main);
+        cursor: pointer;
+        transition: all 0.2s;
+        /* min-height: 120px; */
+    }
+    
+    .role-selection-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .role-selection-header svg {
+        width: 20px;
+        height: 20px;
+        color: var(--text-muted);
+    }
+    
+    .role-selection-header span {
+        font-size: 14px;
+        font-weight: 700;
+    }
+    
+    .role-selection-desc {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.4;
+        text-align: left;
+    }
+    
+    .role-selection-card input[type="radio"]:checked + .role-selection-label {
+        border-color: #2563eb;
+        background: rgba(37, 99, 235, 0.04);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    }
+
+    .role-selection-card input[type="radio"]:checked + .role-selection-label .role-selection-header svg {
+        color: #2563eb;
+    }
+
+    [data-theme="dark"] .role-selection-card input[type="radio"]:checked + .role-selection-label {
+        border-color: #60a5fa;
+        background: rgba(96, 165, 250, 0.08);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    }
+
+    [data-theme="dark"] .role-selection-card input[type="radio"]:checked + .role-selection-label .role-selection-header svg {
+        color: #60a5fa;
+    }
+    
+    .role-selection-label:hover {
+        border-color: var(--text-muted);
+    }
 
     /* Info box */
     .info-note {
@@ -91,135 +193,255 @@
         border-radius: 12px;
         font-size: 12px;
         color: #1e40af;
-        margin-bottom: 20px;
     }
     [data-theme="dark"] .info-note { background: #1e3a5f; border-color: #2563eb; color: #93c5fd; }
     .info-note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* Footer Buttons */
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 24px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--card-bg);
+        color: var(--text-main);
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+        background: var(--hover-bg);
+        border-color: var(--text-muted);
+    }
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 24px;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .btn-primary:hover {
+        opacity: 0.9;
+    }
 </style>
 
-<div class="card" style="max-width: 820px;">
-
-    @if($errors->any())
-        <div class="alert-error">Harap periksa kembali isian formulir di bawah.</div>
-    @endif
-
-    <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-
-        {{-- Photo Upload --}}
-        <div class="photo-upload-area" onclick="document.getElementById('photoInputCreate').click()">
-            <div class="photo-preview-wrap">
-                <img src="https://ui-avatars.com/api/?name=Karyawan+Baru&background=e5e7eb&color=6b7280"
-                     id="createPhotoPreview" class="photo-avatar" alt="Preview Foto">
-            </div>
-            <div class="photo-upload-text">
-                <h5>Foto Profil</h5>
-                <p>Klik untuk upload foto · PNG atau JPG · Maks. 2MB</p>
-            </div>
-        </div>
-        <input type="file" id="photoInputCreate" name="photo" accept="image/png,image/jpeg"
-               onchange="previewCreatePhoto(event)">
-
-        {{-- Row 1: NIK & Nama --}}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="form-group">
-                <label for="nik">No Karyawan</label>
-                <input type="text" id="nik" name="nik" class="form-control"
-                       value="{{ old('nik') }}" required >
-                @error('nik')<div class="error-text">{{ $message }}</div>@enderror
-            </div>
-            <div class="form-group">
-                <label for="name">Nama</label>
-                <input type="text" id="name" name="name" class="form-control"
-                       value="{{ old('name') }}" required >
-                @error('name')<div class="error-text">{{ $message }}</div>@enderror
-            </div>
-        </div>
-
-        {{-- Row 2: Email & Password --}}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control"
-                       value="{{ old('email') }}" required >
-                @error('email')<div class="error-text">{{ $message }}</div>@enderror
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <input type="password" id="password" name="password" class="form-control"
-                           value="password123" required>
-                    <button type="button" class="toggle-eye" onclick="togglePassword()" title="Tampilkan/sembunyikan">
-                        <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </button>
-                </div>
-                @error('password')<div class="error-text">{{ $message }}</div>@enderror
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="form-group">
-                <label for="division_id">Divisi</label>
-                <select id="division_id" name="division_id" class="form-control" required>
-                    <option value="" disabled selected>Pilih Divisi</option>
-                    @foreach($divisions as $division)
-                        <option value="{{ $division->id }}" {{ old('division_id') == $division->id ? 'selected' : '' }}>
-                            {{ $division->name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('division_id')<div class="error-text">{{ $message }}</div>@enderror
-            </div>
-            <div class="form-group">
-                <label for="join_date">Tanggal Bergabung</label>
-                <input type="date" id="join_date" name="join_date" class="form-control"
-                       value="{{ old('join_date', date('Y-m-d')) }}" required>
-                @error('join_date')<div class="error-text">{{ $message }}</div>@enderror
-            </div>
-        </div>
-
-        <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 24px 0;">
-
-        <div class="form-group">
-            <label>Role</label>
-            <div class="info-note">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                <span>Role <strong>CEO</strong> dan <strong>GM</strong> memiliki akses penuh ke seluruh manajemen sistem.</span>
-            </div>
-
-            <div class="role-grid">
-                @foreach($roles as $role)
-                    @if($role->name === 'PIC Event') @continue @endif
-                    <div class="role-card">
-                        <input type="radio" id="role_{{ $role->id }}" name="role"
-                               value="{{ $role->name }}"
-                               {{ old('role', 'Employee') === $role->name ? 'checked' : '' }}>
-                        <label for="role_{{ $role->id }}" class="role-label">{{ $role->name }}</label>
-                    </div>
-                @endforeach
-            </div>
-            @error('role')<div class="error-text" style="margin-top: 8px;">{{ $message }}</div>@enderror
-        </div>
-
-        <div style="margin-top: 32px; display: flex; justify-content: space-between; align-items: center;">
-            <a href="{{ route('users.index') }}"
-               style="color: var(--text-muted); text-decoration: none; font-size: 14px;">← Kembali ke Daftar</a>
-            <button type="submit" class="btn-submit">Simpan Data Karyawan</button>
-        </div>
-    </form>
+<div style="margin-bottom: 28px;">
+    <a href="{{ route('users.index') }}" class="btn-back" style="margin-bottom: 16px;">
+        <i data-feather="arrow-left"></i>
+        <span>Kembali ke Manajemen User</span>
+    </a>
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); margin: 0 0 4px 0;">Tambah Karyawan</h1>
+    <p style="font-size: 13.5px; color: var(--text-muted); margin: 0; font-weight: 500;">Isi data karyawan baru untuk menambahkan ke sistem.</p>
 </div>
+
+@if($errors->any())
+    <div class="alert-error" style="max-width: 1000px;">Harap periksa kembali isian formulir di bawah.</div>
+@endif
+
+<form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data" style="max-width: 1000px;">
+    @csrf
+
+    <!-- Card Atas: Informasi Personal & Pekerjaan -->
+    <div class="create-card">
+        
+        <div style="display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start;">
+            <!-- Left Side: Profile Photo Upload -->
+            <div class="photo-upload-container">
+                <label style="display: block; margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--text-main);">Foto Profil</label>
+                <div class="photo-upload-area" id="photoUploadArea" onclick="document.getElementById('photoInputCreate').click()">
+                    <!-- Image Preview (1:1 aspect ratio) -->
+                    <img src="" id="createPhotoPreview" class="photo-avatar-preview" alt="Preview Foto">
+                    
+                    <!-- Default Upload Content -->
+                    <div class="photo-upload-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <i data-feather="upload-cloud" style="width: 28px; height: 28px; color: #2563eb; margin-bottom: 8px;"></i>
+                        <h5 style="font-size: 13px; font-weight: 600; color: var(--text-main); margin: 0 0 4px 0;">Klik untuk upload foto</h5>
+                        <p style="font-size: 11px; color: var(--text-muted); margin: 0;">PNG atau JPG · Maks. 2MB</p>
+                    </div>
+                </div>
+                <input type="file" id="photoInputCreate" name="photo" accept="image/png,image/jpeg" style="display: none;" onchange="previewCreatePhoto(event)">
+            </div>
+
+            <!-- Right Side: Input Grid -->
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="nik">ID Karyawan <span style="color: #ef4444;">*</span></label>
+                        <input type="text" id="nik" name="nik" class="form-control"
+                               value="{{ old('nik') }}" placeholder="Contoh: LDR-001" required>
+                        @error('nik')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Nama Lengkap <span style="color: #ef4444;">*</span></label>
+                        <input type="text" id="name" name="name" class="form-control"
+                               value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
+                        @error('name')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="email">Email <span style="color: #ef4444;">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control"
+                               value="{{ old('email') }}" placeholder="nama@eventracore.com" required>
+                        @error('email')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">No Telepon</label>
+                        <input type="text" id="phone" name="phone" class="form-control"
+                               value="{{ old('phone') }}" placeholder="Contoh: 08123456789">
+                        @error('phone')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="password">Password <span style="color: #ef4444;">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" name="password" class="form-control"
+                                   value="password123" required>
+                            <button type="button" class="toggle-eye" onclick="togglePassword()" title="Tampilkan/sembunyikan">
+                                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                        @error('password')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="division_id">Divisi <span style="color: #ef4444;">*</span></label>
+                        <select id="division_id" name="division_id" class="form-control" required>
+                            <option value="" disabled selected>Pilih Divisi</option>
+                            @foreach($divisions as $division)
+                                <option value="{{ $division->id }}" {{ old('division_id') == $division->id ? 'selected' : '' }}>
+                                    {{ $division->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('division_id')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="join_date">Tanggal Bergabung <span style="color: #ef4444;">*</span></label>
+                        <input type="date" id="join_date" name="join_date" class="form-control"
+                               value="{{ old('join_date', date('Y-m-d')) }}" required>
+                        @error('join_date')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="birth_date">Tanggal Lahir</label>
+                        <input type="date" id="birth_date" name="birth_date" class="form-control"
+                               value="{{ old('birth_date') }}">
+                        @error('birth_date')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="employee_type">Tipe Karyawan <span style="color: #ef4444;">*</span></label>
+                        <select id="employee_type" name="employee_type" class="form-control" required>
+                            <option value="Full Time" {{ old('employee_type', 'Full Time') === 'Full Time' ? 'selected' : '' }}>Full Time</option>
+                            <option value="Part Time" {{ old('employee_type') === 'Part Time' ? 'selected' : '' }}>Part Time</option>
+                            <option value="Contract" {{ old('employee_type') === 'Contract' ? 'selected' : '' }}>Contract</option>
+                            <option value="Internship" {{ old('employee_type') === 'Internship' ? 'selected' : '' }}>Internship</option>
+                            <option value="Freelance" {{ old('employee_type') === 'Freelance' ? 'selected' : '' }}>Freelance</option>
+                        </select>
+                        @error('employee_type')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="gender">Jenis Kelamin <span style="color: #ef4444;">*</span></label>
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value="" disabled selected>Pilih Jenis Kelamin</option>
+                            <option value="Laki-laki" {{ old('gender') === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="Perempuan" {{ old('gender') === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                        @error('gender')<div class="error-text">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Bawah: Role / Akses -->
+    <div class="create-card">
+        <div class="create-card-title">
+            <!-- <i data-feather="key"></i> -->
+            <span>Role</span>
+        </div>
+
+        <!-- <div class="info-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>Pilih role untuk menentukan akses karyawan dalam sistem.</span>
+        </div> -->
+
+        <div class="role-selection-grid">
+            @foreach($roles as $role)
+                @if($role->name === 'PIC Event') @continue @endif
+                @php
+                    $icon = 'user';
+                    if ($role->name === 'CEO') {
+                        $icon = 'award';
+                    } elseif ($role->name === 'GM') {
+                        $icon = 'users';
+                    } elseif ($role->name === 'Head') {
+                        $icon = 'shield';
+                    } elseif ($role->name === 'Employee') {
+                        $icon = 'user';
+                    } elseif ($role->name === 'Intern') {
+                        $icon = 'book-open';
+                    } elseif ($role->name === 'Freelance') {
+                        $icon = 'briefcase';
+                    } elseif ($role->name === 'Admin') {
+                        $icon = 'settings';
+                    }
+                @endphp
+                <div class="role-selection-card">
+                    <input type="radio" id="role_{{ $role->id }}" name="role" value="{{ $role->name }}"
+                        {{ old('role', 'Employee') === $role->name ? 'checked' : '' }}>
+                    <label for="role_{{ $role->id }}" class="role-selection-label">
+                        <div class="role-selection-header">
+                            <i data-feather="{{ $icon }}"></i>
+                            <span>{{ $role->name }}</span>
+                        </div>
+                    </label>
+                </div>
+            @endforeach
+        </div>
+        @error('role')<div class="error-text" style="margin-top: 12px;">{{ $message }}</div>@enderror
+    </div>
+
+    <!-- Form Actions Footer -->
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin-top: 12px; margin-bottom: 40px;">
+        <a href="{{ route('users.index') }}" class="btn-secondary">Batal</a>
+        <button type="submit" class="btn-primary">Simpan Data Karyawan</button>
+    </div>
+</form>
 
 <script>
     function previewCreatePhoto(event) {
         const file = event.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = e => document.getElementById('createPhotoPreview').src = e.target.result;
+        reader.onload = function(e) {
+            const preview = document.getElementById('createPhotoPreview');
+            preview.src = e.target.result;
+            document.getElementById('photoUploadArea').classList.add('has-image');
+        };
         reader.readAsDataURL(file);
     }
 
@@ -234,6 +456,5 @@
             icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
         }
     }
-
 </script>
 @endsection

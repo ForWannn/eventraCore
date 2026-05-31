@@ -8,28 +8,11 @@
     .edit-header {
         margin-bottom: 28px;
     }
-    .back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--text-muted);
-        text-decoration: none;
-        font-size: 13.5px;
-        font-weight: 500;
-        transition: color 0.15s;
-    }
-    .back-link:hover {
-        color: #2563eb;
-    }
-    .back-link svg {
-        width: 16px;
-        height: 16px;
-    }
     .edit-title {
         font-size: 24px;
         font-weight: 700;
         color: var(--text-main);
-        margin: 12px 0 4px 0;
+        margin: 0 0 4px 0;
     }
     .edit-subtitle {
         font-size: 13.5px;
@@ -542,7 +525,7 @@
 </style>
 
 <div class="edit-header">
-    <a href="{{ route('users.index') }}" class="back-link">
+    <a href="{{ route('users.index') }}" class="btn-back" style="margin-bottom: 16px;">
         <i data-feather="arrow-left"></i>
         <span>Kembali ke Daftar Karyawan</span>
     </a>
@@ -642,8 +625,8 @@
             
             <div class="form-grid-2">
                 <div class="form-group">
-                    <label for="nik">NIK</label>
-                    <input type="text" id="nik" name="nik" class="form-input" value="{{ $user->nik }}" readonly style="cursor: not-allowed;" title="NIK tidak dapat diubah">
+                    <label for="nik">ID Karyawan</label>
+                    <input type="text" id="nik" name="nik" class="form-input" value="{{ $user->nik }}" readonly style="cursor: not-allowed;" title="ID Karyawan tidak dapat diubah">
                 </div>
                 <div class="form-group">
                     <label for="name">Nama Lengkap</label>
@@ -652,10 +635,17 @@
                 </div>
             </div>
 
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-input" value="{{ old('email', $user->email) }}" required placeholder="nama@eventracore.com">
-                @error('email')<span class="error-text">{{ $message }}</span>@enderror
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" value="{{ old('email', $user->email) }}" required placeholder="nama@eventracore.com">
+                    @error('email')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <label for="phone">No Telepon</label>
+                    <input type="text" id="phone" name="phone" class="form-input" value="{{ old('phone', $user->phone) }}" placeholder="Contoh: 08123456789">
+                    @error('phone')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
             </div>
 
             <div class="form-grid-2">
@@ -676,6 +666,40 @@
                     <input type="date" id="join_date" name="join_date" class="form-input" 
                            value="{{ old('join_date', $user->join_date ? $user->join_date->format('Y-m-d') : '') }}" required>
                     @error('join_date')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="birth_date">Tanggal Lahir</label>
+                    <input type="date" id="birth_date" name="birth_date" class="form-input" value="{{ old('birth_date', $user->birth_date ? $user->birth_date->format('Y-m-d') : '') }}">
+                    @error('birth_date')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <label for="gender">Jenis Kelamin</label>
+                    <select id="gender" name="gender" class="form-select" required>
+                        <option value="" disabled>Pilih Jenis Kelamin</option>
+                        <option value="Laki-laki" {{ old('gender', $user->gender) === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="Perempuan" {{ old('gender', $user->gender) === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                    @error('gender')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="employee_type">Tipe Karyawan</label>
+                    <select id="employee_type" name="employee_type" class="form-select" required>
+                        <option value="Full Time" {{ old('employee_type', $user->employee_type) === 'Full Time' ? 'selected' : '' }}>Full Time</option>
+                        <option value="Part Time" {{ old('employee_type', $user->employee_type) === 'Part Time' ? 'selected' : '' }}>Part Time</option>
+                        <option value="Contract" {{ old('employee_type', $user->employee_type) === 'Contract' ? 'selected' : '' }}>Contract</option>
+                        <option value="Internship" {{ old('employee_type', $user->employee_type) === 'Internship' ? 'selected' : '' }}>Internship</option>
+                        <option value="Freelance" {{ old('employee_type', $user->employee_type) === 'Freelance' ? 'selected' : '' }}>Freelance</option>
+                    </select>
+                    @error('employee_type')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <!-- spacing -->
                 </div>
             </div>
 

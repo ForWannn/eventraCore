@@ -8,28 +8,11 @@
     .show-header {
         margin-bottom: 28px;
     }
-    .back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--text-muted);
-        text-decoration: none;
-        font-size: 13.5px;
-        font-weight: 500;
-        transition: color 0.15s;
-    }
-    .back-link:hover {
-        color: #2563eb;
-    }
-    .back-link svg {
-        width: 16px;
-        height: 16px;
-    }
     .show-title {
         font-size: 24px;
         font-weight: 700;
         color: var(--text-main);
-        margin: 12px 0 4px 0;
+        margin: 0 0 4px 0;
     }
     .show-subtitle {
         font-size: 13.5px;
@@ -351,7 +334,7 @@
 </style>
 
 <div class="show-header">
-    <a href="{{ route('users.index') }}" class="back-link">
+    <a href="{{ route('users.index') }}" class="btn-back" style="margin-bottom: 16px;">
         <i data-feather="arrow-left"></i>
         <span>Kembali ke Daftar Karyawan</span>
     </a>
@@ -421,7 +404,7 @@
         
         <div class="form-grid-2">
             <div class="form-group">
-                <label for="nik">NIK</label>
+                <label for="nik">ID Karyawan</label>
                 <input type="text" id="nik" class="form-input" value="{{ $user->nik }}" disabled>
             </div>
             <div class="form-group">
@@ -430,9 +413,15 @@
             </div>
         </div>
 
-        <div class="form-group" style="margin-bottom: 20px;">
-            <label for="email">Email</label>
-            <input type="email" id="email" class="form-input" value="{{ $user->email }}" disabled>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-input" value="{{ $user->email }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="phone">No Telepon</label>
+                <input type="text" id="phone" class="form-input" value="{{ $user->phone ?? '-' }}" disabled>
+            </div>
         </div>
 
         <div class="form-grid-2">
@@ -450,6 +439,27 @@
                 <label for="join_date">Tanggal Bergabung</label>
                 <input type="date" id="join_date" class="form-input" 
                        value="{{ $user->join_date ? $user->join_date->format('Y-m-d') : '' }}" disabled>
+            </div>
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label for="birth_date">Tanggal Lahir</label>
+                <input type="date" id="birth_date" class="form-input" value="{{ $user->birth_date ? $user->birth_date->format('Y-m-d') : '' }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="gender">Jenis Kelamin</label>
+                <input type="text" id="gender" class="form-input" value="{{ $user->gender ?? '-' }}" disabled>
+            </div>
+        </div>
+
+        <div class="form-grid-2" style="margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="employee_type">Tipe Karyawan</label>
+                <input type="text" id="employee_type" class="form-input" value="{{ $user->employee_type ?? 'Full Time' }}" disabled>
+            </div>
+            <div class="form-group">
+                <!-- spacing -->
             </div>
         </div>
 

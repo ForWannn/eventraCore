@@ -7,11 +7,14 @@
     /* ── Stat Cards Grid ── */
     .att-stats-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         gap: 20px;
         margin-bottom: 28px;
     }
-    @media (max-width: 1200px) {
+    @media (max-width: 1400px) {
+        .att-stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 992px) {
         .att-stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 640px) {
@@ -563,14 +566,23 @@
         <div class="att-stat-value">{{ $remoteCount }}</div>
         <div class="att-stat-sub">via web / geotagging</div>
     </div>
+
+    <div class="att-stat-card">
+        <div class="att-stat-glow" style="background: #fbbf24;"></div>
+        <div class="att-stat-icon" style="background: rgba(245,158,11,0.1); color: #d97706; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:16px;"><i data-feather="calendar"></i></div>
+        <div class="att-stat-label">Izin & Cuti</div>
+        <div class="att-stat-value">{{ $leaveCount ?? 0 }}</div>
+        <div class="att-stat-sub">berstatus disetujui</div>
+    </div>
 </div>
 
 {{-- ═══ ATTENDANCE PROGRESS BAR ═══ --}}
 @php
     $ontimeCount = $presentCount - $lateCount;
-    $absentCount = $totalStaff - $presentCount;
+    $absentCount = $totalStaff - $presentCount - ($leaveCount ?? 0);
     $pOntime  = $totalStaff > 0 ? ($ontimeCount / $totalStaff) * 100 : 0;
     $pLate    = $totalStaff > 0 ? ($lateCount / $totalStaff) * 100 : 0;
+    $pLeave   = $totalStaff > 0 ? (($leaveCount ?? 0) / $totalStaff) * 100 : 0;
     $pAbsent  = $totalStaff > 0 ? ($absentCount / $totalStaff) * 100 : 0;
 @endphp
 
@@ -600,6 +612,7 @@
     <div class="att-progress-bar">
         <div class="att-progress-present" style="width: {{ $pOntime }}%;"></div>
         <div class="att-progress-late" style="width: {{ $pLate }}%;"></div>
+        <div class="att-progress-leave" style="width: {{ $pLeave }}%; background: #fbbf24;"></div>
         <div class="att-progress-absent" style="width: {{ $pAbsent }}%;"></div>
     </div>
     <div class="att-progress-legend">
@@ -610,6 +623,10 @@
         <div class="att-progress-legend-item">
             <div class="att-dot" style="background: #f43f5e;"></div>
             Terlambat ({{ $lateCount }})
+        </div>
+        <div class="att-progress-legend-item">
+            <div class="att-dot" style="background: #fbbf24;"></div>
+            Izin & Cuti ({{ $leaveCount ?? 0 }})
         </div>
         <div class="att-progress-legend-item">
             <div class="att-dot" style="background: var(--border-color);"></div>
@@ -652,6 +669,8 @@
                                 <span style="font-weight: 600; color: var(--text-main);">
                                     {{ \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i') }}
                                 </span>
+                            @elseif(isset($leaves[$user->id]))
+                                <span style="font-weight: 600; color: var(--text-muted);">—</span>
                             @else
                                 <span class="att-badge-absent">Belum Hadir</span>
                             @endif
@@ -667,6 +686,16 @@
                                 @else
                                     <span class="att-badge att-badge-late">
                                         <i data-feather="clock" style="width:12px;height:12px;"></i> Terlambat
+                                    </span>
+                                @endif
+                            @elseif(isset($leaves[$user->id]))
+                                @if($leaves[$user->id]->type === 'izin')
+                                    <span class="att-badge" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2);">
+                                        <i data-feather="alert-circle" style="width:12px;height:12px;"></i> Izin
+                                    </span>
+                                @else
+                                    <span class="att-badge" style="background: rgba(139, 92, 246, 0.1); color: #7c3aed; border: 1px solid rgba(139, 92, 246, 0.2);">
+                                        <i data-feather="calendar" style="width:12px;height:12px;"></i> Cuti
                                     </span>
                                 @endif
                             @else
@@ -686,6 +715,10 @@
                                         <i data-feather="map-pin" style="width:12px;height:12px;"></i> Luar Kantor
                                     </span>
                                 @endif
+                            @elseif(isset($leaves[$user->id]))
+                                <span class="att-badge" style="background: var(--hover-bg); color: var(--text-muted); border: 1px solid var(--border-color);">
+                                    Form Pengajuan
+                                </span>
                             @else
                                 <span class="att-badge-absent">—</span>
                             @endif
@@ -703,6 +736,10 @@
                                         <i data-feather="camera"></i> Lihat Bukti
                                     </button>
                                 @endif
+                            @elseif(isset($leaves[$user->id]))
+                                <span class="att-validated-text" style="color: #2563eb;">
+                                    <i data-feather="check-circle" style="width:14px;height:14px;"></i> Acc: {{ $leaves[$user->id]->approvedBy->name ?? 'System' }}
+                                </span>
                             @else
                                 <span class="att-badge-absent">—</span>
                             @endif

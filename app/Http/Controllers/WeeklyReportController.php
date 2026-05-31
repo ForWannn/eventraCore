@@ -87,53 +87,114 @@ class WeeklyReportController extends Controller
 
     public function history(Request $request)
     {
-        if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);
-
-        $selectedWeek = $request->week;
+        $user = Auth::user();
+        $isDirector = $user->hasRole(['CEO', 'GM']);
         
-        // Ambil semua daftar minggu yang tersedia (yang sudah ada report disubmit)
-        $availableWeeks = WeeklyReport::where('status', 'submitted')
-            ->select('week_start_date')
-            ->distinct()
-            ->orderBy('week_start_date', 'desc')
-            ->pluck('week_start_date');
+        $search = $request->query('search');
+        $status = $request->query('status');
+        $month = $request->query('month');
+        $year = $request->query('year');
 
-        $query = WeeklyReport::with(['user', 'user.division'])
-            ->where('status', 'submitted');
-
-        if ($selectedWeek) {
-            $query->whereDate('week_start_date', $selectedWeek);
+        // Base query
+        if ($isDirector) {
+            $query = WeeklyReport::with(['user', 'user.division', 'items', 'dailyLogs'])
+                ->where('status', 'submitted');
+        } else {
+            $query = WeeklyReport::where('user_id', $user->id)->with(['items', 'dailyLogs']);
         }
 
-        $reports = $query->orderBy('week_start_date', 'desc')
-            ->orderBy('user_id')
-            ->get();
-
-        // ── FITUR BARU: LIST USER BELUM SUBMIT ──
-        $targetWeek = $selectedWeek ?: ($availableWeeks->first() ? $availableWeeks->first()->toDateString() : null);
-        $nonSubmitters = [];
-        
-        if ($targetWeek) {
-            $submitterIds = WeeklyReport::whereDate('week_start_date', $targetWeek)
-                ->where('status', 'submitted')
-                ->pluck('user_id');
-
-            $nonSubmitters = User::role(['Employee', 'Head', 'Intern'])
-                ->whereNotIn('id', $submitterIds)
-                ->with('division')
-                ->get();
+        // Apply Search Filter (Search in user name/division for director, or objective items content for all)
+        if ($search) {
+            $query->where(function($q) use ($search, $isDirector) {
+                if ($isDirector) {
+                    $q->whereHas('user', function($sub) use ($search) {
+                        $sub->where('name', 'like', "%{$search}%");
+                    })->orWhereHas('items', function($sub) use ($search) {
+                        $sub->where('content', 'like', "%{$search}%");
+                    })->orWhereHas('user.division', function($sub) use ($search) {
+                        $sub->where('name', 'like', "%{$search}%");
+                    });
+                } else {
+                    $q->whereHas('items', function($sub) use ($search) {
+                        $sub->where('content', 'like', "%{$search}%");
+                    });
+                }
+            });
         }
 
-        return view('weekly-reports.history', compact('reports', 'availableWeeks', 'selectedWeek', 'nonSubmitters', 'targetWeek'));
+        // Apply Status Filter (only relevant for employees, since directors only view submitted reports)
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        // Apply Month Filter
+        if ($month) {
+            $query->whereMonth('week_start_date', $month);
+        }
+
+        // Apply Year Filter
+        if ($year) {
+            $query->whereYear('week_start_date', $year);
+        }
+
+        // Calculate Stats based on the filtered query (before pagination)
+        $statsQuery = clone $query;
+        
+        $totalSubmitted = (clone $statsQuery)->where('status', 'submitted')->count();
+        $totalLate = (clone $statsQuery)->where('status', 'submitted')->where('is_late_plan', true)->count();
+        $totalOnTime = (clone $statsQuery)->where('status', 'submitted')->where('is_late_plan', false)->count();
+        $averageCompletion = round((clone $statsQuery)->avg('completion_percentage') ?? 0);
+
+        // Fetch reports with pagination (5 per page to match mockup)
+        if ($isDirector) {
+            $reports = $query->orderBy('week_start_date', 'desc')
+                ->orderBy('user_id')
+                ->paginate(5)
+                ->withQueryString();
+        } else {
+            $reports = $query->orderBy('week_start_date', 'desc')
+                ->paginate(5)
+                ->withQueryString();
+        }
+
+        // Available years for dropdown
+        $availableYears = WeeklyReport::pluck('week_start_date')
+            ->map(function($date) {
+                return \Carbon\Carbon::parse($date)->year;
+            })
+            ->unique()
+            ->sortDesc()
+            ->values();
+        
+        if ($availableYears->isEmpty()) {
+            $availableYears = collect([date('Y')]);
+        }
+
+        return view('weekly-reports.history', compact(
+            'reports',
+            'isDirector',
+            'search',
+            'status',
+            'month',
+            'year',
+            'totalSubmitted',
+            'totalLate',
+            'totalOnTime',
+            'averageCompletion',
+            'availableYears'
+        ));
     }
 
     public function showUserReport($userId, $weekStart)
     {
-        if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);
+        $currentUser = Auth::user();
+        if (!$currentUser->hasRole(['CEO', 'GM']) && $currentUser->id != $userId) {
+            abort(403);
+        }
 
         $user = User::with('division')->findOrFail($userId);
         $report = WeeklyReport::where('user_id', $userId)
-            ->where('week_start_date', $weekStart)
+            ->whereDate('week_start_date', $weekStart)
             ->with(['items', 'dailyLogs'])
             ->firstOrFail();
 

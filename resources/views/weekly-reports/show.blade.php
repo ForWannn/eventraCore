@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Review Laporan Karyawan')
+@php
+    $isDirector = Auth::user()->hasRole(['CEO', 'GM']);
+@endphp
+
+@section('title', $isDirector ? 'Review Laporan Karyawan' : 'Detail Laporan Mingguan')
 
 @section('content')
 <style>
@@ -21,7 +25,17 @@
 </style>
 
 <div style="margin-bottom: 20px;">
-    <a href="{{ route('weekly.recap', ['week' => $report->week_start_date->format('Y-m-d')]) }}" style="text-decoration: none; font-size: 13px; color: var(--text-muted); font-weight: 500;">← Kembali ke Rekapitulasi</a>
+    @if($isDirector)
+        <a href="{{ route('weekly.recap', ['week' => $report->week_start_date->format('Y-m-d')]) }}" class="btn-back">
+            <i data-feather="arrow-left"></i>
+            <span>Kembali ke Rekapitulasi</span>
+        </a>
+    @else
+        <a href="{{ route('weekly.history') }}" class="btn-back">
+            <i data-feather="arrow-left"></i>
+            <span>Kembali ke Riwayat</span>
+        </a>
+    @endif
 </div>
 
 <div class="card">

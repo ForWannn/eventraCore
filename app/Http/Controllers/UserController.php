@@ -26,23 +26,31 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|string|email|max:255|unique:users',
-            'nik'         => 'required|string|max:50|unique:users',
-            'password'    => 'required|string|min:6',
-            'division_id' => 'required|exists:divisions,id',
-            'role'        => 'required|exists:roles,name',
-            'photo'       => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-            'join_date'   => 'required|date',
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|string|email|max:255|unique:users',
+            'nik'           => 'required|string|max:50|unique:users',
+            'password'      => 'required|string|min:6',
+            'division_id'   => 'required|exists:divisions,id',
+            'role'          => 'required|exists:roles,name',
+            'photo'         => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'join_date'     => 'required|date',
+            'phone'         => 'nullable|string|max:20',
+            'birth_date'    => 'nullable|date',
+            'employee_type' => 'required|string|in:Full Time,Part Time,Contract,Internship,Freelance',
+            'gender'        => 'required|string|in:Laki-laki,Perempuan',
         ]);
 
         $user = User::create([
-            'name'        => $request->name,
-            'email'       => $request->email,
-            'nik'         => $request->nik,
-            'password'    => Hash::make($request->password),
-            'division_id' => $request->division_id,
-            'join_date'   => $request->join_date,
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'nik'           => $request->nik,
+            'password'      => Hash::make($request->password),
+            'division_id'   => $request->division_id,
+            'join_date'     => $request->join_date,
+            'phone'         => $request->phone,
+            'birth_date'    => $request->birth_date,
+            'employee_type' => $request->employee_type,
+            'gender'        => $request->gender,
         ]);
 
         $user->assignRole($request->role);
@@ -66,22 +74,30 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email|max:255|unique:users,email,' . $user->id,
-            'nik'         => 'required|string|max:50|unique:users,nik,' . $user->id,
-            'division_id' => 'required|exists:divisions,id',
-            'role'        => 'required|exists:roles,name',
-            'photo'       => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-            'password'    => 'nullable|string|min:6|confirmed',
-            'join_date'   => 'required|date',
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|email|max:255|unique:users,email,' . $user->id,
+            'nik'           => 'required|string|max:50|unique:users,nik,' . $user->id,
+            'division_id'   => 'required|exists:divisions,id',
+            'role'          => 'required|exists:roles,name',
+            'photo'         => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'password'      => 'nullable|string|min:6|confirmed',
+            'join_date'     => 'required|date',
+            'phone'         => 'nullable|string|max:20',
+            'birth_date'    => 'nullable|date',
+            'employee_type' => 'required|string|in:Full Time,Part Time,Contract,Internship,Freelance',
+            'gender'        => 'required|string|in:Laki-laki,Perempuan',
         ]);
 
         $updateData = [
-            'name'        => $request->name,
-            'email'       => $request->email,
-            'nik'         => $request->nik,
-            'division_id' => $request->division_id,
-            'join_date'   => $request->join_date,
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'nik'           => $request->nik,
+            'division_id'   => $request->division_id,
+            'join_date'     => $request->join_date,
+            'phone'         => $request->phone,
+            'birth_date'    => $request->birth_date,
+            'employee_type' => $request->employee_type,
+            'gender'        => $request->gender,
         ];
 
         if ($request->filled('password')) {

@@ -22,13 +22,28 @@ class DailyAttendanceController extends Controller
         $now = Carbon::now();
         $date = $now->format('Y-m-d');
 
+        // Block check-in on non-working days
+        $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
+        $isWorkDay = true;
+        if ($calendar) {
+            $isWorkDay = (bool)$calendar->is_working_day;
+        } else {
+            if ($now->dayOfWeek === Carbon::SATURDAY || $now->dayOfWeek === Carbon::SUNDAY) {
+                $isWorkDay = false;
+            }
+        }
+
+        if (!$isWorkDay) {
+            return response()->json(['message' => 'Hari ini libur.'], 400);
+        }
+
         // Prevent double entry
         $exists = DailyAttendance::where('user_id', $user->id)
                                   ->where('date', $date)
                                   ->exists();
 
         if ($exists) {
-            return response()->json(['message' => 'Anda sudah melakukan absensi hari ini.'], 400);
+            return response()->json(['message' => 'Kamu sudah melakukan absensi hari ini.'], 400);
         }
 
         // Process Base64 Photo
@@ -79,13 +94,28 @@ class DailyAttendanceController extends Controller
             $endDate = $now->copy()->endOfMonth()->endOfDay();
         }
 
-        // Get all weekdays in this range
+        // Fetch calendar overrides in range
+        $overrides = \App\Models\WorkCalendar::whereBetween('date', [
+            $startDate->format('Y-m-d'),
+            $endDate->format('Y-m-d')
+        ])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
+
+        // Get all weekdays or overridden dates in this range
         $workdays = [];
         $temp = $startDate->copy();
         while ($temp->lte($endDate)) {
-            // Check if weekday (Monday to Friday)
-            if ($temp->dayOfWeek !== Carbon::SATURDAY && $temp->dayOfWeek !== Carbon::SUNDAY) {
-                $workdays[] = $temp->format('Y-m-d');
+            $dateStr = $temp->format('Y-m-d');
+            $isWork = true;
+            if (isset($overrides[$dateStr])) {
+                $isWork = $overrides[$dateStr]->is_working_day;
+            } else {
+                if ($temp->dayOfWeek === Carbon::SATURDAY || $temp->dayOfWeek === Carbon::SUNDAY) {
+                    $isWork = false;
+                }
+            }
+
+            if ($isWork) {
+                $workdays[] = $dateStr;
             }
             $temp->addDay();
         }
@@ -95,6 +125,19 @@ class DailyAttendanceController extends Controller
             ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
             ->get()
             ->keyBy('date');
+
+        // Fetch approved leaves covering this range
+        $approvedLeaves = \App\Models\LeaveRequest::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->where(function($q) use ($startDate, $endDate) {
+                $q->whereBetween('start_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+                  ->orWhereBetween('end_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+                  ->orWhere(function($sub) use ($startDate, $endDate) {
+                      $sub->where('start_date', '<=', $startDate->format('Y-m-d'))
+                          ->where('end_date', '>=', $endDate->format('Y-m-d'));
+                  });
+            })
+            ->get();
 
         // Build the full list of entries
         $historyData = [];
@@ -131,11 +174,19 @@ class DailyAttendanceController extends Controller
                     'is_present' => true
                 ];
             } else {
+                // Check if has approved leave request for this date
+                $leave = $approvedLeaves->first(fn($l) => $l->start_date->format('Y-m-d') <= $dateStr && $l->end_date->format('Y-m-d') >= $dateStr);
+
+                $status = 'Tidak Hadir';
+                if ($leave) {
+                    $status = $leave->type === 'izin' ? 'Izin' : 'Cuti';
+                }
+
                 $historyData[] = [
                     'date' => $dateStr,
                     'day_name' => $dateObj->locale('id')->translatedFormat('l, d M Y'),
                     'check_in' => '-',
-                    'status' => 'Tidak Hadir',
+                    'status' => $status,
                     'attendance_type' => null,
                     'photo_path' => null,
                     'latitude' => null,
@@ -156,13 +207,19 @@ class DailyAttendanceController extends Controller
         $statsHadir = 0;
         $statsTerlambat = 0;
         $statsTidakHadir = 0;
+        $statsIzin = 0;
+        $statsCuti = 0;
 
         foreach ($historyData as $item) {
             if ($item['status'] === 'Hadir') {
                 $statsHadir++;
             } elseif ($item['status'] === 'Terlambat') {
                 $statsTerlambat++;
-            } elseif ($item['status'] === 'Tidak Hadir') {
+            } elseif ($item['status'] === 'Izin') {
+                $statsIzin++;
+            } elseif ($item['status'] === 'Cuti') {
+                $statsCuti++;
+            } else {
                 $statsTidakHadir++;
             }
         }
@@ -177,6 +234,10 @@ class DailyAttendanceController extends Controller
                     return $item['status'] === 'Terlambat';
                 } elseif ($statusFilter === 'tidak_hadir') {
                     return $item['status'] === 'Tidak Hadir';
+                } elseif ($statusFilter === 'izin') {
+                    return $item['status'] === 'Izin';
+                } elseif ($statusFilter === 'cuti') {
+                    return $item['status'] === 'Cuti';
                 }
                 return true;
             });
@@ -212,9 +273,13 @@ class DailyAttendanceController extends Controller
                 'hadir' => $statsHadir,
                 'terlambat' => $statsTerlambat,
                 'tidak_hadir' => $statsTidakHadir,
+                'izin' => $statsIzin,
+                'cuti' => $statsCuti,
                 'hadir_pct' => $statsWorkdays > 0 ? round(($statsHadir / $statsWorkdays) * 100, 2) : 0,
                 'terlambat_pct' => $statsWorkdays > 0 ? round(($statsTerlambat / $statsWorkdays) * 100, 2) : 0,
                 'tidak_hadir_pct' => $statsWorkdays > 0 ? round(($statsTidakHadir / $statsWorkdays) * 100, 2) : 0,
+                'izin_pct' => $statsWorkdays > 0 ? round(($statsIzin / $statsWorkdays) * 100, 2) : 0,
+                'cuti_pct' => $statsWorkdays > 0 ? round(($statsCuti / $statsWorkdays) * 100, 2) : 0,
             ],
             'filters' => [
                 'start_date' => $startDate->format('Y-m-d'),
@@ -239,14 +304,22 @@ class DailyAttendanceController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
+        // Query approved leave requests covering the selected date
+        $leaves = \App\Models\LeaveRequest::where('status', 'approved')
+            ->where('start_date', '<=', $date)
+            ->where('end_date', '>=', $date)
+            ->get()
+            ->keyBy('user_id');
+
         // Compute summary statistics
         $totalStaff = $users->count();
         $presentCount = $users->filter(fn($u) => $u->dailyAttendances->isNotEmpty())->count();
         $lateCount = $users->filter(fn($u) => $u->dailyAttendances->where('status', 'terlambat')->isNotEmpty())->count();
         $remoteCount = $users->filter(fn($u) => $u->dailyAttendances->where('attendance_type', 'luar')->isNotEmpty())->count();
+        $leaveCount = $users->filter(fn($u) => $u->dailyAttendances->isEmpty() && isset($leaves[$u->id]))->count();
 
         return view('daily-attendances.index', compact(
-            'users', 'date', 'totalStaff', 'presentCount', 'lateCount', 'remoteCount'
+            'users', 'date', 'totalStaff', 'presentCount', 'lateCount', 'remoteCount', 'leaves', 'leaveCount'
         ));
     }
 }

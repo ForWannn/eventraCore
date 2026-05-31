@@ -11,6 +11,7 @@
         overflow: hidden;
         margin-bottom: 24px;
         background: var(--sidebar-bg);
+        transition: transform 0.2s, box-shadow 0.2s;
     }
     
     .section-header {
@@ -21,6 +22,7 @@
         color: var(--text-main);
         border-bottom: 1px solid var(--border-color);
         display: flex;
+        align-items: center;
         justify-content: space-between;
     }
     
@@ -48,30 +50,40 @@
     .input-line:read-only {
         color: var(--text-muted);
         border-bottom-style: dotted;
+        cursor: not-allowed;
     }
 
     /* Daily Logs Grid */
     .days-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+    }
+    
+    @media (max-width: 1200px) {
+        .days-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+        .days-grid { grid-template-columns: 1fr; }
     }
     
     .day-col {
-        border-right: 1px solid var(--border-color);
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
         display: flex;
         flex-direction: column;
-        min-height: 350px;
+        min-height: 380px;
+        overflow: hidden;
+        transition: all 0.2s;
     }
-    
-    .day-col:last-child { border-right: none; }
-    
-    @media (max-width: 1024px) {
-        .days-grid { grid-template-columns: 1fr; }
-        .day-col { border-right: none; border-bottom: 1px solid var(--border-color); min-height: auto; }
+
+    .day-col:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
     }
     
     .day-header {
-        padding: 12px 16px;
+        padding: 16px;
         background: var(--hover-bg);
         border-bottom: 1px solid var(--border-color);
         display: flex;
@@ -80,23 +92,38 @@
     }
     
     .day-date {
-        font-size: 24px;
+        font-size: 32px;
         font-weight: 700;
-        color: var(--text-main);
-        line-height: 1;
+        color: #2563eb;
+        line-height: 0.9;
     }
     
+    .day-meta {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
     .day-name {
         font-size: 11px;
-        color: var(--text-muted);
+        font-weight: 700;
+        color: var(--text-main);
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        line-height: 1.2;
+        line-height: 1.1;
+    }
+
+    .day-month-year {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+        line-height: 1.1;
+        margin-top: 2px;
     }
     
     .day-body {
         flex: 1;
-        padding: 12px 16px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -107,7 +134,13 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
-        margin-bottom: 12px;
+    }
+
+    .daily-task-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
     }
 
     .btn-add-task {
@@ -116,60 +149,73 @@
         justify-content: center;
         gap: 6px;
         width: 100%;
-        padding: 8px;
+        padding: 10px;
         background: transparent;
         border: 1px dashed var(--border-color);
-        color: var(--text-muted);
-        border-radius: 8px;
-        font-size: 11px;
+        color: #2563eb;
+        border-radius: 10px;
+        font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
+        margin-top: 16px;
     }
 
     .btn-add-task:hover {
         background: var(--hover-bg);
-        color: var(--text-main);
-        border-color: var(--text-muted);
+        border-color: #2563eb;
     }
 
     /* Primary Buttons */
-    .btn-primary {
-        display: inline-block;
+    .btn-save-plan {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         padding: 10px 20px;
-        background: var(--primary);
-        color: var(--primary-text);
-        border: none;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: opacity 0.2s;
-        text-decoration: none;
-    }
-    
-    .btn-primary:hover { opacity: 0.9; }
-
-    .btn-success {
-        display: inline-block;
-        padding: 12px 32px;
-        background: #000000ff;
+        background: #2563eb;
         color: white;
         border: none;
-        border-radius: 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    
+    .btn-save-plan:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-submit-final {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 32px;
+        background: #0f172a;
+        color: white;
+        border: none;
+        border-radius: 10px;
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        transition: opacity 0.2s;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
     }
     
-    .btn-success:hover { opacity: 0.9; }
+    .btn-submit-final:hover {
+        background: #1e293b;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+    }
 
     .alert-late {
-        /* background: #fff1f2; */
+        background: rgba(225, 29, 72, 0.05);
         color: #e11d48;
-        /* border: 1px solid #fda4af; */
-        /* padding: 10px 16px; */
+        border: 1px solid rgba(225, 29, 72, 0.15);
+        padding: 12px 16px;
         border-radius: 12px;
         font-size: 12px;
         font-weight: 600;
@@ -178,56 +224,23 @@
         align-items: center;
         gap: 8px;
     }
-    
-    /* [data-theme="dark"] .alert-late { background: rgba(225, 29, 72, 0.1); border-color: rgba(225, 29, 72, 0.2); } */
 
-    /* Style untuk Check/Cross Toggle */
-    .status-toggle {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-right: 8px;
-    }
-
-    .status-btn {
-        width: 24px;
-        height: 24px;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border: 1px solid var(--border-color);
-        background: var(--hover-bg);
-        color: var(--text-muted);
+    .checkbox-btn {
         transition: all 0.2s;
     }
-
-    .status-btn.active-check { 
-        background: #dcfce7; 
-        color: #166534; 
-        border-color: #86efac; 
+    .checkbox-btn:hover {
+        transform: scale(1.05);
     }
-    
-    .status-btn.active-cross { 
-        background: #fee2e2; 
-        color: #b91c1c; 
-        border-color: #fca5a5; 
+    .checkbox-btn.checked {
+        border-color: #10b981 !important;
+        background-color: #10b981 !important;
     }
 
-    .status-btn:hover:not(.disabled) {
-        border-color: var(--text-muted);
-    }
-    
-    .status-btn.disabled {
-        cursor: default;
-        opacity: 0.7;
-    }
-
-    .item-row {
+    .objective-row, .deadline-row {
         display: flex;
         align-items: center;
-        margin-bottom: 4px;
+        gap: 10px;
+        width: 100%;
     }
 </style>
 
@@ -236,6 +249,7 @@
         $isFinalPhase = true;
         // $isFinalPhase = !$now->isWeekend() && $now->format('H:i') >= '17:00';
     @endphp
+    
     @if($report->is_late_plan)
         <div class="alert-late">
             <i data-feather="clock" style="width: 14px; height: 14px;"></i>
@@ -259,163 +273,178 @@
                 <i data-feather="check-circle" style="width: 16px; height: 16px;"></i>
                 Laporan Mingguan resmi diserahkan pada {{ \Carbon\Carbon::parse($report->final_submitted_at)->format('d/m/Y H:i') }}
             </div>
-        <div style="font-weight: 700; background: #166534; color: white; padding: 4px 12px; border-radius: 8px;">
-        Penyelesaian: {{ $report->completion_percentage }}%
+            <div style="font-weight: 700; background: #166534; color: white; padding: 4px 12px; border-radius: 8px;">
+                Penyelesaian: {{ $report->completion_percentage }}%
+            </div>
         </div>
+    @endif
+
+    <!-- Header Section -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(37, 99, 235, 0.08); display: flex; align-items: center; justify-content: center;">
+                <i data-feather="calendar" style="width: 24px; height: 24px; color: #2563eb;"></i>
             </div>
-        @endif
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-        <div>
-            <h3 style="margin-bottom: 4px;">Weekly Schedule Planner</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">
-                Minggu: <strong>{{ \Carbon\Carbon::parse($report->week_start_date)->format('d M') }} - {{ \Carbon\Carbon::parse($report->week_start_date)->addDays(4)->format('d M Y') }}</strong>
-            </p>
+            <div>
+                <h2 style="font-size: 22px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.5px;">Weekly Report Planner</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0; display: flex; align-items: center; gap: 6px; font-weight: 500;">
+                    <i data-feather="calendar" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                    Minggu, {{ \Carbon\Carbon::parse($report->week_start_date)->locale('id')->translatedFormat('d M Y') }} – {{ \Carbon\Carbon::parse($report->week_start_date)->addDays(4)->locale('id')->translatedFormat('d M Y') }}
+                </p>
+            </div>
         </div>
-        
-        <!-- <div style="display: flex; align-items: center; gap: 12px;">
-            <div id="autosave-indicator" style="font-size: 11px; color: var(--text-muted); opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 4px;">
-                <i data-feather="save" style="width: 12px; height: 12px;"></i> <span id="autosave-text">Menyimpan...</span>
-            </div>
-            <div style="font-size: 11px; padding: 6px 12px; border-radius: 20px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 600;">
-                {{ strtoupper($report->status) }}
-            </div>
-            
-            @if(!$report->plan_submitted_at && $report->status !== 'submitted')
-                <button type="submit" form="planForm" class="btn-primary">
-                    Simpan Plan & Deadline
-                </button>
-            @elseif($report->plan_submitted_at && $report->status !== 'submitted')
-                <div style="font-size: 11px; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 6px 12px;">
-                    <i data-feather="lock" style="width: 12px; height: 12px;"></i> Plan Disimpan
-                </div>
-            @endif
-        </div> -->
 
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="font-size: 11px; padding: 6px 12px; border-radius: 20px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 600;">
-                {{ strtoupper($report->status) }}
+            <div style="font-size: 11px; padding: 6px 14px; border-radius: 8px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                {{ $report->status }}
             </div>
             
-            <button type="submit" form="mainReportForm" formaction="{{ route('weekly.plan', $report->id) }}" class="btn-primary">
-                Simpan Plan & Deadline (Test)
+            <button type="submit" form="mainReportForm" formaction="{{ route('weekly.plan', $report->id) }}" class="btn-save-plan">
+                <i data-feather="save"></i>
+                <span>Simpan Plan & Deadline (Test)</span>
             </button>
         </div>
     </div>
 
+    <!-- Main Form -->
     <form id="mainReportForm" action="{{ route('weekly.final', $report->id) }}" method="POST">
         @csrf
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;" class="top-responsive">
-            <style>@media (max-width: 768px) { .top-responsive { grid-template-columns: 1fr !important; } }</style>
+        
+        <!-- Top Row Grid: Objectives & Monthly Deadlines -->
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 24px;" class="top-responsive">
+            <style>@media (max-width: 960px) { .top-responsive { grid-template-columns: 1fr !important; } }</style>
             
+            <!-- Weekly Objective Card -->
             <div class="section-box" style="margin-bottom: 0;">
                 <div class="section-header">
-                    <span>Weekly Objective</span>
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                        <i data-feather="target" style="width: 16px; height: 16px; color: #2563eb;"></i>
+                        Weekly Objective
+                    </span>
                 </div>
-                <div class="section-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
+                <div class="section-body objectives-responsive" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
+                    <style>@media (max-width: 640px) { .objectives-responsive { grid-template-columns: 1fr !important; } }</style>
                     @for($i = 0; $i < 10; $i++)
                         @php $item = $report->items->where('type', 'objective')->values()->get($i); @endphp
-                        <div class="item-row">
+                        <div class="objective-row">
                             @if($item && $item->content)
-                                <div class="status-toggle">
+                                <div class="status-checkbox" style="display: flex; align-items: center; flex-shrink: 0;">
                                     <input type="hidden" name="item_status[{{ $item->id }}]" value="{{ $item->is_completed ? '1' : '0' }}" id="status-{{ $item->id }}">
-                                    
-                                    <div class="status-btn {{ $item->is_completed ? 'active-check' : '' }} {{ !$isFinalPhase ? 'disabled' : '' }}" 
-                                        onclick="{{ $isFinalPhase ? 'toggleStatus('.$item->id.', 1)' : '' }}" title="Selesai">
-                                        <i data-feather="check" style="width: 14px; height: 14px;"></i>
-                                    </div>
-                                    <div class="status-btn {{ ($item && !$item->is_completed && $report->status === 'submitted') ? 'active-cross' : '' }} {{ !$isFinalPhase ? 'disabled' : '' }}" 
-                                        onclick="{{ $isFinalPhase ? 'toggleStatus('.$item->id.', 0)' : '' }}" title="Tidak Selesai">
-                                        <i data-feather="x" style="width: 14px; height: 14px;"></i>
-                                    </div>
+                                    <button type="button" class="checkbox-btn {{ $item->is_completed ? 'checked' : '' }}" 
+                                            onclick="toggleStatus({{ $item->id }})" 
+                                            style="width: 18px; height: 18px; border: 2px solid {{ $item->is_completed ? '#10b981' : 'var(--text-muted)' }}; border-radius: 5px; background: {{ $item->is_completed ? '#10b981' : 'transparent' }}; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 0.2s;">
+                                        <i data-feather="check" style="width: 12px; height: 12px; color: white; stroke-width: 3; visibility: {{ $item->is_completed ? 'visible' : 'hidden' }};"></i>
+                                    </button>
                                 </div>
+                            @else
+                                <span style="font-size: 16px; color: var(--text-muted); flex-shrink: 0; line-height: 1; margin-left: 4px; margin-right: 4px;">•</span>
                             @endif
                             <input type="text" name="objectives[]" value="{{ $item->content ?? '' }}" 
-                                class="input-line" placeholder="..." {{ $report->plan_submitted_at ?  : '' }}>
+                                class="input-line" placeholder="..." 
+                                {{ $report->plan_submitted_at ? 'readonly' : '' }}>
                         </div>
                     @endfor
                 </div>
             </div>
 
+            <!-- Monthly Deadline Card -->
             <div class="section-box" style="margin-bottom: 0;">
                 <div class="section-header">
-                    <span>Deadline {{ \Carbon\Carbon::parse($report->week_start_date)->format('F') }}</span>
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                        <i data-feather="calendar" style="width: 16px; height: 16px; color: #2563eb;"></i>
+                        Deadline Bulan {{ \Carbon\Carbon::parse($report->week_start_date)->locale('id')->translatedFormat('F') }}
+                    </span>
                 </div>
                 <div class="section-body" style="display: flex; flex-direction: column; gap: 12px;">
-    @for($i = 0; $i < 5; $i++)
-        @php $item = $report->items->where('type', 'deadline')->values()->get($i); @endphp
-        <div class="item-row">
-            @if($item && $item->content)
-                <div class="status-toggle">
-                    <input type="hidden" name="item_status[{{ $item->id }}]" value="{{ $item->is_completed ? '1' : '0' }}" id="status-{{ $item->id }}">
-                    
-                    <div class="status-btn {{ $item->is_completed ? 'active-check' : '' }} {{ !$isFinalPhase ? 'disabled' : '' }}" 
-                        onclick="{{ $isFinalPhase ? 'toggleStatus('.$item->id.', 1)' : '' }}" title="Selesai">
-                        <i data-feather="check" style="width: 14px; height: 14px;"></i>
-                    </div>
-                    <div class="status-btn {{ ($item && !$item->is_completed && $report->status === 'submitted') ? 'active-cross' : '' }} {{ !$isFinalPhase ? 'disabled' : '' }}" 
-                        onclick="{{ $isFinalPhase ? 'toggleStatus('.$item->id.', 0)' : '' }}" title="Tidak Selesai">
-                        <i data-feather="x" style="width: 14px; height: 14px;"></i>
-                    </div>
+                    @for($i = 0; $i < 5; $i++)
+                        @php $item = $report->items->where('type', 'deadline')->values()->get($i); @endphp
+                        <div class="deadline-row">
+                            @if($item && $item->content)
+                                <div class="status-checkbox" style="display: flex; align-items: center; flex-shrink: 0;">
+                                    <input type="hidden" name="item_status[{{ $item->id }}]" value="{{ $item->is_completed ? '1' : '0' }}" id="status-{{ $item->id }}">
+                                    <button type="button" class="checkbox-btn {{ $item->is_completed ? 'checked' : '' }}" 
+                                            onclick="toggleStatus({{ $item->id }})" 
+                                            style="width: 18px; height: 18px; border: 2px solid {{ $item->is_completed ? '#10b981' : 'var(--text-muted)' }}; border-radius: 5px; background: {{ $item->is_completed ? '#10b981' : 'transparent' }}; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 0.2s;">
+                                        <i data-feather="check" style="width: 12px; height: 12px; color: white; stroke-width: 3; visibility: {{ $item->is_completed ? 'visible' : 'hidden' }};"></i>
+                                    </button>
+                                </div>
+                            @else
+                                <span style="font-size: 16px; color: var(--text-muted); flex-shrink: 0; line-height: 1; margin-left: 4px; margin-right: 4px;">•</span>
+                            @endif
+                            <input type="text" name="deadlines[]" value="{{ $item->content ?? '' }}" 
+                                class="input-line" placeholder="..." 
+                                {{ $report->plan_submitted_at ? 'readonly' : '' }}>
+                        </div>
+                    @endfor
                 </div>
-            @endif
-            <input type="text" name="deadlines[]" value="{{ $item->content ?? '' }}" 
-                class="input-line" placeholder="..." {{ $report->plan_submitted_at ?  : '' }}>
-        </div>
-    @endfor
-</div>
             </div>
         </div>
-        <div class="section-box">
-            <div class="days-grid">
-                @foreach($report->dailyLogs as $log)
-                    @php 
-                        $logDate = \Carbon\Carbon::parse($log->log_date); 
-                        $savedTasks = $log->description ? explode("\n", $log->description) : [];
-                        $tasks = array_pad($savedTasks, 5, '');
-                    @endphp
-                    <div class="day-col">
-                        <div class="day-header">
-                            <div class="day-date">{{ $logDate->format('d') }}</div>
-                            <div class="day-name">
-                                <div>{{ $logDate->format('l') }}</div>
-                                <div style="font-weight: 500;">{{ $logDate->format('M Y') }}</div>
-                            </div>
+
+        <!-- Middle Row: Daily Schedule Columns Grid -->
+        <div class="days-grid" style="margin-bottom: 24px;">
+            @foreach($report->dailyLogs as $log)
+                @php 
+                    $logDate = \Carbon\Carbon::parse($log->log_date); 
+                    $savedTasks = $log->description ? explode("\n", $log->description) : [];
+                    $tasks = array_pad($savedTasks, 5, '');
+                @endphp
+                <div class="day-col">
+                    <div class="day-header">
+                        <div class="day-date">{{ $logDate->format('d') }}</div>
+                        <div class="day-meta">
+                            <div class="day-name">{{ $logDate->locale('id')->translatedFormat('l') }}</div>
+                            <div class="day-month-year">{{ $logDate->locale('id')->translatedFormat('M Y') }}</div>
                         </div>
-                        <div class="day-body">
-                            <div class="task-container" id="task-container-{{ $log->id }}">
-                                @foreach($tasks as $task)
+                    </div>
+                    <div class="day-body">
+                        <div class="task-container" id="task-container-{{ $log->id }}">
+                            @foreach($tasks as $task)
+                                <div class="daily-task-row">
+                                    <div style="width: 16px; height: 16px; border: 1.5px solid var(--border-color); border-radius: 4px; background: transparent; flex-shrink: 0;"></div>
                                     <input type="text" name="logs[{{ $log->id }}][]" class="input-line" 
-                                           value="{{ $task }}" placeholder="" 
+                                           value="{{ $task }}" placeholder="..." 
                                            oninput="triggerAutosave({{ $log->id }})"
                                            {{ $report->status === 'submitted' ? 'readonly' : '' }}>
-                                @endforeach
-                            </div>
-                            
-                            @if($report->status !== 'submitted')
-                                <button type="button" class="btn-add-task" onclick="addTaskRow({{ $log->id }})">
-                                    <i data-feather="plus" style="width: 12px; height: 12px;"></i> Tambah
-                                </button>
-                            @endif
+                                </div>
+                            @endforeach
                         </div>
+                        
+                        @if($report->status !== 'submitted')
+                            <button type="button" class="btn-add-task" onclick="addTaskRow({{ $log->id }})">
+                                <i data-feather="plus" style="width: 14px; height: 14px;"></i>
+                                <span>Tambah</span>
+                            </button>
+                        @endif
                     </div>
-                @endforeach
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Bottom Card: Notes / Obstacles Section -->
+        <div class="section-box" style="margin-bottom: 24px; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; position: relative;">
+            <div class="section-header">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <i data-feather="message-square" style="width: 16px; height: 16px; color: #2563eb;"></i>
+                    Catatan / Kendala (Opsional)
+                </span>
+            </div>
+            <div style="position: relative; padding: 16px;">
+                <textarea id="notesTextarea" name="notes" placeholder="Tuliskan catatan, kendala, atau hal lain yang perlu diperhatikan..." maxlength="500" style="width: 100%; height: 100px; border: none; background: transparent; color: var(--text-main); font-size: 13px; outline: none; resize: none; padding-bottom: 24px;" {{ $report->status === 'submitted' ? 'readonly' : '' }}>{{ $report->notes }}</textarea>
+                <div id="charCounter" style="position: absolute; bottom: 12px; right: 16px; font-size: 11px; color: var(--text-muted); font-weight: 500;">0/500</div>
             </div>
         </div>
 
-        <div class="section-box">
-            <div class="section-header">Catatan / Kendala (Opsional)</div>
-            <textarea name="notes" style="width: 100%; height: 80px; border: none; background: transparent; color: var(--text-main); font-size: 13px; padding: 16px; outline: none; resize: none;" {{ $report->status === 'submitted' ? 'readonly' : '' }}>{{ $report->notes }}</textarea>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px;">
+        <!-- Submit Button Row -->
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px; margin-bottom: 40px;">
             @if($report->status !== 'submitted')
-                <button type="submit" class="btn-success">
-                    Submit Final Report (Test)
+                <button type="submit" class="btn-submit-final">
+                    <i data-feather="send" style="width: 16px; height: 16px;"></i>
+                    <span>Submit Final Report (Test)</span>
                 </button>
             @else
                 <div style="color: #10b981; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px;">
                     <i data-feather="check-circle" style="width: 16px; height: 16px;"></i>
-                    Laporan Selesai ({{ \Carbon\Carbon::parse($report->final_submitted_at)->format('d/m/Y H:i') }})
+                    <span>Laporan Selesai ({{ \Carbon\Carbon::parse($report->final_submitted_at)->format('d/m/Y H:i') }})</span>
                 </div>
             @endif
         </div>
@@ -423,30 +452,68 @@
 </div>
 
 <script>
-    function toggleStatus(itemId, status) {
+    function toggleStatus(itemId) {
         const input = document.getElementById('status-' + itemId);
         if (!input) return;
         
-        input.value = status;
+        const isChecked = input.value === '1';
+        const newValue = isChecked ? '0' : '1';
+        input.value = newValue;
         
-        const btnCheck = input.nextElementSibling;
-        const btnCross = btnCheck.nextElementSibling;
+        const btn = input.nextElementSibling;
+        const icon = btn.querySelector('svg');
         
-        btnCheck.classList.toggle('active-check', status == 1);
-        btnCross.classList.toggle('active-cross', status == 0);
+        if (newValue === '1') {
+            btn.classList.add('checked');
+            btn.style.borderColor = '#10b981';
+            btn.style.backgroundColor = '#10b981';
+            if (icon) icon.style.visibility = 'visible';
+        } else {
+            btn.classList.remove('checked');
+            btn.style.borderColor = 'var(--text-muted)';
+            btn.style.backgroundColor = 'transparent';
+            if (icon) icon.style.visibility = 'hidden';
+        }
     }
 
     function addTaskRow(logId) {
         const container = document.getElementById('task-container-' + logId);
+        
+        const row = document.createElement('div');
+        row.className = 'daily-task-row';
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.gap = '10px';
+        row.style.marginBottom = '12px';
+        row.style.width = '100%';
+        
+        const checkbox = document.createElement('div');
+        checkbox.style.width = '16px';
+        checkbox.style.height = '16px';
+        checkbox.style.border = '1.5px solid var(--border-color)';
+        checkbox.style.borderRadius = '4px';
+        checkbox.style.background = 'transparent';
+        checkbox.style.flexShrink = '0';
+        
         const input = document.createElement('input');
         input.type = 'text';
         input.name = `logs[${logId}][]`;
         input.className = 'input-line';
-        input.placeholder = 'Rincian pekerjaan tambahan...';
+        input.placeholder = '...';
+        input.style.flex = '1';
+        input.style.border = 'none';
+        input.style.borderBottom = '1px dashed var(--border-color)';
+        input.style.background = 'transparent';
+        input.style.color = 'var(--text-main)';
+        input.style.padding = '4px 0';
+        input.style.fontSize = '13px';
+        input.style.outline = 'none';
         
         input.oninput = function() { triggerAutosave(logId); };
         
-        container.appendChild(input);
+        row.appendChild(checkbox);
+        row.appendChild(input);
+        container.appendChild(row);
         input.focus();
     }
 
@@ -455,17 +522,11 @@
     function triggerAutosave(logId) {
         clearTimeout(autosaveTimer);
         
-        const indicator = document.getElementById('autosave-indicator');
-        const indicatorText = document.getElementById('autosave-text');
-        
-        indicator.style.opacity = '1';
-        indicatorText.textContent = 'Menyimpan...';
-
         const container = document.getElementById('task-container-' + logId);
         const inputs = container.querySelectorAll('input');
         const tasks = Array.from(inputs).map(input => input.value);
 
-        // Tunggu 1 detik setelah user BERHENTI mengetik, baru kirim ke database (Mencegah spam ke server)
+        // Autosave logic
         autosaveTimer = setTimeout(() => {
             fetch('{{ route('weekly.autosave') }}', {
                 method: 'POST',
@@ -482,16 +543,28 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    indicatorText.textContent = 'Draft Tersimpan';
-                    // Sembunyikan indikator setelah 2 detik
-                    setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
+                    console.log('Draft Autosaved successfully');
                 }
             })
             .catch(error => {
-                indicatorText.textContent = 'Koneksi error';
                 console.error('Autosave error:', error);
             });
         }, 1000); 
     }
+
+    // Character Counter initialization
+    document.addEventListener('DOMContentLoaded', () => {
+        const notesTextarea = document.getElementById('notesTextarea');
+        const charCounter = document.getElementById('charCounter');
+        
+        if (notesTextarea && charCounter) {
+            const updateCounter = () => {
+                const len = notesTextarea.value.length;
+                charCounter.textContent = `${len}/500`;
+            };
+            notesTextarea.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+    });
 </script>
 @endsection

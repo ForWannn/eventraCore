@@ -308,7 +308,7 @@
     <div class="control-bar">
         <div class="search-wrapper">
             <i data-feather="search" class="search-icon"></i>
-            <input type="text" id="searchQuery" placeholder="Cari nama, NIK, atau email..." />
+            <input type="text" id="searchQuery" placeholder="Cari nama, ID Karyawan, atau email..." />
         </div>
         <div class="filter-wrapper">
             <!-- Division / Department Filter -->
@@ -337,7 +337,7 @@
         <table>
             <thead>
                 <tr style="border-bottom: 1.5px solid var(--border-color);">
-                    <th style="width: 12%;">NIK</th>
+                    <th style="width: 12%;">ID Karyawan</th>
                     <th style="width: 25%;">Nama Pengguna</th>
                     <th style="width: 23%;">Email</th>
                     <th style="width: 15%;">Role</th>

@@ -81,7 +81,7 @@
         .custom-select {
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            background: var(--hover-bg);
+            /* background: var(--hover-bg); */
             padding: 10px 12px;
             display: flex;
             align-items: center;
@@ -145,7 +145,7 @@
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 16px;
-            background: var(--hover-bg);
+            /* background: var(--hover-bg); */
         }
 
         .pos-header {

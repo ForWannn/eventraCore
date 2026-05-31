@@ -54,14 +54,15 @@
             --divider: #334155;
         }
 
-        * {
+        *, input, select, textarea, button {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Google Sans Flex', sans-serif !important;
         }
 
         body {
-            font-family: 'Google Sans Flex', sans-serif;
+            font-family: 'Google Sans Flex', sans-serif !important;
             background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
@@ -338,6 +339,36 @@
             height: 16px;
             stroke-width: 2;
         }
+
+        /* Global Back Button Style (CTA Style) */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-back:hover {
+            background: var(--hover-bg);
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+        .btn-back svg, .btn-back i {
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .btn-back:hover svg, .btn-back:hover i {
+            color: var(--text-main);
+        }
     </style>
 </head>
 
@@ -347,55 +378,77 @@
          <div class="sidebar-header">
              eventraCore
          </div>
-         <div class="nav-links">
-             <div class="nav-section-label">OPERASIONAL</div>
-             <a href="{{ route('dashboard') }}"
-                 class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                 <i data-feather="grid"></i> <span>Dashboard</span>
-             </a>
-             
-             @role('CEO|GM|Admin')
-             <a href="{{ route('users.index') }}"
-                 class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                 <i data-feather="users"></i> <span>Manajemen Karyawan</span>
-             </a>
-             @endrole
-             
-             <a href="{{ route('events.index') }}"
-                 class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
-                 <i data-feather="calendar"></i> 
-                 <span>{{ Auth::user()->hasRole(['CEO', 'GM']) ? 'Daftar Event' : 'My Events' }}</span>
-             </a>
- 
-             <div class="nav-section-label" style="margin-top: 16px;">REPORT & HISTORY</div>
-             <a href="{{ route('weekly.index') }}"
-                 class="nav-link {{ request()->routeIs('weekly.index') ? 'active' : '' }}">
-                 <i data-feather="file-text"></i> <span>Weekly Report</span>
-             </a>
- 
-             @role('CEO|GM')
-                <a href="{{ route('weekly.recap') }}"
-                    class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">
-                    <i data-feather="layers"></i> <span>Rekap Weekly Report</span>
-                </a>
-                <a href="{{ route('attendance.recap') }}"
-                    class="nav-link {{ request()->routeIs('attendance.recap') ? 'active' : '' }}">
-                    <i data-feather="clipboard"></i> <span>Rekap Absensi Harian</span>
-                </a>
-                 <a href="{{ route('weekly.history') }}"
-                     class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
-                     <i data-feather="archive"></i> <span>Riwayat Weekly Report</span>
+          <div class="nav-links">
+              <div class="nav-section-label">OPERASIONAL</div>
+              <a href="{{ route('dashboard') }}"
+                  class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                  <i data-feather="grid"></i> <span>Dashboard</span>
+              </a>
+              
+              @role('CEO|GM|Admin')
+              <a href="{{ route('users.index') }}"
+                  class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                  <i data-feather="users"></i> <span>Manajemen User</span>
+              </a>
+              @endrole
+              
+              @unless(Auth::user()->hasRole('Admin'))
+              <a href="{{ route('events.index') }}"
+                  class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
+                  <i data-feather="calendar"></i> 
+                  <span>{{ Auth::user()->hasRole(['CEO', 'GM']) ? 'Daftar Event' : 'My Events' }}</span>
+              </a>
+              @endunless
+
+              @role('Admin')
+              <div class="nav-section-label" style="margin-top: 16px;">PENGATURAN</div>
+              <a href="{{ route('settings.calendar') }}"
+                  class="nav-link {{ request()->routeIs('settings.calendar') ? 'active' : '' }}">
+                  <i data-feather="calendar"></i> <span>Kalender</span>
+              </a>
+              @endrole
+  
+              <div class="nav-section-label" style="margin-top: 16px;">REPORT & HISTORY</div>
+              @unless(Auth::user()->hasRole('Admin'))
+              <a href="{{ route('weekly.index') }}"
+                  class="nav-link {{ request()->routeIs('weekly.index') ? 'active' : '' }}">
+                  <i data-feather="file-text"></i> <span>Weekly Report</span>
+              </a>
+              @endunless
+  
+              @role('CEO|GM')
+                 <a href="{{ route('weekly.recap') }}"
+                     class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">
+                     <i data-feather="layers"></i> <span>Rekap Weekly Report</span>
                  </a>
-             @else
-                 <a href="{{ route('weekly.history') }}"
-                     class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
-                     <i data-feather="archive"></i> <span>History Weekly Report</span>
+                 <a href="{{ route('attendance.recap') }}"
+                     class="nav-link {{ request()->routeIs('attendance.recap') ? 'active' : '' }}">
+                     <i data-feather="clipboard"></i> <span>Rekap Absensi Harian</span>
                  </a>
-                 <a href="{{ route('attendance.history') }}"
-                     class="nav-link {{ request()->routeIs('attendance.history') ? 'active' : '' }}">
-                     <i data-feather="clock"></i> <span>Riwayat Absensi</span>
-                 </a>
-             @endrole
+                  <a href="{{ route('weekly.history') }}"
+                      class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
+                      <i data-feather="archive"></i> <span>Riwayat Weekly Report</span>
+                  </a>
+                  <a href="{{ route('leave-approvals.index') }}"
+                      class="nav-link {{ request()->routeIs('leave-approvals.*') ? 'active' : '' }}">
+                      <i data-feather="check-square"></i> <span>Persetujuan Izin/Cuti</span>
+                  </a>
+              @else
+                  @unless(Auth::user()->hasRole('Admin'))
+                  <a href="{{ route('weekly.history') }}"
+                      class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
+                      <i data-feather="archive"></i> <span>History Weekly Report</span>
+                  </a>
+                  @endunless
+                  <a href="{{ route('attendance.history') }}"
+                      class="nav-link {{ request()->routeIs('attendance.history') ? 'active' : '' }}">
+                      <i data-feather="clock"></i> <span>Riwayat Absensi</span>
+                  </a>
+                  <a href="{{ route('leave-requests.index') }}"
+                      class="nav-link {{ request()->routeIs('leave-requests.*') ? 'active' : '' }}">
+                      <i data-feather="send"></i> <span>Pengajuan Izin/Cuti</span>
+                  </a>
+              @endrole
  
              @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
                  <a href="#" class="nav-link">

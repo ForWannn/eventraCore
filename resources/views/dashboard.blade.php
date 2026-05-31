@@ -669,6 +669,205 @@
         max-width: 68%;
         z-index: 10;
     }
+
+    /* Redesigned Employee Attendance Widget */
+    .attendance-redesign-layout {
+        display: flex;
+        align-items: center;
+        padding: 16px 0;
+    }
+    @media (max-width: 768px) {
+        .attendance-redesign-layout {
+            flex-direction: column;
+            gap: 32px;
+            align-items: stretch;
+            text-align: center;
+        }
+    }
+
+    .attendance-circle-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .progress-ring-wrapper {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .progress-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: rotate(-90deg);
+    }
+
+    .progress-ring__bar {
+        stroke-dasharray: 314.159; /* 2 * pi * r (where r = 50) => 314.159 */
+        stroke-dashoffset: 314.159;
+        transition: stroke-dashoffset 0.5s ease;
+        stroke-linecap: round;
+    }
+
+    .progress-ring-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        z-index: 2;
+        position: absolute;
+    }
+
+    .work-time-counter {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.2;
+    }
+
+    .work-time-label {
+        font-size: 9px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 2px;
+        line-height: 1;
+    }
+
+    .work-time-target {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-top: 2px;
+        line-height: 1;
+    }
+
+    .attendance-details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px 40px;
+        flex: 1;
+    }
+    @media (max-width: 480px) {
+        .attendance-details-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .detail-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .detail-icon {
+        width: 15px;
+        height: 15px;
+        color: var(--text-muted);
+    }
+
+    .detail-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    /* Not checked in layout */
+    .attendance-redesign-layout.not-checked-in {
+        justify-content: space-between;
+        gap: 24px;
+        width: 100%;
+    }
+    @media (max-width: 768px) {
+        .attendance-redesign-layout.not-checked-in {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    .digital-clock-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+    }
+    @media (max-width: 768px) {
+        .digital-clock-container {
+            align-items: center;
+            text-align: center;
+        }
+    }
+
+    .attendance-action-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 12px;
+    }
+    @media (max-width: 768px) {
+        .attendance-action-container {
+            align-items: center;
+            width: 100%;
+        }
+    }
+
+    .btn-checkin-large {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        padding: 14px 28px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        width: 100%;
+        min-width: 240px;
+    }
+
+    .btn-checkin-large:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-checkin-large svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .action-note {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
 </style>
 
 @role('CEO|GM')
@@ -888,6 +1087,122 @@
         </div>
     </div>
 
+    <!-- Redesigned Absensi Hari Ini Widget (Full Width) for CEO/GM -->
+    <div class="section-card" style="margin-bottom: 28px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i data-feather="map-pin" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                <span class="section-title">Absensi Hari Ini</span>
+            </div>
+            @if($todayAttendance)
+                <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                    Hadir
+                </span>
+            @elseif(!$isWorkingDayToday)
+                <span class="badge" style="background: var(--hover-bg); color: var(--text-muted); border: 1px solid var(--border-color); font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                    Libur
+                </span>
+            @else
+                <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                    Belum Absen
+                </span>
+            @endif
+        </div>
+
+        @if($todayAttendance)
+            <div class="attendance-redesign-layout">
+                <!-- Left: Circular Progress Timer -->
+                <div class="attendance-circle-container">
+                    <div class="progress-ring-wrapper">
+                        <svg class="progress-ring" width="120" height="120">
+                            <circle class="progress-ring__background" stroke="var(--border-color)" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
+                            <circle class="progress-ring__bar" id="progressRingBar" stroke="#2563eb" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
+                        </svg>
+                        <div class="progress-ring-text">
+                            <span id="elapsedWorkTime" class="work-time-counter">00:00:00</span>
+                            <span class="work-time-label">Jam Kerja</span>
+                            <span class="work-time-target">/ 08:00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Detail Info Grid -->
+                <div class="attendance-details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="clock" class="detail-icon"></i>
+                            <span>Jam Masuk</span>
+                        </div>
+                        <div class="detail-value" style="color: #10b981;">
+                            {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }} WIB
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="map-pin" class="detail-icon"></i>
+                            <span>Lokasi Presensi</span>
+                        </div>
+                        <div class="detail-value">
+                            {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor Utama' : 'Luar Kantor (WFA)' }}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="shield" class="detail-icon"></i>
+                            <span>Metode Presensi</span>
+                        </div>
+                        <div class="detail-value">
+                            Selfie & GPS Verification
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="check-circle" class="detail-icon"></i>
+                            <span>Status Kehadiran</span>
+                        </div>
+                        <div class="detail-value">
+                            <span style="color: {{ $todayAttendance->status === 'tepat_waktu' ? '#10b981' : '#f59e0b' }}; font-weight: 700;">
+                                {{ $todayAttendance->status === 'tepat_waktu' ? 'Tepat Waktu' : 'Terlambat' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @elseif(!$isWorkingDayToday)
+            <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--hover-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                    <i data-feather="coffee" style="width: 32px; height: 32px; color: #2563eb;"></i>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0 0 6px 0;">Hari Ini Libur</h3>
+                <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
+                    Nikmati hari istirahat dengan baik!
+                </p>
+            </div>
+        @else
+            <div class="attendance-redesign-layout not-checked-in">
+                <div class="digital-clock-container">
+                    <div class="digital-clock" id="digitalClock" style="font-size: 40px; font-weight: 700; color: var(--text-main); font-family: monospace; letter-spacing: 1px;">00:00:00</div>
+                    <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 500;">
+                        Silakan lakukan absensi kehadiran untuk hari ini.
+                    </p>
+                </div>
+                <div class="attendance-action-container">
+                    <button class="btn-checkin-large" onclick="openAttendanceModal()">
+                        <i data-feather="camera"></i>
+                        <span>Absen Masuk Sekarang</span>
+                    </button>
+                    <p class="action-note">
+                        <i data-feather="info" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                        Pastikan Anda berada di lokasi kerja saat melakukan absensi.
+                    </p>
+                </div>
+            </div>
+        @endif
+    </div>
+
     <!-- Main Columns: Calendar & Comparison Trend + Upcoming Events List -->
     <div class="dashboard-cols">
         <!-- Column 1: Kalender Event -->
@@ -1045,6 +1360,122 @@
         </div>
     </div>
 
+    <!-- Redesigned Absensi Hari Ini Widget (Full Width) -->
+    <div class="section-card" style="margin-bottom: 28px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i data-feather="map-pin" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                <span class="section-title">Absensi Hari Ini</span>
+            </div>
+            @if($todayAttendance)
+                <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                    Hadir
+                </span>
+            @elseif(!$isWorkingDayToday)
+                <span class="badge" style="background: var(--hover-bg); color: var(--text-muted); border: 1px solid var(--border-color); font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                    Libur
+                </span>
+            @else
+                <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                    Belum Absen
+                </span>
+            @endif
+        </div>
+
+        @if($todayAttendance)
+            <div class="attendance-redesign-layout">
+                <!-- Left: Circular Progress Timer -->
+                <div class="attendance-circle-container">
+                    <div class="progress-ring-wrapper">
+                        <svg class="progress-ring" width="120" height="120">
+                            <circle class="progress-ring__background" stroke="var(--border-color)" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
+                            <circle class="progress-ring__bar" id="progressRingBar" stroke="#2563eb" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
+                        </svg>
+                        <div class="progress-ring-text">
+                            <span id="elapsedWorkTime" class="work-time-counter">00:00:00</span>
+                            <span class="work-time-label">Jam Kerja</span>
+                            <span class="work-time-target">/ 08:00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Detail Info Grid -->
+                <div class="attendance-details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="clock" class="detail-icon"></i>
+                            <span>Jam Masuk</span>
+                        </div>
+                        <div class="detail-value" style="color: #10b981;">
+                            {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }} WIB
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="map-pin" class="detail-icon"></i>
+                            <span>Lokasi Presensi</span>
+                        </div>
+                        <div class="detail-value">
+                            {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor Utama' : 'Luar Kantor (WFA)' }}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="shield" class="detail-icon"></i>
+                            <span>Metode Presensi</span>
+                        </div>
+                        <div class="detail-value">
+                            Selfie & GPS Verification
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i data-feather="check-circle" class="detail-icon"></i>
+                            <span>Status Kehadiran</span>
+                        </div>
+                        <div class="detail-value">
+                            <span style="color: {{ $todayAttendance->status === 'tepat_waktu' ? '#10b981' : '#f59e0b' }}; font-weight: 700;">
+                                {{ $todayAttendance->status === 'tepat_waktu' ? 'Tepat Waktu' : 'Terlambat' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @elseif(!$isWorkingDayToday)
+            <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--hover-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                    <i data-feather="coffee" style="width: 32px; height: 32px; color: #2563eb;"></i>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0 0 6px 0;">Hari Ini Libur</h3>
+                <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
+                    Nikmati hari libur kamu dengan baik!
+                </p>
+            </div>
+        @else
+            <div class="attendance-redesign-layout not-checked-in">
+                <div class="digital-clock-container">
+                    <div class="digital-clock" id="digitalClock" style="font-size: 40px; font-weight: 700; color: var(--text-main); font-family: monospace; letter-spacing: 1px;">00:00:00</div>
+                    <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 500;">
+                        Silakan lakukan absensi kehadiran untuk hari ini.
+                    </p>
+                </div>
+                <div class="attendance-action-container">
+                    <button class="btn-checkin-large" onclick="openAttendanceModal()">
+                        <i data-feather="camera"></i>
+                        <span>Absen Masuk Sekarang</span>
+                    </button>
+                    <p class="action-note">
+                        <i data-feather="info" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                        Pastikan Anda berada di lokasi kerja saat melakukan absensi.
+                    </p>
+                </div>
+            </div>
+        @endif
+    </div>
+
     <div class="dashboard-cols">
         <!-- Left Container: Kalender Event -->
         <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
@@ -1073,57 +1504,8 @@
             </div>
         </div>
 
-        <!-- Right Container: Absen Hari Ini & Riwayat Absen Terbaru -->
+        <!-- Right Container: Riwayat Absen Terbaru -->
         <div style="display: flex; flex-direction: column; gap: 24px;">
-            <!-- Widget: Absen Hari Ini -->
-            <div class="section-card" style="position: relative;">
-                <div class="section-header" style="margin-bottom: 20px; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <i data-feather="map-pin" style="color: var(--primary); width: 20px; height: 20px;"></i>
-                        <span class="section-title">Absen</span>
-                    </div>
-                    
-                </div>
-
-                @if($todayAttendance)
-                    <div style="text-align: center; padding: 24px 0;">
-                        <p style="font-size: 14px; color: #059669; margin-bottom: 24px;">
-                            Kamu sudah absen hari ini jam {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }} WIB.
-                        </p>
-                        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(16,185,129,0.1); border-radius: 99px; color: #065f46; font-size: 12px; font-weight: 600; text-transform: uppercase;">
-                            @if($todayAttendance->attendance_type === 'kantor')
-                                <i data-feather="home" style="width: 14px; height: 14px;"></i> Kantor
-                            @else
-                                <i data-feather="map-pin" style="width: 14px; height: 14px;"></i> Web Absen
-                            @endif
-                        </div>
-                    </div>
-                @else
-                    <div style="text-align: center; padding: 20px 0;">
-                        <div class="digital-clock" id="digitalClock" style="font-size: 48px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); font-family: monospace;">00:00:00</div>
-                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">
-                            Silakan lakukan absensi untuk hari ini.
-                        </p>
-                        <button class="btn" style="width: 100%; justify-content: center; height: 50px; border-radius: 14px; font-weight: 700; background: var(--primary); color: white; border: none; transition: background 0.2s;" onclick="openAttendanceModal()">
-                            Absen Sekarang
-                        </button>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Widget: Riwayat Absen Terbaru -->
-            <div class="section-card">
-                <div class="section-header" style="margin-bottom: 16px; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <i data-feather="clock" style="color: #2563eb; width: 20px; height: 20px;"></i>
-                        <span class="section-title">History Absen</span>
-                    </div>
-                    <a href="{{ route('attendance.history') }}" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 600;">
-                        Lihat Semua Riwayat
-                    </a>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 12px;">
                     @forelse($recentAttendances as $att)
                         <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px;">
                             <div style="display: flex; align-items: center; gap: 12px;">
@@ -1163,129 +1545,40 @@
             </div>
         </div>
 
-    <div id="attendanceModal" style="display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); padding: 20px; flex-direction: column; align-items: center; justify-content: center;">
-        <div style="background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; overflow: hidden; position: relative;">
-            <button onclick="closeAttendanceModal()" style="position: absolute; top: 12px; right: 12px; z-index: 110; background: rgba(0,0,0,0.5); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
-            
-            <div style="position: relative; aspect-ratio: 4/3; background: #000;">
-                <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-                <canvas id="photoCanvas" style="display:none;"></canvas>
+@endrole
 
-                <div id="gpsOverlay" style="position: absolute; bottom: 20px; left: 20px; right: 20px; display: flex; align-items: center; gap: 16px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.55); border-radius: 16px; padding: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 10; max-width: none;">
-                    <div style="width: 72px; height: 72px; border-radius: 10px; overflow: hidden; border: 1.5px solid rgba(255,255,255,0.6); flex-shrink: 0;">
-                        <div id="miniMap" style="width: 100%; height: 100%;"></div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; text-align: left;">
-                        <div id="gpsAddress" style="font-size: 11px; font-weight: 700; color: #fff; line-height: 1.3; overflow-wrap: break-word; word-wrap: break-word; white-space: normal;">Proses Lokasi...</div>
-                        <div id="gpsCoords" style="font-size: 9px; font-family: monospace; color: rgba(255,255,255,0.9); font-weight: 500;">—</div>
-                        <div id="gpsClock" style="font-size: 9px; color: rgba(255,255,255,0.8); font-weight: 500;">00:00 WIB</div>
-                    </div>
+<!-- Global Leaflet Assets (Loaded for everyone) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Global Attendance Modal (Accessed by both employees and directors) -->
+<div id="attendanceModal" style="display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); padding: 20px; flex-direction: column; align-items: center; justify-content: center;">
+    <div style="background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; overflow: hidden; position: relative;">
+        <button onclick="closeAttendanceModal()" style="position: absolute; top: 12px; right: 12px; z-index: 110; background: rgba(0,0,0,0.5); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
+        
+        <div style="position: relative; aspect-ratio: 4/3; background: #000;">
+            <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+            <canvas id="photoCanvas" style="display:none;"></canvas>
+            <div id="gpsOverlay" style="position: absolute; bottom: 20px; left: 20px; right: 20px; display: flex; align-items: center; gap: 16px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.55); border-radius: 16px; padding: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 10; max-width: none;">
+                <div style="width: 72px; height: 72px; border-radius: 10px; overflow: hidden; border: 1.5px solid rgba(255,255,255,0.6); flex-shrink: 0;">
+                    <div id="miniMap" style="width: 100%; height: 100%;"></div>
                 </div>
-            </div>
-
-            <div style="padding: 20px;">
-                <button id="btnSubmitAbsen" class="btn" style="width:100%; justify-content:center; height: 48px; border-radius: 12px; font-weight: 600;">
-                    <i data-feather="camera" style="width:16px; margin-right:8px;"></i> Ambil Foto & Absen
-                </button>
-                <div style="text-align: center; margin-top: 10px;">
-                    <span id="mockLocationBtn" style="font-size: 11px; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-weight: 600;">
-                        📍 Simulasikan Jalan Swadaya (Kenten)
-                    </span>
+                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; text-align: left;">
+                    <div id="gpsAddress" style="font-size: 11px; font-weight: 700; color: #fff; line-height: 1.3; overflow-wrap: break-word; word-wrap: break-word; white-space: normal;">Proses Lokasi...</div>
+                    <div id="gpsCoords" style="font-size: 9px; font-family: monospace; color: rgba(255,255,255,0.9); font-weight: 500;">—</div>
+                    <div id="gpsClock" style="font-size: 9px; color: rgba(255,255,255,0.8); font-weight: 500;">00:00 WIB</div>
                 </div>
             </div>
         </div>
+        <div style="padding: 20px;">
+            <button id="btnSubmitAbsen" class="btn" style="width:100%; justify-content:center; height: 48px; border-radius: 12px; font-weight: 600;">
+                <i data-feather="camera" style="width:16px; margin-right:8px;"></i> Ambil Foto & Absen
+            </button>
+        </div>
     </div>
+</div>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-@endrole
-
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-@role('CEO|GM')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tren Event Chart
-        const ctxTrend = document.getElementById('eventTrendChart');
-        if (ctxTrend) {
-            new Chart(ctxTrend, {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($months ?? []) !!},
-                    datasets: [
-                        {
-                            label: '{{ $trendYear }}',
-                            data: {!! json_encode($trendsCurrent ?? []) !!},
-                            borderColor: '#2563eb',
-                            backgroundColor: 'rgba(37,99,235,0.08)',
-                            borderWidth: 3,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#2563eb',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        },
-                        {
-                            label: '{{ $trendYear - 1 }}',
-                            data: {!! json_encode($trendsPrevious ?? []) !!},
-                            borderColor: '#94a3b8',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            tension: 0.4,
-                            fill: false,
-                            pointBackgroundColor: '#94a3b8',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' },
-                            ticks: { stepSize: 5 }
-                        },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
-        }
-
-        // Year select listener
-        const yearSelect = document.getElementById('trendYearSelect');
-        if (yearSelect) {
-            yearSelect.addEventListener('change', function() {
-                const url = new URL(window.location.href);
-                url.searchParams.set('year', this.value);
-                window.location.href = url.toString();
-            });
-        }
-
-        // Calendar
-        const calEl = document.getElementById('eventCalendar');
-        if (calEl) {
-            new FullCalendar.Calendar(calEl, {
-                initialView: 'dayGridMonth',
-                locale: 'id',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listMonth' },
-                events: {!! $calendarEvents ?? '[]' !!},
-                height: 'auto'
-            }).render();
-        }
-    });
-</script>
-@else
+<!-- Global Attendance Scripts (Available for all roles) -->
 <script>
 function openAttendanceModal() {
     document.getElementById('attendanceModal').style.display = 'flex';
@@ -1418,13 +1711,13 @@ function initCameraAndGps() {
             coordsCache = `${toDMS(lat, true)} ${toDMS(lng, false)}`;
             if(gpsCoords) gpsCoords.textContent = coordsCache;
 
-            // Reverse Geocode (longer address details without the country name at the end)
+            // Reverse Geocode
             fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
                 .then(r => r.json())
                 .then(d => {
                     const parts = d.display_name.split(', ');
                     if (parts.length > 1) {
-                        parts.pop(); // Remove the country name at the end
+                        parts.pop();
                     }
                     addressCache = parts.join(', ');
                     if(gpsAddress) gpsAddress.textContent = addressCache;
@@ -1439,11 +1732,11 @@ function initCameraAndGps() {
             }
         });
     }
-    // Developer helper: Mock Location to test named road geocoding
+
+    // Developer helper: Mock Location
     const mockBtn = document.getElementById('mockLocationBtn');
     if (mockBtn) {
         mockBtn.addEventListener('click', function() {
-            // Coordinates of Jalan Swadaya, Palembang
             const mockLat = -2.9507;
             const mockLng = 104.7454;
             userCoords = { lat: mockLat, lng: mockLng };
@@ -1458,16 +1751,14 @@ function initCameraAndGps() {
                 .then(d => {
                     const parts = d.display_name.split(', ');
                     if (parts.length > 1) {
-                        parts.pop(); // Remove country
+                        parts.pop();
                     }
                     addressCache = parts.join(', ');
                     if(gpsAddress) gpsAddress.textContent = addressCache;
                 });
                 
-            // Update Mini Map
             if (miniMapInst) {
                 miniMapInst.setView([mockLat, mockLng], 15);
-                // Clear existing markers and place a new one
                 miniMapInst.eachLayer(layer => {
                     if (layer instanceof L.Marker) {
                         miniMapInst.removeLayer(layer);
@@ -1489,29 +1780,24 @@ function initCameraAndGps() {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0);
         
-        // Dimensions of overlay box
         const boxWidth = canvas.width - 40;
         const boxHeight = 110;
         const boxX = 20;
         const boxY = canvas.height - boxHeight - 20;
         const borderRadius = 14;
 
-        // Draw backdrop blur effect on canvas
         ctx.save();
         drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, borderRadius);
         ctx.clip();
         
-        // Apply blur to clipped area (backdrop blur)
         ctx.filter = 'blur(12px)';
         ctx.drawImage(video, 0, 0);
-        ctx.filter = 'none'; // reset filter
+        ctx.filter = 'none';
         
-        // Translucent overlay
         ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
         ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
         ctx.restore();
         
-        // Overlay stroke border
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
         ctx.lineWidth = 1.5;
         drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, borderRadius);
@@ -1519,7 +1805,6 @@ function initCameraAndGps() {
 
         const dmsCoords = `${toDMS(userCoords.lat, true)} ${toDMS(userCoords.lng, false)}`;
 
-        // Draw Map Tile on Canvas (crop and draw Leaflet OSM tile)
         const mapImg = new Image();
         mapImg.crossOrigin = "Anonymous";
         const zoom = 15;
@@ -1527,12 +1812,10 @@ function initCameraAndGps() {
         const tileY = Math.floor((1 - Math.log(Math.tan(userCoords.lat * Math.PI / 180) + 1 / Math.cos(userCoords.lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
         
         mapImg.onload = function() {
-            // Map box dims
             const mapSize = 72;
             const mapX = boxX + 14;
             const mapY = boxY + (boxHeight - mapSize) / 2;
             
-            // OSM tiles are 256x256
             function getTilePercentX(lon, zoom) {
                 const a = (lon + 180) / 360 * Math.pow(2, zoom);
                 return a - Math.floor(a);
@@ -1544,14 +1827,11 @@ function initCameraAndGps() {
             const px = getTilePercentX(userCoords.lng, zoom) * 256;
             const py = getTilePercentY(userCoords.lat, zoom) * 256;
             
-            // Source crop centered
             const srcSize = 120;
             const srcX = Math.max(0, Math.min(256 - srcSize, px - srcSize/2));
             const srcY = Math.max(0, Math.min(256 - srcSize, py - srcSize/2));
 
-            // Draw map image
             ctx.save();
-            // Rounded corners for map
             ctx.beginPath();
             ctx.arc(mapX + 8, mapY + 8, 8, Math.PI, 1.5 * Math.PI);
             ctx.arc(mapX + mapSize - 8, mapY + 8, 8, 1.5 * Math.PI, 2 * Math.PI);
@@ -1562,7 +1842,6 @@ function initCameraAndGps() {
             
             ctx.drawImage(mapImg, srcX, srcY, srcSize, srcSize, mapX, mapY, mapSize, mapSize);
             
-            // Draw marker dot in center of map
             ctx.beginPath();
             ctx.arc(mapX + mapSize/2, mapY + mapSize/2, 5, 0, 2 * Math.PI);
             ctx.fillStyle = '#ef4444';
@@ -1573,7 +1852,6 @@ function initCameraAndGps() {
             
             ctx.restore();
 
-            // Draw map border
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
@@ -1584,7 +1862,6 @@ function initCameraAndGps() {
             ctx.closePath();
             ctx.stroke();
 
-            // Draw text overlay
             ctx.fillStyle = '#ffffff';
             ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
             ctx.shadowBlur = 4;
@@ -1592,17 +1869,14 @@ function initCameraAndGps() {
             const textX = mapX + mapSize + 16;
             let textY = boxY + 24;
             
-            // Address
             ctx.font = 'bold 11px sans-serif';
             const nextY = wrapText(ctx, addressCache || 'Lokasi Absen', textX, textY, boxWidth - mapSize - 40, 15);
             
-            // Coordinates
             ctx.font = 'normal 9px monospace';
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
             textY = nextY + 14;
             ctx.fillText(dmsCoords, textX, textY);
             
-            // Time
             ctx.font = 'normal 9px sans-serif';
             ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
             textY += 12;
@@ -1611,7 +1885,6 @@ function initCameraAndGps() {
             submitPhotoAndCoords();
         };
 
-        // Fallback if map loading fails
         mapImg.onerror = function() {
             const mapSize = 72;
             const mapX = boxX + 14;
@@ -1643,7 +1916,6 @@ function initCameraAndGps() {
 
         function submitPhotoAndCoords() {
             const photo = canvas.toDataURL('image/png');
-            
             fetch('{{ route("attendance.storeLuar") }}', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
@@ -1655,13 +1927,190 @@ function initCameraAndGps() {
         }
     };
 }
+</script>
 
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+@role('CEO|GM')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clock for CEO/GM
+        setInterval(() => {
+            const el = document.getElementById('digitalClock');
+            if(el) el.textContent = new Date().toLocaleTimeString('id-ID', {hour12:false});
+        }, 1000);
+
+        // Work Timer for CEO/GM
+        @if($todayAttendance)
+        (function() {
+            const checkInStr = "{{ $todayAttendance->check_in_time }}";
+            const dateStr = "{{ $todayAttendance->date }}";
+            const checkInTime = new Date(dateStr + 'T' + checkInStr);
+            
+            function updateWorkTime() {
+                const now = new Date();
+                let diff = now - checkInTime;
+                if (diff < 0) diff = 0;
+                
+                const hours = Math.floor(diff / 3600000);
+                const minutes = Math.floor((diff % 3600000) / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                
+                const format = (num) => String(num).padStart(2, '0');
+                const timeStr = `${format(hours)}:${format(minutes)}:${format(seconds)}`;
+                
+                const el = document.getElementById('elapsedWorkTime');
+                if (el) el.textContent = timeStr;
+                
+                const targetMs = 28800000;
+                let percent = (diff / targetMs) * 100;
+                if (percent > 100) percent = 100;
+                
+                const bar = document.getElementById('progressRingBar');
+                if (bar) {
+                    const radius = bar.r.baseVal.value;
+                    const circumference = radius * 2 * Math.PI;
+                    const offset = circumference - (percent / 100) * circumference;
+                    bar.style.strokeDashoffset = offset;
+                }
+            }
+            updateWorkTime();
+            setInterval(updateWorkTime, 1000);
+        })();
+        @endif
+
+        // Tren Event Chart
+        const ctxTrend = document.getElementById('eventTrendChart');
+        if (ctxTrend) {
+            new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($months ?? []) !!},
+                    datasets: [
+                        {
+                            label: '{{ $trendYear }}',
+                            data: {!! json_encode($trendsCurrent ?? []) !!},
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37,99,235,0.08)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#2563eb',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: '{{ $trendYear - 1 }}',
+                            data: {!! json_encode($trendsPrevious ?? []) !!},
+                            borderColor: '#94a3b8',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: false,
+                            pointBackgroundColor: '#94a3b8',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' },
+                            ticks: { stepSize: 5 }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Year select listener
+        const yearSelect = document.getElementById('trendYearSelect');
+        if (yearSelect) {
+            yearSelect.addEventListener('change', function() {
+                const url = new URL(window.location.href);
+                url.searchParams.set('year', this.value);
+                window.location.href = url.toString();
+            });
+        }
+
+        // Calendar
+        const calEl = document.getElementById('eventCalendar');
+        if (calEl) {
+            new FullCalendar.Calendar(calEl, {
+                initialView: 'dayGridMonth',
+                locale: 'id',
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listMonth' },
+                events: {!! $calendarEvents ?? '[]' !!},
+                height: 'auto'
+            }).render();
+        }
+    });
+</script>
+@else
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     // Clock
     setInterval(() => {
         const el = document.getElementById('digitalClock');
         if(el) el.textContent = new Date().toLocaleTimeString('id-ID', {hour12:false});
     }, 1000);
+
+    // Work Timer (Elapsed time since check-in)
+    @if($todayAttendance)
+    (function() {
+        const checkInStr = "{{ $todayAttendance->check_in_time }}"; // e.g. "08:09:00"
+        const dateStr = "{{ $todayAttendance->date }}"; // e.g. "2026-05-31"
+        
+        // Parse ISO format to ensure timezone consistency in browser
+        const checkInTime = new Date(dateStr + 'T' + checkInStr);
+        
+        function updateWorkTime() {
+            const now = new Date();
+            let diff = now - checkInTime;
+            
+            if (diff < 0) diff = 0; // prevent negative time if client clock is slightly behind
+            
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            const format = (num) => String(num).padStart(2, '0');
+            const timeStr = `${format(hours)}:${format(minutes)}:${format(seconds)}`;
+            
+            const el = document.getElementById('elapsedWorkTime');
+            if (el) el.textContent = timeStr;
+            
+            // 8 hours target (8 * 3600000 = 28,800,000 ms)
+            const targetMs = 28800000;
+            let percent = (diff / targetMs) * 100;
+            if (percent > 100) percent = 100;
+            
+            const bar = document.getElementById('progressRingBar');
+            if (bar) {
+                const radius = bar.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                const offset = circumference - (percent / 100) * circumference;
+                bar.style.strokeDashoffset = offset;
+            }
+        }
+        
+        updateWorkTime();
+        setInterval(updateWorkTime, 1000);
+    })();
+    @endif
 
     // Calendar
     const calEl = document.getElementById('eventCalendar');
