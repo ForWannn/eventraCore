@@ -252,6 +252,92 @@
         [data-theme="dark"] .moon-icon {
             display: none;
         }
+
+        /* User Mini Card on Sidebar */
+        .user-mini-card-wrapper {
+            position: relative;
+            margin: 8px 12px 4px 12px;
+        }
+        .user-mini-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        [data-theme="dark"] .user-mini-card {
+            background: rgba(30, 58, 95, 0.3);
+            border-color: rgba(30, 58, 95, 0.5);
+        }
+        .user-mini-card:hover {
+            background: rgba(37, 99, 235, 0.1);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+        .user-mini-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1.5px solid var(--border-color);
+        }
+        .user-mini-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+            text-align: left;
+        }
+        .user-mini-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .user-mini-role {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .user-mini-chevron {
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .sidebar-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            margin: 4px 12px 12px 12px;
+            color: var(--danger);
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+            width: calc(100% - 24px);
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.15s;
+        }
+        .sidebar-logout-btn:hover {
+            background: rgba(239, 68, 68, 0.05);
+        }
+        .sidebar-logout-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
     </style>
 </head>
 
@@ -268,7 +354,7 @@
                  <i data-feather="grid"></i> <span>Dashboard</span>
              </a>
              
-             @role('CEO')
+             @role('CEO|GM|Admin')
              <a href="{{ route('users.index') }}"
                  class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
                  <i data-feather="users"></i> <span>Manajemen Karyawan</span>
@@ -317,42 +403,57 @@
                  </a>
              @endif
          </div>
-         <div class="sidebar-footer">
-             <div class="nav-link" style="font-size: 12px;">© 2026 eventraCore</div>
-         </div>
-     </div>
-    @endauth
- 
-     <div class="main-wrapper">
-        @auth
-         <div class="top-header">
-             <div>
+             <!-- Sidebar User Mini Card & Logout -->
+             <div class="user-mini-card-wrapper">
+                 <a href="{{ route('profile') }}" class="user-mini-card">
+                     <img src="{{ Auth::user()->photo_url }}" class="user-mini-avatar" alt="{{ Auth::user()->name }}">
+                     <div class="user-mini-info">
+                         <span class="user-mini-name">{{ Auth::user()->name }}</span>
+                         @php
+                             $userRole = Auth::user()->roles->where('name', '!=', 'PIC Event')->first()?->name ?? 'Crew';
+                         @endphp
+                         <span class="user-mini-role">{{ $userRole }}</span>
+                     </div>
+                     <i data-feather="chevron-right" class="user-mini-chevron"></i>
+                 </a>
              </div>
-             <div class="user-info">
-                 <button class="theme-toggle-btn" id="themeToggle">
-                     <svg class="moon-icon" viewBox="0 0 24 24">
-                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                     </svg>
-                     <svg class="sun-icon" viewBox="0 0 24 24">
-                         <circle cx="12" cy="12" r="5"></circle>
-                         <line x1="12" y1="1" x2="12" y2="3"></line>
-                         <line x1="12" y1="21" x2="12" y2="23"></line>
-                         <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                         <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                         <line x1="1" y1="12" x2="3" y2="12"></line>
-                         <line x1="21" y1="12" x2="23" y2="12"></line>
-                         <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                     </svg>
+
+             <form action="{{ route('logout') }}" method="POST" style="margin:0;">
+                 @csrf
+                 <button type="submit" class="sidebar-logout-btn">
+                     <i data-feather="log-out"></i>
+                     <span>Keluar</span>
                  </button>
-                 <span>Halo, {{ Auth::user()->name }}</span>
-                 <form action="{{ route('logout') }}" method="POST" style="margin:0;">
-                     @csrf
-                     <button type="submit" class="btn-logout">Keluar</button>
-                 </form>
-             </div>
+             </form>
          </div>
         @endauth
+     
+         <div class="main-wrapper">
+            @auth
+             <div class="top-header">
+                 <div>
+                 </div>
+                 <div class="user-info">
+                     <button class="theme-toggle-btn" id="themeToggle">
+                         <svg class="moon-icon" viewBox="0 0 24 24">
+                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                         </svg>
+                         <svg class="sun-icon" viewBox="0 0 24 24">
+                             <circle cx="12" cy="12" r="5"></circle>
+                             <line x1="12" y1="1" x2="12" y2="3"></line>
+                             <line x1="12" y1="21" x2="12" y2="23"></line>
+                             <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                             <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                             <line x1="1" y1="12" x2="3" y2="12"></line>
+                             <line x1="21" y1="12" x2="23" y2="12"></line>
+                             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                         </svg>
+                     </button>
+                     <span style="font-weight: 600; color: var(--text-main);">Halo, {{ Auth::user()->name }}</span>
+                 </div>
+             </div>
+            @endauth
  
          <div class="content">
             @auth

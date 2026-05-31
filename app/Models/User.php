@@ -49,6 +49,12 @@ class User extends Authenticatable
         'email',
         'password',
         'base_salary',
+        'phone',
+        'birth_date',
+        'gender',
+        'employee_type',
+        'direct_manager_id',
+        'join_date',
     ];
 
     /**
@@ -71,12 +77,19 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birth_date' => 'date',
+            'join_date' => 'date',
         ];
     }
 
     public function division()
     {
         return $this->belongsTo(Division::class);
+    }
+
+    public function directManager()
+    {
+        return $this->belongsTo(User::class, 'direct_manager_id');
     }
 
     /** Events this user is assigned to as PIC */

@@ -27,6 +27,7 @@ class UserSeeder extends Seeder
         $finance = Division::create(['name' => 'Finance', 'description' => 'Tim Keuangan dan Akuntansi']);
         $ae = Division::create(['name' => 'Account Executive', 'description' => 'Tim Komunikasi Klien']);
         $leader = Division::create(['name' => 'Leader', 'description' => 'Direksi dan Manajemen Puncak']);
+        $reelSeven = Division::create(['name' => 'reel_seven', 'description' => 'Divisi Utama Administrasi dan Operasional']);
 
         $ceo = User::create([
             'nik' => 'LDR-001',
@@ -47,6 +48,18 @@ class UserSeeder extends Seeder
             'base_salary' => 35000000,
         ]);
         $gm->assignRole('GM');
+
+        // Seed 1 Admin account
+        $adminUser = User::create([
+            'nik' => 'ADM-001',
+            'division_id' => $reelSeven->id,
+            'name' => 'Admin Ops',
+            'email' => 'admin@eventracore.com',
+            'password' => Hash::make('password123'),
+            'base_salary' => 10000000,
+            'join_date' => '2024-01-01',
+        ]);
+        $adminUser->assignRole('Admin');
 
         // Helper function for mass users
         $createUser = function($nik, $divId, $role, $salary, $isPic = false) use ($faker, &$nameIndex, $realNames) {

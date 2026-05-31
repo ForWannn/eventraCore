@@ -33,6 +33,7 @@ class UserController extends Controller
             'division_id' => 'required|exists:divisions,id',
             'role'        => 'required|exists:roles,name',
             'photo'       => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'join_date'   => 'required|date',
         ]);
 
         $user = User::create([
@@ -41,6 +42,7 @@ class UserController extends Controller
             'nik'         => $request->nik,
             'password'    => Hash::make($request->password),
             'division_id' => $request->division_id,
+            'join_date'   => $request->join_date,
         ]);
 
         $user->assignRole($request->role);
@@ -71,6 +73,7 @@ class UserController extends Controller
             'role'        => 'required|exists:roles,name',
             'photo'       => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
             'password'    => 'nullable|string|min:6|confirmed',
+            'join_date'   => 'required|date',
         ]);
 
         $updateData = [
@@ -78,6 +81,7 @@ class UserController extends Controller
             'email'       => $request->email,
             'nik'         => $request->nik,
             'division_id' => $request->division_id,
+            'join_date'   => $request->join_date,
         ];
 
         if ($request->filled('password')) {
@@ -116,5 +120,74 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index')->with('success', "Karyawan \"{$name}\" berhasil dihapus.");
+    }
+
+    public function profile()
+    {
+        $user = auth()->user();
+        $divisions = Division::all();
+        $roles = Role::all();
+        $managers = User::whereHas('roles', function($q) {
+            $q->whereIn('name', ['CEO', 'GM', 'Head']);
+        })->where('id', '!=', $user->id)->orderBy('name')->get();
+
+        return view('users.profile', compact('user', 'divisions', 'roles', 'managers'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone'      => 'nullable|string|max:20',
+            'birth_date' => 'nullable|date',
+            'gender'     => 'nullable|string|in:Laki-laki,Perempuan',
+            'photo'      => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+        ]);
+
+        $updateData = [
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'phone'      => $request->phone,
+            'birth_date' => $request->birth_date,
+            'gender'     => $request->gender,
+        ];
+
+        $user->update($updateData);
+
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            $filename = 'user_' . $user->id . '.png';
+            $destination = public_path('assets/Images');
+            $request->file('photo')->move($destination, $filename);
+        }
+
+        return redirect()->back()->with('success', 'Profil Anda berhasil diperbarui.');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $user = auth()->user();
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->back()->with('success', 'Password Anda berhasil diperbarui.');
+    }
+
+    public function show(User $user)
+    {
+        $divisions = Division::all();
+        $roles = Role::all();
+        $managers = User::whereHas('roles', function($q) {
+            $q->whereIn('name', ['CEO', 'GM', 'Head']);
+        })->where('id', '!=', $user->id)->orderBy('name')->get();
+
+        return view('users.show', compact('user', 'divisions', 'roles', 'managers'));
     }
 }

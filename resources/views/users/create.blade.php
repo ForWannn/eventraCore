@@ -160,17 +160,25 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="division_id">Divisi</label>
-            <select id="division_id" name="division_id" class="form-control" required>
-                <option value=""></option>
-                @foreach($divisions as $division)
-                    <option value="{{ $division->id }}" {{ old('division_id') == $division->id ? 'selected' : '' }}>
-                        {{ $division->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('division_id')<div class="error-text">{{ $message }}</div>@enderror
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label for="division_id">Divisi</label>
+                <select id="division_id" name="division_id" class="form-control" required>
+                    <option value="" disabled selected>Pilih Divisi</option>
+                    @foreach($divisions as $division)
+                        <option value="{{ $division->id }}" {{ old('division_id') == $division->id ? 'selected' : '' }}>
+                            {{ $division->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('division_id')<div class="error-text">{{ $message }}</div>@enderror
+            </div>
+            <div class="form-group">
+                <label for="join_date">Tanggal Bergabung</label>
+                <input type="date" id="join_date" name="join_date" class="form-control"
+                       value="{{ old('join_date', date('Y-m-d')) }}" required>
+                @error('join_date')<div class="error-text">{{ $message }}</div>@enderror
+            </div>
         </div>
 
         <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 24px 0;">

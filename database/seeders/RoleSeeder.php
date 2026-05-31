@@ -20,7 +20,8 @@ class RoleSeeder extends Seeder
             'PIC Event',
             'Employee',
             'Intern',
-            'Freelance'
+            'Freelance',
+            'Admin'
         ];
 
         foreach ($roles as $role) {

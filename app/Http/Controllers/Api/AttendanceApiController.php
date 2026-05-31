@@ -13,7 +13,6 @@ class AttendanceApiController extends Controller
 {
     /**
      * Handle Hikvision Push Event
-     * Expected Payload (Simplified): { "employeeNo": "1001", "time": "2026-05-27T08:30:00" }
      */
     public function hikvisionPush(Request $request)
     {
@@ -26,7 +25,6 @@ class AttendanceApiController extends Controller
             return response()->json(['status' => 'error', 'message' => 'employeeNo is required'], 400);
         }
 
-        // Find user by employee_id or nik
         $user = User::where('employee_id', $employeeNo)
                     ->orWhere('nik', $employeeNo)
                     ->first();

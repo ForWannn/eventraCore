@@ -658,17 +658,25 @@
                 @error('email')<span class="error-text">{{ $message }}</span>@enderror
             </div>
 
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label for="division_id">Divisi</label>
-                <select id="division_id" name="division_id" class="form-select" required>
-                    <option value="" disabled>Pilih Divisi</option>
-                    @foreach($divisions as $division)
-                        <option value="{{ $division->id }}" {{ old('division_id', $user->division_id) == $division->id ? 'selected' : '' }}>
-                            {{ $division->name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('division_id')<span class="error-text">{{ $message }}</span>@enderror
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label for="division_id">Divisi</label>
+                    <select id="division_id" name="division_id" class="form-select" required>
+                        <option value="" disabled>Pilih Divisi</option>
+                        @foreach($divisions as $division)
+                            <option value="{{ $division->id }}" {{ old('division_id', $user->division_id) == $division->id ? 'selected' : '' }}>
+                                {{ $division->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('division_id')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <label for="join_date">Tanggal Bergabung</label>
+                    <input type="date" id="join_date" name="join_date" class="form-input" 
+                           value="{{ old('join_date', $user->join_date ? $user->join_date->format('Y-m-d') : '') }}" required>
+                    @error('join_date')<span class="error-text">{{ $message }}</span>@enderror
+                </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 20px;">
@@ -714,7 +722,7 @@
                             </button>
                         </div>
                         @error('password')<span class="error-text">{{ $message }}</span>@enderror
-                    </div>
+                    </div>  
                     <div class="form-group">
                         <label for="password_confirmation">Konfirmasi Password</label>
                         <div class="password-input-wrapper">

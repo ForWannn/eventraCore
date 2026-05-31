@@ -296,10 +296,12 @@
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin: 0;">Daftar Pegawai & Akses</h2>
             <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px; font-weight: 500; margin-bottom: 0;">Kelola data pegawai, anak magang, beserta jabatannya.</p>
         </div>
+        @role('Admin')
         <a href="{{ route('users.create') }}" class="btn-create">
             <i data-feather="plus" style="width: 16px; height: 16px;"></i>
             <span>Tambah Karyawan</span>
         </a>
+        @endrole
     </div>
 
     <!-- Control Bar: Search & Filters -->
@@ -379,10 +381,17 @@
                         </span>
                     </td>
                     <td>
+                        @role('Admin')
                         <a href="{{ route('users.edit', $user->id) }}" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; text-decoration: none; font-size: 13.5px; font-weight: 700;">
                             <i data-feather="edit-2" style="width: 14px; height: 14px;"></i>
                             <span>Edit</span>
                         </a>
+                        @else
+                        <a href="{{ route('users.show', $user->id) }}" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; text-decoration: none; font-size: 13.5px; font-weight: 700;">
+                            <i data-feather="eye" style="width: 14px; height: 14px;"></i>
+                            <span>Detail</span>
+                        </a>
+                        @endrole
                     </td>
                 </tr>
                 @endforeach
