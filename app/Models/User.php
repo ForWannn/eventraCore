@@ -25,14 +25,7 @@ class User extends Authenticatable
             return asset('assets/Images/user_' . $this->id . '.png') . '?v=' . filemtime($uploadedPath);
         }
 
-        // Priority 2: seeded photo by first name (agus.png, angel.png, etc.)
-        $firstName = strtolower(explode(' ', trim($this->name))[0]);
-        $seedPath = public_path('assets/Images/' . $firstName). '.png';
-        if (file_exists($seedPath)) {
-            return asset('assets/Images/' . $firstName . '.png');
-        }
-
-        // Fallback: auto-generated avatar
+        // Fallback: auto-generated avatar based on first letter
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff';
     }
 

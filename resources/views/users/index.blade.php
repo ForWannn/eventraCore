@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Karyawan')
+@section('title', 'Manajemen User')
 
 @section('content')
 <style>
@@ -236,13 +236,12 @@
     }
 </style>
 
-<!-- 4 Top KPI Cards -->
 <div class="stats-grid">
-    <!-- Card 1: Total Karyawan -->
+    <!-- Card 1: Total User -->
     <div class="stat-card">
         <div class="stat-icon blue"><i data-feather="users"></i></div>
         <div class="stat-card-content">
-            <span class="stat-label">Total Karyawan</span>
+            <span class="stat-label">Total User</span>
             <span class="stat-value">{{ $users->count() }}</span>
             <span class="stat-sub">orang terdaftar</span>
         </div>

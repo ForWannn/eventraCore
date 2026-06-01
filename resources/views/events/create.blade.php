@@ -400,6 +400,13 @@
                     rows="2">{{ old('description') }}</textarea>
             </div>
 
+            <div class="form-group">
+                <label for="location">Lokasi</label>
+                <input type="text" id="location" name="location" class="form-control" value="{{ old('location') }}" placeholder="Contoh: Ruang Meeting Utama, Aula Lantai 3">
+            </div>
+
+
+
             <hr class="section-divider">
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">

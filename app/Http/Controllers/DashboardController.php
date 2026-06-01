@@ -92,16 +92,25 @@ class DashboardController extends Controller
             sort($dates);
 
             $calendarEvents[] = [
+                'id'    => $event->id,
                 'title' => $event->name,
                 'start' => $dates[0],
                 'end'   => Carbon::parse(end($dates))->addDay()->format('Y-m-d'),
                 'color' => match ($event->status) {
                     'ongoing'   => '#2563eb',
-                    'upcoming'  => '#f59e0b',
                     'completed' => '#10b981',
-                    default     => '#6b7280',
+                    default     => '#f59e0b',
                 },
-                'url'   => route('events.show', $event->id),
+                'status'        => $event->status,
+                'url'           => route('events.show', $event->id),
+                'className'     => 'fc-event-' . $event->status,
+                'extendedProps' => [
+                    'status'      => $event->status,
+                    'location'    => $event->location ?? '',
+                    'start_time'  => $event->start_time ? Carbon::parse($event->start_time)->format('H:i') : '',
+                    'end_time'    => $event->end_time ? Carbon::parse($event->end_time)->format('H:i') : '',
+                    'event_dates' => $dates,
+                ],
             ];
         }
 
@@ -261,23 +270,25 @@ class DashboardController extends Controller
             if (empty($dates)) continue;
             sort($dates);
 
-            // Main event range
             $calendarEvents[] = [
+                'id'    => $event->id,
                 'title' => $event->name,
                 'start' => $dates[0],
                 'end'   => Carbon::parse(end($dates))->addDay()->format('Y-m-d'),
                 'color' => match ($event->status) {
                     'ongoing'   => '#2563eb',
-                    'upcoming'  => '#f59e0b',
                     'completed' => '#10b981',
-                    default     => '#6b7280',
+                    default     => '#f59e0b',
                 },
-                'status'      => $event->status,
-                'url'         => route('events.show', $event->id),
-                'className'   => 'fc-event-' . $event->status,
+                'status'        => $event->status,
+                'url'           => route('events.show', $event->id),
+                'className'     => 'fc-event-' . $event->status,
                 'extendedProps' => [
-                    'status' => $event->status,
-                    'positions' => $event->positions->count(),
+                    'status'      => $event->status,
+                    'location'    => $event->location ?? '',
+                    'start_time'  => $event->start_time ? Carbon::parse($event->start_time)->format('H:i') : '',
+                    'end_time'    => $event->end_time ? Carbon::parse($event->end_time)->format('H:i') : '',
+                    'event_dates' => $dates,
                 ],
             ];
         }
@@ -448,10 +459,12 @@ class DashboardController extends Controller
     {
         $now = Carbon::now();
 
-        // 1. Top Card Stats
-        $totalEmployees = User::count();
-        $activeEmployees = User::count();
-        $totalDivisions = Division::count();
+        // 1. Top Card Stats (Excluding Admin from active employee counts)
+        $totalEmployees = User::whereDoesntHave('roles', function($q) {
+            $q->where('name', 'Admin');
+        })->count();
+        $activeEmployees = $totalEmployees;
+        $totalDivisions = Division::where('name', '!=', 'reel_seven')->count();
         $totalEvents = Event::count();
 
         // 2. Grafik Presensi Karyawan (Attendance counts for the last 7 working days)
@@ -488,7 +501,7 @@ class DashboardController extends Controller
         }
         $attendanceTrend = array_reverse($attendanceTrend);
 
-        // 3. Jumlah Karyawan per Divisi (Doughnut Chart data with colors and percentages)
+        // 3. Jumlah Karyawan per Divisi (Doughnut Chart data with colors and percentages, excluding Admin/reel_seven)
         $colors = [
             '#2563eb', // Blue
             '#10b981', // Emerald
@@ -501,7 +514,13 @@ class DashboardController extends Controller
             '#6b7280', // Grey
         ];
 
-        $divisionsData = Division::withCount('users')->get()->map(function($div, $index) use ($totalEmployees, $colors) {
+        $divisionsData = Division::withCount(['users' => function($q) {
+            $q->whereDoesntHave('roles', function($sub) {
+                $sub->where('name', 'Admin');
+            });
+        }])->get()->filter(function($div) {
+            return $div->users_count > 0;
+        })->values()->map(function($div, $index) use ($totalEmployees, $colors) {
             $count = $div->users_count;
             $percent = $totalEmployees > 0 ? round(($count / $totalEmployees) * 100, 1) : 0;
             $color = $colors[$index % count($colors)];

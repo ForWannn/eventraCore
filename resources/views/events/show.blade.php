@@ -371,6 +371,17 @@
                     <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">{{ $durationSub }}</div>
                 </div>
             </div>
+
+            <div class="info-box-new">
+                <div class="info-icon-wrapper"><i data-feather="map-pin" style="width: 16px; height: 16px;"></i></div>
+                <div>
+                    <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Lokasi</span>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $event->location ?? '-' }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">Tempat Pelaksanaan</div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 

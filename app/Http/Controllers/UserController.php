@@ -56,7 +56,19 @@ class UserController extends Controller
         $user->assignRole($request->role);
 
         // Handle photo upload — saved as user_{id}.png
-        if ($request->hasFile('photo')) {
+        if ($request->filled('cropped_photo')) {
+            $data = $request->input('cropped_photo');
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]);
+                if (in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                    $data = base64_decode($data);
+                    if ($data !== false) {
+                        file_put_contents(public_path('assets/Images/user_' . $user->id . '.png'), $data);
+                    }
+                }
+            }
+        } elseif ($request->hasFile('photo')) {
             $request->file('photo')->move(public_path('assets/Images'), 'user_' . $user->id . '.png');
         }
 
@@ -107,7 +119,19 @@ class UserController extends Controller
         $user->update($updateData);
 
         // Handle photo upload — saved as user_{id}.png
-        if ($request->hasFile('photo')) {
+        if ($request->filled('cropped_photo')) {
+            $data = $request->input('cropped_photo');
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]);
+                if (in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                    $data = base64_decode($data);
+                    if ($data !== false) {
+                        file_put_contents(public_path('assets/Images/user_' . $user->id . '.png'), $data);
+                    }
+                }
+            }
+        } elseif ($request->hasFile('photo')) {
             $filename = 'user_' . $user->id . '.png';
             $destination = public_path('assets/Images');
             $request->file('photo')->move($destination, $filename);
@@ -173,7 +197,19 @@ class UserController extends Controller
         $user->update($updateData);
 
         // Handle photo upload
-        if ($request->hasFile('photo')) {
+        if ($request->filled('cropped_photo')) {
+            $data = $request->input('cropped_photo');
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]);
+                if (in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                    $data = base64_decode($data);
+                    if ($data !== false) {
+                        file_put_contents(public_path('assets/Images/user_' . $user->id . '.png'), $data);
+                    }
+                }
+            }
+        } elseif ($request->hasFile('photo')) {
             $filename = 'user_' . $user->id . '.png';
             $destination = public_path('assets/Images');
             $request->file('photo')->move($destination, $filename);

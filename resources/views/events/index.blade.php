@@ -336,10 +336,20 @@
                 @endphp
                 <tr class="event-row" style="border-bottom: 1px solid var(--border-color);">
                     <td>
-                        <span style="font-weight: 600; color: var(--text-main); font-size: 14.5px;">{{ $event->name }}</span>
-                        @if($event->description)
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 500;">{{ Str::limit($event->description, 60) }}</div>
-                        @endif
+                        <div style="display: flex; flex-direction: column; gap: 3px;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <span style="font-weight: 600; color: var(--text-main); font-size: 14.5px;">{{ $event->name }}</span>
+                            </div>
+                            @if($event->description)
+                                <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">{{ Str::limit($event->description, 60) }}</div>
+                            @endif
+                            @if($event->location)
+                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; font-weight: 500;">
+                                    <i data-feather="map-pin" style="width: 12px; height: 12px;"></i>
+                                    <span>{{ $event->location }}</span>
+                                </div>
+                            @endif
+                        </div>
                     </td>
                     <td>
                         @php

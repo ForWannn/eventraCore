@@ -13,110 +13,303 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create('id_ID');
-        
-        $realNames = [
-            'Agus', 'Aidil', 'Aldi', 'Andri', 'Angel', 'Arbie', 'Arief', 
-            'Bobby', 'Dani', 'Dita', 'Genta', 'Ichwan', 'Nana', 'Reza', 
-            'Rifai', 'Saskia', 'Yoga', 'Gilang', 'Rudi', 'Siti'
+
+        // 1. Create Divisions
+        $creative = Division::firstOrCreate(['name' => 'Creative'], ['description' => 'Tim Kreatif dan Desain']);
+        $ops = Division::firstOrCreate(['name' => 'Operasional'], ['description' => 'Tim Manajemen Operasional']);
+        $finance = Division::firstOrCreate(['name' => 'Finance'], ['description' => 'Tim Keuangan dan Akuntansi']);
+        $ae = Division::firstOrCreate(['name' => 'Account Executive'], ['description' => 'Tim Komunikasi Klien']);
+        $leader = Division::firstOrCreate(['name' => 'Leader'], ['description' => 'Direksi dan Manajemen Puncak']);
+        $reelSeven = Division::firstOrCreate(['name' => 'reel_seven'], ['description' => 'Divisi Utama Administrasi dan Operasional']);
+
+        $divisionMap = [
+            'Creative' => $creative->id,
+            'Operasional' => $ops->id,
+            'Finance' => $finance->id,
+            'Account Executive' => $ae->id,
+            'Leader' => $leader->id,
+            'reel_seven' => $reelSeven->id,
         ];
-        $nameIndex = 0;
 
-        // Create Divisions
-        $creative = Division::create(['name' => 'Creative', 'description' => 'Tim Kreatif dan Desain']);
-        $ops = Division::create(['name' => 'Operasional', 'description' => 'Tim Manajemen Operasional']);
-        $finance = Division::create(['name' => 'Finance', 'description' => 'Tim Keuangan dan Akuntansi']);
-        $ae = Division::create(['name' => 'Account Executive', 'description' => 'Tim Komunikasi Klien']);
-        $leader = Division::create(['name' => 'Leader', 'description' => 'Direksi dan Manajemen Puncak']);
-        $reelSeven = Division::create(['name' => 'reel_seven', 'description' => 'Divisi Utama Administrasi dan Operasional']);
-
-        $ceo = User::create([
-            'nik' => 'LDR-001',
-            'division_id' => $leader->id,
-            'name' => $realNames[$nameIndex++],
-            'email' => 'ceo@eventracore.com',
-            'password' => Hash::make('password123'),
-            'base_salary' => 50000000,
-        ]);
-        $ceo->assignRole('CEO');
-
-        $gm = User::create([
-            'nik' => 'LDR-002',
-            'division_id' => $leader->id,
-            'name' => $realNames[$nameIndex++],
-            'email' => 'gm@eventracore.com',
-            'password' => Hash::make('password123'),
-            'base_salary' => 35000000,
-        ]);
-        $gm->assignRole('GM');
-
-        // Seed 1 Admin account
-        $adminUser = User::create([
+        // 2. Seed Admin user (not counted as active employee, not in doughnut chart)
+        $admin = User::create([
             'nik' => 'ADM-001',
+            'employee_id' => 'ADM-001',
             'division_id' => $reelSeven->id,
             'name' => 'Admin Ops',
             'email' => 'admin@eventracore.com',
             'password' => Hash::make('password123'),
             'base_salary' => 10000000,
+            'phone' => '081234567890',
+            'birth_date' => '1990-01-01',
+            'gender' => 'Laki-laki',
+            'employee_type' => 'Full Time',
             'join_date' => '2024-01-01',
         ]);
-        $adminUser->assignRole('Admin');
+        $admin->assignRole('Admin');
 
-        // Helper function for mass users
-        $createUser = function($nik, $divId, $role, $salary, $isPic = false) use ($faker, &$nameIndex, $realNames) {
+        // 3. User Seed Definition List
+        $usersToSeed = [
+            // Leaders
+            [
+                'name' => 'Bobby hendra saputra',
+                'email' => 'bobby@eventracore.com',
+                'role' => 'CEO',
+                'division' => 'Leader',
+                'nik' => 'LDR-001',
+                'salary' => 50000000,
+                'gender' => 'Laki-laki',
+                'join_date' => '2013-02-07',
+            ],
+            [
+                'name' => 'M. Agus Idham',
+                'email' => 'agus@eventracore.com',
+                'role' => 'GM',
+                'division' => 'Leader',
+                'nik' => 'LDR-002',
+                'salary' => 35000000,
+                'gender' => 'Laki-laki',
+            ],
+            // Finance
+            [
+                'name' => 'Sherina Andriani',
+                'email' => 'sherina@eventracore.com',
+                'role' => 'Head',
+                'division' => 'Finance',
+                'nik' => 'FNC-001',
+                'salary' => 18000000,
+                'gender' => 'Perempuan',
+            ],
+            [
+                'name' => 'Siti Tri Dita',
+                'email' => 'sitidita@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Finance',
+                'nik' => 'FNC-002',
+                'salary' => 8000000,
+                'gender' => 'Perempuan',
+            ],
+            [
+                'name' => 'Siti Nuraziza Saskia',
+                'email' => 'saskia@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Finance',
+                'nik' => 'FNC-003',
+                'salary' => 8000000,
+                'gender' => 'Perempuan',
+            ],
+            [
+                'name' => 'Suci',
+                'email' => 'suci@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Finance',
+                'nik' => 'FNC-004',
+                'salary' => 8000000,
+                'gender' => 'Perempuan',
+            ],
+            [
+                'name' => 'Ayu',
+                'email' => 'ayu@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Finance',
+                'nik' => 'FNC-005',
+                'salary' => 8000000,
+                'gender' => 'Perempuan',
+            ],
+            // Operational
+            [
+                'name' => 'Andri Nugraha',
+                'email' => 'andri@eventracore.com',
+                'role' => 'Head',
+                'division' => 'Operasional',
+                'nik' => 'OPR-001',
+                'salary' => 15000000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Yoga Pratama',
+                'email' => 'yoga@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Operasional',
+                'nik' => 'OPR-002',
+                'salary' => 7500000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Aidil Septiansyah',
+                'email' => 'aidil@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Operasional',
+                'nik' => 'OPR-003',
+                'salary' => 7500000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Arief Khurniawan',
+                'email' => 'arief@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Operasional',
+                'nik' => 'OPR-004',
+                'salary' => 7500000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Relli Asmadi',
+                'email' => 'relli@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Operasional',
+                'nik' => 'OPR-005',
+                'salary' => 7500000,
+                'gender' => 'Laki-laki',
+            ],
+            // Creative
+            [
+                'name' => 'Genta Prayoga',
+                'email' => 'genta@eventracore.com',
+                'role' => 'Head',
+                'division' => 'Creative',
+                'nik' => 'CRE-001',
+                'salary' => 15000000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'M Rifai',
+                'email' => 'rifai@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Creative',
+                'nik' => 'CRE-002',
+                'salary' => 8000000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Aldi Yusuf',
+                'email' => 'aldi@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Creative',
+                'nik' => 'CRE-003',
+                'salary' => 8000000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Reza Desten Paltama',
+                'email' => 'reza@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Creative',
+                'nik' => 'CRE-004',
+                'salary' => 8000000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Dani Pamungkas',
+                'email' => 'dani@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Creative',
+                'nik' => 'CRE-005',
+                'salary' => 8000000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Muhammad Ichwan',
+                'email' => 'ichwan@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Creative',
+                'nik' => 'CRE-006',
+                'salary' => 8000000,
+                'gender' => 'Laki-laki',
+            ],
+            // Account Executive
+            [
+                'name' => 'Angel Maharani Puspita',
+                'email' => 'angel@eventracore.com',
+                'role' => 'Head',
+                'division' => 'Account Executive',
+                'nik' => 'AEX-001',
+                'salary' => 16000000,
+                'gender' => 'Perempuan',
+            ],
+            [
+                'name' => 'M Aditya Arbie',
+                'email' => 'arbie@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Account Executive',
+                'nik' => 'AEX-002',
+                'salary' => 8500000,
+                'gender' => 'Laki-laki',
+            ],
+            [
+                'name' => 'Hanifah',
+                'email' => 'hanifah@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Account Executive',
+                'nik' => 'AEX-003',
+                'salary' => 8500000,
+                'gender' => 'Perempuan',
+            ],
+        ];
+
+        // 4. Create Users and Assign Roles
+        $createdUsers = [];
+        foreach ($usersToSeed as $uData) {
+            $divId = $divisionMap[$uData['division']];
+            $joinDate = $uData['join_date'] ?? $faker->dateTimeBetween('-5 years', '-1 months')->format('Y-m-d');
+            $birthDate = $faker->dateTimeBetween('-40 years', '-22 years')->format('Y-m-d');
+            $phone = '08' . $faker->numerify('##########');
+
             $user = User::create([
-                'nik' => $nik,
+                'nik' => $uData['nik'],
+                'employee_id' => $uData['nik'],
                 'division_id' => $divId,
-                'name' => $realNames[$nameIndex++],
-                'email' => $faker->unique()->safeEmail,
+                'name' => $uData['name'],
+                'email' => $uData['email'],
                 'password' => Hash::make('password123'),
-                'base_salary' => $salary,
+                'base_salary' => $uData['salary'],
+                'phone' => $phone,
+                'birth_date' => $birthDate,
+                'gender' => $uData['gender'],
+                'employee_type' => 'Full Time',
+                'join_date' => $joinDate,
             ]);
-            $roles = [$role];
-            if ($isPic) {
-                $roles[] = 'PIC Event';
+
+            $user->assignRole($uData['role']);
+            $createdUsers[$uData['nik']] = $user;
+        }
+
+        // 5. Update direct_manager_id relationships
+        // CEO has no direct manager (null)
+        
+        // GM reports to CEO
+        if (isset($createdUsers['LDR-002']) && isset($createdUsers['LDR-001'])) {
+            $createdUsers['LDR-002']->update(['direct_manager_id' => $createdUsers['LDR-001']->id]);
+        }
+
+        // Heads report to GM
+        $gmId = $createdUsers['LDR-002']->id ?? null;
+        if ($gmId) {
+            $heads = ['FNC-001', 'OPR-001', 'CRE-001', 'AEX-001'];
+            foreach ($heads as $headNik) {
+                if (isset($createdUsers[$headNik])) {
+                    $createdUsers[$headNik]->update(['direct_manager_id' => $gmId]);
+                }
             }
-            $user->assignRole($roles);
-        };
-
-        // 2. Creative (6 Orang: 1 Head, 5 Employee)
-        $createUser('CRE-001', $creative->id, 'Head', 15000000);
-        for ($i=2; $i<=6; $i++) {
-            $createUser('CRE-00' . $i, $creative->id, 'Employee', 8000000, $i == 2); // 1 random PIC ready
         }
 
-        // 3. Operasional (5 Orang: 1 Head, 4 Employee)
-        $createUser('OPS-001', $ops->id, 'Head', 15000000);
-        for ($i=2; $i<=5; $i++) {
-            $createUser('OPS-00' . $i, $ops->id, 'Employee', 7500000, $i == 2);
-        }
+        // Employees report to their respective Head
+        $relations = [
+            'FNC-001' => ['FNC-002', 'FNC-003', 'FNC-004', 'FNC-005'],
+            'OPR-001' => ['OPR-002', 'OPR-003', 'OPR-004', 'OPR-005'],
+            'CRE-001' => ['CRE-002', 'CRE-003', 'CRE-004', 'CRE-005', 'CRE-006'],
+            'AEX-001' => ['AEX-002', 'AEX-003'],
+        ];
 
-        // 4. Account Executive / AE (3 Orang: 1 Head, 2 Employee)
-        $createUser('AE-001', $ae->id, 'Head', 16000000);
-        for ($i=2; $i<=3; $i++) {
-            $createUser('AE-00' . $i, $ae->id, 'Employee', 8500000);
+        foreach ($relations as $headNik => $employeeNiks) {
+            $headId = $createdUsers[$headNik]->id ?? null;
+            if ($headId) {
+                foreach ($employeeNiks as $empNik) {
+                    if (isset($createdUsers[$empNik])) {
+                        $createdUsers[$empNik]->update(['direct_manager_id' => $headId]);
+                    }
+                }
+            }
         }
-
-        // 5. Finance (3 Orang: 1 Head, 2 Employee)
-        User::create([
-            'nik' => 'FIN-001',
-            'division_id' => $finance->id,
-            'name' => $realNames[$nameIndex++],
-            'email' => 'finance@eventracore.com',
-            'password' => Hash::make('password123'),
-            'base_salary' => 18000000,
-        ])->assignRole('Head');
-        for ($i=2; $i<=3; $i++) {
-            $createUser('FIN-00' . $i, $finance->id, 'Employee', 8000000);
-        }
-
-        // 6. Anak Magang Operasional (1 Orang: Intern)
-        User::create([
-            'nik' => 'MAG-001',
-            'division_id' => $ops->id,
-            'name' => $realNames[$nameIndex++],
-            'email' => 'magang@eventracore.com',
-            'password' => Hash::make('password123'),
-            'base_salary' => 2500000,
-        ])->assignRole('Intern');
     }
 }

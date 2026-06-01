@@ -868,6 +868,196 @@
         color: var(--text-muted);
         font-weight: 500;
     }
+
+    /* Redesigned Calendar Side-by-Side Split View */
+    .calendar-split-container {
+        display: grid;
+        grid-template-columns: 2.2fr 1fr;
+        gap: 28px;
+    }
+    @media (max-width: 1024px) {
+        .calendar-split-container {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        .calendar-sidebar-area {
+            border-left: none !important;
+            padding-left: 0 !important;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+        }
+    }
+    
+    /* View Toggle styling */
+    .cal-view-toggle {
+        background: transparent;
+        color: var(--text-muted);
+    }
+    .cal-view-toggle.active {
+        background: var(--card-bg) !important;
+        color: var(--text-main) !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    
+    /* Custom Theme Overrides for FullCalendar */
+    .redesigned-calendar-theme .fc-header-toolbar {
+        display: none !important;
+    }
+    .redesigned-calendar-theme .fc-col-header-cell {
+        background: var(--hover-bg);
+        border: none !important;
+        padding: 12px 0 !important;
+    }
+    .redesigned-calendar-theme .fc-col-header-cell-cushion {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: var(--text-muted) !important;
+        letter-spacing: 0.8px;
+        text-decoration: none !important;
+    }
+    .redesigned-calendar-theme .fc-scrollgrid {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border-color) !important;
+    }
+    .redesigned-calendar-theme .fc-daygrid-day {
+        height: 80px !important;
+    }
+    .redesigned-calendar-theme .fc-daygrid-day-number {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: var(--text-main) !important;
+        padding: 8px 12px !important;
+        text-decoration: none !important;
+    }
+    .redesigned-calendar-theme .fc-day-today {
+        background: transparent !important;
+    }
+    .redesigned-calendar-theme .fc-day-today .fc-daygrid-day-number {
+        color: #2563eb !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Day cell with dots */
+    .day-event-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0 2px;
+    }
+    .day-event-dot.ongoing { background-color: #2563eb; }
+    .day-event-dot.completed { background-color: #10b981; }
+    .day-event-dot.upcoming { background-color: #f59e0b; }
+    
+    .fc-day-events-dots-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 4px;
+        height: 8px;
+    }
+
+    /* Selected Date highlight */
+    .redesigned-calendar-theme .fc-day.selected-day .fc-daygrid-day-number {
+        background: #2563eb !important;
+        color: #fff !important;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        margin: 4px 8px;
+        padding: 0 !important;
+    }
+    
+    /* Sidebar list styling */
+    .calendar-sidebar-scroll::-webkit-scrollbar {
+        width: 4px;
+    }
+    .calendar-sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .calendar-sidebar-scroll::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+    }
+    
+    .sidebar-event-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-left: 4px solid var(--border-color) !important;
+        text-align: left;
+    }
+    .sidebar-event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    }
+    .sidebar-event-card.ongoing { border-left-color: #2563eb !important; }
+    .sidebar-event-card.completed { border-left-color: #10b981 !important; }
+    .sidebar-event-card.upcoming { border-left-color: #f59e0b !important; }
+
+    .sidebar-event-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+    .sidebar-event-name {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.3;
+    }
+    .sidebar-event-tag {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+    }
+    .sidebar-event-tag.ongoing { background: #eff6ff; color: #2563eb; }
+    .sidebar-event-tag.completed { background: #ecfdf5; color: #10b981; }
+    .sidebar-event-tag.upcoming { background: #fff7ed; color: #f59e0b; }
+    
+    .sidebar-event-icon-box.ongoing { background: #eff6ff; color: #2563eb; }
+    .sidebar-event-icon-box.completed { background: #ecfdf5; color: #10b981; }
+    .sidebar-event-icon-box.upcoming { background: #fff7ed; color: #f59e0b; }
+
+    .sidebar-event-body {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .sidebar-event-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .sidebar-event-meta-item i {
+        width: 14px;
+        height: 14px;
+        color: var(--text-muted);
+    }
+    .sidebar-event-footer-date {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-top: 2px;
+        border-top: 1px dashed var(--border-color);
+        padding-top: 8px;
+    }
 </style>
 
 @role('CEO|GM')
@@ -904,18 +1094,7 @@
                     <span class="stat-trend-text">vs minggu lalu</span>
                 </div>
             </div>
-            <div class="stat-card-right">
-                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
-                    <defs>
-                        <linearGradient id="sparkline-grad-blue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#2563eb" stop-opacity="0.15"></stop>
-                            <stop offset="100%" stop-color="#2563eb" stop-opacity="0"></stop>
-                        </linearGradient>
-                    </defs>
-                    <path d="M0,32 Q15,10 30,28 T60,20 T90,35 T100,12" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M0,32 Q15,10 30,28 T60,20 T90,35 T100,12 L100,40 L0,40 Z" fill="url(#sparkline-grad-blue)"></path>
-                </svg>
-            </div>
+
         </div>
 
         <!-- Card 2: Sedang Berjalan -->
@@ -934,18 +1113,7 @@
                     <span class="stat-trend-text">vs minggu lalu</span>
                 </div>
             </div>
-            <div class="stat-card-right">
-                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
-                    <defs>
-                        <linearGradient id="sparkline-grad-emerald" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#10b981" stop-opacity="0.15"></stop>
-                            <stop offset="100%" stop-color="#10b981" stop-opacity="0"></stop>
-                        </linearGradient>
-                    </defs>
-                    <path d="M0,30 Q15,20 30,35 T60,18 T90,15 T100,8" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M0,30 Q15,20 30,35 T60,18 T90,15 T100,8 L100,40 L0,40 Z" fill="url(#sparkline-grad-emerald)"></path>
-                </svg>
-            </div>
+
         </div>
 
         <!-- Card 3: Runner Event -->
@@ -964,18 +1132,7 @@
                     <span class="stat-trend-text">vs minggu lalu</span>
                 </div>
             </div>
-            <div class="stat-card-right">
-                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
-                    <defs>
-                        <linearGradient id="sparkline-grad-amber" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.15"></stop>
-                            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"></stop>
-                        </linearGradient>
-                    </defs>
-                    <path d="M0,32 Q15,25 30,15 T60,35 T90,20 T100,28" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M0,32 Q15,25 30,15 T60,35 T90,20 T100,28 L100,40 L0,40 Z" fill="url(#sparkline-grad-amber)"></path>
-                </svg>
-            </div>
+
         </div>
         
         <!-- Card 4: Kehadiran Hari Ini -->
@@ -994,18 +1151,7 @@
                     <span class="stat-trend-text">vs kemarin</span>
                 </div>
             </div>
-            <div class="stat-card-right">
-                <svg class="sparkline" viewBox="0 0 100 40" style="width: 100px; height: 45px; display: block; overflow: visible;">
-                    <defs>
-                        <linearGradient id="sparkline-grad-violet" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.15"></stop>
-                            <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"></stop>
-                        </linearGradient>
-                    </defs>
-                    <path d="M0,32 Q15,15 30,30 T60,18 T90,32 T100,25" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M0,32 Q15,15 30,30 T60,18 T90,32 T100,25 L100,40 L0,40 Z" fill="url(#sparkline-grad-violet)"></path>
-                </svg>
-            </div>
+
         </div>
     </div>
 
@@ -1203,85 +1349,171 @@
         @endif
     </div>
 
-    <!-- Main Columns: Calendar & Comparison Trend + Upcoming Events List -->
-    <div class="dashboard-cols">
-        <!-- Column 1: Kalender Event -->
-        <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
-            <div class="section-header" style="flex: none; margin-bottom: 20px;">
-                <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
-                    <i data-feather="calendar" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
-                    Kalender Event
-                </span>
-            </div>
-            <div id="eventCalendar" style="flex: 1; min-height: 0;"></div>
+    <!-- Redesigned Calendar Card (Full Width) -->
+    <div class="section-card calendar-redesign-card" style="margin-bottom: 28px; padding: 28px;">
+        <!-- Header Title & Subtitle -->
+        <div class="calendar-header-section" style="margin-bottom: 24px;">
+            <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i data-feather="calendar" style="width: 22px; height: 22px; color: var(--primary);"></i>
+                Kalender Event
+            </h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin: 4px 0 0 0; font-weight: 500;">Lihat dan kelola event perusahaan dalam kalender.</p>
         </div>
 
-        <!-- Column 2: Comparison Trend Chart & Horizontal Upcoming Events -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-            <!-- Comparison Trend Card -->
-            <div class="section-card" style="display: flex; flex-direction: column;">
-                <div class="section-header" style="align-items: center; margin-bottom: 20px;">
-                    <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
-                        <i data-feather="trending-up" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
-                        Tren Event Bulanan
-                    </span>
-                    <select id="trendYearSelect" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--hover-bg); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; outline: none; transition: all 0.2s;">
-                        @php $currentYear = request('year', date('Y')); @endphp
-                        @for($y = date('Y') + 1; $y >= date('Y') - 4; $y--)
-                            <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
+        <!-- Custom Toolbar -->
+        <div class="calendar-custom-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+            <!-- Left: Nav Buttons -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="calPrevBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                    <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
+                </button>
+                <button id="calNextBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                    <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                </button>
+                <button id="calTodayBtn" class="btn" style="height: 38px; padding: 0 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-main);">
+                    Today
+                </button>
+            </div>
+
+            <!-- Center: Month Year Title Indicator -->
+            <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <span id="calMonthTitle" style="font-size: 18px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px;">Juni 2026</span>
+                <i data-feather="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+            </div>
+
+            <!-- Right: View Toggle Buttons & Buat Event Baru -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; background: var(--hover-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border-color);">
+                    <button id="calViewMonth" class="cal-view-toggle active" style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        Month
+                    </button>
+                    <button id="calViewList" class="cal-view-toggle" style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        List
+                    </button>
                 </div>
-                <div class="chart-container" style="flex: none; height: 280px; margin-bottom: 12px;">
-                    <canvas id="eventTrendChart"></canvas>
-                </div>
-                <!-- Custom Legend -->
-                <div style="display: flex; justify-content: center; gap: 24px; margin-top: 8px;">
-                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted);">
-                        <span style="width: 12px; height: 3px; background: #2563eb; border-radius: 2px; display: inline-block;"></span>
-                        <span>{{ $trendYear }}</span>
+                
+                <a href="{{ route('events.create') }}" class="btn" style="display: flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 10px; background: #2563eb; color: #fff; border-color: #2563eb; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer;">
+                    <i data-feather="plus" style="width: 16px; height: 16px;"></i>
+                    <span>Buat Event Baru</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Split Grid -->
+        <div class="calendar-split-container">
+            <!-- Left: Calendar Area -->
+            <div style="display: flex; flex-direction: column;">
+                <div id="eventCalendar" class="redesigned-calendar-theme"></div>
+
+                <!-- Legend below calendar -->
+                <div class="calendar-legend-bar" style="display: flex; gap: 20px; font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
+                        <span>Sedang Berjalan</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted);">
-                        <span style="width: 12px; height: 3px; background: #94a3b8; border-radius: 2px; display: inline-block; opacity: 0.7;"></span>
-                        <span>{{ $trendYear - 1 }}</span>
+                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+                        <span>Akan Datang</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                        <span>Selesai</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Redesigned Horizontal Upcoming Events -->
-            <div class="section-card">
-                <div class="section-header" style="margin-bottom: 20px; align-items: center;">
-                    <span class="section-title">Event Mendatang</span>
-                    <a href="{{ route('events.index') }}" style="font-size: 12px; color: #2563eb; text-decoration: none; font-weight: 600; transition: color 0.2s;">
-                        Lihat Semua
-                    </a>
+            <!-- Right: Daftar Event Sidebar Area -->
+            <div class="calendar-sidebar-area" style="border-left: 1px solid var(--border-color); padding-left: 28px; display: flex; flex-direction: column;">
+                <!-- Sidebar Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
+                    <span id="sidebarListTitle" style="font-size: 15px; font-weight: 700; color: var(--text-main);">Daftar Event</span>
                 </div>
 
-                <div class="upcoming-event-grid">
-                    @forelse($upcomingEventsList as $event)
-                        <a href="{{ route('events.show', $event['id']) }}" class="upcoming-event-card">
-                            <div class="upcoming-event-date-box {{ $event['status'] }}">
-                                <span class="upcoming-event-date-day">{{ $event['day_num'] }}</span>
-                                <span class="upcoming-event-date-month">{{ $event['month_str'] }}</span>
-                            </div>
-                            <div class="upcoming-event-details">
-                                <div class="upcoming-event-name-group">
-                                    <span class="upcoming-event-dot {{ $event['status'] }}"></span>
-                                    <span class="upcoming-event-name">{{ $event['name'] }}</span>
-                                </div>
-                                <div class="upcoming-event-time">{{ $event['time_range'] }}</div>
-                                <div class="upcoming-event-loc">{{ $event['location'] }}</div>
-                            </div>
-                            <div class="upcoming-event-chevron">
-                                <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
-                            </div>
-                        </a>
-                    @empty
-                        <div style="grid-column: span 3; text-align: center; padding: 32px 0; color: var(--text-muted);">
-                            <p style="font-size: 13px;">Belum ada event mendatang.</p>
-                        </div>
-                    @endforelse
+                <!-- Scrollable Event List -->
+                <div id="calendarSidebarList" class="calendar-sidebar-scroll" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; max-height: 480px; padding-right: 4px;">
+                    <!-- Dynamically populated -->
                 </div>
+                
+                <!-- Sidebar Footer link -->
+                <a href="{{ route('events.index') }}" class="view-all-events-btn" style="margin-top: 16px; border: 1px solid var(--border-color); border-radius: 10px; text-align: center; padding: 10px; font-size: 13px; font-weight: 600; color: #2563eb; text-decoration: none; background: var(--card-bg); display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                    <span>Lihat Semua Event</span>
+                    <i data-feather="chevron-right" style="width: 14px; height: 14px;"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Banner at bottom -->
+        <div class="calendar-info-banner warning" style="margin-top: 24px; padding: 12px 16px; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 12px; display: flex; align-items: center; gap: 8px;">
+            <i data-feather="info" style="color: #2563eb; width: 16px; height: 16px; flex-shrink: 0;"></i>
+            <span style="font-size: 12px; font-weight: 500; color: #1e40af;">Klik pada tanggal di kalender untuk melihat event pada hari tersebut.</span>
+        </div>
+    </div>
+
+    <!-- Main Columns: Comparison Trend & Upcoming Events List -->
+    <div class="dashboard-cols">
+        <!-- Column 1: Comparison Trend Chart -->
+        <div class="section-card" style="display: flex; flex-direction: column;">
+            <div class="section-header" style="align-items: center; margin-bottom: 20px;">
+                <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
+                    <i data-feather="trending-up" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
+                    Tren Event Bulanan
+                </span>
+                <select id="trendYearSelect" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--hover-bg); color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; outline: none; transition: all 0.2s;">
+                    @php $currentYear = request('year', date('Y')); @endphp
+                    @for($y = date('Y') + 1; $y >= date('Y') - 4; $y--)
+                        <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="chart-container" style="flex: none; height: 280px; margin-bottom: 12px;">
+                <canvas id="eventTrendChart"></canvas>
+            </div>
+            <!-- Custom Legend -->
+            <div style="display: flex; justify-content: center; gap: 24px; margin-top: 8px;">
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted);">
+                    <span style="width: 12px; height: 3px; background: #2563eb; border-radius: 2px; display: inline-block;"></span>
+                    <span>{{ $trendYear }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted);">
+                    <span style="width: 12px; height: 3px; background: #94a3b8; border-radius: 2px; display: inline-block; opacity: 0.7;"></span>
+                    <span>{{ $trendYear - 1 }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Event Mendatang -->
+        <div class="section-card" style="display: flex; flex-direction: column;">
+            <div class="section-header" style="margin-bottom: 20px; align-items: center;">
+                <span class="section-title">Event Mendatang</span>
+                <a href="{{ route('events.index') }}" style="font-size: 12px; color: #2563eb; text-decoration: none; font-weight: 600; transition: color 0.2s;">
+                    Lihat Semua
+                </a>
+            </div>
+
+            <div class="upcoming-event-grid" style="grid-template-columns: 1fr; gap: 12px;">
+                @forelse($upcomingEventsList as $event)
+                    <a href="{{ route('events.show', $event['id']) }}" class="upcoming-event-card">
+                        <div class="upcoming-event-date-box {{ $event['status'] }}">
+                            <span class="upcoming-event-date-day">{{ $event['day_num'] }}</span>
+                            <span class="upcoming-event-date-month">{{ $event['month_str'] }}</span>
+                        </div>
+                        <div class="upcoming-event-details">
+                            <div class="upcoming-event-name-group">
+                                <span class="upcoming-event-dot {{ $event['status'] }}"></span>
+                                <span class="upcoming-event-name">{{ $event['name'] }}</span>
+                            </div>
+                            <div class="upcoming-event-time">{{ $event['time_range'] }}</div>
+                            <div class="upcoming-event-loc">{{ $event['location'] }}</div>
+                        </div>
+                        <div class="upcoming-event-chevron">
+                            <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                        </div>
+                    </a>
+                @empty
+                    <div style="text-align: center; padding: 32px 0; color: var(--text-muted);">
+                        <p style="font-size: 13px;">Belum ada event mendatang.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
@@ -1476,74 +1708,148 @@
         @endif
     </div>
 
-    <div class="dashboard-cols">
-        <!-- Left Container: Kalender Event -->
-        <div class="section-card calendar-wrapper" style="display: flex; flex-direction: column;">
-            <div class="section-header" style="flex: none; align-items: center; margin-bottom: 20px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <i data-feather="calendar" style="color: var(--primary); width: 20px; height: 20px;"></i>
-                    <span class="section-title">Kalender Event</span>
-                </div>
-                <a href="{{ route('events.index') }}" class="btn btn-sm" style="font-size: 12px; padding: 6px 12px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 4px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);">
-                    Lihat Semua Event
-                </a>
+    <!-- Redesigned Calendar Card (Full Width) -->
+    <div class="section-card calendar-redesign-card" style="margin-bottom: 28px; padding: 28px;">
+        <!-- Header Title & Subtitle -->
+        <div class="calendar-header-section" style="margin-bottom: 24px;">
+            <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i data-feather="calendar" style="width: 22px; height: 22px; color: var(--primary);"></i>
+                Kalender Event
+            </h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin: 4px 0 0 0; font-weight: 500;">Lihat dan kelola event perusahaan dalam kalender.</p>
+        </div>
+
+        <!-- Custom Toolbar -->
+        <div class="calendar-custom-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+            <!-- Left: Nav Buttons -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="calPrevBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                    <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
+                </button>
+                <button id="calNextBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                    <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                </button>
+                <button id="calTodayBtn" class="btn" style="height: 38px; padding: 0 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-main);">
+                    Today
+                </button>
             </div>
-            
-            <div id="eventCalendar" style="flex: 1; min-height: 0; margin-bottom: 16px;"></div>
-            
-            <!-- Legend below calendar -->
-            <div style="display: flex; gap: 16px; font-size: 12px; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
-                    Event Anda
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #ec4899; display: inline-block;"></span>
-                    Event Penting
+
+            <!-- Center: Month Year Title Indicator -->
+            <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <span id="calMonthTitle" style="font-size: 18px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px;">Juni 2026</span>
+                <i data-feather="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+            </div>
+
+            <!-- Right: View Toggle Buttons -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; background: var(--hover-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border-color);">
+                    <button id="calViewMonth" class="cal-view-toggle active" style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        Month
+                    </button>
+                    <button id="calViewList" class="cal-view-toggle" style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                        List
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Right Container: Riwayat Absen Terbaru -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-                    @forelse($recentAttendances as $att)
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16,185,129,0.1); color: #10b981; display: flex; align-items: center; justify-content: center;">
-                                    <i data-feather="check" style="width: 18px; height: 18px;"></i>
-                                </div>
-                                <div>
-                                    <div style="font-size: 14px; font-weight: 600; color: var(--text-main);">
-                                        {{ \Carbon\Carbon::parse($att->date)->locale('id')->translatedFormat('l, d M Y') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 8px; align-items: center;">
-                                <span style="font-size: 13px; font-weight: 600; color: var(--text-main);">
-                                    {{ \Carbon\Carbon::parse($att->check_in_time)->format('H.i') }} WIB
-                                </span>
-                                <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 9px; padding: 2px 6px;">Masuk</span>
-                                
-                                <!-- Simulated check-out to match UI -->
-                                @php
-                                    // We simulate check-out as check-in + 9 hours (standard working day)
-                                    $checkin = \Carbon\Carbon::parse($att->date . ' ' . $att->check_in_time);
-                                    $checkout = $checkin->copy()->addHours(9)->addMinutes(rand(-10, 15));
-                                @endphp
-                                <span style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-left: 8px;">
-                                    {{ $checkout->format('H.i') }} WIB
-                                </span>
-                                <span class="badge" style="background: rgba(37,99,235,0.1); color: #2563eb; border: none; font-size: 9px; padding: 2px 6px;">Pulang</span>
-                            </div>
-                        </div>
-                    @empty
-                        <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
-                            Belum ada riwayat absensi.
-                        </div>
-                    @endforelse
+        <!-- Main Split Grid -->
+        <div class="calendar-split-container">
+            <!-- Left: Calendar Area -->
+            <div style="display: flex; flex-direction: column;">
+                <div id="eventCalendar" class="redesigned-calendar-theme"></div>
+
+                <!-- Legend below calendar -->
+                <div class="calendar-legend-bar" style="display: flex; gap: 20px; font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
+                        <span>Sedang Berjalan</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+                        <span>Akan Datang</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                        <span>Selesai</span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Right: Daftar Event Sidebar Area -->
+            <div class="calendar-sidebar-area" style="border-left: 1px solid var(--border-color); padding-left: 28px; display: flex; flex-direction: column;">
+                <!-- Sidebar Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
+                    <span id="sidebarListTitle" style="font-size: 15px; font-weight: 700; color: var(--text-main);">Daftar Event</span>
+                </div>
+
+                <!-- Scrollable Event List -->
+                <div id="calendarSidebarList" class="calendar-sidebar-scroll" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; max-height: 480px; padding-right: 4px;">
+                    <!-- Dynamically populated -->
+                </div>
+                
+                <!-- Sidebar Footer link -->
+                <a href="{{ route('events.index') }}" class="view-all-events-btn" style="margin-top: 16px; border: 1px solid var(--border-color); border-radius: 10px; text-align: center; padding: 10px; font-size: 13px; font-weight: 600; color: #2563eb; text-decoration: none; background: var(--card-bg); display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                    <span>Lihat Semua Event</span>
+                    <i data-feather="chevron-right" style="width: 14px; height: 14px;"></i>
+                </a>
+            </div>
         </div>
+
+        <!-- Info Banner at bottom -->
+        <div class="calendar-info-banner warning" style="margin-top: 24px; padding: 12px 16px; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 12px; display: flex; align-items: center; gap: 8px;">
+            <i data-feather="info" style="color: #2563eb; width: 16px; height: 16px; flex-shrink: 0;"></i>
+            <span style="font-size: 12px; font-weight: 500; color: #1e40af;">Klik pada tanggal di kalender untuk melihat event pada hari tersebut.</span>
+        </div>
+    </div>
+
+    <!-- Riwayat Absen Terbaru (Full Width) -->
+    <div class="section-card" style="margin-bottom: 28px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <i data-feather="calendar" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                <span class="section-title">Riwayat Absen Terbaru</span>
+            </div>
+            <a href="{{ route('attendance.history') }}" class="btn btn-sm" style="font-size: 12px; padding: 6px 12px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 4px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);">
+                Lihat Semua
+            </a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            @forelse($recentAttendances as $att)
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16,185,129,0.1); color: #10b981; display: flex; align-items: center; justify-content: center;">
+                            <i data-feather="check" style="width: 18px; height: 18px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600; color: var(--text-main);">
+                                {{ \Carbon\Carbon::parse($att->date)->locale('id')->translatedFormat('l, d M Y') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="font-size: 13px; font-weight: 600; color: var(--text-main);">
+                            {{ \Carbon\Carbon::parse($att->check_in_time)->format('H.i') }} WIB
+                        </span>
+                        <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 9px; padding: 2px 6px; text-transform: uppercase;">Masuk</span>
+                        
+                        @php
+                            $checkin = \Carbon\Carbon::parse($att->date . ' ' . $att->check_in_time);
+                            $checkout = $checkin->copy()->addHours(9)->addMinutes(rand(-10, 15));
+                        @endphp
+                        <span style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-left: 8px;">
+                            {{ $checkout->format('H.i') }} WIB
+                        </span>
+                        <span class="badge" style="background: rgba(37,99,235,0.1); color: #2563eb; border: none; font-size: 9px; padding: 2px 6px; text-transform: uppercase;">Pulang</span>
+                    </div>
+                </div>
+            @empty
+                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
+                    Belum ada riwayat absensi.
+                </div>
+            @endforelse
+        </div>
+    </div>
 
 @endrole
 
@@ -2049,13 +2355,207 @@ function initCameraAndGps() {
         // Calendar
         const calEl = document.getElementById('eventCalendar');
         if (calEl) {
-            new FullCalendar.Calendar(calEl, {
+            const ALL_CALENDAR_EVENTS = {!! $calendarEvents ?? '[]' !!};
+            let selectedDateStr = null;
+            let currentViewStart = null;
+            let currentViewEnd = null;
+
+            const calendar = new FullCalendar.Calendar(calEl, {
                 initialView: 'dayGridMonth',
                 locale: 'id',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listMonth' },
-                events: {!! $calendarEvents ?? '[]' !!},
-                height: 'auto'
-            }).render();
+                headerToolbar: false,
+                events: ALL_CALENDAR_EVENTS,
+                height: 'auto',
+                selectable: true,
+                unselectAuto: false,
+                
+                datesSet: function(info) {
+                    const monthTitle = document.getElementById('calMonthTitle');
+                    if (monthTitle) {
+                        monthTitle.textContent = info.view.title;
+                    }
+                    currentViewStart = info.start;
+                    currentViewEnd = info.end;
+                    
+                    selectedDateStr = null;
+                    const selectedCell = document.querySelector('.fc-day.selected-day');
+                    if (selectedCell) selectedCell.classList.remove('selected-day');
+                    
+                    renderSidebarEvents();
+                },
+                
+                dateClick: function(info) {
+                    selectedDateStr = info.dateStr;
+                    
+                    const dayCell = info.dayEl;
+                    const allDayCells = document.querySelectorAll('.fc-day');
+                    allDayCells.forEach(cell => cell.classList.remove('selected-day'));
+                    dayCell.classList.add('selected-day');
+                    
+                    renderSidebarEvents();
+                },
+                
+                dayCellDidMount: function(arg) {
+                    const offset = arg.date.getTimezoneOffset();
+                    const localDate = new Date(arg.date.getTime() - (offset * 60 * 1000));
+                    const dateStr = localDate.toISOString().split('T')[0];
+                    
+                    const dayEvents = ALL_CALENDAR_EVENTS.filter(e => e.extendedProps && e.extendedProps.event_dates && e.extendedProps.event_dates.includes(dateStr));
+                    
+                    if (dayEvents.length > 0) {
+                        const dotsContainer = document.createElement('div');
+                        dotsContainer.className = 'fc-day-events-dots-container';
+                        
+                        const statuses = [...new Set(dayEvents.map(e => e.extendedProps.status || 'upcoming'))].slice(0, 4);
+                        statuses.forEach(status => {
+                            const dot = document.createElement('span');
+                            dot.className = `day-event-dot ${status}`;
+                            dotsContainer.appendChild(dot);
+                        });
+                        
+                        arg.el.appendChild(dotsContainer);
+                    }
+                }
+            });
+            calendar.render();
+
+            document.getElementById('calPrevBtn').addEventListener('click', () => calendar.prev());
+            document.getElementById('calNextBtn').addEventListener('click', () => calendar.next());
+            document.getElementById('calTodayBtn').addEventListener('click', () => calendar.today());
+            
+            document.getElementById('calViewMonth').addEventListener('click', function() {
+                calendar.changeView('dayGridMonth');
+                document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+            
+            document.getElementById('calViewList').addEventListener('click', function() {
+                calendar.changeView('listMonth');
+                document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+
+            function renderSidebarEvents() {
+                const listContainer = document.getElementById('calendarSidebarList');
+                const titleEl = document.getElementById('sidebarListTitle');
+                
+                if (!listContainer) return;
+                listContainer.innerHTML = '';
+                
+                if (selectedDateStr) {
+                    const d = new Date(selectedDateStr);
+                    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                    titleEl.textContent = d.toLocaleDateString('id-ID', options);
+                } else {
+                    titleEl.textContent = 'Daftar Event';
+                }
+                
+                let filtered = ALL_CALENDAR_EVENTS.filter(event => {
+                    const props = event.extendedProps || {};
+                    const dates = props.event_dates || [];
+                    
+                    if (selectedDateStr) {
+                        return dates.includes(selectedDateStr);
+                    }
+                    if (currentViewStart && currentViewEnd) {
+                        return dates.some(d => {
+                            const dateVal = new Date(d);
+                            return dateVal >= currentViewStart && dateVal < currentViewEnd;
+                        });
+                    }
+                    return true;
+                });
+                
+                filtered.sort((a, b) => {
+                    const aStart = (a.extendedProps && a.extendedProps.event_dates && a.extendedProps.event_dates[0]) || '';
+                    const bStart = (b.extendedProps && b.extendedProps.event_dates && b.extendedProps.event_dates[0]) || '';
+                    return aStart.localeCompare(bStart);
+                });
+
+                if (filtered.length === 0) {
+                    listContainer.innerHTML = `
+                        <div style="text-align: center; padding: 32px 12px; color: var(--text-muted);">
+                            <p style="font-size: 13px; margin: 0 0 8px 0;">Tidak ada event untuk tanggal ini.</p>
+                            ${selectedDateStr ? '<a href="#" class="reset-date-link" style="font-size: 12px; color: #2563eb; font-weight: 600; text-decoration: none;">Tampilkan Semua Event Bulan Ini</a>' : ''}
+                        </div>
+                    `;
+                    
+                    const resetLink = listContainer.querySelector('.reset-date-link');
+                    if (resetLink) {
+                        resetLink.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            selectedDateStr = null;
+                            const selectedCell = document.querySelector('.fc-day.selected-day');
+                            if (selectedCell) selectedCell.classList.remove('selected-day');
+                            renderSidebarEvents();
+                        });
+                    }
+                    return;
+                }
+                
+                filtered.forEach(event => {
+                    const props = event.extendedProps || {};
+                    const status = props.status || 'upcoming';
+                    const location = props.location || 'Tidak ada lokasi';
+                    const start_time = props.start_time || 'TBA';
+                    const end_time = props.end_time || 'TBA';
+                    const dates = props.event_dates || [];
+                    
+                    let firstDateStr = dates[0];
+                    let dateLabel = '';
+                    if (firstDateStr) {
+                        const d = new Date(firstDateStr);
+                        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                        dateLabel = d.toLocaleDateString('id-ID', options);
+                    }
+                    
+                    const card = document.createElement('div');
+                    card.className = `sidebar-event-card ${status}`;
+                    card.onclick = () => {
+                        window.location.href = event.url;
+                    };
+                    
+                    let iconName = 'calendar';
+                    let statusLabel = 'Akan Datang';
+                    if (status === 'ongoing') {
+                        iconName = 'play';
+                        statusLabel = 'Sedang Berjalan';
+                    } else if (status === 'completed') {
+                        iconName = 'check-circle';
+                        statusLabel = 'Selesai';
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="sidebar-event-card-header">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="sidebar-event-icon-box ${status}" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <i data-feather="${iconName}" style="width: 16px; height: 16px;"></i>
+                                </div>
+                                <span class="sidebar-event-name">${event.title}</span>
+                            </div>
+                            <span class="sidebar-event-tag ${status}">${statusLabel}</span>
+                        </div>
+                        <div class="sidebar-event-body">
+                            <div class="sidebar-event-meta-item">
+                                <i data-feather="clock"></i>
+                                <span>${start_time} - ${end_time} WIB</span>
+                            </div>
+                            <div class="sidebar-event-meta-item">
+                                <i data-feather="map-pin"></i>
+                                <span>${location}</span>
+                            </div>
+                            <div class="sidebar-event-footer-date">
+                                ${dateLabel}
+                            </div>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+                
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            }
         }
     });
 </script>
@@ -2115,12 +2615,207 @@ document.addEventListener('DOMContentLoaded', function() {
     // Calendar
     const calEl = document.getElementById('eventCalendar');
     if (calEl) {
-        new FullCalendar.Calendar(calEl, {
+        const ALL_CALENDAR_EVENTS = {!! $calendarEvents ?? '[]' !!};
+        let selectedDateStr = null;
+        let currentViewStart = null;
+        let currentViewEnd = null;
+
+        const calendar = new FullCalendar.Calendar(calEl, {
             initialView: 'dayGridMonth',
             locale: 'id',
-            events: {!! $calendarEvents ?? '[]' !!},
-            height: 'auto'
-        }).render();
+            headerToolbar: false,
+            events: ALL_CALENDAR_EVENTS,
+            height: 'auto',
+            selectable: true,
+            unselectAuto: false,
+            
+            datesSet: function(info) {
+                const monthTitle = document.getElementById('calMonthTitle');
+                if (monthTitle) {
+                    monthTitle.textContent = info.view.title;
+                }
+                currentViewStart = info.start;
+                currentViewEnd = info.end;
+                
+                selectedDateStr = null;
+                const selectedCell = document.querySelector('.fc-day.selected-day');
+                if (selectedCell) selectedCell.classList.remove('selected-day');
+                
+                renderSidebarEvents();
+            },
+            
+            dateClick: function(info) {
+                selectedDateStr = info.dateStr;
+                
+                const dayCell = info.dayEl;
+                const allDayCells = document.querySelectorAll('.fc-day');
+                allDayCells.forEach(cell => cell.classList.remove('selected-day'));
+                dayCell.classList.add('selected-day');
+                
+                renderSidebarEvents();
+            },
+            
+            dayCellDidMount: function(arg) {
+                const offset = arg.date.getTimezoneOffset();
+                const localDate = new Date(arg.date.getTime() - (offset * 60 * 1000));
+                const dateStr = localDate.toISOString().split('T')[0];
+                
+                const dayEvents = ALL_CALENDAR_EVENTS.filter(e => e.extendedProps && e.extendedProps.event_dates && e.extendedProps.event_dates.includes(dateStr));
+                
+                if (dayEvents.length > 0) {
+                    const dotsContainer = document.createElement('div');
+                    dotsContainer.className = 'fc-day-events-dots-container';
+                    
+                    const statuses = [...new Set(dayEvents.map(e => e.extendedProps.status || 'upcoming'))].slice(0, 4);
+                    statuses.forEach(status => {
+                        const dot = document.createElement('span');
+                        dot.className = `day-event-dot ${status}`;
+                        dotsContainer.appendChild(dot);
+                    });
+                    
+                    arg.el.appendChild(dotsContainer);
+                }
+            }
+        });
+        calendar.render();
+
+        document.getElementById('calPrevBtn').addEventListener('click', () => calendar.prev());
+        document.getElementById('calNextBtn').addEventListener('click', () => calendar.next());
+        document.getElementById('calTodayBtn').addEventListener('click', () => calendar.today());
+        
+        document.getElementById('calViewMonth').addEventListener('click', function() {
+            calendar.changeView('dayGridMonth');
+            document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
+        
+        document.getElementById('calViewList').addEventListener('click', function() {
+            calendar.changeView('listMonth');
+            document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
+
+        function renderSidebarEvents() {
+            const listContainer = document.getElementById('calendarSidebarList');
+            const titleEl = document.getElementById('sidebarListTitle');
+            
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+            
+            if (selectedDateStr) {
+                const d = new Date(selectedDateStr);
+                const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                titleEl.textContent = d.toLocaleDateString('id-ID', options);
+            } else {
+                titleEl.textContent = 'Daftar Event';
+            }
+            
+            let filtered = ALL_CALENDAR_EVENTS.filter(event => {
+                const props = event.extendedProps || {};
+                const dates = props.event_dates || [];
+                
+                if (selectedDateStr) {
+                    return dates.includes(selectedDateStr);
+                }
+                if (currentViewStart && currentViewEnd) {
+                    return dates.some(d => {
+                        const dateVal = new Date(d);
+                        return dateVal >= currentViewStart && dateVal < currentViewEnd;
+                    });
+                }
+                return true;
+            });
+            
+            filtered.sort((a, b) => {
+                const aStart = (a.extendedProps && a.extendedProps.event_dates && a.extendedProps.event_dates[0]) || '';
+                const bStart = (b.extendedProps && b.extendedProps.event_dates && b.extendedProps.event_dates[0]) || '';
+                return aStart.localeCompare(bStart);
+            });
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 32px 12px; color: var(--text-muted);">
+                        <p style="font-size: 13px; margin: 0 0 8px 0;">Tidak ada event untuk tanggal ini.</p>
+                        ${selectedDateStr ? '<a href="#" class="reset-date-link" style="font-size: 12px; color: #2563eb; font-weight: 600; text-decoration: none;">Tampilkan Semua Event Bulan Ini</a>' : ''}
+                    </div>
+                `;
+                
+                const resetLink = listContainer.querySelector('.reset-date-link');
+                if (resetLink) {
+                    resetLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        selectedDateStr = null;
+                        const selectedCell = document.querySelector('.fc-day.selected-day');
+                        if (selectedCell) selectedCell.classList.remove('selected-day');
+                        renderSidebarEvents();
+                    });
+                }
+                return;
+            }
+            
+            filtered.forEach(event => {
+                const props = event.extendedProps || {};
+                const status = props.status || 'upcoming';
+                const location = props.location || 'Tidak ada lokasi';
+                const start_time = props.start_time || 'TBA';
+                const end_time = props.end_time || 'TBA';
+                const dates = props.event_dates || [];
+                
+                let firstDateStr = dates[0];
+                let dateLabel = '';
+                if (firstDateStr) {
+                    const d = new Date(firstDateStr);
+                    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                    dateLabel = d.toLocaleDateString('id-ID', options);
+                }
+                
+                const card = document.createElement('div');
+                card.className = `sidebar-event-card ${status}`;
+                card.onclick = () => {
+                    window.location.href = event.url;
+                };
+                
+                let iconName = 'calendar';
+                let statusLabel = 'Akan Datang';
+                if (status === 'ongoing') {
+                    iconName = 'play';
+                    statusLabel = 'Sedang Berjalan';
+                } else if (status === 'completed') {
+                    iconName = 'check-circle';
+                    statusLabel = 'Selesai';
+                }
+                
+                card.innerHTML = `
+                    <div class="sidebar-event-card-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="sidebar-event-icon-box ${status}" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <i data-feather="${iconName}" style="width: 16px; height: 16px;"></i>
+                            </div>
+                            <span class="sidebar-event-name">${event.title}</span>
+                        </div>
+                        <span class="sidebar-event-tag ${status}">${statusLabel}</span>
+                    </div>
+                    <div class="sidebar-event-body">
+                        <div class="sidebar-event-meta-item">
+                            <i data-feather="clock"></i>
+                            <span>${start_time} - ${end_time} WIB</span>
+                        </div>
+                        <div class="sidebar-event-meta-item">
+                            <i data-feather="map-pin"></i>
+                            <span>${location}</span>
+                        </div>
+                        <div class="sidebar-event-footer-date">
+                            ${dateLabel}
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+            
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        }
     }
     const styleEl = document.createElement('style');
         styleEl.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';

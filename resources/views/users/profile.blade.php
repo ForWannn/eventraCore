@@ -484,7 +484,8 @@
             <input type="hidden" name="name" value="{{ $user->name }}">
             <input type="hidden" name="email" value="{{ $user->email }}">
             
-            <input type="file" id="photoInput" name="photo" accept="image/png,image/jpeg" style="display: none;" onchange="submitAvatarForm()">
+            <input type="file" id="photoInput" name="photo" accept="image/png,image/jpeg" style="display: none;" onchange="previewPhoto(event)">
+            <input type="hidden" name="cropped_photo" id="croppedPhotoInput">
             <div class="avatar-wrapper">
                 <img src="{{ $user->photo_url }}" alt="{{ $user->name }}" class="avatar-img" id="photoPreview">
                 <div class="avatar-upload-trigger" onclick="document.getElementById('photoInput').click()" title="Ubah Foto">
@@ -733,23 +734,110 @@
     </div>
 </div>
 
+<!-- Modal Cropping Foto -->
+<div id="cropperModal" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 20px; width: 90%; max-width: 500px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--text-main);">Atur & Potong Foto</h4>
+            <button type="button" onclick="closeCropperModal()" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <i data-feather="x" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+        <div style="width: 100%; aspect-ratio: 1; max-height: 300px; background: #000; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <img id="cropperImage" src="" style="max-width: 100%; max-height: 100%;">
+        </div>
+        <!-- Cropper Controls -->
+        <div style="display: flex; justify-content: center; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-secondary" onclick="cropper.zoom(0.1)" style="padding: 6px 12px; display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                <i data-feather="zoom-in" style="width: 14px; height: 14px;"></i> Perbesar
+            </button>
+            <button type="button" class="btn-secondary" onclick="cropper.zoom(-0.1)" style="padding: 6px 12px; display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                <i data-feather="zoom-out" style="width: 14px; height: 14px;"></i> Perkecil
+            </button>
+            <button type="button" class="btn-secondary" onclick="cropper.rotate(-90)" style="padding: 6px 12px; display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                <i data-feather="rotate-ccw" style="width: 14px; height: 14px;"></i> Putar
+            </button>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+            <button type="button" class="btn-secondary" onclick="closeCropperModal()">Batal</button>
+            <button type="button" class="btn-primary" onclick="saveCroppedPhoto()" style="background: #2563eb; color: #fff;">Potong & Simpan</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    function submitAvatarForm() {
-        // Automatically submit the avatar upload form when a file is chosen
-        const fileInput = document.getElementById('photoInput');
-        if (fileInput.files && fileInput.files[0]) {
-            // Show preview instantly
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('photoPreview').src = e.target.result;
-            };
-            reader.readAsDataURL(fileInput.files[0]);
-            
-            // Wait slightly and submit form
+    let cropper;
+
+    function previewPhoto(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('cropperModal').style.display = 'flex';
+            const cropperImage = document.getElementById('cropperImage');
+            cropperImage.src = e.target.result;
+
+            if (cropper) {
+                cropper.destroy();
+            }
+
             setTimeout(() => {
-                document.getElementById('avatarForm').submit();
-            }, 300);
+                cropper = new Cropper(cropperImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 0.9,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false
+                });
+                
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            }, 100);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function closeCropperModal() {
+        document.getElementById('cropperModal').style.display = 'none';
+        document.getElementById('photoInput').value = '';
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
         }
+    }
+
+    function saveCroppedPhoto() {
+        if (!cropper) return;
+
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 400
+        });
+
+        const dataUrl = canvas.toDataURL('image/jpeg');
+
+        const preview = document.getElementById('photoPreview');
+        preview.src = dataUrl;
+
+        document.getElementById('croppedPhotoInput').value = dataUrl;
+
+        document.getElementById('photoInput').value = '';
+
+        document.getElementById('cropperModal').style.display = 'none';
+        
+        cropper.destroy();
+        cropper = null;
+
+        // Auto submit the avatar form
+        document.getElementById('avatarForm').submit();
     }
 
     function togglePasswordModalVisibility(inputId) {
