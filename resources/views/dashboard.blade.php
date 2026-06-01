@@ -312,17 +312,14 @@
     .fc-event-ongoing {
         background-color: rgba(37, 99, 235, 0.1) !important;
         color: #1e40af !important;
-        border-left: 3px solid #2563eb !important;
     }
     .fc-event-upcoming {
         background-color: rgba(245, 158, 11, 0.1) !important;
         color: #b27300 !important;
-        border-left: 3px solid #f59e0b !important;
     }
     .fc-event-completed {
         background-color: rgba(16, 185, 129, 0.1) !important;
         color: #065f46 !important;
-        border-left: 3px solid #10b981 !important;
     }
     [data-theme="dark"] .fc-event-ongoing {
         background-color: rgba(37, 99, 235, 0.2) !important;
@@ -994,16 +991,13 @@
         gap: 12px;
         cursor: pointer;
         transition: all 0.2s;
-        border-left: 4px solid var(--border-color) !important;
         text-align: left;
     }
     .sidebar-event-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(0,0,0,0.04);
     }
-    .sidebar-event-card.ongoing { border-left-color: #2563eb !important; }
-    .sidebar-event-card.completed { border-left-color: #10b981 !important; }
-    .sidebar-event-card.upcoming { border-left-color: #f59e0b !important; }
+
 
     .sidebar-event-card-header {
         display: flex;
@@ -1337,8 +1331,8 @@
                 </div>
                 <div class="attendance-action-container">
                     <button class="btn-checkin-large" onclick="openAttendanceModal()">
-                        <i data-feather="camera"></i>
-                        <span>Absen Masuk Sekarang</span>
+                        <!-- <i data-feather="camera"></i> -->
+                        <span>Absen Sekarang</span>
                     </button>
                     <p class="action-note">
                         <i data-feather="info" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
@@ -1383,14 +1377,14 @@
 
             <!-- Right: View Toggle Buttons & Buat Event Baru -->
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="display: flex; background: var(--hover-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border-color);">
+                <!-- <div style="display: flex; background: var(--hover-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border-color);">
                     <button id="calViewMonth" class="cal-view-toggle active" style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         Month
                     </button>
                     <button id="calViewList" class="cal-view-toggle" style="padding: 6px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                         List
                     </button>
-                </div>
+                </div> -->
                 
                 <a href="{{ route('events.create') }}" class="btn" style="display: flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 10px; background: #2563eb; color: #fff; border-color: #2563eb; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer;">
                     <i data-feather="plus" style="width: 16px; height: 16px;"></i>
@@ -1482,7 +1476,7 @@
         </div>
 
         <!-- Column 2: Event Mendatang -->
-        <div class="section-card" style="display: flex; flex-direction: column;">
+        <!-- <div class="section-card" style="display: flex; flex-direction: column;">
             <div class="section-header" style="margin-bottom: 20px; align-items: center;">
                 <span class="section-title">Event Mendatang</span>
                 <a href="{{ route('events.index') }}" style="font-size: 12px; color: #2563eb; text-decoration: none; font-weight: 600; transition: color 0.2s;">
@@ -1515,7 +1509,7 @@
                     </div>
                 @endforelse
             </div>
-        </div>
+        </div> -->
     </div>
 @else
     @if($showBanner)
@@ -1696,8 +1690,8 @@
                 </div>
                 <div class="attendance-action-container">
                     <button class="btn-checkin-large" onclick="openAttendanceModal()">
-                        <i data-feather="camera"></i>
-                        <span>Absen Masuk Sekarang</span>
+                        <!-- <i data-feather="camera"></i> -->
+                        <span>Absen Sekarang</span>
                     </button>
                     <p class="action-note">
                         <i data-feather="info" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
@@ -1878,7 +1872,7 @@
         </div>
         <div style="padding: 20px;">
             <button id="btnSubmitAbsen" class="btn" style="width:100%; justify-content:center; height: 48px; border-radius: 12px; font-weight: 600;">
-                <i data-feather="camera" style="width:16px; margin-right:8px;"></i> Ambil Foto & Absen
+                <i data-feather="camera" style="width:16px; margin-right:8px;"></i> Absen
             </button>
         </div>
     </div>

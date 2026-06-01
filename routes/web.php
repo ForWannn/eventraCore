@@ -79,7 +79,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/weekly-recap/user/{user}/{week}', [WeeklyReportController::class, 'showUserReport'])->name('weekly.show_user');
     Route::middleware(['role:CEO|GM'])->group(function () {
         Route::get('/daily-attendance-recap', [DailyAttendanceController::class, 'recap'])->name('attendance.recap');
+        Route::get('/daily-attendance-recap/export', [DailyAttendanceController::class, 'exportRecap'])->name('attendance.recap.export');
         Route::get('/weekly-recap', [WeeklyReportController::class, 'recap'])->name('weekly.recap');
+        Route::get('/weekly-recap/export', [WeeklyReportController::class, 'exportRecap'])->name('weekly.recap.export');
     });
 
     Route::post('/events/{event}/tasks', [EventTaskController::class, 'store'])->name('events.tasks.store');

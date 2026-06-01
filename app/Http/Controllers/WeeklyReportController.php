@@ -74,6 +74,9 @@ class WeeklyReportController extends Controller
 
         $now = Carbon::now();
         $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
+        $search = $request->query('search');
+        $divisionId = $request->query('division_id');
+        $statusFilter = $request->query('status', 'all');
 
         // Ambil semua user bersama data laporan minggunya pada tanggal yang dipilih
         $users = User::whereDoesntHave('roles', function($q){
@@ -82,7 +85,230 @@ class WeeklyReportController extends Controller
             $q->where('week_start_date', $weekStart);
         }, 'division'])->orderBy('name')->get();
 
-        return view('weekly-reports.recap', compact('users', 'weekStart', 'now'));
+        // Map and compute status details for all users
+        $usersData = $users->map(function ($u) {
+            $userReport = $u->weeklyReports->first();
+            
+            $planStatus = 'belum';
+            $finalStatus = 'belum';
+            $completion = 0;
+            
+            if ($userReport) {
+                if ($userReport->plan_submitted_at) {
+                    $planStatus = $userReport->is_late_plan ? 'terlambat' : 'terkirim';
+                }
+                
+                if ($userReport->status === 'submitted') {
+                    $finalStatus = 'selesai';
+                    $completion = $userReport->completion_percentage;
+                } elseif ($userReport->status === 'draft') {
+                    $finalStatus = 'draft';
+                }
+            }
+            
+            return [
+                'user' => $u,
+                'userReport' => $userReport,
+                'plan_status' => $planStatus,
+                'final_status' => $finalStatus,
+                'completion' => $completion,
+            ];
+        });
+
+        // Compute summary statistics BEFORE filters are applied
+        $totalStaff = $usersData->count();
+        $planSubmittedCount = $usersData->filter(fn($item) => $item['plan_status'] !== 'belum')->count();
+        $planLateCount = $usersData->filter(fn($item) => $item['plan_status'] === 'terlambat')->count();
+        $finalSubmittedCount = $usersData->filter(fn($item) => $item['final_status'] === 'selesai')->count();
+        
+        $submittedReports = $usersData->filter(fn($item) => $item['final_status'] === 'selesai');
+        $averageCompletion = $submittedReports->count() > 0 ? round($submittedReports->avg('completion')) : 0;
+
+        $planPct = $totalStaff > 0 ? round(($planSubmittedCount / $totalStaff) * 100, 1) : 0;
+        $planLatePct = $planSubmittedCount > 0 ? round(($planLateCount / $planSubmittedCount) * 100, 1) : 0;
+        $finalPct = $totalStaff > 0 ? round(($finalSubmittedCount / $totalStaff) * 100, 1) : 0;
+
+        // Apply filters
+        if ($search) {
+            $usersData = $usersData->filter(function ($item) use ($search) {
+                return strpos(strtolower($item['user']->name), strtolower($search)) !== false;
+            });
+        }
+
+        if ($divisionId && $divisionId !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($divisionId) {
+                return (string)$item['user']->division_id === (string)$divisionId;
+            });
+        }
+
+        if ($statusFilter && $statusFilter !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($statusFilter) {
+                if ($statusFilter === 'belum_setor_plan') {
+                    return $item['plan_status'] === 'belum';
+                } elseif ($statusFilter === 'plan_terkirim') {
+                    return $item['plan_status'] === 'terkirim' || $item['plan_status'] === 'terlambat';
+                } elseif ($statusFilter === 'plan_terlambat') {
+                    return $item['plan_status'] === 'terlambat';
+                } elseif ($statusFilter === 'laporan_draft') {
+                    return $item['final_status'] === 'draft';
+                } elseif ($statusFilter === 'laporan_selesai') {
+                    return $item['final_status'] === 'selesai';
+                }
+                return true;
+            });
+        }
+
+        // Paginate results
+        $perPage = (int) $request->input('per_page', 10);
+        $currentPage = \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPage() ?: 1;
+        $currentItems = array_slice($usersData->all(), ($currentPage - 1) * $perPage, $perPage);
+        
+        $paginatedUsers = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentItems,
+            $usersData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $divisions = \App\Models\Division::orderBy('name', 'asc')->get();
+
+        return view('weekly-reports.recap', [
+            'users' => $paginatedUsers,
+            'weekStart' => $weekStart,
+            'now' => $now,
+            'divisions' => $divisions,
+            'totalStaff' => $totalStaff,
+            'planSubmittedCount' => $planSubmittedCount,
+            'planLateCount' => $planLateCount,
+            'finalSubmittedCount' => $finalSubmittedCount,
+            'averageCompletion' => $averageCompletion,
+            'stats' => [
+                'plan_pct' => $planPct,
+                'plan_late_pct' => $planLatePct,
+                'final_pct' => $finalPct,
+            ],
+            'filters' => [
+                'search' => $search,
+                'division_id' => $divisionId,
+                'status' => $statusFilter,
+                'per_page' => $perPage,
+            ]
+        ]);
+    }
+
+    public function exportRecap(Request $request)
+    {
+        if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);
+
+        $now = Carbon::now();
+        $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
+        $search = $request->query('search');
+        $divisionId = $request->query('division_id');
+        $statusFilter = $request->query('status', 'all');
+
+        $users = User::whereDoesntHave('roles', function($q){
+            $q->whereIn('name', ['CEO', 'Direktur']);
+        })->with(['weeklyReports' => function($q) use ($weekStart) {
+            $q->where('week_start_date', $weekStart);
+        }, 'division'])->orderBy('name')->get();
+
+        $usersData = $users->map(function ($u) {
+            $userReport = $u->weeklyReports->first();
+            
+            $planStatus = 'belum';
+            $finalStatus = 'belum';
+            $completion = 0;
+            
+            if ($userReport) {
+                if ($userReport->plan_submitted_at) {
+                    $planStatus = $userReport->is_late_plan ? 'terlambat' : 'terkirim';
+                }
+                
+                if ($userReport->status === 'submitted') {
+                    $finalStatus = 'selesai';
+                    $completion = $userReport->completion_percentage;
+                } elseif ($userReport->status === 'draft') {
+                    $finalStatus = 'draft';
+                }
+            }
+            
+            return [
+                'user' => $u,
+                'name' => $u->name,
+                'nik' => $u->nik ?? '-',
+                'division' => $u->division->name ?? 'Tanpa Divisi',
+                'plan_status' => $planStatus,
+                'final_status' => $finalStatus,
+                'completion' => $completion,
+            ];
+        });
+
+        // Apply filters
+        if ($search) {
+            $usersData = $usersData->filter(function ($item) use ($search) {
+                return strpos(strtolower($item['name']), strtolower($search)) !== false;
+            });
+        }
+
+        if ($divisionId && $divisionId !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($divisionId) {
+                return (string)$item['user']->division_id === (string)$divisionId;
+            });
+        }
+
+        if ($statusFilter && $statusFilter !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($statusFilter) {
+                if ($statusFilter === 'belum_setor_plan') {
+                    return $item['plan_status'] === 'belum';
+                } elseif ($statusFilter === 'plan_terkirim') {
+                    return $item['plan_status'] === 'terkirim' || $item['plan_status'] === 'terlambat';
+                } elseif ($statusFilter === 'plan_terlambat') {
+                    return $item['plan_status'] === 'terlambat';
+                } elseif ($statusFilter === 'laporan_draft') {
+                    return $item['final_status'] === 'draft';
+                } elseif ($statusFilter === 'laporan_selesai') {
+                    return $item['final_status'] === 'selesai';
+                }
+                return true;
+            });
+        }
+
+        $fileName = 'rekap_weekly_report_' . $weekStart . '.csv';
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use($usersData) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($file, ['Nama Karyawan', 'NIK', 'Departemen', 'Status Perencanaan', 'Status Laporan Akhir', 'Tingkat Penyelesaian']);
+
+            foreach ($usersData as $row) {
+                $planLabel = 'Belum Setor';
+                if ($row['plan_status'] === 'terkirim') $planLabel = 'Terkirim';
+                elseif ($row['plan_status'] === 'terlambat') $planLabel = 'Terkirim (Terlambat)';
+
+                $finalLabel = 'Proses / Draft';
+                if ($row['final_status'] === 'selesai') $finalLabel = 'Selesai diserahkan';
+
+                fputcsv($file, [
+                    $row['name'],
+                    $row['nik'],
+                    $row['division'],
+                    $planLabel,
+                    $finalLabel,
+                    $row['final_status'] === 'selesai' ? $row['completion'] . '%' : '-',
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function history(Request $request)

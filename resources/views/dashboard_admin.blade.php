@@ -405,13 +405,13 @@
                 </div>
             </div>
 
-            <!-- Row 3: Penyimpanan Terpakai -->
+            <!-- Row 3: Penyimpanan Upload -->
             <div class="system-summary-row">
-                <div class="system-icon-badge green"><i data-feather="database" style="width: 18px; height: 18px;"></i></div>
+                <div class="system-icon-badge green"><i data-feather="folder" style="width: 18px; height: 18px;"></i></div>
                 <div style="flex: 1;">
-                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Penyimpanan Terpakai</div>
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Penyimpanan Upload</div>
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
-                        <span>{{ $usedDiskSpaceGB }} GB <span style="font-weight: 500; font-size: 12px; color: var(--text-muted);">/ {{ $totalDiskSpaceGB }} GB</span></span>
+                        <span>{{ $usedUploadSizeMB }} MB <span style="font-weight: 500; font-size: 12px; color: var(--text-muted);">/ {{ $uploadQuotaGB }} GB</span></span>
                     </div>
                     <!-- Progress Bar -->
                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
@@ -423,7 +423,16 @@
                 </div>
             </div>
 
-            <!-- Row 4: Backup Terakhir -->
+            <!-- Row 4: Ukuran Basis Data -->
+            <div class="system-summary-row">
+                <div class="system-icon-badge blue"><i data-feather="database" style="width: 18px; height: 18px;"></i></div>
+                <div style="flex: 1;">
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Ukuran Basis Data</div>
+                    <div style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $dbSizeMB }} MB</div>
+                </div>
+            </div>
+
+            <!-- Row 5: Backup Terakhir -->
             <div class="system-summary-row" style="align-items: center;">
                 <div class="system-icon-badge blue"><i data-feather="clock" style="width: 18px; height: 18px;"></i></div>
                 <div style="flex: 1; min-width: 0;">
@@ -433,7 +442,7 @@
                 <span class="status-val-badge success" style="margin-left: 8px;">Sukses</span>
             </div>
 
-            <!-- Row 5: Status Sistem -->
+            <!-- Row 6: Status Sistem -->
             <div class="system-summary-row">
                 <div class="system-icon-badge violet"><i data-feather="activity" style="width: 18px; height: 18px;"></i></div>
                 <div style="flex: 1;">

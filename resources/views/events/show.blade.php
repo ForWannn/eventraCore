@@ -337,7 +337,7 @@
                 <div>
                     <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Tanggal Event</span>
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $dateValue }}</div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">{{ $dateSub }}</div>
+                    <!-- <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">{{ $dateSub }}</div> -->
                 </div>
             </div>
 
@@ -347,8 +347,8 @@
                     <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Jam Mulai</span>
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">
                         {{ $event->start_time ? \Carbon\Carbon::parse($event->start_time)->format('H:i') : '-' }}
+                        <span style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">WIB</span>
                     </div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">WIB</div>
                 </div>
             </div>
 
@@ -358,8 +358,8 @@
                     <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Jam Selesai</span>
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">
                         {{ $event->end_time ? \Carbon\Carbon::parse($event->end_time)->format('H:i') : '-' }}
+                        <span style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">WIB</span>
                     </div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">WIB</div>
                 </div>
             </div>
 
@@ -367,8 +367,8 @@
                 <div class="info-icon-wrapper"><i data-feather="watch" style="width: 16px; height: 16px;"></i></div>
                 <div>
                     <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Durasi</span>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $durationStr }}</div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">{{ $durationSub }}</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $durationStr }} <span style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">{{ $durationSub }}</span></div>
+                    
                 </div>
             </div>
 
@@ -377,7 +377,6 @@
                 <div>
                     <span style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Lokasi</span>
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $event->location ?? '-' }}</div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 500;">Tempat Pelaksanaan</div>
                 </div>
             </div>
 

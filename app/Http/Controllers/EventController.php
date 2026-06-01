@@ -49,6 +49,77 @@ class EventController extends Controller
             $query->whereIn('name', ['CEO', 'Direktur']);
         })->with(['roles', 'division'])->orderBy('name')->get();
 
+        $activeEvents = Event::with(['participants', 'positions.members'])->get()->filter(function ($event) {
+            return $event->status !== 'completed';
+        });
+
+        $usersSchedules = $users->map(function ($u) use ($activeEvents) {
+            $uEvents = $activeEvents->filter(function ($event) use ($u) {
+                $isPic = $event->participants->contains('id', $u->id);
+                $isPosMember = $event->positions->some(fn($pos) => $pos->members->contains('id', $u->id));
+                return $isPic || $isPosMember;
+            });
+
+            // Sort events by starting date
+            $sortedEvents = $uEvents->sortBy(function ($event) {
+                $dates = $event->event_dates ?? [];
+                if (empty($dates)) return now()->addYears(100);
+                sort($dates);
+                $firstDate = \Carbon\Carbon::parse($dates[0])->startOfDay();
+                if ($event->start_time) {
+                    $firstDate->setTimeFromTimeString((string) $event->start_time);
+                }
+                return $firstDate;
+            });
+
+            $nextEvent = $sortedEvents->first();
+            $nextEventDetails = null;
+
+            if ($nextEvent) {
+                $dates = $nextEvent->event_dates ?? [];
+                sort($dates);
+                $formattedDate = '';
+                if (!empty($dates)) {
+                    $first = \Carbon\Carbon::parse($dates[0])->translatedFormat('d M Y');
+                    if (count($dates) > 1) {
+                        $last = \Carbon\Carbon::parse(end($dates))->translatedFormat('d M Y');
+                        $formattedDate = $first . ' - ' . $last;
+                    } else {
+                        $formattedDate = $first;
+                    }
+                }
+                
+                $timeStr = '';
+                if ($nextEvent->start_time && $nextEvent->end_time) {
+                    $timeStr = substr($nextEvent->start_time, 0, 5) . ' - ' . substr($nextEvent->end_time, 0, 5);
+                } elseif ($nextEvent->start_time) {
+                    $timeStr = substr($nextEvent->start_time, 0, 5);
+                }
+
+                $nextEventDetails = [
+                    'id' => $nextEvent->id,
+                    'name' => $nextEvent->name,
+                    'date' => $formattedDate,
+                    'time' => $timeStr,
+                    'status' => $nextEvent->status,
+                ];
+            }
+
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'division' => optional($u->division)->name ?? '-',
+                'photo' => $u->photo_url,
+                'active_events_count' => $uEvents->count(),
+                'next_event' => $nextEventDetails,
+                'all_events' => $uEvents->map(fn($ev) => [
+                    'id' => $ev->id,
+                    'name' => $ev->name,
+                    'status' => $ev->status,
+                ])->values()->all(),
+            ];
+        });
+
         $usersJson = $users->map(fn($u) => [
             'id' => $u->id,
             'name' => $u->name,
@@ -56,7 +127,7 @@ class EventController extends Controller
             'photo' => $u->photo_url,
         ]);
 
-        return view('events.create', compact('users', 'usersJson'));
+        return view('events.create', compact('users', 'usersJson', 'usersSchedules'));
     }
 
     public function store(Request $request)

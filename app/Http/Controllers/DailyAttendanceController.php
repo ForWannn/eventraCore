@@ -295,6 +295,9 @@ class DailyAttendanceController extends Controller
     public function recap(Request $request)
     {
         $date = $request->input('date', Carbon::now()->format('Y-m-d'));
+        $search = $request->input('search');
+        $divisionId = $request->input('division_id');
+        $statusFilter = $request->input('status', 'all');
 
         // Query ALL active users with their division & attendance for the selected date
         $users = \App\Models\User::with(['division'])
@@ -311,15 +314,312 @@ class DailyAttendanceController extends Controller
             ->get()
             ->keyBy('user_id');
 
-        // Compute summary statistics
-        $totalStaff = $users->count();
-        $presentCount = $users->filter(fn($u) => $u->dailyAttendances->isNotEmpty())->count();
-        $lateCount = $users->filter(fn($u) => $u->dailyAttendances->where('status', 'terlambat')->isNotEmpty())->count();
-        $remoteCount = $users->filter(fn($u) => $u->dailyAttendances->where('attendance_type', 'luar')->isNotEmpty())->count();
-        $leaveCount = $users->filter(fn($u) => $u->dailyAttendances->isEmpty() && isset($leaves[$u->id]))->count();
+        $now = Carbon::now();
+        $dateObj = Carbon::parse($date);
+        
+        $limit = config('attendance.checkout_threshold', '09:00:00');
+        $threshold = Carbon::parse($date . ' ' . $limit);
+        
+        $isClosed = false;
+        if ($dateObj->isPast() && !$dateObj->isToday()) {
+            $isClosed = true;
+        } elseif ($dateObj->isToday() && $now->gt($threshold)) {
+            $isClosed = true;
+        }
 
-        return view('daily-attendances.index', compact(
-            'users', 'date', 'totalStaff', 'presentCount', 'lateCount', 'remoteCount', 'leaves', 'leaveCount'
-        ));
+        // Check if the recap date is a working day
+        $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
+        $isWorkDay = true;
+        if ($calendar) {
+            $isWorkDay = (bool)$calendar->is_working_day;
+        } else {
+            if ($dateObj->dayOfWeek === Carbon::SATURDAY || $dateObj->dayOfWeek === Carbon::SUNDAY) {
+                $isWorkDay = false;
+            }
+        }
+
+        // Map and compute status details for all users
+        $usersData = $users->map(function ($u) use ($leaves, $isClosed, $date, $isWorkDay) {
+            $attendance = $u->dailyAttendances->first();
+            $leave = $leaves->get($u->id);
+            
+            $status = 'belum_hadir';
+            $checkInTime = null;
+            $lateness = null;
+            $method = null;
+            $photoPath = null;
+            $latitude = null;
+            $longitude = null;
+            $reason = null;
+            
+            if ($attendance) {
+                $status = $attendance->status === 'tepat_waktu' ? 'hadir' : 'terlambat';
+                $checkInTime = $attendance->check_in_time;
+                $method = $attendance->attendance_type;
+                $photoPath = $attendance->photo_path;
+                $latitude = $attendance->latitude;
+                $longitude = $attendance->longitude;
+                
+                // Calculate lateness minutes
+                if ($attendance->status === 'terlambat') {
+                    $checkIn = Carbon::parse($attendance->check_in_time);
+                    $schedule = Carbon::parse($date . ' 08:00:00');
+                    $diff = $schedule->diffInMinutes($checkIn, false);
+                    if ($diff > 0) {
+                        $hours = floor($diff / 60);
+                        $minutes = $diff % 60;
+                        $lateness = ($hours > 0 ? "$hours jam " : "") . "$minutes menit";
+                    }
+                }
+            } elseif ($leave) {
+                $status = 'izin_cuti';
+                $reason = $leave->type === 'izin' ? 'Izin: ' . ($leave->reason ?? 'Izin pribadi') : 'Cuti: ' . ($leave->reason ?? 'Cuti tahunan');
+            } else {
+                if (!$isWorkDay) {
+                    $status = 'libur';
+                } else {
+                    $status = $isClosed ? 'absen' : 'belum_hadir';
+                }
+            }
+            
+            return [
+                'user' => $u,
+                'status' => $status,
+                'check_in_time' => $checkInTime,
+                'lateness' => $lateness,
+                'method' => $method,
+                'photo_path' => $photoPath,
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'reason' => $reason,
+                'leave' => $leave,
+            ];
+        });
+
+        // Compute summary statistics BEFORE filters are applied
+        $totalStaff = $usersData->count();
+        $hadirCount = $usersData->where('status', 'hadir')->count();
+        $lateCount = $usersData->where('status', 'terlambat')->count();
+        $absenCount = $usersData->where('status', 'absen')->count();
+        $leaveCount = $usersData->where('status', 'izin_cuti')->count();
+        $notPresentCount = $usersData->where('status', 'belum_hadir')->count();
+        $liburCount = $usersData->where('status', 'libur')->count();
+
+        $hadirPct = $totalStaff > 0 ? round(($hadirCount / $totalStaff) * 100, 1) : 0;
+        $latePct = $totalStaff > 0 ? round(($lateCount / $totalStaff) * 100, 1) : 0;
+        $absenPct = $totalStaff > 0 ? round(($absenCount / $totalStaff) * 100, 1) : 0;
+        $leavePct = $totalStaff > 0 ? round(($leaveCount / $totalStaff) * 100, 1) : 0;
+        $notPresentPct = $totalStaff > 0 ? round(($notPresentCount / $totalStaff) * 100, 1) : 0;
+
+        // Apply filters
+        if ($search) {
+            $usersData = $usersData->filter(function ($item) use ($search) {
+                return strpos(strtolower($item['user']->name), strtolower($search)) !== false;
+            });
+        }
+
+        if ($divisionId && $divisionId !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($divisionId) {
+                return (string)$item['user']->division_id === (string)$divisionId;
+            });
+        }
+
+        if ($statusFilter && $statusFilter !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($statusFilter) {
+                return $item['status'] === $statusFilter;
+            });
+        }
+
+        // Paginate results
+        $perPage = (int) $request->input('per_page', 10);
+        $currentPage = \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPage() ?: 1;
+        $currentItems = array_slice($usersData->all(), ($currentPage - 1) * $perPage, $perPage);
+        
+        $paginatedUsers = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentItems,
+            $usersData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $divisions = \App\Models\Division::orderBy('name', 'asc')->get();
+
+        return view('daily-attendances.index', [
+            'users' => $paginatedUsers,
+            'date' => $date,
+            'divisions' => $divisions,
+            'totalStaff' => $totalStaff,
+            'hadirCount' => $hadirCount,
+            'lateCount' => $lateCount,
+            'absenCount' => $absenCount,
+            'leaveCount' => $leaveCount,
+            'notPresentCount' => $notPresentCount,
+            'liburCount' => $liburCount,
+            'isWorkDay' => $isWorkDay,
+            'stats' => [
+                'hadir_pct' => $hadirPct,
+                'terlambat_pct' => $latePct,
+                'absen_pct' => $absenPct,
+                'leave_pct' => $leavePct,
+                'not_present_pct' => $notPresentPct,
+            ],
+            'filters' => [
+                'search' => $search,
+                'division_id' => $divisionId,
+                'status' => $statusFilter,
+                'per_page' => $perPage,
+            ]
+        ]);
+    }
+
+    public function exportRecap(Request $request)
+    {
+        $date = $request->input('date', Carbon::now()->format('Y-m-d'));
+        $search = $request->input('search');
+        $divisionId = $request->input('division_id');
+        $statusFilter = $request->input('status', 'all');
+
+        $users = \App\Models\User::with(['division'])
+            ->with(['dailyAttendances' => function ($q) use ($date) {
+                $q->where('date', $date);
+            }])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $leaves = \App\Models\LeaveRequest::where('status', 'approved')
+            ->where('start_date', '<=', $date)
+            ->where('end_date', '>=', $date)
+            ->get()
+            ->keyBy('user_id');
+
+        $now = Carbon::now();
+        $dateObj = Carbon::parse($date);
+        
+        $limit = config('attendance.checkout_threshold', '09:00:00');
+        $threshold = Carbon::parse($date . ' ' . $limit);
+        
+        $isClosed = false;
+        if ($dateObj->isPast() && !$dateObj->isToday()) {
+            $isClosed = true;
+        } elseif ($dateObj->isToday() && $now->gt($threshold)) {
+            $isClosed = true;
+        }
+
+        // Check if the recap date is a working day
+        $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
+        $isWorkDay = true;
+        if ($calendar) {
+            $isWorkDay = (bool)$calendar->is_working_day;
+        } else {
+            if ($dateObj->dayOfWeek === Carbon::SATURDAY || $dateObj->dayOfWeek === Carbon::SUNDAY) {
+                $isWorkDay = false;
+            }
+        }
+
+        $usersData = $users->map(function ($u) use ($leaves, $isClosed, $date, $isWorkDay) {
+            $attendance = $u->dailyAttendances->first();
+            $leave = $leaves->get($u->id);
+            
+            $status = 'belum_hadir';
+            $checkInTime = null;
+            $lateness = null;
+            $method = null;
+            $reason = null;
+            
+            if ($attendance) {
+                $status = $attendance->status === 'tepat_waktu' ? 'hadir' : 'terlambat';
+                $checkInTime = $attendance->check_in_time;
+                $method = $attendance->attendance_type === 'kantor' ? 'Website' : 'Mobile App';
+                
+                if ($attendance->status === 'terlambat') {
+                    $checkIn = Carbon::parse($attendance->check_in_time);
+                    $schedule = Carbon::parse($date . ' 08:00:00');
+                    $diff = $schedule->diffInMinutes($checkIn, false);
+                    if ($diff > 0) {
+                        $hours = floor($diff / 60);
+                        $minutes = $diff % 60;
+                        $lateness = ($hours > 0 ? "$hours jam " : "") . "$minutes menit";
+                    }
+                }
+            } elseif ($leave) {
+                $status = 'izin_cuti';
+                $reason = $leave->type === 'izin' ? 'Izin: ' . ($leave->reason ?? 'Izin pribadi') : 'Cuti: ' . ($leave->reason ?? 'Cuti tahunan');
+            } else {
+                if (!$isWorkDay) {
+                    $status = 'libur';
+                } else {
+                    $status = $isClosed ? 'absen' : 'belum_hadir';
+                }
+            }
+            
+            return [
+                'user' => $u,
+                'name' => $u->name,
+                'division' => $u->division->name ?? 'Tanpa Divisi',
+                'status' => $status,
+                'check_in_time' => $checkInTime,
+                'lateness' => $lateness,
+                'method' => $method,
+                'reason' => $reason,
+            ];
+        });
+
+        // Apply filters
+        if ($search) {
+            $usersData = $usersData->filter(function ($item) use ($search) {
+                return strpos(strtolower($item['name']), strtolower($search)) !== false;
+            });
+        }
+
+        if ($divisionId && $divisionId !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($divisionId) {
+                return (string)$item['user']->division_id === (string)$divisionId;
+            });
+        }
+
+        if ($statusFilter && $statusFilter !== 'all') {
+            $usersData = $usersData->filter(function ($item) use ($statusFilter) {
+                return $item['status'] === $statusFilter;
+            });
+        }
+
+        $fileName = 'rekap_absensi_' . $date . '.csv';
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use($usersData) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($file, ['Nama Karyawan', 'Departemen', 'Status', 'Jam Masuk', 'Keterlambatan', 'Metode', 'Keterangan']);
+
+            foreach ($usersData as $row) {
+                $statusLabel = '-';
+                if ($row['status'] === 'hadir') $statusLabel = 'Hadir';
+                elseif ($row['status'] === 'terlambat') $statusLabel = 'Terlambat';
+                elseif ($row['status'] === 'absen') $statusLabel = 'Absen';
+                elseif ($row['status'] === 'izin_cuti') $statusLabel = 'Izin/Cuti';
+                elseif ($row['status'] === 'belum_hadir') $statusLabel = 'Belum Hadir';
+                elseif ($row['status'] === 'libur') $statusLabel = 'Libur';
+
+                fputcsv($file, [
+                    $row['name'],
+                    $row['division'],
+                    $statusLabel,
+                    $row['check_in_time'] ?? '-',
+                    $row['lateness'] ?? '-',
+                    $row['method'] ?? '-',
+                    $row['reason'] ?? ($row['status'] === 'hadir' ? 'Tepat waktu' : ($row['status'] === 'terlambat' ? 'Terlambat' : ($row['status'] === 'absen' ? 'Tidak ada absen' : ($row['status'] === 'libur' ? 'Hari libur' : '-')))),
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -553,19 +553,36 @@ class DashboardController extends Controller
         $leavesSubmittedToday = \App\Models\LeaveRequest::whereDate('created_at', Carbon::today())->count();
         $totalActivitiesToday = $attendancesToday + $weeklyReportsToday + $tasksCompletedToday + $leavesSubmittedToday;
 
-        // c. Real Storage Disk Details
-        $diskPath = base_path();
-        $totalDiskSpace = @disk_total_space($diskPath);
-        $freeDiskSpace = @disk_free_space($diskPath);
-        if ($totalDiskSpace === false || $freeDiskSpace === false || $totalDiskSpace === 0) {
-            // Fallbacks
-            $totalDiskSpace = 100 * 1024 * 1024 * 1024; // 100 GB
-            $freeDiskSpace = 68 * 1024 * 1024 * 1024;  // 68 GB free (32% used)
+        // c. Real App Uploads Directory Storage Details
+        $uploadPath = storage_path('app/public');
+        $totalUploadSize = 0;
+        if (is_dir($uploadPath)) {
+            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($uploadPath)) as $file) {
+                if ($file->isFile()) {
+                    $totalUploadSize += $file->getSize();
+                }
+            }
         }
-        $usedDiskSpace = $totalDiskSpace - $freeDiskSpace;
-        $usedDiskSpaceGB = round($usedDiskSpace / (1024 * 1024 * 1024), 1);
-        $totalDiskSpaceGB = round($totalDiskSpace / (1024 * 1024 * 1024), 1);
-        $storagePercentage = round(($usedDiskSpace / $totalDiskSpace) * 100);
+        $usedUploadSizeMB = round($totalUploadSize / (1024 * 1024), 1);
+        $uploadQuotaGB = 2; // Soft quota limit (2 GB)
+        $uploadQuotaMB = $uploadQuotaGB * 1024;
+        $storagePercentage = min(round(($usedUploadSizeMB / $uploadQuotaMB) * 100), 100);
+
+        // Calculate database size in MB
+        $connection = config('database.default');
+        $dbSizeMB = 0;
+        if ($connection === 'mysql') {
+            $dbName = config("database.connections.{$connection}.database");
+            $dbQuery = \DB::select("
+                SELECT SUM(data_length + index_length) AS size 
+                FROM information_schema.TABLES 
+                WHERE table_schema = ?
+            ", [$dbName]);
+            $dbSizeBytes = $dbQuery[0]->size ?? 0;
+            $dbSizeMB = round($dbSizeBytes / (1024 * 1024), 2);
+        } else {
+            $dbSizeMB = 0.5; // Fallback for tests/other connections
+        }
 
         // d. Last Backup Time (dynamic, nightly 02:30 WIB)
         $backupTimeToday = Carbon::today()->setTime(2, 30);
@@ -600,9 +617,10 @@ class DashboardController extends Controller
             'divisionsData' => $divisionsData,
             'activeSessionsCount' => $activeSessionsCount,
             'totalActivitiesToday' => $totalActivitiesToday,
-            'usedDiskSpaceGB' => $usedDiskSpaceGB,
-            'totalDiskSpaceGB' => $totalDiskSpaceGB,
+            'usedUploadSizeMB' => $usedUploadSizeMB,
+            'uploadQuotaGB' => $uploadQuotaGB,
             'storagePercentage' => $storagePercentage,
+            'dbSizeMB' => $dbSizeMB,
             'lastBackupFormatted' => $lastBackupFormatted,
             'latestEmployees' => $latestEmployees,
             'latestActivities' => $latestActivities,
