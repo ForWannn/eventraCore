@@ -742,7 +742,7 @@
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
                     <div class="form-group">
-                        <label for="name">Judul Event <span class="required">*</span></label>
+                        <label for="name">Nama Event <span class="required">*</span></label>
                         <div class="input-with-icon">
                             <i data-feather="file-text"></i>
                             <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required placeholder="Masukkan judul event">
@@ -750,13 +750,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label>PIC <span class="required">*</span></label>
+                        <label>PIC</label>
                         <div class="custom-select-wrapper" id="picWrap">
                             <input type="hidden" name="pic_id" id="pic_id_input" value="{{ old('pic_id') }}" required>
                             <div class="custom-select" id="picBtn">
                                 <div class="sel" id="picSel">
                                     <i data-feather="user"></i>
-                                    <span style="color: var(--text-muted);">Pilih PIC Event</span>
+                                    <span style="color: var(--text-muted);">PIC Event</span>
                                 </div>
                                 <i data-feather="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
                             </div>

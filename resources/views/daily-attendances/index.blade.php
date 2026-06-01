@@ -212,7 +212,7 @@
     }
 
     .att-search-box .form-control {
-        padding-left: 38px;
+        padding-left: 32px;
         height: 40px;
         font-size: 13px;
         border-radius: 10px;
@@ -238,8 +238,9 @@
         font-size: 13px;
         border-radius: 10px;
     }
-
+    
     .att-select {
+        padding: 0px 10px;
         height: 40px;
         font-size: 13px;
         border-radius: 10px;
@@ -296,15 +297,13 @@
         font-weight: 600;
     }
     .legend-item.hadir { background: #ECFDF5; color: #059669; border: 1px solid rgba(5,150,105,0.15); }
-    .legend-item.terlambat { background: #FFF7ED; color: #D97706; border: 1px solid rgba(217,119,6,0.15); }
-    .legend-item.absen { background: #FEF2F2; color: #DC2626; border: 1px solid rgba(220,38,38,0.15); }
+    .legend-item.terlambat { background: #FEF2F2; color: #DC2626; border: 1px solid rgba(220,38,38,0.15); }
     .legend-item.izin { background: #FAF5FF; color: #7C3AED; border: 1px solid rgba(124,58,237,0.15); }
     .legend-item.belum { background: #F8FAFC; color: #475569; border: 1px solid var(--border-color); }
     .legend-item.libur { background: #F1F5F9; color: #475569; border: 1px solid var(--border-color); }
     
     [data-theme="dark"] .legend-item.hadir { background: rgba(16,185,129,0.1); }
-    [data-theme="dark"] .legend-item.terlambat { background: rgba(249,115,22,0.1); }
-    [data-theme="dark"] .legend-item.absen { background: rgba(239,68,68,0.1); }
+    [data-theme="dark"] .legend-item.terlambat { background: rgba(239,68,68,0.1); }
     [data-theme="dark"] .legend-item.izin { background: rgba(139,92,246,0.1); }
     [data-theme="dark"] .legend-item.belum { background: rgba(71,85,105,0.1); }
     [data-theme="dark"] .legend-item.libur { background: rgba(71,85,105,0.15); }
@@ -315,8 +314,7 @@
         border-radius: 50%;
     }
     .legend-dot.hadir { background: #10B981; }
-    .legend-dot.terlambat { background: #F97316; }
-    .legend-dot.absen { background: #EF4444; }
+    .legend-dot.terlambat { background: #EF4444; }
     .legend-dot.izin { background: #8B5CF6; }
     .legend-dot.belum { background: #94A3B8; }
     .legend-dot.libur { background: #64748B; }
@@ -388,15 +386,13 @@
         font-weight: 700;
     }
     .badge-status.hadir { background: #ECFDF5; color: #047857; border: 1px solid rgba(4,120,87,0.15); }
-    .badge-status.terlambat { background: #FFF7ED; color: #C2410C; border: 1px solid rgba(194,65,12,0.15); }
-    .badge-status.absen { background: #FEF2F2; color: #B91C1C; border: 1px solid rgba(185,28,28,0.15); }
+    .badge-status.terlambat { background: #FEF2F2; color: #B91C1C; border: 1px solid rgba(185,28,28,0.15); }
     .badge-status.izin { background: #FAF5FF; color: #6D28D9; border: 1px solid rgba(109,40,217,0.15); }
     .badge-status.belum { background: #F8FAFC; color: #475569; border: 1px solid var(--border-color); }
     .badge-status.libur { background: #F1F5F9; color: #475569; border: 1px solid var(--border-color); }
     
     [data-theme="dark"] .badge-status.hadir { background: rgba(16,185,129,0.1); }
-    [data-theme="dark"] .badge-status.terlambat { background: rgba(249,115,22,0.1); }
-    [data-theme="dark"] .badge-status.absen { background: rgba(239,68,68,0.1); }
+    [data-theme="dark"] .badge-status.terlambat { background: rgba(239,68,68,0.1); }
     [data-theme="dark"] .badge-status.izin { background: rgba(139,92,246,0.1); }
     [data-theme="dark"] .badge-status.belum { background: rgba(71,85,105,0.1); }
     [data-theme="dark"] .badge-status.libur { background: rgba(71,85,105,0.15); }
@@ -764,7 +760,6 @@
                     <option value="all" {{ $filters['status'] === 'all' ? 'selected' : '' }}>Semua Status</option>
                     <option value="hadir" {{ $filters['status'] === 'hadir' ? 'selected' : '' }}>Hadir</option>
                     <option value="terlambat" {{ $filters['status'] === 'terlambat' ? 'selected' : '' }}>Terlambat</option>
-                    <option value="absen" {{ $filters['status'] === 'absen' ? 'selected' : '' }}>Absen</option>
                     <option value="izin_cuti" {{ $filters['status'] === 'izin_cuti' ? 'selected' : '' }}>Izin & Cuti</option>
                     <option value="libur" {{ $filters['status'] === 'libur' ? 'selected' : '' }}>Libur</option>
                     <option value="belum_hadir" {{ $filters['status'] === 'belum_hadir' ? 'selected' : '' }}>Belum Hadir</option>
@@ -782,16 +777,6 @@
         </div>
     </form>
 
-    {{-- Status Legend --}}
-    <div class="legend-list">
-        <span class="legend-item hadir"><span class="legend-dot hadir"></span> Hadir</span>
-        <span class="legend-item terlambat"><span class="legend-dot terlambat"></span> Terlambat</span>
-        <span class="legend-item absen"><span class="legend-dot absen"></span> Absen</span>
-        <span class="legend-item izin"><span class="legend-dot izin"></span> Izin & Cuti</span>
-        <span class="legend-item libur"><span class="legend-dot libur"></span> Libur</span>
-        <span class="legend-item belum"><span class="legend-dot belum"></span> Belum Hadir</span>
-    </div>
-
     {{-- Attendance Table --}}
     <div class="att-table-wrapper">
         <table class="att-table">
@@ -803,7 +788,7 @@
                     <th>Jam Masuk</th>
                     <th>Keterangan</th>
                     <th>Metode</th>
-                    <th>Validasi / Bukti</th>
+                    <th>Bukti</th>
                 </tr>
             </thead>
             <tbody>
@@ -834,7 +819,7 @@
                             @elseif($item['status'] === 'terlambat')
                                 <span class="badge-status terlambat">Terlambat</span>
                             @elseif($item['status'] === 'absen')
-                                <span class="badge-status absen">Absen</span>
+                                <span style="color: var(--text-muted); font-weight: 500;">—</span>
                             @elseif($item['status'] === 'izin_cuti')
                                 <span class="badge-status izin">{{ $item['leave']->type === 'izin' ? 'Izin' : 'Cuti' }}</span>
                             @elseif($item['status'] === 'libur')
@@ -860,11 +845,11 @@
                             @if($item['status'] === 'hadir')
                                 <span style="color: var(--text-muted); font-weight: 500;">Tepat waktu</span>
                             @elseif($item['status'] === 'terlambat')
-                                <span style="color: #EA580C; font-weight: 600;">Terlambat {{ $item['lateness'] }}</span>
+                                <span style="color: #DC2626; font-weight: 600;">Terlambat {{ $item['lateness'] }}</span>
                             @elseif($item['status'] === 'izin_cuti')
                                 <span style="color: #7C3AED; font-weight: 600; font-style: italic;">{{ $item['reason'] }}</span>
                             @elseif($item['status'] === 'absen')
-                                <span style="color: #DC2626; font-weight: 500;">Tidak ada absen</span>
+                                <span style="color: var(--text-muted); font-weight: 500;">—</span>
                             @elseif($item['status'] === 'libur')
                                 <span style="color: var(--text-muted); font-weight: 500;">Hari libur</span>
                             @else
@@ -876,11 +861,11 @@
                         <td>
                             @if($item['method'] === 'kantor')
                                 <span class="badge-method">
-                                    <i data-feather="globe"></i> Website
+                                    <i data-feather="globe"></i> Kantor
                                 </span>
                             @elseif($item['method'] === 'luar')
                                 <span class="badge-method">
-                                    <i data-feather="smartphone"></i> Mobile App
+                                    <i data-feather="globe"></i> Website
                                 </span>
                             @else
                                 <span style="color: var(--text-muted); font-weight: 500;">—</span>

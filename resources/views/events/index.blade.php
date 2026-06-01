@@ -80,7 +80,7 @@
 
     /* Controls Dropdowns & Filters */
     .filter-select {
-        padding: 10px 16px;
+        padding: 10px ;
         border: 1px solid var(--border-color);
         border-radius: 10px;
         background: var(--bg-color);
@@ -106,7 +106,7 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 20px;
+        padding: 10px 10px;
         background: #2563eb;
         color: #fff;
         text-decoration: none;
@@ -274,9 +274,9 @@
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin: 0;">Daftar Event</h2>
             <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px; font-weight: 500; margin-bottom: 0;">
                 @role('CEO|GM')
-                    Daftar event berdasarkan bulan yang dipilih.
+                    <!-- Daftar event berdasarkan bulan yang dipilih. -->
                 @else
-                    Event yang Anda ditugaskan pada bulan ini.
+                    <!-- Event yang Anda ditugaskan pada bulan ini. -->
                 @endrole
             </p>
         </div>

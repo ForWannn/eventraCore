@@ -4,7 +4,6 @@
 
 @section('content')
 <style>
-    /* Styling Modern Minimalis eventraCore */
     .section-box {
         border: 1px solid var(--border-color);
         border-radius: 12px;
@@ -15,7 +14,7 @@
     }
     
     .section-header {
-        background: var(--hover-bg);
+        /* background: var(--hover-bg); */
         padding: 12px 16px;
         font-size: 13px;
         font-weight: 600;
@@ -235,6 +234,10 @@
         border-color: #10b981 !important;
         background-color: #10b981 !important;
     }
+    .checkbox-btn.crossed {
+        border-color: #ef4444 !important;
+        background-color: #ef4444 !important;
+    }
 
     .objective-row, .deadline-row {
         display: flex;
@@ -244,17 +247,17 @@
     }
 </style>
 
-<div class="card">
+<div>
     @php
         $isFinalPhase = true;
         // $isFinalPhase = !$now->isWeekend() && $now->format('H:i') >= '17:00';
     @endphp
     
     @if($report->is_late_plan)
-        <div class="alert-late">
+        <!-- <div class="alert-late">
             <i data-feather="clock" style="width: 14px; height: 14px;"></i>
             PENGUMPULAN PLAN TERLAMBAT
-        </div>
+        </div> -->
     @endif
 
     @if(session('success'))
@@ -301,7 +304,7 @@
             
             <button type="submit" form="mainReportForm" formaction="{{ route('weekly.plan', $report->id) }}" class="btn-save-plan">
                 <i data-feather="save"></i>
-                <span>Simpan Plan & Deadline (Test)</span>
+                <span>Simpan Weekly</span>
             </button>
         </div>
     </div>
@@ -330,10 +333,10 @@
                             @if($item && $item->content)
                                 <div class="status-checkbox" style="display: flex; align-items: center; flex-shrink: 0;">
                                     <input type="hidden" name="item_status[{{ $item->id }}]" value="{{ $item->is_completed ? '1' : '0' }}" id="status-{{ $item->id }}">
-                                    <button type="button" class="checkbox-btn {{ $item->is_completed ? 'checked' : '' }}" 
+                                    <button type="button" class="checkbox-btn {{ $item->is_completed ? 'checked' : 'crossed' }}" 
                                             onclick="toggleStatus({{ $item->id }})" 
-                                            style="width: 18px; height: 18px; border: 2px solid {{ $item->is_completed ? '#10b981' : 'var(--text-muted)' }}; border-radius: 5px; background: {{ $item->is_completed ? '#10b981' : 'transparent' }}; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 0.2s;">
-                                        <i data-feather="check" style="width: 12px; height: 12px; color: white; stroke-width: 3; visibility: {{ $item->is_completed ? 'visible' : 'hidden' }};"></i>
+                                            style="width: 18px; height: 18px; border: 2px solid {{ $item->is_completed ? '#10b981' : '#ef4444' }}; border-radius: 5px; background: {{ $item->is_completed ? '#10b981' : '#ef4444' }}; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 0.2s;">
+                                        <i data-feather="{{ $item->is_completed ? 'check' : 'x' }}" style="width: 12px; height: 12px; color: white; stroke-width: 3;"></i>
                                     </button>
                                 </div>
                             @else
@@ -362,10 +365,10 @@
                             @if($item && $item->content)
                                 <div class="status-checkbox" style="display: flex; align-items: center; flex-shrink: 0;">
                                     <input type="hidden" name="item_status[{{ $item->id }}]" value="{{ $item->is_completed ? '1' : '0' }}" id="status-{{ $item->id }}">
-                                    <button type="button" class="checkbox-btn {{ $item->is_completed ? 'checked' : '' }}" 
+                                    <button type="button" class="checkbox-btn {{ $item->is_completed ? 'checked' : 'crossed' }}" 
                                             onclick="toggleStatus({{ $item->id }})" 
-                                            style="width: 18px; height: 18px; border: 2px solid {{ $item->is_completed ? '#10b981' : 'var(--text-muted)' }}; border-radius: 5px; background: {{ $item->is_completed ? '#10b981' : 'transparent' }}; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 0.2s;">
-                                        <i data-feather="check" style="width: 12px; height: 12px; color: white; stroke-width: 3; visibility: {{ $item->is_completed ? 'visible' : 'hidden' }};"></i>
+                                            style="width: 18px; height: 18px; border: 2px solid {{ $item->is_completed ? '#10b981' : '#ef4444' }}; border-radius: 5px; background: {{ $item->is_completed ? '#10b981' : '#ef4444' }}; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: all 0.2s;">
+                                        <i data-feather="{{ $item->is_completed ? 'check' : 'x' }}" style="width: 12px; height: 12px; color: white; stroke-width: 3;"></i>
                                     </button>
                                 </div>
                             @else
@@ -461,19 +464,21 @@
         input.value = newValue;
         
         const btn = input.nextElementSibling;
-        const icon = btn.querySelector('svg');
         
         if (newValue === '1') {
+            btn.classList.remove('crossed');
             btn.classList.add('checked');
             btn.style.borderColor = '#10b981';
             btn.style.backgroundColor = '#10b981';
-            if (icon) icon.style.visibility = 'visible';
+            btn.innerHTML = '<i data-feather="check" style="width: 12px; height: 12px; color: white; stroke-width: 3;"></i>';
         } else {
             btn.classList.remove('checked');
-            btn.style.borderColor = 'var(--text-muted)';
-            btn.style.backgroundColor = 'transparent';
-            if (icon) icon.style.visibility = 'hidden';
+            btn.classList.add('crossed');
+            btn.style.borderColor = '#ef4444';
+            btn.style.backgroundColor = '#ef4444';
+            btn.innerHTML = '<i data-feather="x" style="width: 12px; height: 12px; color: white; stroke-width: 3;"></i>';
         }
+        feather.replace();
     }
 
     function addTaskRow(logId) {

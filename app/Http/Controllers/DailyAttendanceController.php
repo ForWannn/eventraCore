@@ -530,7 +530,7 @@ class DailyAttendanceController extends Controller
             if ($attendance) {
                 $status = $attendance->status === 'tepat_waktu' ? 'hadir' : 'terlambat';
                 $checkInTime = $attendance->check_in_time;
-                $method = $attendance->attendance_type === 'kantor' ? 'Website' : 'Mobile App';
+                $method = $attendance->attendance_type === 'kantor' ? 'Website' : 'Website';
                 
                 if ($attendance->status === 'terlambat') {
                     $checkIn = Carbon::parse($attendance->check_in_time);
@@ -602,7 +602,7 @@ class DailyAttendanceController extends Controller
                 $statusLabel = '-';
                 if ($row['status'] === 'hadir') $statusLabel = 'Hadir';
                 elseif ($row['status'] === 'terlambat') $statusLabel = 'Terlambat';
-                elseif ($row['status'] === 'absen') $statusLabel = 'Absen';
+                elseif ($row['status'] === 'absen') $statusLabel = '-';
                 elseif ($row['status'] === 'izin_cuti') $statusLabel = 'Izin/Cuti';
                 elseif ($row['status'] === 'belum_hadir') $statusLabel = 'Belum Hadir';
                 elseif ($row['status'] === 'libur') $statusLabel = 'Libur';
@@ -614,7 +614,7 @@ class DailyAttendanceController extends Controller
                     $row['check_in_time'] ?? '-',
                     $row['lateness'] ?? '-',
                     $row['method'] ?? '-',
-                    $row['reason'] ?? ($row['status'] === 'hadir' ? 'Tepat waktu' : ($row['status'] === 'terlambat' ? 'Terlambat' : ($row['status'] === 'absen' ? 'Tidak ada absen' : ($row['status'] === 'libur' ? 'Hari libur' : '-')))),
+                    $row['reason'] ?? ($row['status'] === 'hadir' ? 'Tepat waktu' : ($row['status'] === 'terlambat' ? 'Terlambat' : ($row['status'] === 'absen' ? '-' : ($row['status'] === 'libur' ? 'Hari libur' : '-')))),
                 ]);
             }
             fclose($file);
