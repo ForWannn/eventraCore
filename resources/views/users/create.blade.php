@@ -233,8 +233,7 @@
     }
     .btn-primary:hover {
         opacity: 0.9;
-    }
-</style>
+    }</style>
 
 <div style="margin-bottom: 28px;">
     <a href="{{ route('users.index') }}" class="btn-back" style="margin-bottom: 16px;">
@@ -301,7 +300,7 @@
                     <div class="form-group">
                         <label for="phone">No Telepon</label>
                         <input type="text" id="phone" name="phone" class="form-control"
-                               value="{{ old('phone') }}" placeholder="Contoh: 08123456789">
+                               value="{{ old('phone') }}" placeholder="08123456789">
                         @error('phone')<div class="error-text">{{ $message }}</div>@enderror
                     </div>
                 </div>
@@ -428,7 +427,6 @@
 
     <!-- Form Actions Footer -->
     <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin-top: 12px; margin-bottom: 40px;">
-        <a href="{{ route('users.index') }}" class="btn-secondary">Batal</a>
         <button type="submit" class="btn-primary">Simpan Data Karyawan</button>
     </div>
 </form>

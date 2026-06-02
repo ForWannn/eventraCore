@@ -20,7 +20,7 @@ class DashboardController extends Controller
         
         $data = [];
         
-        if ($user->hasRole('Admin')) {
+        if ($user->hasRole(['Admin', 'Superadmin'])) {
             $data = $this->getAdminData($request);
             return view('dashboard_admin', $data);
         } elseif ($user->hasRole(['CEO', 'GM'])) {
@@ -461,7 +461,7 @@ class DashboardController extends Controller
 
         // 1. Top Card Stats (Excluding Admin from active employee counts)
         $totalEmployees = User::whereDoesntHave('roles', function($q) {
-            $q->where('name', 'Admin');
+            $q->whereIn('name', ['Admin', 'Superadmin']);
         })->count();
         $activeEmployees = $totalEmployees;
         $totalDivisions = Division::where('name', '!=', 'reel_seven')->count();
@@ -516,7 +516,7 @@ class DashboardController extends Controller
 
         $divisionsData = Division::withCount(['users' => function($q) {
             $q->whereDoesntHave('roles', function($sub) {
-                $sub->where('name', 'Admin');
+                $sub->whereIn('name', ['Admin', 'Superadmin']);
             });
         }])->get()->filter(function($div) {
             return $div->users_count > 0;

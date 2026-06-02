@@ -303,7 +303,7 @@
             </div>
             
             <button type="submit" form="mainReportForm" formaction="{{ route('weekly.plan', $report->id) }}" class="btn-save-plan">
-                <i data-feather="save"></i>
+                <!-- <i data-feather="save"></i> -->
                 <span>Simpan Weekly</span>
             </button>
         </div>
@@ -441,8 +441,8 @@
         <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px; margin-bottom: 40px;">
             @if($report->status !== 'submitted')
                 <button type="submit" class="btn-submit-final">
-                    <i data-feather="send" style="width: 16px; height: 16px;"></i>
-                    <span>Submit Final Report (Test)</span>
+                    <!-- <i data-feather="send" style="width: 16px; height: 16px;"></i> -->
+                    <span>Submit Weekly Report</span>
                 </button>
             @else
                 <div style="color: #10b981; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px;">

@@ -203,6 +203,21 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+            overflow-y: auto;
+        }
+
+        .nav-links::-webkit-scrollbar {
+            width: 4px;
+        }
+        .nav-links::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .nav-links::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        .nav-links::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
 
         .nav-link {
@@ -249,6 +264,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-width: 0;
         }
 
         .top-header {
@@ -453,6 +469,116 @@
         .btn-back:hover svg, .btn-back:hover i {
             color: var(--text-main);
         }
+
+        /* Mobile Responsive Sidebar Drawer Styles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 998;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .mobile-toggle-btn {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .mobile-toggle-btn:hover {
+            background: var(--hover-bg);
+        }
+        .mobile-toggle-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 999;
+                transform: translateX(-100%);
+                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .mobile-toggle-btn {
+                display: inline-flex;
+            }
+            .top-header {
+                padding: 0 16px;
+            }
+            .content {
+                padding: 16px;
+            }
+
+            /* Compact Cards on Mobile */
+            .card, 
+            .stat-card, 
+            .admin-stat-card, 
+            .admin-panel, 
+            .section-card,
+            .upcoming-event-card,
+            .attendance-panel {
+                padding: 16px !important;
+                border-radius: 12px !important;
+                margin-bottom: 16px !important;
+            }
+
+            /* Horizontal Rule margin offset inside cards */
+            .stat-card hr {
+                margin: 0 -16px 12px -16px !important;
+            }
+
+            /* Stats values and labels tuning */
+            .stat-card {
+                min-height: auto !important;
+            }
+            .stat-card .stat-value,
+            .admin-stat-value {
+                font-size: 24px !important;
+            }
+            .stat-card .stat-label,
+            .admin-stat-label {
+                font-size: 12px !important;
+            }
+            .stat-card .stat-icon,
+            .admin-stat-icon {
+                width: 36px !important;
+                height: 36px !important;
+                border-radius: 10px !important;
+                font-size: 16px !important;
+            }
+            .stat-card .stat-icon svg,
+            .admin-stat-icon svg {
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            /* Smart banners / Alert cards */
+            .smart-banner {
+                padding: 12px 16px !important;
+                border-radius: 12px !important;
+                margin-bottom: 16px !important;
+            }
+        }
     </style>
 </head>
 
@@ -462,71 +588,122 @@
          <div class="sidebar-header">
              eventraCore
          </div>
-          <div class="nav-links">
-              <div class="nav-section-label">OPERASIONAL</div>
-              <a href="{{ route('dashboard') }}"
-                  class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                  <i data-feather="grid"></i> <span>Dashboard</span>
-              </a>
-              
-              @role('CEO|GM|Admin')
-              <a href="{{ route('users.index') }}"
-                  class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                  <i data-feather="users"></i> <span>Manajemen User</span>
-              </a>
-              @endrole
-              
-              <a href="{{ route('events.index') }}"
-                  class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
-                  <i data-feather="calendar"></i> 
-                  <span>{{ Auth::user()->hasAnyRole(['CEO', 'GM', 'Admin']) ? 'Daftar Event' : 'My Events' }}</span>
-              </a>
+           <div class="nav-links">
+               <!-- SECTION 1: OPERASIONAL -->
+               <div class="nav-section-label">OPERASIONAL</div>
+               @can('view_dashboard')
+               <a href="{{ route('dashboard') }}"
+                   class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                   <i data-feather="grid"></i> <span>Dashboard</span>
+               </a>
+               @endcan
+               
+               <a href="{{ route('events.index') }}"
+                   class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
+                   <i data-feather="calendar"></i> 
+                   <span>{{ Auth::user()->can('crud_events') ? 'Daftar Event' : 'My Events' }}</span>
+               </a>
 
-              @role('Admin')
-              <div class="nav-section-label" style="margin-top: 16px;">PENGATURAN</div>
-              <a href="{{ route('settings.calendar') }}"
-                  class="nav-link {{ request()->routeIs('settings.calendar') ? 'active' : '' }}">
-                  <i data-feather="calendar"></i> <span>Kalender</span>
-              </a>
-              @endrole
-  
-              @unless(Auth::user()->hasRole('Admin'))
-              <a href="{{ route('weekly.index') }}"
-              class="nav-link {{ request()->routeIs('weekly.index') ? 'active' : '' }}">
-              <i data-feather="file-text"></i> <span>Weekly Report</span>
-            </a>
-            @endunless
-            
-            @role('CEO|GM')
-            <div class="nav-section-label" style="margin-top: 16px;">REPORT & HISTORY</div>
-                 <a href="{{ route('weekly.recap') }}"
-                     class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">
-                     <i data-feather="layers"></i> <span>Rekap Weekly Report</span>
+               <!-- SECTION 2: PENGATURAN -->
+               @if(Auth::user()->can('manage_calendar') || Auth::user()->can('crud_users'))
+               <div class="nav-section-label" style="margin-top: 16px;">PENGATURAN</div>
+               @can('manage_calendar')
+               <a href="{{ route('settings.calendar') }}"
+                   class="nav-link {{ request()->routeIs('settings.calendar') ? 'active' : '' }}">
+                   <i data-feather="calendar"></i> <span>Kalender</span>
+               </a>
+               @endcan
+               
+               @can('crud_users')
+               <a href="{{ route('users.index') }}"
+                   class="nav-link {{ (request()->routeIs('users.*') && !request()->routeIs('users.permissions')) ? 'active' : '' }}">
+                   <i data-feather="users"></i> <span>Manajemen User</span>
+               </a>
+               @endcan
+               @endif
+
+               <!-- SECTION 3: REPORT -->
+               @if((Auth::user()->can('weekly_report') && !Auth::user()->hasAnyRole(['Admin', 'Superadmin'])) || Auth::user()->can('leave_request') || Auth::user()->can('leave_approvals'))
+               <div class="nav-section-label" style="margin-top: 16px;">REPORT</div>
+               @can('weekly_report')
+                 @unless(Auth::user()->hasAnyRole(['Admin', 'Superadmin']))
+                 <a href="{{ route('weekly.index') }}"
+                     class="nav-link {{ request()->routeIs('weekly.index') ? 'active' : '' }}">
+                     <i data-feather="file-text"></i> <span>Weekly Report</span>
                  </a>
-                 <a href="{{ route('attendance.recap') }}"
-                     class="nav-link {{ request()->routeIs('attendance.recap') ? 'active' : '' }}">
-                     <i data-feather="clipboard"></i> <span>Rekap Absensi Harian</span>
-                 </a>
-                  <a href="{{ route('weekly.history') }}"
-                      class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
-                      <i data-feather="archive"></i> <span>Riwayat Weekly Report</span>
-                  </a>
-                  <a href="{{ route('leave-approvals.index') }}"
-                      class="nav-link {{ request()->routeIs('leave-approvals.*') ? 'active' : '' }}">
-                      <i data-feather="check-square"></i> <span>Persetujuan Izin/Cuti</span>
-                  </a>
-              
-              @endrole
- 
-             @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
-                 <a href="#" class="nav-link">
-                     <i data-feather="bar-chart-2"></i> <span>Rekapitulasi Event</span>
-                 </a>
-             @endif
-         </div>
+                 @endunless
+               @endcan
+
+               @can('leave_request')
+               <a href="{{ route('leave-requests.index') }}"
+                   class="nav-link {{ request()->routeIs('leave-requests.*') ? 'active' : '' }}">
+                   <i data-feather="send"></i> <span>Pengajuan Izin/Cuti</span>
+               </a>
+               @endcan
+
+               @can('leave_approvals')
+               <a href="{{ route('leave-approvals.index') }}"
+                   class="nav-link {{ request()->routeIs('leave-approvals.*') ? 'active' : '' }}">
+                   <i data-feather="check-square"></i> <span>Persetujuan Izin/Cuti</span>
+               </a>
+               @endcan
+               @endif
+
+               <!-- SECTION 4: REKAPITULASI -->
+               @if(Auth::user()->can('rekap_weekly') || Auth::user()->can('rekap_absen') || (Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
+               <div class="nav-section-label" style="margin-top: 16px;">REKAPITULASI</div>
+               @can('rekap_weekly')
+               <a href="{{ route('weekly.recap') }}"
+                   class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">
+                   <i data-feather="layers"></i> <span>Rekap Weekly Report</span>
+               </a>
+               @endcan
+
+               @can('rekap_absen')
+               <a href="{{ route('attendance.recap') }}"
+                   class="nav-link {{ request()->routeIs('attendance.recap') ? 'active' : '' }}">
+                   <i data-feather="clipboard"></i> 
+                   <span>{{ Auth::user()->hasAnyRole(['Admin', 'Superadmin']) ? 'Rekap Absensi Karyawan' : 'Rekap Absensi Harian' }}</span>
+               </a>
+               @endcan
+
+               @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
+               <a href="#" class="nav-link">
+                   <i data-feather="bar-chart-2"></i> <span>Rekapitulasi Event</span>
+               </a>
+               @endif
+               @endif
+
+               <!-- SECTION 5: HISTORY -->
+               @if(Auth::user()->can('weekly_history') || Auth::user()->can('attendance_history'))
+               <div class="nav-section-label" style="margin-top: 16px;">HISTORY</div>
+               @can('weekly_history')
+               <a href="{{ route('weekly.history') }}"
+                   class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
+                   <i data-feather="archive"></i> <span>History Weekly Report</span>
+               </a>
+               @endcan
+
+               @can('attendance_history')
+               <a href="{{ route('attendance.history') }}"
+                   class="nav-link {{ request()->routeIs('attendance.history') ? 'active' : '' }}">
+                   <i data-feather="clock"></i> <span>History Absen</span>
+               </a>
+               @endcan
+               @endif
+
+               <!-- SECTION 6: SUPERADMIN -->
+               @if(Auth::user()->hasRole('Superadmin'))
+               <div class="nav-section-label" style="margin-top: 16px;">SUPERADMIN</div>
+               <a href="{{ route('users.permissions') }}"
+                   class="nav-link {{ request()->routeIs('users.permissions') ? 'active' : '' }}">
+                   <i data-feather="shield"></i> <span>Hak Akses Pengguna</span>
+               </a>
+               @endif
+           </div>
              <!-- Sidebar User Mini Card & Logout -->
              <div class="user-mini-card-wrapper">
-                 @if(Auth::user()->hasRole('Admin'))
+                 @if(Auth::user()->hasAnyRole(['Admin', 'Superadmin']))
                  <div class="user-mini-card" style="cursor: default;">
                      <img src="{{ Auth::user()->photo_url }}" class="user-mini-avatar" alt="{{ Auth::user()->name }}">
                      <div class="user-mini-info">
@@ -559,13 +736,17 @@
                      <span>Keluar</span>
                  </button>
              </form>
-         </div>
-        @endauth
+          </div>
+          <div class="sidebar-overlay" id="sidebarOverlay"></div>
+         @endauth
      
          <div class="main-wrapper">
             @auth
              <div class="top-header">
                  <div>
+                      <button class="mobile-toggle-btn" id="mobileSidebarToggle" aria-label="Buka Menu">
+                          <i data-feather="menu"></i>
+                      </button>
                  </div>
                  <div class="user-info">
                      <button class="theme-toggle-btn" id="themeToggle">
@@ -625,8 +806,33 @@
              });
          }
      </script>
-     <script>
-       feather.replace();
-     </script>
+      <script>
+         // Sidebar Mobile Toggle
+         const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+         const sidebar = document.querySelector('.sidebar');
+         const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+         if (mobileSidebarToggle && sidebar && sidebarOverlay) {
+             mobileSidebarToggle.addEventListener('click', () => {
+                 sidebar.classList.add('open');
+                 sidebarOverlay.classList.add('active');
+             });
+
+             sidebarOverlay.addEventListener('click', () => {
+                 sidebar.classList.remove('open');
+                 sidebarOverlay.classList.remove('active');
+             });
+
+             const navLinks = document.querySelectorAll('.nav-link');
+             navLinks.forEach(link => {
+                 link.addEventListener('click', () => {
+                     sidebar.classList.remove('open');
+                     sidebarOverlay.classList.remove('active');
+                 });
+             });
+         }
+
+         feather.replace();
+      </script>
 </body>
 </html>

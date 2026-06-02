@@ -2817,6 +2817,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endrole
-
-
 @endsection

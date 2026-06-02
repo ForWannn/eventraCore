@@ -70,7 +70,7 @@ class WeeklyReportController extends Controller
     // ── FITUR BARU: HALAMAN REKAP UNTUK CEO & GM ──────────────────────
     public function recap(Request $request)
     {
-        if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);
+        if (!Auth::user()->hasRole(['CEO', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
 
         $now = Carbon::now();
         $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
@@ -199,7 +199,7 @@ class WeeklyReportController extends Controller
 
     public function exportRecap(Request $request)
     {
-        if (!Auth::user()->hasRole(['CEO', 'GM'])) abort(403);
+        if (!Auth::user()->hasRole(['CEO', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
 
         $now = Carbon::now();
         $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
@@ -314,7 +314,7 @@ class WeeklyReportController extends Controller
     public function history(Request $request)
     {
         $user = Auth::user();
-        $isDirector = $user->hasRole(['CEO', 'GM']);
+        $isDirector = $user->hasRole(['CEO', 'GM']) || $user->can('weekly_history');
         
         $search = $request->query('search');
         $status = $request->query('status');
@@ -414,7 +414,7 @@ class WeeklyReportController extends Controller
     public function showUserReport($userId, $weekStart)
     {
         $currentUser = Auth::user();
-        if (!$currentUser->hasRole(['CEO', 'GM']) && $currentUser->id != $userId) {
+        if (!$currentUser->hasRole(['CEO', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
             abort(403);
         }
 

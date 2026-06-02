@@ -305,6 +305,14 @@
     <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px; font-weight: 500;">Pantau performa sistem, absensi, divisi, dan administrasi karyawan.</p>
 </div>
 
+@if(session('success'))
+    <div style="background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; font-weight: 500;">
+        {{ session('success') }}
+    </div>
+@endif
+
+
+
 <!-- 4 Stats Cards -->
 <div class="admin-stats-grid">
     <div class="admin-stat-card">

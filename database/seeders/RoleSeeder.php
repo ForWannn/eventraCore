@@ -21,11 +21,31 @@ class RoleSeeder extends Seeder
             'Employee',
             'Intern',
             'Freelance',
-            'Admin'
+            'Admin',
+            'Superadmin'
         ];
 
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
+        }
+
+        // Define system permissions
+        $permissions = [
+            'crud_users',
+            'crud_events',
+            'rekap_absen',
+            'rekap_weekly',
+            'weekly_history',
+            'manage_calendar',
+            'leave_approvals',
+            'view_dashboard',
+            'weekly_report',
+            'leave_request',
+            'attendance_history'
+        ];
+
+        foreach ($permissions as $permission) {
+            \Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission]);
         }
     }
 }

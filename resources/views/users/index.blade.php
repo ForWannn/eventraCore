@@ -292,19 +292,19 @@
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin: 0;">Daftar Pegawai & Akses</h2>
             <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px; font-weight: 500; margin-bottom: 0;">Kelola data pegawai, anak magang, beserta jabatannya.</p>
         </div>
-        @role('Admin')
+        @can('crud_users')
         <a href="{{ route('users.create') }}" class="btn-create">
             <i data-feather="plus" style="width: 16px; height: 16px;"></i>
             <span>Tambah Karyawan</span>
         </a>
-        @endrole
+        @endcan
     </div>
 
     <!-- Control Bar: Search & Filters -->
     <div class="control-bar">
         <div class="search-wrapper">
             <i data-feather="search" class="search-icon"></i>
-            <input type="text" id="searchQuery" placeholder="Cari nama, ID Karyawan, atau email..." />
+            <input type="text" id="searchQuery" placeholder="Cari nama, ID atau Email" />
         </div>
         <div class="filter-wrapper">
             <!-- Division / Department Filter -->
@@ -333,11 +333,11 @@
         <table>
             <thead>
                 <tr style="border-bottom: 1.5px solid var(--border-color);">
-                    <th style="width: 12%;">ID Karyawan</th>
-                    <th style="width: 25%;">Nama Pengguna</th>
+                    <th style="width: 12%;">ID</th>
+                    <th style="width: 25%;">Nama </th>
                     <th style="width: 23%;">Email</th>
                     <th style="width: 15%;">Role</th>
-                    <th style="width: 15%;">Department</th>
+                    <th style="width: 15%;">Divis</th>
                     <th style="width: 10%;">Status</th>
                     <th style="width: 10%;">Aksi</th>
                 </tr>
@@ -377,7 +377,7 @@
                         </span>
                     </td>
                     <td>
-                        @role('Admin')
+                        @can('crud_users')
                         <a href="{{ route('users.edit', $user->id) }}" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; text-decoration: none; font-size: 13.5px; font-weight: 700;">
                             <i data-feather="edit-2" style="width: 14px; height: 14px;"></i>
                             <span>Edit</span>
@@ -387,7 +387,7 @@
                             <i data-feather="eye" style="width: 14px; height: 14px;"></i>
                             <span>Detail</span>
                         </a>
-                        @endrole
+                        @endcan
                     </td>
                 </tr>
                 @endforeach

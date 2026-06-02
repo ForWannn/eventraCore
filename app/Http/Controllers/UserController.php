@@ -242,4 +242,37 @@ class UserController extends Controller
 
         return view('users.show', compact('user', 'divisions', 'roles', 'managers'));
     }
+
+    public function editPermissions(Request $request)
+    {
+        $users = User::with(['roles', 'permissions', 'division'])->get();
+        return view('users.permissions', compact('users'));
+    }
+
+    public function updatePermissions(Request $request)
+    {
+        $users = User::all();
+        $availablePermissions = ['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history', 'crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals'];
+        $inputPermissions = $request->input('permissions', []);
+
+        foreach ($users as $user) {
+            // Lockout safeguard: do not modify the active logged-in user's permissions
+            if ($user->id === auth()->id()) {
+                continue;
+            }
+
+            $userChecked = isset($inputPermissions[$user->id]) ? $inputPermissions[$user->id] : [];
+            $permissionsToSync = [];
+
+            foreach ($availablePermissions as $perm) {
+                if (isset($userChecked[$perm]) && $userChecked[$perm] == '1') {
+                    $permissionsToSync[] = $perm;
+                }
+            }
+
+            $user->syncPermissions($permissionsToSync);
+        }
+
+        return redirect()->route('users.permissions');
+    }
 }
