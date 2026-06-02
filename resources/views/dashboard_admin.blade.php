@@ -184,7 +184,7 @@
     /* Bottom Layout (2 Columns) */
     .admin-bottom-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 24px;
     }
     @media (max-width: 768px) {
@@ -350,12 +350,11 @@
     </div>
 
     <!-- Panel 2: Distribusi Karyawan per Divisi -->
-    <div class="admin-panel">
+    <!-- <div class="admin-panel">
         <div class="panel-header" style="margin-bottom: 16px;">
             <span class="panel-title"><i data-feather="pie-chart"></i> Distribusi Karyawan per Divisi</span>
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex: 1;">
-            <!-- Doughnut Chart Section -->
             <div style="position: relative; width: 140px; height: 140px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                 <canvas id="divisionDoughnutChart" style="width: 100%; height: 100%;"></canvas>
                 <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; text-align: center;">
@@ -364,7 +363,6 @@
                 </div>
             </div>
             
-            <!-- Custom Legend -->
             <div class="division-legend-list" style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0;">
                 @foreach($divisionsData as $div)
                     <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; line-height: 1.2;">
@@ -379,7 +377,7 @@
                 @endforeach
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Panel 3: Ringkasan Sistem -->
     <div class="admin-panel">
@@ -391,7 +389,7 @@
             <div class="system-summary-row">
                 <div class="system-icon-badge blue"><i data-feather="user-check" style="width: 18px; height: 18px;"></i></div>
                 <div style="flex: 1;">
-                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Pengguna Aktif (Login Hari Ini)</div>
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">User Aktif</div>
                     <div style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $activeSessionsCount }}</div>
                 </div>
             </div>
@@ -452,6 +450,25 @@
             </div>
         </div>
     </div>
+    <div class="admin-panel">
+        <div class="panel-header" style="margin-bottom: 16px;">
+            <span class="panel-title"><i data-feather="list"></i> Aktivitas Absensi Terbaru</span>
+        </div>
+        <div class="activity-feed">
+            @forelse($latestActivities as $la)
+                <div class="activity-item">
+                    <img src="{{ $la['photo_url'] }}" class="activity-avatar" alt="{{ $la['user_name'] }}">
+                    <div class="activity-content">
+                        <div class="activity-title">{{ $la['user_name'] }}</div>
+                        <div class="activity-desc">Melakukan {{ $la['type'] }} ({{ $la['status'] }})</div>
+                        <div class="activity-time">{{ $la['date'] }} - Pukul {{ $la['time'] }} WIB</div>
+                    </div>
+                </div>
+            @empty
+                <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 13px;">Belum ada aktivitas absensi hari ini.</div>
+            @endforelse
+        </div>
+    </div>
 </div>
 
 <!-- Bottom Row (2 Columns) -->
@@ -467,7 +484,7 @@
                 <thead>
                     <tr>
                         <th>Nama</th>
-                        <th>ID / NIK</th>
+                        <th>ID</th>
                         <th>Divisi</th>
                     </tr>
                 </thead>
@@ -494,25 +511,7 @@
     </div>
 
     <!-- Panel 5: Aktivitas Terbaru -->
-    <div class="admin-panel">
-        <div class="panel-header" style="margin-bottom: 16px;">
-            <span class="panel-title"><i data-feather="list"></i> Aktivitas Absensi Terbaru</span>
-        </div>
-        <div class="activity-feed">
-            @forelse($latestActivities as $la)
-                <div class="activity-item">
-                    <img src="{{ $la['photo_url'] }}" class="activity-avatar" alt="{{ $la['user_name'] }}">
-                    <div class="activity-content">
-                        <div class="activity-title">{{ $la['user_name'] }}</div>
-                        <div class="activity-desc">Melakukan {{ $la['type'] }} ({{ $la['status'] }})</div>
-                        <div class="activity-time">{{ $la['date'] }} - Pukul {{ $la['time'] }} WIB</div>
-                    </div>
-                </div>
-            @empty
-                <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 13px;">Belum ada aktivitas absensi hari ini.</div>
-            @endforelse
-        </div>
-    </div>
+    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>

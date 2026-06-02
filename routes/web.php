@@ -21,7 +21,7 @@ Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkE
 Route::get('/reset-password', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('divisions', DivisionController::class);
     Route::get('/attendance-history', [DailyAttendanceController::class, 'myHistory'])->name('attendance.history');
 
-    // Leave Requests (Izin & Cuti)
+    // Leave Requests (Izin / Cuti)
     Route::get('/leave-requests', [LeaveRequestController::class, 'index'])->name('leave-requests.index');
     Route::post('/leave-requests', [LeaveRequestController::class, 'store'])->name('leave-requests.store');
 
@@ -69,7 +69,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('events', EventController::class)->only(['index', 'show']);
 
-    Route::post('/events/{event}/attend',        [AttendanceController::class, 'store'])->name('attendances.store');
+    Route::post('/events/{event}/attend',[AttendanceController::class, 'store'])->name('attendances.store');
     Route::post('/events/{event}/attend-manual', [AttendanceController::class, 'storeManual'])->name('attendances.store.manual');
     Route::get('/weekly-report', [WeeklyReportController::class, 'index'])->name('weekly.index');
     Route::post('/weekly-report/{report}/plan', [WeeklyReportController::class, 'updatePlan'])->name('weekly.plan');

@@ -32,6 +32,47 @@
             --input-border: #E5E7EB;
             --hover-primary: #A8C5FF;
             --divider: #E5E7EB;
+
+            /* Status Colors */
+            --status-blue: #2563EB;
+            --status-blue-soft: rgba(37, 99, 235, 0.08);
+            --status-blue-border: rgba(37, 99, 235, 0.15);
+
+            --status-emerald: #10B981;
+            --status-emerald-soft: rgba(16, 185, 129, 0.08);
+            --status-emerald-border: rgba(16, 185, 129, 0.15);
+
+            --status-indigo: #6366F1;
+            --status-indigo-soft: rgba(99, 102, 241, 0.08);
+            --status-indigo-border: rgba(99, 102, 241, 0.15);
+
+            --status-teal: #14B8A6;
+            --status-teal-soft: rgba(20, 184, 166, 0.08);
+            --status-teal-border: rgba(20, 184, 166, 0.15);
+
+            --status-cyan: #06B6D4;
+            --status-cyan-soft: rgba(6, 182, 212, 0.08);
+            --status-cyan-border: rgba(6, 182, 212, 0.15);
+
+            --status-amber: #F59E0B;
+            --status-amber-soft: rgba(245, 158, 11, 0.08);
+            --status-amber-border: rgba(245, 158, 11, 0.15);
+
+            --status-rose: #F43F5E;
+            --status-rose-soft: rgba(244, 63, 94, 0.08);
+            --status-rose-border: rgba(244, 63, 94, 0.15);
+
+            --status-purple: #8B5CF6;
+            --status-purple-soft: rgba(139, 92, 246, 0.08);
+            --status-purple-border: rgba(139, 92, 246, 0.15);
+
+            --status-slate: #475569;
+            --status-slate-soft: rgba(71, 85, 105, 0.08);
+            --status-slate-border: rgba(71, 85, 105, 0.15);
+
+            --status-orange: #FB923C;
+            --status-orange-soft: rgba(251, 146, 60, 0.08);
+            --status-orange-border: rgba(251, 146, 60, 0.15);
         }
 
         [data-theme="dark"] {
@@ -54,6 +95,47 @@
             --input-border: #334155;
             --hover-primary: #A8C5FF;
             --divider: #334155;
+
+            /* Status Colors (Dark Mode) */
+            --status-blue: #60A5FA;
+            --status-blue-soft: rgba(96, 165, 250, 0.15);
+            --status-blue-border: rgba(96, 165, 250, 0.2);
+
+            --status-emerald: #34D399;
+            --status-emerald-soft: rgba(52, 211, 153, 0.15);
+            --status-emerald-border: rgba(52, 211, 153, 0.2);
+
+            --status-indigo: #818CF8;
+            --status-indigo-soft: rgba(129, 140, 248, 0.15);
+            --status-indigo-border: rgba(129, 140, 248, 0.2);
+
+            --status-teal: #2DD4BF;
+            --status-teal-soft: rgba(45, 212, 191, 0.15);
+            --status-teal-border: rgba(45, 212, 191, 0.2);
+
+            --status-cyan: #22D3EE;
+            --status-cyan-soft: rgba(34, 211, 238, 0.15);
+            --status-cyan-border: rgba(34, 211, 238, 0.2);
+
+            --status-amber: #FBBF24;
+            --status-amber-soft: rgba(251, 191, 36, 0.15);
+            --status-amber-border: rgba(251, 191, 36, 0.2);
+
+            --status-rose: #F87171;
+            --status-rose-soft: rgba(248, 113, 113, 0.15);
+            --status-rose-border: rgba(248, 113, 113, 0.2);
+
+            --status-purple: #A78BFA;
+            --status-purple-soft: rgba(167, 139, 250, 0.15);
+            --status-purple-border: rgba(167, 139, 250, 0.2);
+
+            --status-slate: #94A3B8;
+            --status-slate-soft: rgba(148, 163, 184, 0.15);
+            --status-slate-border: rgba(148, 163, 184, 0.2);
+
+            --status-orange: #FDBA74;
+            --status-orange-soft: rgba(253, 186, 116, 0.15);
+            --status-orange-border: rgba(253, 186, 116, 0.2);
         }
 
         *, input, select, textarea, button {
@@ -394,13 +476,11 @@
               </a>
               @endrole
               
-              @unless(Auth::user()->hasRole('Admin'))
               <a href="{{ route('events.index') }}"
                   class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
                   <i data-feather="calendar"></i> 
-                  <span>{{ Auth::user()->hasRole(['CEO', 'GM']) ? 'Daftar Event' : 'My Events' }}</span>
+                  <span>{{ Auth::user()->hasAnyRole(['CEO', 'GM', 'Admin']) ? 'Daftar Event' : 'My Events' }}</span>
               </a>
-              @endunless
 
               @role('Admin')
               <div class="nav-section-label" style="margin-top: 16px;">PENGATURAN</div>
@@ -410,15 +490,15 @@
               </a>
               @endrole
   
-              <div class="nav-section-label" style="margin-top: 16px;">REPORT & HISTORY</div>
               @unless(Auth::user()->hasRole('Admin'))
               <a href="{{ route('weekly.index') }}"
-                  class="nav-link {{ request()->routeIs('weekly.index') ? 'active' : '' }}">
-                  <i data-feather="file-text"></i> <span>Weekly Report</span>
-              </a>
-              @endunless
-  
-              @role('CEO|GM')
+              class="nav-link {{ request()->routeIs('weekly.index') ? 'active' : '' }}">
+              <i data-feather="file-text"></i> <span>Weekly Report</span>
+            </a>
+            @endunless
+            
+            @role('CEO|GM')
+            <div class="nav-section-label" style="margin-top: 16px;">REPORT & HISTORY</div>
                  <a href="{{ route('weekly.recap') }}"
                      class="nav-link {{ request()->routeIs('weekly.recap') || request()->routeIs('weekly.show_user') ? 'active' : '' }}">
                      <i data-feather="layers"></i> <span>Rekap Weekly Report</span>
@@ -435,21 +515,7 @@
                       class="nav-link {{ request()->routeIs('leave-approvals.*') ? 'active' : '' }}">
                       <i data-feather="check-square"></i> <span>Persetujuan Izin/Cuti</span>
                   </a>
-              @else
-                  @unless(Auth::user()->hasRole('Admin'))
-                  <a href="{{ route('weekly.history') }}"
-                      class="nav-link {{ request()->routeIs('weekly.history') ? 'active' : '' }}">
-                      <i data-feather="archive"></i> <span>History Weekly Report</span>
-                  </a>
-                  @endunless
-                  <a href="{{ route('attendance.history') }}"
-                      class="nav-link {{ request()->routeIs('attendance.history') ? 'active' : '' }}">
-                      <i data-feather="clock"></i> <span>Riwayat Absensi</span>
-                  </a>
-                  <a href="{{ route('leave-requests.index') }}"
-                      class="nav-link {{ request()->routeIs('leave-requests.*') ? 'active' : '' }}">
-                      <i data-feather="send"></i> <span>Pengajuan Izin/Cuti</span>
-                  </a>
+              
               @endrole
  
              @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
@@ -460,6 +526,18 @@
          </div>
              <!-- Sidebar User Mini Card & Logout -->
              <div class="user-mini-card-wrapper">
+                 @if(Auth::user()->hasRole('Admin'))
+                 <div class="user-mini-card" style="cursor: default;">
+                     <img src="{{ Auth::user()->photo_url }}" class="user-mini-avatar" alt="{{ Auth::user()->name }}">
+                     <div class="user-mini-info">
+                         <span class="user-mini-name">{{ Auth::user()->name }}</span>
+                         @php
+                             $userRole = Auth::user()->roles->where('name', '!=', 'PIC Event')->first()?->name ?? 'Crew';
+                         @endphp
+                         <span class="user-mini-role">{{ $userRole }}</span>
+                     </div>
+                 </div>
+                 @else
                  <a href="{{ route('profile') }}" class="user-mini-card">
                      <img src="{{ Auth::user()->photo_url }}" class="user-mini-avatar" alt="{{ Auth::user()->name }}">
                      <div class="user-mini-info">
@@ -471,6 +549,7 @@
                      </div>
                      <i data-feather="chevron-right" class="user-mini-chevron"></i>
                  </a>
+                 @endif
              </div>
 
              <form action="{{ route('logout') }}" method="POST" style="margin:0;">

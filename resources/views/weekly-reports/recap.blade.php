@@ -32,6 +32,7 @@
         justify-content: center;
         color: #2563EB;
         flex-shrink: 0;
+        border: 1px solid #dbeafe;
     }
     .recap-header-icon svg {
         width: 24px;

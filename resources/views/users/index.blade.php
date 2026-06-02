@@ -46,15 +46,12 @@
         font-size: 20px;
         flex-shrink: 0;
     }
-    .stat-card .stat-icon.blue    { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
-    .stat-card .stat-icon.emerald { background: #ecfdf5; color: #10b981; border: 1px solid #d1fae5; }
-    .stat-card .stat-icon.amber   { background: #fff7ed; color: #f59e0b; border: 1px solid #fed7aa; }
-    .stat-card .stat-icon.violet  { background: #faf5ff; color: #8b5cf6; border: 1px solid #f3e8ff; }
-
-    [data-theme="dark"] .stat-card .stat-icon.blue    { background: rgba(37,99,235,0.15); color: #60a5fa; border-color: rgba(37,99,235,0.2); }
-    [data-theme="dark"] .stat-card .stat-icon.emerald { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.2); }
-    [data-theme="dark"] .stat-card .stat-icon.amber   { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.2); }
-    [data-theme="dark"] .stat-card .stat-icon.violet  { background: rgba(139,92,246,0.15); color: #a78bfa; border-color: rgba(139,92,246,0.2); }
+    .stat-card .stat-icon.blue    { background: var(--status-blue-soft); color: var(--status-blue); border: 1px solid var(--status-blue-border); }
+    .stat-card .stat-icon.emerald { background: var(--status-emerald-soft); color: var(--status-emerald); border: 1px solid var(--status-emerald-border); }
+    .stat-card .stat-icon.amber   { background: var(--status-amber-soft); color: var(--status-amber); border: 1px solid var(--status-amber-border); }
+    .stat-card .stat-icon.violet  { background: var(--status-purple-soft); color: var(--status-purple); border: 1px solid var(--status-purple-border); }
+    .stat-card .stat-icon.slate   { background: var(--status-slate-soft); color: var(--status-slate); border: 1px solid var(--status-slate-border); }
+    .stat-card .stat-icon.orange  { background: var(--status-orange-soft); color: var(--status-orange); border: 1px solid var(--status-orange-border); }
 
     .stat-card .stat-label {
         font-size: 12px;
@@ -243,37 +240,37 @@
         <div class="stat-card-content">
             <span class="stat-label">Total User</span>
             <span class="stat-value">{{ $users->count() }}</span>
-            <span class="stat-sub">orang terdaftar</span>
+            <span class="stat-sub">Orang</span>
         </div>
     </div>
 
-    <!-- Card 2: Direksi / Manajemen -->
+    <!-- Card 2: Direksi & Kepala Divisi -->
     <div class="stat-card">
-        <div class="stat-icon violet"><i data-feather="briefcase"></i></div>
+        <div class="stat-icon slate"><i data-feather="briefcase"></i></div>
         <div class="stat-card-content">
-            <span class="stat-label">Direksi / Manajemen</span>
-            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasRole(['CEO', 'GM']))->count() }}</span>
-            <span class="stat-sub">CEO & GM</span>
+            <span class="stat-label">Direksi & Head</span>
+            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasAnyRole(['CEO', 'GM', 'Head']))->count() }}</span>
+            <span class="stat-sub">Orang</span>
         </div>
     </div>
 
-    <!-- Card 3: Kepala Divisi -->
-    <div class="stat-card">
-        <div class="stat-icon amber"><i data-feather="award"></i></div>
-        <div class="stat-card-content">
-            <span class="stat-label">Kepala Divisi</span>
-            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasRole('Head'))->count() }}</span>
-            <span class="stat-sub">Head / Manager</span>
-        </div>
-    </div>
-
-    <!-- Card 4: Tim Operasional -->
+    <!-- Card 3: Inhouse -->
     <div class="stat-card">
         <div class="stat-icon emerald"><i data-feather="user"></i></div>
         <div class="stat-card-content">
-            <span class="stat-label">Tim Operasional</span>
-            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasAnyRole(['Employee', 'Intern', 'PIC Event']))->count() }}</span>
-            <span class="stat-sub">Staff & Intern</span>
+            <span class="stat-label">Inhouse</span>
+            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasAnyRole(['Employee', 'PIC Event']))->count() }}</span>
+            <span class="stat-sub">Orang</span>
+        </div>
+    </div>
+
+    <!-- Card 4: Intern -->
+    <div class="stat-card">
+        <div class="stat-icon orange"><i data-feather="user"></i></div>
+        <div class="stat-card-content">
+            <span class="stat-label">Intern</span>
+            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasRole('Intern'))->count() }}</span>
+            <span class="stat-sub">Orang</span>
         </div>
     </div>
 </div>

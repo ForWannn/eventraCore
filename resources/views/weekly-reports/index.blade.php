@@ -285,7 +285,7 @@
     <!-- Header Section -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
         <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(37, 99, 235, 0.08); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 48px; height: 48px; border: 1px solid #dbeafe; border-radius: 12px; background: rgba(37, 99, 235, 0.08); display: flex; align-items: center; justify-content: center;">
                 <i data-feather="calendar" style="width: 24px; height: 24px; color: #2563eb;"></i>
             </div>
             <div>

@@ -98,10 +98,10 @@
         display: flex;
         flex-direction: column;
     }
-    .att-stat-card:hover {
+    /* .att-stat-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 30px rgba(0,0,0,0.04);
-    }
+    } */
     .att-stat-card .att-stat-icon {
         width: 40px;
         height: 40px;
@@ -319,7 +319,6 @@
     .legend-dot.belum { background: #94A3B8; }
     .legend-dot.libur { background: #64748B; }
 
-    /* ── Table Layout ── */
     .att-table-wrapper {
         overflow-x: auto;
     }
@@ -350,7 +349,6 @@
         background: rgba(37,99,235,0.01);
     }
 
-    /* ── User cell ── */
     .att-user-cell {
         display: flex;
         align-items: center;
@@ -375,7 +373,6 @@
         margin-top: 1px;
     }
 
-    /* ── Status badges ── */
     .badge-status {
         display: inline-flex;
         align-items: center;
@@ -397,7 +394,6 @@
     [data-theme="dark"] .badge-status.belum { background: rgba(71,85,105,0.1); }
     [data-theme="dark"] .badge-status.libur { background: rgba(71,85,105,0.15); }
 
-    /* ── Method Badges ── */
     .badge-method {
         display: inline-flex;
         align-items: center;
@@ -412,7 +408,6 @@
         color: var(--text-muted);
     }
 
-    /* ── Action Buttons ── */
     .proof-wrapper {
         display: flex;
         align-items: center;
@@ -462,7 +457,6 @@
         height: 14px;
     }
 
-    /* ── Footer & Pagination ── */
     .recap-footer {
         display: flex;
         justify-content: space-between;
@@ -495,8 +489,6 @@
         background-position: right 8px center;
         background-size: 12px;
     }
-    
-    /* Pagination link override */
     .recap-footer .pagination {
         display: flex;
         gap: 4px;
@@ -531,7 +523,6 @@
         background: var(--hover-bg);
     }
 
-    /* ── Empty State ── */
     .att-empty-state {
         text-align: center;
         padding: 48px;
@@ -544,7 +535,6 @@
         margin-bottom: 8px;
     }
 
-    /* ── Modal overlays ── */
     .att-modal-overlay {
         display: none;
         position: fixed;
@@ -668,7 +658,6 @@
     }
 </style>
 
-{{-- ═══ TOP HEADER & EXPORT ═══ --}}
 <div class="att-header-card">
     <div class="att-header-left">
         <div class="att-header-icon">
@@ -685,7 +674,6 @@
     </a>
 </div>
 
-{{-- ═══ KPI STAT CARDS ═══ --}}
 <div class="att-stats-grid">
     <div class="att-stat-card">
         <div class="att-stat-icon blue"><i data-feather="users"></i></div>
@@ -710,14 +698,14 @@
 
     <div class="att-stat-card">
         <div class="att-stat-icon red"><i data-feather="x-circle"></i></div>
-        <div class="att-stat-label">Absen</div>
+        <div class="att-stat-label">Belum Hadir</div>
         <div class="att-stat-value">{{ $absenCount }}</div>
         <div class="att-stat-sub">{{ $stats['absen_pct'] }}% dari total</div>
     </div>
 
     <div class="att-stat-card">
         <div class="att-stat-icon violet"><i data-feather="calendar"></i></div>
-        <div class="att-stat-label">Izin & Cuti</div>
+        <div class="att-stat-label">Izin / Cuti</div>
         <div class="att-stat-value">{{ $leaveCount }}</div>
         <div class="att-stat-sub">{{ $stats['leave_pct'] }}% dari total</div>
     </div>
@@ -857,7 +845,6 @@
                             @endif
                         </td>
 
-                        {{-- Metode --}}
                         <td>
                             @if($item['method'] === 'kantor')
                                 <span class="badge-method">
@@ -872,7 +859,6 @@
                             @endif
                         </td>
 
-                        {{-- Validasi / Bukti --}}
                         <td>
                             @if($item['status'] === 'hadir' || $item['status'] === 'terlambat')
                                 <div class="proof-wrapper">
@@ -886,9 +872,9 @@
                                         </span>
                                     @endif
                                     
-                                    <button class="btn-action-dots" title="Tindakan">
+                                    <!-- <button class="btn-action-dots" title="Tindakan">
                                         <i data-feather="more-horizontal"></i>
-                                    </button>
+                                    </button> -->
                                 </div>
                             @elseif($item['status'] === 'izin_cuti' && $item['leave'])
                                 <div class="proof-wrapper">
