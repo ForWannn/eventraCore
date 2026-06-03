@@ -667,9 +667,14 @@
                </a>
                @endcan
 
-               @if((Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']))
-               <a href="#" class="nav-link">
-                   <i data-feather="bar-chart-2"></i> <span>Rekapitulasi Event</span>
+               @if(optional(Auth::user()->division)->name === 'Finance' || Auth::user()->hasRole(['CEO', 'GM']) || Auth::user()->events()->wherePivot('is_pic', true)->exists())
+               <a href="{{ route('event-recaps.index') }}"
+                   class="nav-link {{ request()->routeIs('event-recaps.index') ? 'active' : '' }}">
+                   <i data-feather="bar-chart-2"></i> <span>Rekap Event</span>
+               </a>
+               <a href="{{ route('event-recaps.history') }}"
+                   class="nav-link {{ request()->routeIs('event-recaps.history') ? 'active' : '' }}">
+                   <i data-feather="archive"></i> <span>Riwayat Rekap</span>
                </a>
                @endif
                @endif

@@ -13,6 +13,7 @@ use App\Http\Controllers\DailyAttendanceController;
 use App\Http\Controllers\WorkCalendarController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\EventRecapController;
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/', [AuthController::class, 'processLogin']);
 
@@ -100,4 +101,16 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
     Route::post('/events/{event}/tasks', [EventTaskController::class, 'store'])->name('events.tasks.store');
     Route::post('/event-tasks/{task}/toggle', [EventTaskController::class, 'toggleComplete'])->name('events.tasks.toggle');
     Route::delete('/event-tasks/{task}', [EventTaskController::class, 'destroy'])->name('events.tasks.destroy');
+
+    // Event Recapitulation
+    Route::get('/event-recaps', [EventRecapController::class, 'index'])->name('event-recaps.index');
+    Route::get('/event-recaps/history', [EventRecapController::class, 'index'])->name('event-recaps.history');
+    Route::get('/event-recaps/{event}', [EventRecapController::class, 'show'])->name('event-recaps.show');
+    Route::post('/event-recaps/{event}/budget', [EventRecapController::class, 'updateBudget'])->name('event-recaps.budget');
+    Route::post('/event-recaps/{event}/items', [EventRecapController::class, 'storeItem'])->name('event-recaps.items.store');
+    Route::delete('/event-recaps/{event}/items/{item}', [EventRecapController::class, 'destroyItem'])->name('event-recaps.items.destroy');
+    Route::post('/event-recaps/{event}/submit', [EventRecapController::class, 'submitToFinance'])->name('event-recaps.submit');
+    Route::post('/event-recaps/{event}/approve', [EventRecapController::class, 'approveRecap'])->name('event-recaps.approve');
+    Route::post('/event-recaps/{event}/reopen', [EventRecapController::class, 'reopenRecap'])->name('event-recaps.reopen');
+    Route::get('/event-recaps/{event}/export', [EventRecapController::class, 'export'])->name('event-recaps.export');
 });

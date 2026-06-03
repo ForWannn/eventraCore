@@ -89,4 +89,16 @@ class Event extends Model
         $completed = $this->tasks()->where('is_completed', true)->count();
         return round(($completed / $total) * 100);
     }
+
+    /** Event recap settings and metadata */
+    public function recap()
+    {
+        return $this->hasOne(EventRecap::class);
+    }
+
+    /** Event recap itemized receipts */
+    public function recapItems()
+    {
+        return $this->hasMany(EventRecapItem::class);
+    }
 }
