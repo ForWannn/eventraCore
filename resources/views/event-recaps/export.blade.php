@@ -95,7 +95,7 @@
             <td colspan="2" style="border: none;">: {{ $picDetails ? $picDetails->name : '-' }}</td>
             <td class="font-bold" style="border: none;">Sisa Anggaran</td>
             <td style="border: none; font-weight: bold; color: {{ $recap->remaining_budget < 0 ? '#b91c1c' : '#047857' }};">
-                : Rp {{ number_format($recap->remaining_budget, 2, ',', '.') }}
+                : {{ $recap->remaining_budget < 0 ? '-' : '' }}Rp {{ number_format(abs($recap->remaining_budget), 2, ',', '.') }}
             </td>
         </tr>
         <tr>

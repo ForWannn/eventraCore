@@ -141,7 +141,6 @@
 
 <div style="margin-bottom: 28px;">
     <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Pengajuan Izin & Cuti</h1>
-    <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px; font-weight: 500;">Ajukan perizinan sakit, cuti tahunan, atau urusan keluarga Anda.</p>
 </div>
 
 @if(session('success'))
@@ -154,7 +153,6 @@
     <!-- Left Column: Form -->
     <div class="leave-card">
         <h3 class="leave-card-title">
-            <i data-feather="send"></i>
             <span>Form Pengajuan</span>
         </h3>
         
@@ -164,8 +162,8 @@
             <div class="form-group">
                 <label for="type">Jenis Pengajuan</label>
                 <select id="type" name="type" class="form-select" required>
-                    <option value="izin">Izin (Sakit / Keperluan Penting)</option>
-                    <option value="cuti">Cuti Tahunan</option>
+                    <option value="izin">Izin</option>
+                    <option value="cuti">Cuti</option>
                 </select>
                 @error('type')<span style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</span>@enderror
             </div>
@@ -184,12 +182,12 @@
 
             <div class="form-group">
                 <label for="reason">Alasan / Keterangan</label>
-                <textarea id="reason" name="reason" class="form-textarea" required placeholder="Tulis alasan pengajuan secara jelas..."></textarea>
+                <textarea id="reason" name="reason" class="form-textarea" required placeholder="Alasan pengajuan"></textarea>
                 @error('reason')<span style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</span>@enderror
             </div>
 
             <button type="submit" class="btn-submit">
-                <i data-feather="check"></i> Kirim Pengajuan
+                 Kirim
             </button>
         </form>
     </div>
@@ -197,7 +195,6 @@
     <!-- Right Column: History -->
     <div class="leave-card">
         <h3 class="leave-card-title">
-            <i data-feather="clock"></i>
             <span>Riwayat Pengajuan</span>
         </h3>
         

@@ -21,7 +21,7 @@ class AdminAccessRestrictionTest extends TestCase
         Role::firstOrCreate(['name' => 'Employee']);
 
         // Create permissions
-        $availablePermissions = ['crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'view_dashboard', 'weekly_report', 'leave_request', 'attendance_history'];
+        $availablePermissions = ['crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'view_dashboard', 'weekly_report', 'leave_request', 'attendance_history', 'rekap_event'];
         foreach ($availablePermissions as $perm) {
             Permission::firstOrCreate(['name' => $perm]);
         }

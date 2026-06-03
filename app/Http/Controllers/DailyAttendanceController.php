@@ -12,13 +12,17 @@ class DailyAttendanceController extends Controller
 {
     public function storeLuar(Request $request)
     {
+        $user = Auth::user();
+        if ($user->hasRole('Intern')) {
+            return response()->json(['message' => 'Intern tidak diperbolehkan melakukan absensi.'], 403);
+        }
+
         $request->validate([
             'photo' => 'required', // Base64 image
             'latitude' => 'required',
             'longitude' => 'required',
         ]);
 
-        $user = Auth::user();
         $now = Carbon::now();
         $date = $now->format('Y-m-d');
 
@@ -79,6 +83,9 @@ class DailyAttendanceController extends Controller
     public function myHistory(Request $request)
     {
         $user = Auth::user();
+        if ($user->hasRole('Intern')) {
+            abort(403, 'Intern tidak memiliki akses ke riwayat absensi.');
+        }
         $now = Carbon::now();
 
         // Date range parse

@@ -29,7 +29,7 @@ class EventRecapController extends Controller
     {
         return $event->participants()
             ->where('user_id', $user->id)
-            ->where('pivot.is_pic', true)
+            ->where('event_participants.is_pic', true)
             ->exists();
     }
 
@@ -47,6 +47,13 @@ class EventRecapController extends Controller
         
         $searchPattern = '%"' . $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-%';
 
+        $isPicOfAny = $user->events()->wherePivot('is_pic', true)->exists();
+        $hasPermission = $user->can('rekap_event');
+
+        if (!$isPicOfAny && !$hasPermission) {
+            abort(403, 'Anda tidak memiliki akses ke rekapitulasi event.');
+        }
+
         // Base query
         $query = Event::with(['participants', 'recap', 'recapItems'])
             ->where('event_dates', 'like', $searchPattern);
@@ -56,8 +63,8 @@ class EventRecapController extends Controller
         }
 
         // Access Control
-        if ($this->isFinance($user) || $user->hasAnyRole(['CEO', 'GM'])) {
-            // Finance, CEO, and GM see all events
+        if ($hasPermission) {
+            // Users with rekap_event permission see all events
             if ($isHistory) {
                 $query->whereHas('recap', fn($q) => $q->where('status', 'selesai'));
             } else {
@@ -69,7 +76,7 @@ class EventRecapController extends Controller
         } else {
             // PIC Event sees only their assigned events
             $query->whereHas('participants', function ($q) use ($user) {
-                $q->where('user_id', $user->id)->where('is_pic', true);
+                $q->where('event_participants.user_id', $user->id)->where('event_participants.is_pic', true);
             });
 
             if ($isHistory) {
@@ -96,12 +103,15 @@ class EventRecapController extends Controller
         
         // Authorization check
         $isFinance = $this->isFinance($user);
-        $isLeader = $user->hasAnyRole(['CEO', 'GM']);
         $isPic = $this->isPic($user, $event);
+        $hasPermission = $user->can('rekap_event');
 
-        if (!$isFinance && !$isLeader && !$isPic) {
+        if (!$isPic && !$hasPermission) {
             abort(403, 'Anda tidak memiliki akses ke rekapitulasi event ini.');
         }
+
+        // Treat users with permission who are not Finance as read-only (like CEO/GM)
+        $isLeader = $user->hasAnyRole(['CEO', 'GM']) || ($hasPermission && !$isFinance);
 
         // Initialize recap if not exists
         $recap = $event->recap;
@@ -185,8 +195,8 @@ class EventRecapController extends Controller
     public function updateBudget(Request $request, Event $event)
     {
         $user = Auth::user();
-        if (!$this->isFinance($user)) {
-            abort(403, 'Hanya tim Finance yang dapat mengatur anggaran.');
+        if (!$this->isFinance($user) || !$user->can('rekap_event')) {
+            abort(403, 'Hanya tim Finance dengan akses rekap yang dapat mengatur anggaran.');
         }
 
         $request->validate([
@@ -326,8 +336,8 @@ class EventRecapController extends Controller
     public function approveRecap(Event $event)
     {
         $user = Auth::user();
-        if (!$this->isFinance($user)) {
-            abort(403, 'Hanya tim Finance yang dapat menyelesaikan verifikasi rekap.');
+        if (!$this->isFinance($user) || !$user->can('rekap_event')) {
+            abort(403, 'Hanya tim Finance dengan akses rekap yang dapat menyelesaikan verifikasi rekap.');
         }
 
         $recap = $event->recap;
@@ -380,8 +390,8 @@ class EventRecapController extends Controller
     public function reopenRecap(Request $request, Event $event)
     {
         $user = Auth::user();
-        if (!$this->isFinance($user)) {
-            abort(403, 'Hanya tim Finance yang dapat membuka kembali rekap.');
+        if (!$this->isFinance($user) || !$user->can('rekap_event')) {
+            abort(403, 'Hanya tim Finance dengan akses rekap yang dapat membuka kembali rekap.');
         }
 
         $recap = $event->recap;
@@ -406,8 +416,9 @@ class EventRecapController extends Controller
         $user = Auth::user();
         $isFinance = $this->isFinance($user);
         $isLeader = $user->hasAnyRole(['CEO', 'GM']);
+        $hasPermission = $user->can('rekap_event');
 
-        if (!$isFinance && !$isLeader) {
+        if ((!$isFinance && !$isLeader) || !$hasPermission) {
             abort(403, 'Anda tidak memiliki hak untuk mengekspor dokumen rekap.');
         }
 

@@ -550,9 +550,7 @@
                 <tr>
                     <td>
                         <div class="recap-event-cell">
-                            <div class="recap-event-icon">
-                                <i data-feather="award"></i>
-                            </div>
+                            
                             <div>
                                 <div class="recap-event-name">{{ $event->name }}</div>
                                 <div class="recap-event-date">{{ $event->location ?? '-' }}</div>

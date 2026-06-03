@@ -140,7 +140,6 @@
 
 <div style="margin-bottom: 28px;">
     <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Persetujuan Izin & Cuti</h1>
-    <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px; font-weight: 500;">Tinjau, setujui, atau tolak pengajuan izin dan cuti yang diajukan oleh karyawan.</p>
 </div>
 
 @if(session('success'))
@@ -158,7 +157,7 @@
 <div class="approval-card">
     <div class="approval-title-section">
         <h3 class="approval-title">
-            <i data-feather="alert-circle"></i>
+            <!-- <i data-feather="alert-circle"></i> -->
             <span>Menunggu Persetujuan</span>
         </h3>
         <p class="approval-subtitle">Daftar pengajuan izin dan cuti karyawan yang memerlukan tindakan Anda.</p>
@@ -205,13 +204,13 @@
                                 <form action="{{ route('leave-approvals.approve', $req->id) }}" method="POST" style="margin:0;">
                                     @csrf
                                     <button type="submit" class="btn-approve">
-                                        <i data-feather="check" style="width:12px; height:12px;"></i> Setujui
+                                        Setuju
                                     </button>
                                 </form>
                                 <form action="{{ route('leave-approvals.reject', $req->id) }}" method="POST" style="margin:0;">
                                     @csrf
                                     <button type="submit" class="btn-reject">
-                                        <i data-feather="x" style="width:12px; height:12px;"></i> Tolak
+                                         Tolak
                                     </button>
                                 </form>
                             </div>
@@ -231,7 +230,7 @@
 <div class="approval-card">
     <div class="approval-title-section">
         <h3 class="approval-title">
-            <i data-feather="check-square"></i>
+            <!-- <i data-feather="check-square"></i> -->
             <span>Riwayat Tindakan</span>
         </h3>
         <p class="approval-subtitle">Log riwayat persetujuan atau penolakan pengajuan izin dan cuti.</p>
@@ -246,7 +245,7 @@
                     <th style="width: 12%;">Jenis</th>
                     <th style="width: 23%;">Alasan</th>
                     <th style="width: 10%;">Status</th>
-                    <th style="width: 10%;">Diproses Oleh</th>
+                    <th style="width: 10%;">Disetujui Oleh</th>
                 </tr>
             </thead>
             <tbody>

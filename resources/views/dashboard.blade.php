@@ -1398,22 +1398,6 @@
             <!-- Left: Calendar Area -->
             <div style="display: flex; flex-direction: column;">
                 <div id="eventCalendar" class="redesigned-calendar-theme"></div>
-
-                <!-- Legend below calendar -->
-                <div class="calendar-legend-bar" style="display: flex; gap: 20px; font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
-                        <span>Sedang Berjalan</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
-                        <span>Akan Datang</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
-                        <span>Selesai</span>
-                    </div>
-                </div>
             </div>
 
             <!-- Right: Daftar Event Sidebar Area -->
@@ -1530,7 +1514,7 @@
         @endif
     @endif
 
-    <div class="stats-grid-3">
+    <div class="stats-grid-3" @if(Auth::user()->hasRole('Intern')) style="grid-template-columns: repeat(2, 1fr);" @endif>
         <!-- Card 1: Total Event -->
         <div class="stat-card">
             <!-- <div class="stat-glow" style="background: var(--primary);"></div> -->
@@ -1549,6 +1533,7 @@
             </a>
         </div>
 
+        @unless(Auth::user()->hasRole('Intern'))
         <!-- Card 2: Kehadiran Bulan Ini -->
         <div class="stat-card">
             <!-- <div class="stat-glow" style="background: #10b981;"></div> -->
@@ -1566,6 +1551,7 @@
                 <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
             </a>
         </div>
+        @endunless
 
         <!-- Card 3: To Do Belum Selesai -->
         <div class="stat-card">
@@ -1586,6 +1572,7 @@
         </div>
     </div>
 
+    @unless(Auth::user()->hasRole('Intern'))
     <!-- Redesigned Absensi Hari Ini Widget (Full Width) -->
     <div class="section-card" style="margin-bottom: 28px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
@@ -1701,6 +1688,7 @@
             </div>
         @endif
     </div>
+    @endunless
 
     <!-- Redesigned Calendar Card (Full Width) -->
     <div class="section-card calendar-redesign-card" style="margin-bottom: 28px; padding: 28px;">
@@ -1752,22 +1740,6 @@
             <!-- Left: Calendar Area -->
             <div style="display: flex; flex-direction: column;">
                 <div id="eventCalendar" class="redesigned-calendar-theme"></div>
-
-                <!-- Legend below calendar -->
-                <div class="calendar-legend-bar" style="display: flex; gap: 20px; font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
-                        <span>Sedang Berjalan</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
-                        <span>Akan Datang</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 500;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
-                        <span>Selesai</span>
-                    </div>
-                </div>
             </div>
 
             <!-- Right: Daftar Event Sidebar Area -->
@@ -1789,14 +1761,9 @@
                 </a>
             </div>
         </div>
-
-        <!-- Info Banner at bottom -->
-        <div class="calendar-info-banner warning" style="margin-top: 24px; padding: 12px 16px; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 12px; display: flex; align-items: center; gap: 8px;">
-            <i data-feather="info" style="color: #2563eb; width: 16px; height: 16px; flex-shrink: 0;"></i>
-            <span style="font-size: 12px; font-weight: 500; color: #1e40af;">Klik pada tanggal di kalender untuk melihat event pada hari tersebut.</span>
-        </div>
     </div>
 
+    @unless(Auth::user()->hasRole('Intern'))
     <!-- Riwayat Absen Terbaru (Full Width) -->
     <div class="section-card" style="margin-bottom: 28px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
@@ -1844,6 +1811,7 @@
             @endforelse
         </div>
     </div>
+    @endunless
 
 @endrole
 

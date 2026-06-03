@@ -721,12 +721,9 @@
 {{-- ═══ 1. EVENT INFO HEADER CARD ═══ --}}
 <div class="event-info-card">
     <div class="event-info-left">
-        <div class="event-poster">
-            <i data-feather="award" style="width: 36px; height: 36px; opacity: 0.4;"></i>
-        </div>
+        
         <div class="event-details-text">
             <h2>{{ $event->name }}</h2>
-            <div class="organized-by">Diselenggarakan oleh: <strong>{{ $event->category ?? 'Division' }}</strong></div>
             <div class="event-meta-list">
                 <div class="event-meta-item">
                     <i data-feather="calendar"></i>
@@ -752,12 +749,11 @@
     </div>
     
     <div class="event-info-right">
-        <div class="event-status-pill">Berjalan</div>
         @if($picDetails)
         <div class="pic-badge-card">
             <div class="pic-badge-label">PIC Event</div>
             <div class="pic-badge-name">{{ $picDetails->name }}</div>
-            <div class="pic-badge-division">{{ optional($picDetails->division)->name ?? '-' }}</div>
+            <!-- <div class="pic-badge-division">{{ optional($picDetails->division)->name ?? '-' }}</div> -->
         </div>
         @endif
     </div>
@@ -797,7 +793,7 @@
         <div class="summary-card-info" style="flex: 1;">
             <div class="summary-card-label">Total Anggaran</div>
             <div class="summary-card-value">Rp {{ number_format($recap->initial_nominal, 0, ',', '.') }}</div>
-            <div class="summary-card-sub">Nominal awal</div>
+            <!-- <div class="summary-card-sub">Nominal awal</div> -->
         </div>
         @if($isFinance && $recap->status !== 'selesai')
             <button class="btn-icon" onclick="openBudgetModal()" title="Edit Anggaran" style="border-color: #2563eb; color: #2563eb;">
@@ -812,7 +808,7 @@
         <div class="summary-card-info">
             <div class="summary-card-label">Total Pengeluaran</div>
             <div class="summary-card-value">Rp {{ number_format($totalSpent, 0, ',', '.') }}</div>
-            <div class="summary-card-sub">{{ $spentPercentage }}% dari anggaran</div>
+            <!-- <div class="summary-card-sub">{{ $spentPercentage }}% dari anggaran</div> -->
         </div>
     </div>
 
@@ -822,9 +818,9 @@
         <div class="summary-card-info">
             <div class="summary-card-label">Sisa Anggaran</div>
             <div class="summary-card-value" style="color: {{ $remainingBudget < 0 ? '#ef4444' : 'inherit' }}">
-                Rp {{ number_format($remainingBudget, 0, ',', '.') }}
+                {{ $remainingBudget < 0 ? '-' : '' }}Rp {{ number_format(abs($remainingBudget), 0, ',', '.') }}
             </div>
-            <div class="summary-card-sub">{{ $remainingPercentage }}% dari anggaran</div>
+            <!-- <div class="summary-card-sub">{{ $remainingPercentage }}% dari anggaran</div> -->
         </div>
     </div>
 
@@ -871,7 +867,7 @@
                 <div class="filter-toolbar">
                     <div class="search-input-wrapper">
                         <i data-feather="search"></i>
-                        <input type="text" name="search_item" class="search-control" placeholder="Cari keterangan atau vendor..." value="{{ $searchQuery }}">
+                        <input type="text" name="search_item" class="search-control" placeholder="Cari Keterangan" value="{{ $searchQuery }}">
                     </div>
                     
                     <select name="category" class="select-control" onchange="this.form.submit()">
@@ -901,7 +897,7 @@
                             <th style="width: 40px;">No</th>
                             <th>Tanggal</th>
                             <th>Kategori</th>
-                            <th>Keterangan / Vendor</th>
+                            <th>Vendor</th>
                             <th>Nominal</th>
                             <th>Bukti</th>
                             @if($isPic && in_array($recap->status, ['draft', 'dalam_rekap', 'direvisi']))
@@ -1116,7 +1112,7 @@
                         </td>
                         <td style="padding: 4px 0; font-weight: bold;">Sisa Anggaran</td>
                         <td style="padding: 4px 0; font-weight: bold; color: {{ $remainingBudget < 0 ? '#b91c1c' : 'inherit' }}">
-                            : Rp {{ number_format($remainingBudget, 0, ',', '.') }}
+                            : {{ $remainingBudget < 0 ? '-' : '' }}Rp {{ number_format(abs($remainingBudget), 0, ',', '.') }}
                         </td>
                     </tr>
                 </table>
@@ -1183,17 +1179,17 @@
 
             <div class="breakdown-list">
                 <div class="breakdown-item">
-                    <div class="breakdown-label"><span class="breakdown-dot blue"></span> Total Pengeluaran</div>
+                    <div class="breakdown-label"> Total Pengeluaran</div>
                     <div class="breakdown-val">Rp {{ number_format($totalSpent, 0, ',', '.') }}</div>
                 </div>
                 <div class="breakdown-item">
-                    <div class="breakdown-label"><span class="breakdown-dot emerald"></span> Sisa Anggaran</div>
+                    <div class="breakdown-label"> Sisa Anggaran</div>
                     <div class="breakdown-val" style="color: {{ $remainingBudget < 0 ? '#ef4444' : 'inherit' }}">
-                        Rp {{ number_format($remainingBudget, 0, ',', '.') }}
+                        {{ $remainingBudget < 0 ? '-' : '' }}Rp {{ number_format(abs($remainingBudget), 0, ',', '.') }}
                     </div>
                 </div>
                 <div class="breakdown-item">
-                    <div class="breakdown-label"><span class="breakdown-dot slate"></span> Total Anggaran</div>
+                    <div class="breakdown-label"> Total Anggaran</div>
                     <div class="breakdown-val">Rp {{ number_format($recap->initial_nominal, 0, ',', '.') }}</div>
                 </div>
             </div>
@@ -1201,8 +1197,7 @@
 
         {{-- CARD B: PROGRESS PENYELESAIAN REKAP --}}
         <div class="recap-panel-card">
-            <h3 class="panel-title" style="margin-bottom: 4px;">Progress Penyelesaian</h3>
-            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">Semakin lengkap rekap, semakin tinggi skor penyelesaian.</div>
+            <h3 class="panel-title" style="margin-bottom: 4px;">Progress</h3>
             
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px;">
                 <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Skor Penyelesaian</span>
@@ -1248,16 +1243,6 @@
             </div>
         </div>
 
-        {{-- CARD C: CATATAN SISTEM --}}
-        <div class="notice-card warning">
-            <strong style="display: block; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">Catatan Penting</strong>
-            <ul style="padding-left: 18px; margin: 0;">
-                <li>Pastikan seluruh bukti nota fisik yang diunggah jelas terbaca.</li>
-                <li>Nominal transaksi yang diinput harus sesuai dengan bukti nota pembelian resmi.</li>
-                <li>Laporan rekapitulasi yang telah dikunci tidak dapat diubah oleh PIC.</li>
-            </ul>
-        </div>
-
         {{-- CARD D: AKSI REKAP (CONDITIONAL ACCORDING TO ROLE & STATUS) --}}
         <div class="recap-panel-card">
             <h3 class="panel-title">Aksi Rekap</h3>
@@ -1268,7 +1253,7 @@
                         <form action="{{ route('event-recaps.submit', $event->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyelesaikan rekapitulasi belanja event ini dan mengirimkannya ke Finance?')">
                             @csrf
                             <button type="submit" class="btn-action-block blue">
-                                <i data-feather="send"></i> Selesai Rekap
+                                 Selesai Rekap
                             </button>
                         </form>
                         <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; text-align: center; margin-top: 8px;">
@@ -1276,7 +1261,7 @@
                         </div>
                     @else
                         <button type="button" class="btn-action-block blue" disabled style="opacity: 0.5; cursor: not-allowed;">
-                            <i data-feather="lock"></i> Terkunci
+                             Selesai
                         </button>
                         <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; text-align: center; margin-top: 8px;">
                             Rekapitulasi telah dikirim. Halaman terkunci dari pengeditan atau pengunggahan baru.
@@ -1289,7 +1274,7 @@
                         <form action="{{ route('event-recaps.approve', $event->id) }}" method="POST" style="margin-bottom: 8px;">
                             @csrf
                             <button type="submit" class="btn-action-block blue">
-                                <i data-feather="check"></i> Setujui Rekap (Selesai)
+                                 Setuju 
                             </button>
                         </form>
                     @endif
@@ -1298,7 +1283,7 @@
                         <form action="{{ route('event-recaps.reopen', $event->id) }}" method="POST">
                             @csrf
                             <button type="submit" class="btn-action-block white">
-                                <i data-feather="rotate-ccw"></i> Buka Rekap Tambahan
+                                 Buka Rekap Tambahan
                             </button>
                         </form>
                     @else
@@ -1308,19 +1293,11 @@
                     @endif
                 @endif
 
-                @if($isLeader)
-                    <div style="font-size: 12px; color: var(--text-muted); text-align: center; font-style: italic; line-height: 1.5;">
-                        <i data-feather="eye" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;"></i>
-                        Anda memiliki hak akses <strong>Supervisor (Read-Only)</strong>. Perubahan data tidak diizinkan.
-                    </div>
-                @endif
+                
             </div>
         </div>
 
-        {{-- FOOTER INFORMASI --}}
-        <div style="font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.4; padding: 0 8px;">
-            Setelah rekapitulasi selesai disetujui, PIC tidak dapat mengakses halaman pengeditan. Tim Finance akan menyimpan data rekap dan menyediakan dokumen Excel untuk pelaporan resmi.
-        </div>
+        
     </div>
 </div>
 
@@ -1393,23 +1370,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="vendor">Nama Toko / Vendor / Penyedia Barang</label>
-                    <input type="text" id="vendor" name="vendor" class="form-control" placeholder="Contoh: RM Sederhana, AlfaMart, Grab" required>
+                    <label for="vendor">Vendor</label>
+                    <input type="text" id="vendor" name="vendor" class="form-control" placeholder="Vendor Produksi ataupun tempat makan" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="nominal">Nominal Pembelian Belanja (Rp)</label>
-                    <input type="number" id="nominal" name="nominal" class="form-control" placeholder="Contoh: 1250000" required>
+                    <label for="nominal">Nominal Belanja</label>
+                    <input type="number" id="nominal" name="nominal" class="form-control" placeholder="" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="description">Keterangan Tambahan / Deskripsi Barang</label>
+                    <label for="description">Keterangan </label>
                     <textarea id="description" name="description" class="form-control" placeholder="Deskripsikan barang atau layanan yang dibeli..."></textarea>
                 </div>
 
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
                     <button type="button" class="btn-primary" style="background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);" onclick="closeUploadModal()">Batal</button>
-                    <button type="submit" class="btn-primary">Upload Pengeluaran</button>
+                    <button type="submit" class="btn-primary">Upload Bukti Nota</button>
                 </div>
             </div>
         </form>
@@ -1432,11 +1409,11 @@
                 <div class="preview-details-panel">
                     <div>
                         <div class="preview-detail-row">
-                            <div class="preview-detail-label">Penyedia / Vendor</div>
+                            <div class="preview-detail-label">Vendor</div>
                             <div class="preview-detail-value" id="preview-vendor-val">-</div>
                         </div>
                         <div class="preview-detail-row">
-                            <div class="preview-detail-label">Nominal Transaksi</div>
+                            <div class="preview-detail-label">Nominal</div>
                             <div class="preview-detail-value" style="color: #2563EB; font-size: 18px;" id="preview-nominal-val">-</div>
                         </div>
                         <div class="preview-detail-row">
@@ -1444,7 +1421,7 @@
                             <div class="preview-detail-value" id="preview-category-val">-</div>
                         </div>
                         <div class="preview-detail-row">
-                            <div class="preview-detail-label">Tanggal Transaksi</div>
+                            <div class="preview-detail-label">Tanggal</div>
                             <div class="preview-detail-value" id="preview-date-val">-</div>
                         </div>
                         <div class="preview-detail-row">

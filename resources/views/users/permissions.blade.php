@@ -82,7 +82,8 @@
     /* Table styling */
     .table-wrapper {
         margin-top: 20px;
-        overflow-x: auto;
+        overflow: auto;
+        max-height: calc(100vh - 280px);
         border: 1px solid var(--border-color);
         border-radius: 12px;
     }
@@ -96,15 +97,27 @@
         border-bottom: 1px solid var(--border-color);
         white-space: nowrap;
     }
-    .permissions-table th:first-child, .permissions-table td:first-child {
-        text-align: left;
-    }
     .permissions-table th {
         font-size: 11px;
         color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-weight: 700;
+        background: var(--bg-color);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    .permissions-table th:first-child, .permissions-table td:first-child {
+        text-align: left;
+        position: sticky;
+        left: 0;
+        z-index: 8;
+        background: var(--card-bg);
+        border-right: 1.5px solid var(--border-color);
+    }
+    .permissions-table th:first-child {
+        z-index: 12;
         background: var(--bg-color);
     }
     .user-cell {
@@ -275,11 +288,12 @@
                         <th title="Melihat dan mengekspor rekapitulasi laporan mingguan seluruh karyawan.">Rekap Weekly</th>
                         <th title="Melihat arsip riwayat laporan mingguan karyawan.">Riwayat Weekly</th>
                         <th title="Meninjau, menyetujui, atau menolak permohonan izin/cuti karyawan.">Persetujuan Izin/Cuti</th>
+                        <th title="Melihat, menginput anggaran, mengupload nota, dan mengekspor rekapitulasi event.">Rekap Event</th>
                     </tr>
                 </thead>
                 <tbody>
                     @php
-                        $availablePermissions = ['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history', 'crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals'];
+                        $availablePermissions = ['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history', 'crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'rekap_event'];
                     @endphp
                     @foreach($users as $user)
                         @php
@@ -327,7 +341,7 @@
                         </tr>
                     @endforeach
                     <tr id="noResultsRow" style="display: none;">
-                        <td colspan="12" style="text-align: center; color: var(--text-muted); padding: 32px 16px; font-weight: 500;">
+                        <td colspan="13" style="text-align: center; color: var(--text-muted); padding: 32px 16px; font-weight: 500;">
                             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
                                 <i data-feather="users" style="width: 32px; height: 32px; stroke-width: 1.5; opacity: 0.5;"></i>
                                 <span>Tidak ada data pengguna yang cocok dengan pencarian Anda</span>

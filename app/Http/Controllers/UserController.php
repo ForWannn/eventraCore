@@ -252,7 +252,7 @@ class UserController extends Controller
     public function updatePermissions(Request $request)
     {
         $users = User::all();
-        $availablePermissions = ['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history', 'crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals'];
+        $availablePermissions = ['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history', 'crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'rekap_event'];
         $inputPermissions = $request->input('permissions', []);
 
         foreach ($users as $user) {

@@ -41,7 +41,8 @@ class RoleSeeder extends Seeder
             'view_dashboard',
             'weekly_report',
             'leave_request',
-            'attendance_history'
+            'attendance_history',
+            'rekap_event'
         ];
 
         foreach ($permissions as $permission) {
