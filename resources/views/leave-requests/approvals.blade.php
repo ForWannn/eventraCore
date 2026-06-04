@@ -208,6 +208,9 @@
         
         .table-wrapper {
             overflow-x: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
         }
         
         /* Hide standard table header */
@@ -216,24 +219,42 @@
         }
         
         /* Force table elements to stack */
-        .approval-table, 
-        .approval-table tbody, 
+        .approval-table {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
         .approval-table tr, 
         .approval-table td {
             display: block !important;
             width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .approval-table tbody {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
         }
         
         /* Render normal rows as compact card boxes, exclude empty rows */
         .approval-table tr:not(:has(td[colspan])) {
-            /* background: var(--hover-bg) !important; */
             border: 1px solid var(--border-color) !important;
             border-radius: 14px !important;
             padding: 14px !important;
-            margin-bottom: 14px !important;
+            margin-bottom: 0px !important; /* managed by grid gap */
             display: flex !important;
             flex-direction: column !important;
             gap: 10px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            align-self: start; /* Prevents cards from stretching vertically */
+            box-sizing: border-box !important;
         }
         [data-theme="dark"] .approval-table tr:not(:has(td[colspan])) {
             background: rgba(30, 41, 59, 0.25) !important;
@@ -244,6 +265,28 @@
             padding: 0 !important;
             text-align: left !important;
             font-size: 10px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            word-break: break-word !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Empty results row spanning 2 columns */
+        .approval-table tr:has(td[colspan]) {
+            grid-column: span 2 !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .approval-table tr:has(td[colspan]) td {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+            padding: 40px 0 !important;
+            box-sizing: border-box !important;
         }
         
         /* Column 1 (Employee) */
@@ -296,21 +339,23 @@
         /* Action buttons column */
         .approval-table tr td:nth-child(5) .btn-action-group {
             display: flex !important;
+            flex-direction: column !important; /* Stack vertically to fit narrow cards */
             width: 100% !important;
-            gap: 8px !important;
+            gap: 6px !important;
             margin-top: 6px !important;
             border-top: 1px dashed var(--border-color) !important;
             padding-top: 10px !important;
         }
         .approval-table tr td:nth-child(5) .btn-action-group form {
             flex: 1 !important;
+            width: 100% !important;
         }
         .approval-table tr td:nth-child(5) .btn-action-group button {
             width: 100% !important;
             padding: 8px 12px !important;
             justify-content: center !important;
             border-radius: 8px !important;
-            font-size: 12.5px !important;
+            font-size: 12px !important;
         }
         
         /* Labeled status column (History table) */
@@ -338,6 +383,38 @@
             text-transform: uppercase;
             margin-right: 4px;
         }
+
+        .user-cell {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            flex-shrink: 0 !important;
+        }
+        .user-cell > div:not(.user-avatar) {
+            min-width: 0 !important;
+            flex: 1 !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+            box-sizing: border-box !important;
+        }
+        .user-cell > div:not(.user-avatar) > div {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            width: 100% !important;
+        }
+
         .badge-type{
             font-size: 10px !important;
         }
@@ -353,8 +430,29 @@
             height: 30px !important;
         }
         .tab-button, .tab-badge,
-        .badge-status.approved{
+        .badge-status {
             font-size: 10px !important;
+        }
+        .filter-actions-wrapper {
+            width: 100% !important;
+        }
+        .filter-actions-wrapper button,
+        .filter-actions-wrapper a {
+            flex: 1 !important;
+            width: 100% !important;
+            justify-content: center !important;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .approval-card {
+            padding: 12px !important;
+        }
+        .approval-table tbody {
+            gap: 12px !important;
+        }
+        .approval-table tr:not(:has(td[colspan])) {
+            padding: 12px !important;
         }
     }
 </style>
@@ -384,6 +482,69 @@
         <p class="approval-subtitle">Daftar pengajuan izin dan cuti karyawan yang memerlukan tindakan Anda.</p>
     </div>
 
+    <div class="table-wrapper">
+        <table class="approval-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Karyawan</th>
+                    <th style="width: 20%;">Tanggal Range</th>
+                    <th style="width: 12%;">Jenis</th>
+                    <th style="width: 25%;">Alasan</th>
+                    <th style="width: 18%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($pendingRequests as $req)
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <img src="{{ $req->user->photo_url }}" class="user-avatar" alt="{{ $req->user->name }}">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-main);">{{ $req->user->name }}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">{{ $req->user->division->name ?? '-' }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="font-weight: 600; color: var(--text-main);">
+                            @if($req->start_date->format('Y-m-d') === $req->end_date->format('Y-m-d'))
+                                {{ $req->start_date->translatedFormat('d M Y') }}
+                            @else
+                                {{ $req->start_date->translatedFormat('d M') }} - {{ $req->end_date->translatedFormat('d M Y') }}
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge-type">{{ $req->type }}</span>
+                        </td>
+                        <td style="color: var(--text-main); font-weight: 500;">
+                            {{ $req->reason }}
+                        </td>
+                        <td>
+                            <div class="btn-action-group">
+                                <form action="{{ route('leave-approvals.approve', $req->id) }}" method="POST" style="margin:0;">
+                                    @csrf
+                                    <button type="submit" class="btn-approve">
+                                        Setuju
+                                    </button>
+                                </form>
+                                <form action="{{ route('leave-approvals.reject', $req->id) }}" method="POST" style="margin:0;">
+                                    @csrf
+                                    <button type="submit" class="btn-reject">
+                                         Tolak
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px 0;">Tidak ada pengajuan yang menunggu persetujuan.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <!-- History Panel -->
 <div class="approval-card">
     <div class="approval-title-section">
@@ -405,7 +566,7 @@
                 <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block;">Sampai Tanggal</label>
                 <input type="date" name="filter_end_date" class="form-input" style="width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-color); color: var(--text-main); outline: none;" value="{{ request('filter_end_date') }}">
             </div>
-            <div style="display: flex; gap: 8px;">
+            <div class="filter-actions-wrapper" style="display: flex; gap: 8px;">
                 <button type="submit" class="btn-approve" style="height: 40px; padding: 0 16px; margin: 0; background: #2563eb; border-radius: 10px; font-size: 13.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
                     Filter
                 </button>

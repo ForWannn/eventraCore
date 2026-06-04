@@ -233,7 +233,108 @@
     }
     .btn-primary:hover {
         opacity: 0.9;
-    }</style>
+    }
+
+    .create-layout-split {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 28px;
+        align-items: start;
+    }
+
+    .form-grid-2col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .create-layout-split {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .photo-upload-container {
+            align-self: center !important;
+            width: 160px !important;
+            margin: 0 auto 12px auto !important;
+        }
+        .photo-upload-area {
+            padding: 16px !important;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .create-card {
+            padding: 20px !important;
+            border-radius: 16px !important;
+            margin-bottom: 16px !important;
+        }
+        .create-card-title {
+            font-size: 14px !important;
+            margin-bottom: 16px !important;
+        }
+        .form-grid-2col {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+        }
+        .form-group {
+            margin-bottom: 12px !important;
+        }
+        .form-group label {
+            font-size: 12.5px !important;
+            margin-bottom: 6px !important;
+        }
+        .form-control {
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+            border-radius: 10px !important;
+        }
+        .role-selection-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 10px !important;
+            margin-top: 12px !important;
+        }
+        .role-selection-label {
+            padding: 12px 14px !important;
+            border-radius: 12px !important;
+        }
+        .role-selection-header svg {
+            width: 16px !important;
+            height: 16px !important;
+        }
+        .role-selection-header span {
+            font-size: 12px !important;
+        }
+        .role-selection-desc {
+            font-size: 10.5px !important;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 8px 20px !important;
+            font-size: 12.5px !important;
+            border-radius: 10px !important;
+        }
+        .form-actions-footer {
+            width: 100% !important;
+            margin-bottom: 24px !important;
+        }
+        .form-actions-footer .btn-primary {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 10px 20px !important;
+        }
+        /* Title adjustments */
+        h1[style*="font-size: 24px"] {
+            font-size: 18px !important;
+        }
+        p[style*="font-size: 13.5px"] {
+            font-size: 11.5px !important;
+        }
+        #cropperModal > div {
+            padding: 16px !important;
+            border-radius: 16px !important;
+        }
+    }
+</style>
 
 <div style="margin-bottom: 28px;">
     <a href="{{ route('users.index') }}" class="btn-back" style="margin-bottom: 16px;">
@@ -254,7 +355,7 @@
     <!-- Card Atas: Informasi Personal & Pekerjaan -->
     <div class="create-card">
         
-        <div style="display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start;">
+        <div class="create-layout-split">
             <!-- Left Side: Profile Photo Upload -->
             <div class="photo-upload-container">
                 <label style="display: block; margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--text-main);">Foto Profil</label>
@@ -275,7 +376,7 @@
 
             <!-- Right Side: Input Grid -->
             <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-grid-2col">
                     <div class="form-group">
                         <label for="nik">ID Karyawan <span style="color: #ef4444;">*</span></label>
                         <input type="text" id="nik" name="nik" class="form-control"
@@ -290,7 +391,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-grid-2col">
                     <div class="form-group">
                         <label for="email">Email <span style="color: #ef4444;">*</span></label>
                         <input type="email" id="email" name="email" class="form-control"
@@ -305,7 +406,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-grid-2col">
                     <div class="form-group">
                         <label for="password">Password <span style="color: #ef4444;">*</span></label>
                         <div class="input-wrapper">
@@ -334,7 +435,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-grid-2col">
                     <div class="form-group">
                         <label for="join_date">Tanggal Bergabung <span style="color: #ef4444;">*</span></label>
                         <input type="date" id="join_date" name="join_date" class="form-control"
@@ -349,7 +450,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-grid-2col">
                     <div class="form-group" style="margin-bottom: 0;">
                         <label for="employee_type">Tipe Karyawan <span style="color: #ef4444;">*</span></label>
                         <select id="employee_type" name="employee_type" class="form-control" required>
@@ -426,7 +527,7 @@
     </div>
 
     <!-- Form Actions Footer -->
-    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin-top: 12px; margin-bottom: 40px;">
+    <div class="form-actions-footer" style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin-top: 12px; margin-bottom: 40px;">
         <button type="submit" class="btn-primary">Simpan Data Karyawan</button>
     </div>
 </form>

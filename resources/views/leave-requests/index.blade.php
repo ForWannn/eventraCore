@@ -189,6 +189,168 @@
     .tab-content.active {
         display: block;
     }
+
+    @media (max-width: 768px) {
+        .table-wrapper {
+            overflow-x: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .leave-table thead {
+            display: none !important;
+        }
+        .leave-table {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .leave-table tr,
+        .leave-table td {
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .leave-table tbody {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .leave-table tr:not(:has(td[colspan])) {
+            border: 1px solid var(--border-color) !important;
+            border-radius: 14px !important;
+            padding: 14px !important;
+            margin-bottom: 0px !important; /* managed by grid gap */
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            background: var(--bg-color);
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            align-self: start; /* Prevents cards from stretching vertically */
+            box-sizing: border-box !important;
+        }
+        .leave-table tr td {
+            border: none !important;
+            padding: 0 !important;
+            text-align: left !important;
+            font-size: 12px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            word-break: break-word !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Empty results row spanning 2 columns */
+        .leave-table tr:has(td[colspan]) {
+            grid-column: span 2 !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .leave-table tr:has(td[colspan]) td {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+            padding: 40px 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Column 1 (Date range) - main header */
+        .leave-table tr td:nth-child(1) {
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            color: var(--text-main) !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            padding-bottom: 8px !important;
+            margin-bottom: 4px !important;
+        }
+        
+        /* Column 2 (Reason) */
+        .leave-table tr td:nth-child(2):before {
+            content: "Alasan: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 4px;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+        
+        /* Column 3 (Status) */
+        .leave-table tr td:nth-child(3):before {
+            content: "Status: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 4px;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+        
+        /* Column 4 (Approved By) */
+        .leave-table tr td:nth-child(4):before {
+            content: "Oleh: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 4px;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+
+        .tab-button, .tab-badge,
+        .badge-status {
+            font-size: 10px !important;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .leave-card {
+            padding: 16px !important;
+            border-radius: 16px !important;
+        }
+        h1[style*="font-size: 24px"] {
+            font-size: 20px !important;
+        }
+        .leave-card-title {
+            font-size: 15px !important;
+            margin-bottom: 16px !important;
+        }
+        .form-group {
+            margin-bottom: 14px !important;
+        }
+        .form-input, .form-select, .form-textarea {
+            font-size: 13px !important;
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
+        }
+        .btn-submit {
+            font-size: 13px !important;
+            padding: 10px !important;
+            border-radius: 8px !important;
+        }
+        .filter-actions-wrapper {
+            width: 100% !important;
+        }
+        .filter-actions-wrapper .btn-submit {
+            flex: 1 !important;
+            width: 100% !important;
+            justify-content: center !important;
+        }
+        .leave-table tbody {
+            gap: 12px !important;
+        }
+        .leave-table tr {
+            padding: 12px !important;
+        }
+    }
 </style>
 
 <div style="margin-bottom: 28px;">
@@ -261,12 +423,12 @@
                     <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block;">Sampai Tanggal</label>
                     <input type="date" name="filter_end_date" class="form-input" style="height: 40px; padding: 0 12px;" value="{{ request('filter_end_date') }}">
                 </div>
-                <div style="display: flex; gap: 8px;">
+                <div class="filter-actions-wrapper" style="display: flex; gap: 8px;">
                     <button type="submit" class="btn-submit" style="width: auto; height: 40px; padding: 0 16px; margin: 0; display: inline-flex; align-items: center; gap: 6px;">
-                        <i data-feather="filter" style="width: 14px; height: 14px;"></i> Filter
+                        Filter
                     </button>
                     <a href="{{ route('leave-requests.index') }}" class="btn-submit" style="width: auto; height: 40px; padding: 0 16px; margin: 0; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; justify-content: center;">
-                        <i data-feather="rotate-ccw" style="width: 14px; height: 14px;"></i> Reset
+                        Reset
                     </a>
                 </div>
             </div>

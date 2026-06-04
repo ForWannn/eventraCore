@@ -262,7 +262,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            height: 42px;
+            /* height: 42px; */
         }
         .btn-remove-pos:hover {
             background: #FEE2E2;
@@ -300,7 +300,7 @@
         /* Employee cards grid */
         .emp-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 12px;
             margin-bottom: 20px;
         }
@@ -313,32 +313,38 @@
         }
         .emp-inner {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
+            justify-content: center;
+            text-align: center;
+            padding: 14px 8px;
             border: 1px solid var(--border-color);
             border-radius: 12px;
             background: var(--sidebar-bg);
             transition: all 0.2s;
             position: relative;
-            text-align: left;
-            height: 60px;
+            height: auto;
+            min-height: 110px;
+            gap: 6px;
         }
         .emp-inner:hover {
             border-color: #94A3B8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         .emp-cb:checked+.emp-inner {
             border-color: #2563EB;
             background: rgba(37, 99, 235, 0.04);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.06);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
         }
         .emp-avatar {
-            width: 34px;
-            height: 34px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
             border: 1.5px solid var(--border-color);
+            margin-bottom: 2px;
         }
         .emp-cb:checked+.emp-inner .emp-avatar {
             border-color: #2563EB;
@@ -346,26 +352,33 @@
         .emp-info {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            width: 100%;
             min-width: 0;
         }
         .emp-name {
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-main);
             line-height: 1.3;
+            width: 100%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .emp-div {
-            font-size: 10.5px;
+            font-size: 10px;
             color: var(--text-muted);
-            margin-top: 1px;
+            margin-top: 2px;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .emp-close-btn {
             position: absolute;
-            top: 4px;
-            right: 6px;
+            top: 8px;
+            right: 8px;
             color: var(--text-muted);
             display: none;
         }
@@ -392,6 +405,13 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        .dates-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 16px;
+            margin-top: 12px;
+            width: 100%;
+        }
         .date-row {
             display: flex;
             align-items: center;
@@ -400,7 +420,7 @@
             background: var(--sidebar-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 0;
             flex-wrap: wrap;
         }
         .date-row-user {
@@ -707,6 +727,244 @@
             width: 16px;
             height: 16px;
         }
+
+        /* Form grids */
+        .form-grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-grid-3col {
+            display: grid;
+            grid-template-columns: 1.2fr 0.9fr 0.9fr;
+            gap: 20px;
+        }
+
+        .sidebar-search-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        /* Actions footer */
+        .form-actions-row {
+            margin-top: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .date-row-toggles {
+            margin-left: auto;
+            display: flex;
+            gap: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .card-left {
+                padding: 16px !important;
+            }
+            .card-right {
+                padding: 16px !important;
+                position: static !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dates-grid {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+                gap: 10px !important;
+                width: 100% !important;
+                margin-top: 12px !important;
+            }
+            .date-row {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                padding: 12px !important;
+                gap: 12px !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                margin-bottom: 0 !important;
+            }
+            .date-row-user {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+            .date-row-inputs {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                width: 100% !important;
+                min-width: 0 !important;
+                gap: 8px !important;
+            }
+            .date-input-sm {
+                font-size: 10px !important;
+                width: 100% !important;
+            }
+            .btn-full-event {
+                width: 100% !important;
+                justify-content: center !important;
+                font-size: 10px !important;
+            }
+            .date-row-toggles {
+                margin-left: 0 !important;
+                width: 100% !important;
+                justify-content: space-between !important;
+            }
+            .date-row-toggles .toggle-btn {
+                flex: 1 !important;
+            }
+            .date-row-toggles .badge-opt {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
+                font-size: 8px !important;
+            }
+            .pos-participants-header {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+            }
+            .pos-search-wrapper {
+                width: 100% !important;
+            }
+            .emp-grid {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+                gap: 10px !important;
+                width: 100% !important;
+            }
+            .emp-lbl {
+                width: 100% !important;
+                max-width: none !important;
+            }
+            .emp-inner {
+                width: 100% !important;
+                max-width: none !important;
+                box-sizing: border-box !important;
+            }
+            .emp-name,
+            .emp-sched-name {
+                white-space: normal !important;
+                word-break: break-word !important;
+                font-size: 10px !important;
+            }
+            .emp-div,
+            .event-count-badge,
+            .emp-sched-div,
+            .emp-sched-event-name span{
+                font-size: 8px !important;
+            }
+
+            .emp-sched-event-time span{
+                font-size: 7px !important   ;
+            }
+
+            .form-header-text h2{
+                font-size: 14px !important;
+            }
+            .form-header-text p{
+                font-size: 10px !important;
+            }
+            .section-indicator-title span{
+                font-size: 10px !important;
+            }
+            .form-group{
+                margin-bottom: 10px !important;
+            }
+            .form-group label,
+            .form-group input{
+                font-size: 10px !important;
+            }
+            .custom-select span{
+                font-size: 10px !important;
+            }
+            .custom-select .sel svg {
+                width: 10px !important;
+                height: 10px !important;
+            }
+            .custom-select{
+                max-height: 35px !important;
+            }
+            .custom-select .avatar-sm{
+                width: 24px !important;
+                height: 24px !important;
+            }
+            .form-group textarea{
+                font-size: 10px !important;
+            }
+            .input-with-icon svg, .input-with-icon i,
+            .sidebar-search-wrapper i {
+                width: 10px;
+                height: 10px;
+                left: 8px !important;
+            }
+            .pos-participants-header .label-peserta,
+            .sidebar-title,
+            .sidebar-badge,
+            .sidebar-search-wrapper .form-control{
+                font-size: 10px !important;
+            }
+            .pos-search-wrapper input{
+                font-size: 10px !important;
+            }
+            .dates-header{
+                font-size: 10px !important;
+            }
+            .input-with-icon .form-control{
+                padding-left: 20px !important;
+            }
+            .btn-add-pos,
+            .btn-submit-premium,
+            .btn-cancel,
+            .btn-remove-pos,
+            .btn-show-all{
+                font-size: 10px !important;
+            }
+            .pos-header .input-with-icon .form-control,
+            .pos-header label{
+                font-size: 10px !important;
+            }
+            #sidebarSearch{
+                height: 30px !important;
+            }
+            .sidebar-filter-wrapper span{
+                font-size: 10px !important;
+            }
+            #sidebarFilter,
+            .date-row-user span{
+                font-size: 10px !important;
+            }
+            .date-row-user img{
+                width: 20px !important;
+                height: 20px !important;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+            .pos-header {
+                grid-template-columns: 1fr !important;
+                align-items: stretch !important;
+                gap: 12px !important;
+            }
+            .btn-remove-pos {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            .form-actions-row {
+                flex-direction: column-reverse !important;
+                align-items: stretch !important;
+            }
+            .btn-cancel, .btn-submit-premium {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            
+        }
     </style>
 
     <div class="create-event-grid">
@@ -721,12 +979,6 @@
                     <p>Lengkapi informasi event dan pilih peserta yang akan terlibat.</p>
                 </div>
             </div>
-
-            <div class="alert-info-custom">
-                <i data-feather="info"></i>
-                <span>Pastikan karyawan belum memiliki jadwal event yang bertabrakan.</span>
-            </div>
-
             @if($errors->any())
                 <div style="background:#fee2e2;color:#b91c1c;padding:12px;border-radius:12px;font-size:13px;margin-bottom:20px;border:1px solid #fca5a5;">
                     Harap periksa kembali isian formulir di bawah.
@@ -740,9 +992,9 @@
                     <span>Informasi Event</span>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="form-grid-2col">
                     <div class="form-group">
-                        <label for="name">Nama Event <span class="required">*</span></label>
+                        <label for="name">Nama Event </label>
                         <div class="input-with-icon">
                             <i data-feather="file-text"></i>
                             <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required placeholder="Masukkan judul event">
@@ -776,21 +1028,21 @@
                     <label for="description">Deskripsi</label>
                     <div class="input-with-icon">
                         <i data-feather="edit-2" style="top: 14px;"></i>
-                        <textarea id="description" name="description" class="form-control" rows="2" style="padding-left: 42px; resize: none;" placeholder="Tulis deskripsi event (opsional)">{{ old('description') }}</textarea>
+                        <textarea id="description" name="description" class="form-control" rows="2" style="padding-left: 42px; resize: none;" placeholder="Deskripsi Event">{{ old('description') }}</textarea>
                     </div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="form-grid-2col">
                     <div class="form-group">
-                        <label for="location">Lokasi <span class="required">*</span></label>
+                        <label for="location">Lokasi </label>
                         <div class="input-with-icon">
                             <i data-feather="map-pin"></i>
-                            <input type="text" id="location" name="location" class="form-control" value="{{ old('location') }}" required placeholder="Contoh: Ruang Meeting Utama, Aula Lantai 3">
+                            <input type="text" id="location" name="location" class="form-control" value="{{ old('location') }}" required placeholder="Lokasi Event">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="first_pos_name">Runner Event (Nama Posisi) <span class="required">*</span></label>
+                        <label for="first_pos_name">Nama Posisi</label>
                         <div class="input-with-icon">
                             <i data-feather="briefcase"></i>
                             <input type="text" id="first_pos_name" name="positions[0][name]" class="form-control" value="{{ old('positions.0.name', 'Runner Event') }}" required placeholder="Cari atau pilih posisi">
@@ -798,23 +1050,23 @@
                     </div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1.2fr 0.9fr 0.9fr;gap:20px;">
+                <div class="form-grid-3col">
                     <div class="form-group">
-                        <label for="event_dates">Tanggal Event <span class="required">*</span></label>
+                        <label for="event_dates">Tanggal Event </label>
                         <div class="input-with-icon">
                             <i data-feather="calendar"></i>
                             <input type="text" id="event_dates" name="event_dates" class="form-control" value="{{ old('event_dates') }}" required placeholder="Pilih tanggal">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="start_time">Jam Mulai <span class="required">*</span></label>
+                        <label for="start_time">Jam Mulai </label>
                         <div class="input-with-icon">
                             <i data-feather="clock"></i>
                             <input type="time" id="start_time" name="start_time" class="form-control" value="{{ old('start_time') }}" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="end_time">Jam Selesai <span class="required">*</span></label>
+                        <label for="end_time">Jam Selesai </label>
                         <div class="input-with-icon">
                             <i data-feather="clock"></i>
                             <input type="time" id="end_time" name="end_time" class="form-control" value="{{ old('end_time') }}" required>
@@ -829,12 +1081,12 @@
                     Tambah Posisi Baru
                 </button>
 
-                <div style="margin-top:32px;display:flex;justify-content:space-between;align-items:center;">
+                <div class="form-actions-row">
                     <a href="{{ route('events.index') }}" class="btn-cancel">
                         Batal
                     </a>
                     <button type="submit" class="btn-submit-premium">
-                        <i data-feather="save"></i> Simpan Event
+                        Simpan Event
                     </button>
                 </div>
             </form>
@@ -848,8 +1100,8 @@
             </div>
 
             <div class="sidebar-search-wrapper">
-                <input type="text" id="sidebarSearch" class="form-control" placeholder="Cari karyawan atau event..." style="padding-right: 36px; height: 40px; border-radius: 10px;">
-                <i data-feather="search" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none;"></i>
+                <i data-feather="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none;"></i>
+                <input type="text" id="sidebarSearch" class="form-control" placeholder="Cari karyawan atau event..." style="padding-left: 36px; height: 40px; border-radius: 10px;">
             </div>
 
             <div class="sidebar-filter-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -866,7 +1118,7 @@
             </div>
 
             <button type="button" id="toggleShowAllEmployees" class="btn-show-all">
-                Lihat Semua Karyawan <i data-feather="chevron-right"></i>
+                Lihat Semua Karyawan
             </button>
         </div>
     </div>
@@ -956,7 +1208,7 @@
                     <div class="date-row-inputs">
                         <input type="text" name="positions[${posIdx}][member_dates][${userId}][work_dates]" class="date-input-sm multi-date" placeholder="Multi tanggal">
                         <button type="button" class="btn-full-event" onclick="setFullEvent(${posIdx},${userId})">Full Event</button>
-                        <div style="margin-left: auto; display:flex; gap:6px;">
+                        <div class="date-row-toggles">
                             <label class="toggle-btn" title="Tugas Loading">
                                 <input type="checkbox" name="positions[${posIdx}][member_loading][${userId}]">
                                 <span class="badge-opt ld">LD</span>
@@ -1014,10 +1266,10 @@
             if (idx === 0) {
                 posHeaderHtml = `
                     <div class="pos-participants-header">
-                        <div style="font-size: 14px; font-weight: 700; color: var(--text-main);">Pilih Peserta (PIC)</div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--text-main);" class="label-peserta">Pilih Peserta</div>
                         <div class="pos-search-wrapper">
                             <i data-feather="search"></i>
-                            <input type="text" class="form-control pos-search" placeholder="Cari nama karyawan atau posisi..." oninput="filterPosEmployees(this)">
+                            <input type="text" class="form-control pos-search" placeholder="Cari nama atau posisi" oninput="filterPosEmployees(this)">
                         </div>
                     </div>
                 `;
@@ -1033,7 +1285,7 @@
                         </div>
                         <div>
                             <button type="button" class="btn-remove-pos" onclick="removePos(this)">
-                                <i data-feather="trash-2"></i> Hapus Posisi
+                               Hapus Posisi
                             </button>
                         </div>
                     </div>
@@ -1041,7 +1293,7 @@
                         <div style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Pilih Peserta</div>
                         <div class="pos-search-wrapper">
                             <i data-feather="search"></i>
-                            <input type="text" class="form-control pos-search" placeholder="Cari nama karyawan..." oninput="filterPosEmployees(this)">
+                            <input type="text" class="form-control pos-search" placeholder="Cari nama atau posisi" oninput="filterPosEmployees(this)">
                         </div>
                     </div>
                 `;
@@ -1052,7 +1304,7 @@
                 <div class="emp-grid" style="margin-top: 12px;">${buildGrid(idx)}</div>
                 <div class="dates-wrap">
                     <div class="dates-header" id="dates-header-${idx}" style="display: none;">Detail Tugas</div>
-                    <div id="dates-${idx}"></div>
+                    <div id="dates-${idx}" class="dates-grid"></div>
                 </div>
             `;
             

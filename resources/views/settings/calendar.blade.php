@@ -45,7 +45,6 @@
         padding: 8px 14px;
         border-radius: 10px;
         border: 1px solid var(--border-color);
-        background: var(--hover-bg);
         color: var(--text-main);
         font-size: 13px;
         font-weight: 600;
@@ -161,6 +160,113 @@
     .btn-save:hover {
         opacity: 0.9;
     }
+
+    @media (max-width: 640px) {
+        .calendar-settings-card {
+            padding: 20px !important;
+            border-radius: 16px !important;
+        }
+        .settings-header {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 16px !important;
+            margin-bottom: 20px !important;
+        }
+        .settings-title {
+            font-size: 14px !important;
+        }
+        .settings-subtitle {
+            font-size: 10px !important;
+        }
+        .selector-form {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+        }
+        .select-input {
+            width: 100% !important;
+            padding: 8px 10px !important;
+            font-size: 10px !important;
+        }
+        .calendar-table-wrapper {
+            margin-top: 12px !important;
+            overflow-x: visible !important;
+        }
+        .calendar-table, 
+        .calendar-table thead, 
+        .calendar-table tbody, 
+        .calendar-table tr, 
+        .calendar-table td {
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .calendar-table thead {
+            display: none !important;
+        }
+        .calendar-table tr {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 14px !important;
+            padding: 12px 14px !important;
+            margin-bottom: 12px !important;
+            display: grid !important;
+            grid-template-columns: auto 1fr auto !important;
+            grid-template-areas: 
+                "date day switch"
+                "desc desc desc" !important;
+            align-items: center !important;
+            gap: 10px 8px !important;
+        }
+        .calendar-table tr.weekend {
+            background: rgba(239, 68, 68, 0.03) !important;
+            border-color: rgba(239, 68, 68, 0.15) !important;
+        }
+        [data-theme="dark"] .calendar-table tr.weekend {
+            background: rgba(239, 68, 68, 0.05) !important;
+            border-color: rgba(239, 68, 68, 0.25) !important;
+        }
+        .calendar-table td {
+            padding: 0 !important;
+            border: none !important;
+            width: auto !important;
+        }
+        .calendar-table td:nth-child(1) {
+            grid-area: date;
+            font-size: 15px !important;
+            font-weight: 700 !important;
+        }
+        .calendar-table td:nth-child(2) {
+            grid-area: day;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+        }
+        .calendar-table td:nth-child(3) {
+            grid-area: switch;
+            display: flex !important;
+            justify-content: flex-end !important;
+        }
+        .calendar-table td:nth-child(4) {
+            grid-area: desc;
+            width: 100% !important;
+        }
+        .desc-input {
+            font-size: 10px !important;
+            padding: 8px 10px !important;
+            border-radius: 8px !important;
+        }
+        .form-actions {
+            margin-top: 20px !important;
+        }
+        .btn-save {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 12px 20px !important;
+            font-size: 10px !important;
+            border-radius: 10px !important;
+        }
+    }
 </style>
 
 <div class="calendar-settings-card">
@@ -234,7 +340,6 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-save">
-                <i data-feather="save" style="width: 16px; height: 16px;"></i>
                 <span>Simpan Perubahan</span>
             </button>
         </div>

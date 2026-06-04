@@ -681,7 +681,7 @@
             margin-bottom: 12px !important;
         }
         .section-card .section-title {
-            font-size: 10px !important;
+            font-size: 13.5px !important;
         }
         .status-section-grid {
             grid-template-columns: 1fr auto !important;
@@ -696,23 +696,23 @@
             gap: 4px !important;
         }
         .status-col-header {
-            font-size: 7px !important;
+            font-size: 10.5px !important;
             gap: 4px !important;
         }
         .status-col-header .dot {
-            width: 3px !important;
-            height: 3px !important;
+            width: 5px !important;
+            height: 5px !important;
         }
         .status-col-value-group {
-            gap: 4px !important;
+            gap: 2px !important;
             flex-direction: column !important;
             align-items: flex-start !important;
         }
         .status-col-value {
-            font-size: 18px !important;
+            font-size: 20px !important;
         }
         .status-col-label {
-            font-size: 7px !important;
+            font-size: 9.5px !important;
         }
         .status-donut-wrapper {
             gap: 8px !important;
@@ -729,10 +729,10 @@
             font-size: 12px !important;
         }
         .status-donut-wrapper div:last-child span:first-child {
-            font-size: 11px !important;
+            font-size: 12px !important;
         }
         .status-donut-wrapper div:last-child span:last-child {
-            font-size: 9.5px !important;
+            font-size: 10px !important;
         }
 
         .attendance-redesign-layout.not-checked-in{
@@ -740,11 +740,11 @@
         }
         
         .attendance-redesign-layout.not-checked-in .digital-clock-container p{
-            font-size: 8px !important;
+            font-size: 11px !important;
         }
 
         .digital-clock-container .digital-clock{
-            font-size: 15px !important;
+            font-size: 28px !important;
         }
 
         .badge{
@@ -752,11 +752,10 @@
         }
 
         .btn-checkin-large{
-            font-size: 10px !important;
-            max-width: 120px !important;
-            padding: 8px 16px !important;
-            border-radius: 8px !important;
-            
+            font-size: 13px !important;
+            max-width: none !important;
+            padding: 10px 20px !important;
+            border-radius: 10px !important;
         }
         /* Attendance Hari Ini */
         .attendance-redesign-layout {
@@ -784,14 +783,14 @@
             position: relative !important;
         }
         .work-time-counter {
-            font-size: 12px !important;
+            font-size: 13px !important;
         }
         .work-time-label {
-            font-size: 7px !important;
+            font-size: 8.5px !important;
             margin-top: 1px !important;
         }
         .work-time-target {
-            font-size: 8px !important;
+            font-size: 9.5px !important;
             margin-top: 1px !important;
         }
         .attendance-details-grid {
@@ -803,7 +802,7 @@
             gap: 2px !important;
         }
         .detail-label {
-            font-size: 11px !important;
+            font-size: 12px !important;
             gap: 4px !important;
         }
         .detail-icon {
@@ -811,7 +810,7 @@
             height: 12px !important;
         }
         .detail-value {
-            font-size: 10px !important;
+            font-size: 12px !important;
             text-align: left !important;
         }
 
@@ -820,37 +819,41 @@
             margin-bottom: 12px !important;
         }
         .calendar-header-section h2 {
-            font-size: 10px !important;
+            font-size: 16px !important;
         }
         .calendar-header-section h2 svg {
             width: 18px !important;
             height: 18px !important;
         }
         .calendar-header-section p {
-            font-size: 10.5px !important;
+            font-size: 11px !important;
             margin-top: 2px !important;
         }
         .calendar-custom-toolbar {
-            display: grid !important;
-            grid-template-columns: 1fr auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
             gap: 12px !important;
             margin-bottom: 12px !important;
         }
         .calendar-custom-toolbar > div:nth-child(1) {
-            grid-column: 1 !important;
-            justify-content: flex-start !important;
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
         }
         .calendar-custom-toolbar > div:nth-child(2) {
-            grid-column: 2 !important;
-            justify-content: flex-end !important;
-        }
-        .calendar-custom-toolbar > div:nth-child(3) {
-            grid-column: span 2 !important;
             width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 8px !important;
         }
         #calPrevBtn, #calNextBtn, #calTodayBtn {
             height: 32px !important;
-            font-size: 10px !important;
+            font-size: 11px !important;
             border-radius: 8px !important;
         }
         #calPrevBtn, #calNextBtn {
@@ -858,11 +861,17 @@
         }
         #calMonthTitle {
             font-size: 14px !important;
+            font-weight: 700 !important;
+        }
+        .cal-view-toggle {
+            padding: 4px 12px !important;
+            font-size: 11px !important;
+            border-radius: 6px !important;
         }
         .calendar-custom-toolbar a.btn {
             height: 32px !important;
             padding: 0 10px !important;
-            font-size: 10px !important;
+            font-size: 11px !important;
             border-radius: 8px !important;
             justify-content: center !important;
             width: 100% !important;
@@ -2602,17 +2611,20 @@
 
         <!-- Custom Toolbar -->
         <div class="calendar-custom-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-            <!-- Left: Nav Buttons -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="calPrevBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
-                    <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
-                </button>
-                <button id="calNextBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
-                    <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
-                </button>
-                <button id="calTodayBtn" class="btn" style="height: 38px; padding: 0 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-main);">
-                    Today
-                </button>
+            <!-- Left: Nav Buttons & Month Title -->
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="calPrevBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                        <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    <button id="calNextBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                        <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    <button id="calTodayBtn" class="btn" style="height: 38px; padding: 0 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-main);">
+                        Today
+                    </button>
+                </div>
+                <span id="calMonthTitle" style="font-size: 16px; font-weight: 700; color: var(--text-main);"></span>
             </div>
             <!-- Right: View Toggle Buttons & Buat Event Baru -->
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -2930,17 +2942,20 @@
 
         <!-- Custom Toolbar -->
         <div class="calendar-custom-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-            <!-- Left: Nav Buttons -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="calPrevBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
-                    <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
-                </button>
-                <button id="calNextBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
-                    <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
-                </button>
-                <button id="calTodayBtn" class="btn" style="height: 38px; padding: 0 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-main);">
-                    Today
-                </button>
+            <!-- Left: Nav Buttons & Month Title -->
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="calPrevBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                        <i data-feather="chevron-left" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    <button id="calNextBtn" class="btn" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; color: var(--text-main);">
+                        <i data-feather="chevron-right" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    <button id="calTodayBtn" class="btn" style="height: 38px; padding: 0 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-main);">
+                        Today
+                    </button>
+                </div>
+                <span id="calMonthTitle" style="font-size: 16px; font-weight: 700; color: var(--text-main);"></span>
             </div>
             <!-- Right: View Toggle Buttons -->
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -3705,6 +3720,7 @@ function initCameraAndGps() {
                 initialView: 'dayGridMonth',
                 locale: 'id',
                 headerToolbar: false,
+                dayHeaderFormat: { weekday: 'short' },
                 events: ALL_CALENDAR_EVENTS,
                 height: 'auto',
                 selectable: true,

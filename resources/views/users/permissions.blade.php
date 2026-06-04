@@ -94,7 +94,6 @@
     .permissions-table th, .permissions-table td {
         padding: 12px 10px;
         text-align: center;
-        border-bottom: 1px solid var(--border-color);
         white-space: nowrap;
     }
     .permissions-table th {
@@ -238,6 +237,217 @@
     .btn-save:hover {
         opacity: 0.9;
     }
+
+    /* Dropdown Chevron Toggle styles for mobile */
+    .mobile-dropdown-toggle {
+        display: none;
+        background: none;
+        border: none;
+        padding: 4px;
+        color: var(--text-muted);
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    @media (max-width: 768px) {
+        .mobile-dropdown-toggle {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            padding: 4px !important;
+        }
+        .user-row.expanded .mobile-dropdown-toggle {
+            transform: rotate(180deg);
+        }
+        .mobile-dropdown-toggle svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.5;
+        }
+
+        .permissions-table thead {
+            display: none;
+        }
+        .permissions-table, 
+        .permissions-table tbody, 
+        .permissions-table tr, 
+        .permissions-table td {
+            display: block;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .permissions-table tbody {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+            width: 100% !important;
+        }
+        .permissions-table tr {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 0px; /* managed by grid gap */
+            position: relative;
+            align-self: start; /* Prevents cards from stretching vertically */
+            transition: all 0.2s;
+            min-width: 0 !important;
+            overflow: hidden !important;
+        }
+        .permissions-table td:first-child {
+            border-right: none !important;
+            position: static !important;
+            background: transparent !important;
+            padding: 0 !important;
+            width: 100% !important;
+            cursor: pointer;
+            min-width: 0 !important;
+        }
+        
+        /* Hide all permissions list by default on mobile */
+        .permissions-table tr:not(.expanded) td:not(:first-child) {
+            display: none !important;
+        }
+
+        /* Show permissions list when expanded */
+        .permissions-table tr.expanded td:first-child {
+            border-bottom: 1.5px solid var(--border-color) !important;
+            padding-bottom: 12px !important;
+            margin-bottom: 12px;
+        }
+        .permissions-table tr.expanded td:not(:first-child) {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0 !important;
+            border-bottom: 1px dashed var(--border-color) !important;
+            text-align: left;
+            white-space: normal;
+        }
+        .permissions-table tr.expanded td:last-child {
+            border-bottom: none !important;
+        }
+        
+        /* Add labels using ::before pseudo-elements */
+        .permissions-table td:nth-of-type(2):before { content: "Dashboard"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(3):before { content: "Weekly Report"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(4):before { content: "Pengajuan Cuti"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(5):before { content: "Riwayat Absen"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(6):before { content: "CRUD Karyawan"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(7):before { content: "CRUD Event"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(8):before { content: "Kelola Kalender"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(9):before { content: "Rekap Absen"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(10):before { content: "Rekap Weekly"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(11):before { content: "Riwayat Weekly"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(12):before { content: "Persetujuan Izin/Cuti"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+        .permissions-table td:nth-of-type(13):before { content: "Rekap Event"; font-size: 13px; font-weight: 600; color: var(--text-main); }
+
+        .table-wrapper {
+            border: none !important;
+            max-height: none !important;
+            overflow: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .form-actions {
+            width: 100% !important;
+            margin-top: 20px !important;
+        }
+        .btn-save {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 12px 20px !important;
+            border-radius: 10px !important;
+        }
+        .user-cell {
+            display: flex !important;
+            width: 100% !important;
+            align-items: center !important;
+            gap: 10px !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+        .user-details {
+            min-width: 0 !important;
+            flex: 1 !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 2px !important;
+            box-sizing: border-box !important;
+        }
+        .user-details > div {
+            min-width: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            flex-wrap: wrap !important;
+        }
+        .user-name {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            display: block !important;
+            max-width: 100% !important;
+        }
+        .user-email {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            display: block !important;
+            max-width: 100% !important;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .permissions-card {
+            padding: 20px !important;
+            border-radius: 16px !important;
+        }
+        .settings-title {
+            font-size: 18px !important;
+        }
+        .settings-subtitle {
+            font-size: 12px !important;
+        }
+        .control-bar {
+            padding: 10px 12px !important;
+            margin-bottom: 16px !important;
+        }
+        .search-wrapper input {
+            padding: 8px 12px 8px 36px !important;
+            font-size: 13px !important;
+            border-radius: 8px !important;
+        }
+        .search-wrapper .search-icon {
+            left: 12px !important;
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .permissions-table tbody {
+            gap: 12px !important;
+        }
+        .permissions-table tr {
+            padding: 12px !important;
+        }
+        .mobile-dropdown-toggle {
+            padding: 2px !important;
+        }
+        .mobile-dropdown-toggle svg {
+            width: 16px !important;
+            height: 16px !important;
+        }
+        .badge-status {
+            padding: 1px 6px !important;
+            font-size: 9px !important;
+        }
+    }
 </style>
 
 <div style="margin-bottom: 20px;">
@@ -318,6 +528,9 @@
                                         </div>
                                         <span class="user-email">{{ $user->email }} · {{ $user->roles->where('name', '!=', 'PIC Event')->first()?->name ?? 'Crew' }}</span>
                                     </div>
+                                    <button type="button" class="mobile-dropdown-toggle">
+                                        <i data-feather="chevron-down"></i>
+                                    </button>
                                 </div>
                             </td>
                             @foreach($availablePermissions as $perm)
@@ -387,6 +600,16 @@
             } else {
                 noResultsRow.style.display = 'none';
             }
+        });
+
+        // Toggle mobile dropdown permissions panel
+        rows.forEach(row => {
+            const header = row.querySelector('td:first-child');
+            header.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    row.classList.toggle('expanded');
+                }
+            });
         });
     });
 </script>

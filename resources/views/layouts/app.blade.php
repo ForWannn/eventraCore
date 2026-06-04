@@ -506,6 +506,9 @@
         }
 
         @media (max-width: 768px) {
+            .user-info span{
+                font-size: 12px !important;
+            }
             .sidebar {
                 position: fixed;
                 top: 0;

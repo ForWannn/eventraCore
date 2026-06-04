@@ -231,6 +231,274 @@
         opacity: 0.5;
         cursor: not-allowed;
     }
+
+    @media (max-width: 640px) {
+        /* Card & Padding tweaks */
+        .card {
+            padding: 16px !important;
+            border-radius: 16px !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .card > div:first-of-type {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+            margin-bottom: 20px !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+        }
+        .card h2 {
+            font-size: 15px !important;
+        }
+        .card p {
+            font-size: 11px !important;
+        }
+        
+        .btn-create {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 10px 16px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+        }
+        
+        /* Stats Grid & Cards */
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .stat-card {
+            padding: 12px !important;
+            border-radius: 12px !important;
+            min-height: auto !important;
+            gap: 10px !important;
+        }
+        .stat-card .stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+        }
+        .stat-card .stat-icon svg,
+        .stat-card .stat-icon i {
+            width: 16px !important;
+            height: 16px !important;
+        }
+        .stat-card .stat-label {
+            font-size: 9px !important;
+        }
+        .stat-card .stat-value {
+            font-size: 20px !important;
+            margin-top: 2px !important;
+        }
+        .stat-card .stat-sub {
+            font-size: 9px !important;
+            margin-top: 1px !important;
+        }
+
+        /* Control Bar & Filter styling */
+        .control-bar {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+            padding: 12px !important;
+            border-radius: 12px !important;
+            margin-bottom: 16px !important;
+        }
+        .search-wrapper {
+            width: 100% !important;
+            min-width: auto !important;
+            flex: none !important;
+        }
+        .search-wrapper input {
+            padding: 8px 12px 8px 36px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+        }
+        .search-wrapper .search-icon {
+            left: 12px !important;
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .filter-wrapper {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            width: 100% !important;
+            gap: 8px !important;
+        }
+        .filter-select {
+            width: 100% !important;
+            padding: 8px 10px !important;
+            font-size: 11px !important;
+            border-radius: 8px !important;
+        }
+
+        /* Table to Stack Card layout */
+        .table-container {
+            border: none !important;
+            overflow: visible !important;
+        }
+        table, thead, tbody, th, td, tr {
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        thead {
+            display: none !important;
+        }
+        tbody#userTableBody {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        #noResultsRow {
+            grid-column: span 2 !important;
+        }
+        .user-row {
+            background: var(--bg-color) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 14px !important;
+            padding: 12px !important;
+            margin-bottom: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+            gap: 6px !important;
+        }
+        .user-row td {
+            padding: 0 !important;
+            border: none !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            font-size: 11px !important;
+            line-height: 1.4 !important;
+        }
+        /* Row Header: Avatar & Name cell */
+        .user-row td:nth-child(2) {
+            border-bottom: 1px solid var(--border-color) !important;
+            padding-bottom: 8px !important;
+            margin-bottom: 6px !important;
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .user-row td:nth-child(2) .user-cell {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 6px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .user-row td:nth-child(2) .avatar-table {
+            width: 44px !important;
+            height: 44px !important;
+        }
+        .user-row td:nth-child(2) span {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: var(--text-main) !important;
+            word-break: break-word !important;
+            text-align: center !important;
+            display: block !important;
+            width: 100% !important;
+        }
+        
+        /* Prepend Label NIK */
+        .user-row td:nth-child(1) {
+            color: var(--text-muted) !important;
+            font-size: 10.5px !important;
+            margin-bottom: 2px !important;
+        }
+        /* .user-row td:nth-child(1):before {
+            content: "NIK: ";
+            font-weight: 600;
+        } */
+        
+        /* Email truncation */
+        .user-row td:nth-child(3) {
+            color: var(--text-muted) !important;
+            font-size: 10px !important;
+            margin-bottom: 4px !important;
+            display: block !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            max-width: 100% !important;
+        }
+        
+        /* Role styling */
+        .user-row td:nth-child(4) {
+            margin-bottom: 4px !important;
+        }
+        .badge-role {
+            font-size: 10px !important;
+            padding: 2px 6px !important;
+        }
+        
+        /* Division styling */
+        .user-row td:nth-child(5) {
+            font-weight: 600 !important;
+            color: var(--text-main) !important;
+            margin-bottom: 4px !important;
+        }
+        
+        /* Status styling */
+        .user-row td:nth-child(6) {
+            margin-bottom: 4px !important;
+        }
+        .badge-status {
+            font-size: 10px !important;
+            padding: 2px 6px !important;
+        }
+
+        /* Action buttons card footer */
+        .user-row td:nth-child(7) {
+            margin-top: auto !important;
+            border-top: 1px solid var(--border-color) !important;
+            padding-top: 8px !important;
+            width: 100% !important;
+        }
+        .user-row td:nth-child(7) a {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 6px 8px !important;
+            background: var(--hover-bg) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 8px !important;
+            font-size: 11px !important;
+        }
+        
+        /* Pagination Container adjustments */
+        .pagination-container {
+            flex-direction: column !important;
+            align-items: center !important;
+            margin-top: 16px !important;
+            gap: 12px !important;
+        }
+        .pagination-info {
+            font-size: 11.5px !important;
+        }
+        .pagination-btn {
+            min-width: 30px !important;
+            height: 30px !important;
+            font-size: 11px !important;
+            border-radius: 8px !important;
+        }
+    }
 </style>
 
 <div class="stats-grid">
@@ -379,12 +647,10 @@
                     <td>
                         @can('crud_users')
                         <a href="{{ route('users.edit', $user->id) }}" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; text-decoration: none; font-size: 13.5px; font-weight: 700;">
-                            <i data-feather="edit-2" style="width: 14px; height: 14px;"></i>
                             <span>Edit</span>
                         </a>
                         @else
                         <a href="{{ route('users.show', $user->id) }}" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; text-decoration: none; font-size: 13.5px; font-weight: 700;">
-                            <i data-feather="eye" style="width: 14px; height: 14px;"></i>
                             <span>Detail</span>
                         </a>
                         @endcan
