@@ -22,6 +22,44 @@
     .status-btn { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); background: var(--hover-bg); color: var(--text-muted); }
     .status-btn.active-check { background: #dcfce7; color: #166534; border-color: #86efac; }
     .status-btn.active-cross { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+    @media (max-width: 960px) {
+        .show-header-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+        }
+        .show-header-percentage {
+            text-align: left !important;
+        }
+        .show-top-grid {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+        }
+        .show-objective-body {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .days-grid {
+            grid-template-columns: 1fr !important;
+        }
+        .day-col {
+            border-right: none !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            min-height: auto !important;
+        }
+        .day-col:last-child {
+            border-bottom: none !important;
+        }
+        .day-header {
+            padding: 10px 12px !important;
+        }
+        .day-col .section-body {
+            padding: 12px !important;
+        }
+    }
 </style>
 
 <div style="margin-bottom: 20px;">
@@ -39,22 +77,22 @@
 </div>
 
 <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+    <div class="show-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
         <div>
             <h3 style="margin-bottom: 4px;">Laporan Mingguan: {{ $user->name }}</h3>
             <p style="font-size: 13px; color: var(--text-muted);">Divisi: {{ optional($user->division)->name ?? '-' }} &nbsp;&bull;&nbsp; Minggu: {{ $report->week_start_date->format('d/m/Y') }}</p>
         </div>
-        <div style="text-align: right;">
+        <div class="show-header-percentage" style="text-align: right;">
             <div style="font-size: 14px; font-weight: 700; background: #10b981; color: white; padding: 6px 16px; border-radius: 8px;">
                 Penyelesaian: {{ $report->completion_percentage }}%
             </div>
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+    <div class="show-top-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
         <div class="section-box">
             <div class="section-header">Weekly Objective</div>
-            <div class="section-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
+            <div class="section-body show-objective-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
                 @for($i = 0; $i < 10; $i++)
                     @php $item = $report->items->where('type', 'objective')->values()->get($i); @endphp
                     @if($item)

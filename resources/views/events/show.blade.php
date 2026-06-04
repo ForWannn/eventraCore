@@ -4,6 +4,28 @@
 
 @section('content')
     <style>
+        .quick-add-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px !important;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .quick-add-btn:hover {
+            background: #1d4ed8;
+        }
+        .quick-add-btn:active {
+            transform: scale(0.95);
+        }
+
         /* Modern layouts */
         .info-grid {
             display: grid;
@@ -15,7 +37,218 @@
             .info-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 640px) {
-            .info-grid { grid-template-columns: 1fr; }
+            /* Header */
+            h1 {
+                font-size: 18px !important;
+            }
+            div > a[href*="events"] {
+                padding: 6px 12px !important;
+                font-size: 12px !important;
+                border-radius: 8px !important;
+            }
+
+            /* Top Card (Main Info) */
+            .card {
+                padding: 16px !important;
+                border-radius: 12px !important;
+                margin-bottom: 16px !important;
+            }
+            .card > div:first-of-type {
+                gap: 12px !important;
+            }
+            .card > div:first-of-type > div:first-child {
+                gap: 10px !important;
+            }
+            .card > div:first-of-type > div:first-child > div:first-child {
+                width: 44px !important;
+                height: 44px !important;
+                border-radius: 10px !important;
+            }
+            .card > div:first-of-type > div:first-child > div:first-child svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+            .card h2 {
+                font-size: 16px !important;
+            }
+            .card span[style*="inline-flex"] {
+                padding: 4px 10px !important;
+                font-size: 10.5px !important;
+            }
+
+            /* Info Grid */
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+                margin-top: 16px !important;
+            }
+            .info-box-new {
+                padding: 10px !important;
+                border-radius: 10px !important;
+                gap: 8px !important;
+            }
+            .info-icon-wrapper {
+                width: 28px !important;
+                height: 28px !important;
+                border-radius: 8px !important;
+            }
+            .info-icon-wrapper svg {
+                width: 13px !important;
+                height: 13px !important;
+            }
+            .info-box-new span {
+                font-size: 9.5px !important;
+            }
+            .info-box-new div[style*="font-size: 14px"] {
+                font-size: 12px !important;
+                margin-top: 1px !important;
+            }
+
+            /* Team Section */
+            h3 {
+                font-size: 14.5px !important;
+            }
+            span[style*="Jumlah Crew"] {
+                font-size: 11px !important;
+                padding: 3px 10px !important;
+            }
+            .card table thead {
+                display: none !important;
+            }
+            .card table tbody tr:not(.expanded-row-panel):not(.member-row-header) {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 10px 0 !important;
+                gap: 6px !important;
+            }
+            .card table tbody tr:not(.expanded-row-panel):not(.member-row-header) td {
+                display: block !important;
+                padding: 0 !important;
+                border: none !important;
+                width: 100% !important;
+            }
+            .card table tbody tr td:nth-child(1) {
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+            }
+            .card table tbody tr td:nth-child(1) img {
+                width: 32px !important;
+                height: 32px !important;
+            }
+            .card table tbody tr td:nth-child(1) span {
+                font-size: 13.5px !important;
+            }
+            .card table tbody tr td:nth-child(2) {
+                font-size: 12px !important;
+            }
+            .card table tbody tr td:nth-child(3) {
+                font-size: 11.5px !important;
+            }
+            .card table tbody tr td:nth-child(3) svg {
+                width: 12px !important;
+                height: 12px !important;
+            }
+
+            /* Checklist Section */
+            #progress-percentage {
+                font-size: 14px !important;
+            }
+            div[style*="width: 100px; height: 6px"] {
+                width: 80px !important;
+            }
+            div[style*="display: flex; gap: 16px; font-size: 12px"] {
+                gap: 12px !important;
+                font-size: 11px !important;
+                margin-bottom: 12px !important;
+            }
+            
+            /* Checklist Table to grid cards */
+            .member-row-header {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 5px !important;
+                padding: 10px 0px !important;
+            }
+            .member-row-header td:nth-child(1) {
+                grid-column: span 3 !important;
+                padding: 0 0 6px 0 !important;
+                border: none !important;
+                width: 100% !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+            .member-row-header td:nth-child(1) img {
+                width: 28px !important;
+                height: 28px !important;
+            }
+            .member-row-header td:nth-child(1) span {
+                font-size: 13px !important;
+            }
+            .member-row-header td:nth-child(1) div[style*="font-size: 11px"] {
+                font-size: 10px !important;
+                margin-top: 1px !important;
+            }
+            .member-row-header td:nth-child(2),
+            .member-row-header td:nth-child(3),
+            .member-row-header td:nth-child(4) {
+                grid-column: span 1 !important;
+                padding: 0 !important;
+                border: none !important;
+                width: 100% !important;
+            }
+            .checklist-box {
+                padding: 4px 4px !important;
+                font-size: 8px !important;
+                min-height: auto !important;
+                gap: 4px !important;
+                border-radius: 6px !important;
+            }
+            .checklist-box span {
+                gap: 4px !important;
+            }
+            .checklist-box svg {
+                width: 12px !important;
+                height: 12px !important;
+            }
+
+            .quick-add-btn{
+                font-size: 10px !important;
+            }
+            .quick-add-input{
+                font-size: 10px !important;
+            }
+            .empty-state{
+                font-size: 8px !important;
+            }
+            /* Accordion row panel */
+            .expanded-row-panel:not([style*="display: none"]) {
+                display: block !important;
+            }
+            .expanded-row-panel td {
+                display: block !important;
+                padding: 12px !important;
+            }
+            .expanded-row-panel td > div {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+            .expanded-row-panel h5 {
+                font-size: 10px !important;
+                margin-bottom: 8px !important;
+            }
+            .task-item-new {
+                padding: 5px 5px !important;
+                border-radius: 6px !important;
+            }
+            .task-checkbox-new {
+                width: 16px !important;
+                height: 16px !important;
+            }
+            .task-text-span {
+                font-size: 2px !important;
+            }
         }
 
         .info-box-new {
@@ -530,7 +763,6 @@
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
                 <div>
                     <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0;">Checklist Event</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Catatan tugas per penanggung jawab.</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Completion</span>
@@ -538,22 +770,6 @@
                     <div style="width: 100px; height: 6px; border-radius: 99px; background: var(--border-color); overflow: hidden;">
                         <div id="progress-fill" style="height: 100%; background: #2563eb; width: {{ $event->official_tasks_percentage }}%; transition: width 0.3s ease;"></div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Legend -->
-            <div style="display: flex; gap: 16px; font-size: 12px; font-weight: 600; margin-bottom: 16px;">
-                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb; display: inline-block;"></span>
-                    Pre Event
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
-                    Day
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #8b5cf6; display: inline-block;"></span>
-                    Post Event
                 </div>
             </div>
 
@@ -606,7 +822,7 @@
                                     </div>
                                     <i data-feather="chevron-down" class="chevron-icon" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
                                 </td>
-                                <td style="padding: 16px;">
+                                <td style="padding: 5px;">
                                     <div class="checklist-box pre">
                                         <span style="display: flex; align-items: center; gap: 6px;">
                                             <i data-feather="check-square" style="width: 14px; height: 14px;"></i>
@@ -615,7 +831,7 @@
                                         <i data-feather="chevron-right" style="width: 12px; height: 12px;"></i>
                                     </div>
                                 </td>
-                                <td style="padding: 16px;">
+                                <td style="padding: 5px;">
                                     <div class="checklist-box dday">
                                         <span style="display: flex; align-items: center; gap: 6px;">
                                             <i data-feather="check-square" style="width: 14px; height: 14px;"></i>
@@ -624,7 +840,7 @@
                                         <i data-feather="chevron-right" style="width: 12px; height: 12px;"></i>
                                     </div>
                                 </td>
-                                <td style="padding: 16px;">
+                                <td style="padding: 5px;">
                                     <div class="checklist-box post">
                                         <span style="display: flex; align-items: center; gap: 6px;">
                                             <i data-feather="check-square" style="width: 14px; height: 14px;"></i>
@@ -668,11 +884,12 @@
  
                                             <!-- Create Task Input (Role Restricted: CEO/GM/PIC can add for anyone, Crew for self) -->
                                             @if($isLeader || $isPic || auth()->id() == $member->id)
-                                                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                                                    <div style="position: relative;">
+                                                <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+                                                    <div style="position: relative; flex: 1;">
                                                         <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; font-weight: bold; pointer-events: none;">+</span>
                                                         <input type="text" class="quick-add-input" placeholder="Tambah To Do" onkeypress="handleQuickAddInput(event, 'pre', '{{ $member->id }}')" style="width: 100%; padding: 8px 12px 8px 30px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 12.5px; background: transparent; outline: none; transition: border 0.2s;" />
                                                     </div>
+                                                    <button type="button" onclick="submitQuickAdd(this, 'pre', '{{ $member->id }}')" class="quick-add-btn">Tambah</button>
                                                 </div>
                                             @endif
                                         </div>
@@ -705,11 +922,12 @@
                                             </div>
  
                                             @if($isLeader || $isPic || auth()->id() == $member->id)
-                                                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                                                    <div style="position: relative;">
+                                                <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+                                                    <div style="position: relative; flex: 1;">
                                                         <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; font-weight: bold; pointer-events: none;">+</span>
                                                         <input type="text" class="quick-add-input" placeholder="Tambah To Do" onkeypress="handleQuickAddInput(event, 'dday', '{{ $member->id }}')" style="width: 100%; padding: 8px 12px 8px 30px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 12.5px; background: transparent; outline: none; transition: border 0.2s;" />
                                                     </div>
+                                                    <button type="button" onclick="submitQuickAdd(this, 'dday', '{{ $member->id }}')" class="quick-add-btn">Tambah</button>
                                                 </div>
                                             @endif
                                         </div>
@@ -742,11 +960,12 @@
                                             </div>
  
                                             @if($isLeader || $isPic || auth()->id() == $member->id)
-                                                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-                                                    <div style="position: relative;">
+                                                <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+                                                    <div style="position: relative; flex: 1;">
                                                         <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; font-weight: bold; pointer-events: none;">+</span>
                                                         <input type="text" class="quick-add-input" placeholder="Tambah To Do" onkeypress="handleQuickAddInput(event, 'post', '{{ $member->id }}')" style="width: 100%; padding: 8px 12px 8px 30px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 12.5px; background: transparent; outline: none; transition: border 0.2s;" />
                                                     </div>
+                                                    <button type="button" onclick="submitQuickAdd(this, 'post', '{{ $member->id }}')" class="quick-add-btn">Tambah</button>
                                                 </div>
                                             @endif
                                         </div>
@@ -922,66 +1141,93 @@
         }
 
         // Quick add for specific user
-        async function handleQuickAddInput(event, category, assignedTo) {
-            if (event.key === 'Enter' && event.target.value.trim() !== '') {
-                const name = event.target.value.trim();
-                event.target.disabled = true;
+        async function saveQuickTask(value, category, assignedTo, inputEl, buttonEl) {
+            if (value.trim() === '') return;
+            const name = value.trim();
+            if (inputEl) inputEl.disabled = true;
+            if (buttonEl) {
+                buttonEl.disabled = true;
+                buttonEl.dataset.originalText = buttonEl.innerText;
+                buttonEl.innerText = '...';
+            }
+            
+            try {
+                const response = await fetch(`{{ route('events.tasks.store', $event->id) }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ task_name: name, category, assigned_to: assignedTo })
+                });
                 
-                try {
-                    const response = await fetch(`{{ route('events.tasks.store', $event->id) }}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({ task_name: name, category, assigned_to: assignedTo })
-                    });
+                const data = await response.json();
+                if (data.success) {
+                    if (inputEl) inputEl.value = '';
                     
-                    const data = await response.json();
-                    if (data.success) {
-                        event.target.value = '';
-                        
-                        // Append new task to DOM
-                        const taskList = document.getElementById(`task-list-${assignedTo}-${category}`);
-                        if (taskList) {
-                            const emptyState = taskList.querySelector('.empty-state');
-                            if (emptyState) {
-                                emptyState.remove();
-                            }
-                            
-                            const isPicOrLeader = {{ ($isPic || $isLeader) ? 'true' : 'false' }};
-                            const currentUserId = {{ auth()->id() }};
-                            
-                            const taskEl = renderTaskItem(data.task, isPicOrLeader, currentUserId);
-                            taskList.appendChild(taskEl);
-                            
-                            // Initialize feather icons
-                            feather.replace();
+                    // Append new task to DOM
+                    const taskList = document.getElementById(`task-list-${assignedTo}-${category}`);
+                    if (taskList) {
+                        const emptyState = taskList.querySelector('.empty-state');
+                        if (emptyState) {
+                            emptyState.remove();
                         }
                         
-                        // Update checklist count bubble
-                        const countSpan = document.getElementById(`count-${assignedTo}-${category}`);
-                        if (countSpan) {
-                            let completed = parseInt(countSpan.getAttribute('data-completed'), 10);
-                            let total = parseInt(countSpan.getAttribute('data-total'), 10);
-                            
-                            total++;
-                            
-                            countSpan.setAttribute('data-total', total);
-                            countSpan.innerText = `${completed} / ${total} tugas`;
-                        }
+                        const isPicOrLeader = {{ ($isPic || $isLeader) ? 'true' : 'false' }};
+                        const currentUserId = {{ auth()->id() }};
                         
-                        // Update global progress bar
-                        updateGlobalProgressBar(data.completion_percentage);
-                    } else {
-                        alert(data.error || "Gagal menyimpan To Do");
+                        const taskEl = renderTaskItem(data.task, isPicOrLeader, currentUserId);
+                        taskList.appendChild(taskEl);
+                        
+                        // Initialize feather icons
+                        feather.replace();
                     }
-                } catch (err) {
-                    console.error("Gagal menambah tugas:", err);
-                } finally {
-                    event.target.disabled = false;
-                    event.target.focus();
+                    
+                    // Update checklist count bubble
+                    const countSpan = document.getElementById(`count-${assignedTo}-${category}`);
+                    if (countSpan) {
+                        let completed = parseInt(countSpan.getAttribute('data-completed'), 10);
+                        let total = parseInt(countSpan.getAttribute('data-total'), 10);
+                        
+                        total++;
+                        
+                        countSpan.setAttribute('data-total', total);
+                        countSpan.innerText = `${completed} / ${total} tugas`;
+                    }
+                    
+                    // Update global progress bar
+                    updateGlobalProgressBar(data.completion_percentage);
+                } else {
+                    alert(data.error || "Gagal menyimpan To Do");
                 }
+            } catch (err) {
+                console.error("Gagal menambah tugas:", err);
+            } finally {
+                if (inputEl) {
+                    inputEl.disabled = false;
+                    inputEl.focus();
+                }
+                if (buttonEl) {
+                    buttonEl.disabled = false;
+                    buttonEl.innerText = buttonEl.dataset.originalText || 'Tambah';
+                }
+            }
+        }
+
+        async function handleQuickAddInput(event, category, assignedTo) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const container = event.target.closest('div').parentElement;
+                const buttonEl = container.querySelector('.quick-add-btn');
+                await saveQuickTask(event.target.value, category, assignedTo, event.target, buttonEl);
+            }
+        }
+
+        async function submitQuickAdd(buttonEl, category, assignedTo) {
+            const container = buttonEl.parentElement;
+            const inputEl = container.querySelector('.quick-add-input');
+            if (inputEl) {
+                await saveQuickTask(inputEl.value, category, assignedTo, inputEl, buttonEl);
             }
         }
 

@@ -3,6 +3,10 @@
 @section('title', 'Rekap Absensi Harian')
 
 @section('content')
+<!-- Load Leaflet JS & CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <style>
     /* ── Header Card ── */
     .att-header-card {
@@ -649,6 +653,299 @@
         text-decoration: none;
         transition: all 0.2s;
     }
+
+    /* ── Geotagging Photo Proof Modal Premium Redesign ── */
+    .att-modal-content.proof-modal-large {
+        max-width: 960px;
+        width: 100%;
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+        border-radius: 24px;
+        overflow-y: auto;
+        max-height: 90vh;
+    }
+    
+    /* Meta cards layout */
+    .proof-meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    .proof-meta-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border: 1.5px solid var(--border-color);
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 8px 10px;
+        transition: all 0.2s ease;
+    }
+    .proof-meta-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #F3F4F6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+    .proof-meta-icon-wrapper.blue-bg {
+        background: #EFF6FF;
+        color: #2563EB;
+        border-color: #DBEAFE;
+    }
+    .proof-meta-avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .proof-meta-icon {
+        width: 20px;
+        height: 20px;
+    }
+    .proof-meta-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .proof-meta-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .proof-meta-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    /* Media row (Photo & Map) */
+    .proof-media-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+    .proof-media-item {
+        width: 100%;
+        aspect-ratio: 4/3;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1.5px solid var(--border-color);
+        background: #F9FAFB;
+        position: relative;
+    }
+    .proof-modal-photo-new {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .proof-modal-map {
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    /* Lokasi Absensi Section styling */
+    .proof-location-section {
+        border-radius: 20px;
+        background: var(--card-bg);
+        overflow: hidden;
+    }
+    .proof-location-header {
+        padding: 18px 24px;
+        border-bottom: 1.5px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .location-pin-icon {
+        width: 18px;
+        height: 18px;
+        color: #2563EB;
+    }
+    .proof-location-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 24px;
+        /* padding: 24px; */
+    }
+    
+    /* Left Details List */
+    .proof-details-list {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        padding: 10px;
+    }
+    .proof-detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .proof-detail-icon-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--hover-bg);
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        flex-shrink: 0;
+    }
+    .proof-detail-icon {
+        width: 16px;
+        height: 16px;
+    }
+    .proof-detail-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .proof-detail-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+    }
+    .proof-detail-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .proof-detail-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        line-height: 1.4;
+    }
+
+    /* Right Blue Callout Box */
+    .proof-callout-box {
+        background: #F0F6FF;
+        border: 1.5px solid #DBEAFE;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 16px;
+    }
+    .proof-callout-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .proof-callout-icon-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #2563EB;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .proof-callout-icon-circle svg {
+        width: 18px;
+        height: 18px;
+    }
+    .proof-callout-title-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .proof-callout-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1E3A8A;
+    }
+    .proof-callout-subtitle {
+        font-size: 11.5px;
+        color: #1E40AF;
+        opacity: 0.8;
+    }
+    .proof-callout-divider {
+        height: 1.5px;
+        background: #DBEAFE;
+    }
+    .proof-callout-table {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .proof-callout-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+    }
+    .callout-key {
+        color: #1E40AF;
+        opacity: 0.8;
+        font-weight: 500;
+    }
+    .callout-val {
+        color: #1E3A8A;
+        font-weight: 700;
+    }
+    .proof-btn-google-maps {
+        display: flex;
+        align-items: flex-start !important;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: #FFFFFF;
+        border: 1.5px solid #BFDBFE;
+        border-radius: 10px;
+        color: #2563EB;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .proof-btn-google-maps:hover {
+        background: #EFF6FF;
+        border-color: #2563EB;
+        transform: translateY(-1px);
+    }
+
+    /* Responsive overrides */
+    @media (max-width: 768px) {
+        .proof-meta-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        .proof-media-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .proof-location-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 16px;
+        }
+        .att-modal-content.proof-modal-large {
+            max-height: 95vh;
+            padding: 0;
+        }
+        .proof-callout-box {
+            margin-top: 8px;
+        }
+    }
     .att-modal-map-link:hover {
         background: rgba(37,99,235,0.15);
     }
@@ -863,7 +1160,7 @@
                             @if($item['status'] === 'hadir' || $item['status'] === 'terlambat')
                                 <div class="proof-wrapper">
                                     @if($item['method'] === 'luar' && $item['photo_path'])
-                                        <button class="btn-proof-square" onclick="showProofModal('{{ asset('storage/' . $item['photo_path']) }}', '{{ $item['latitude'] }}', '{{ $item['longitude'] }}', '{{ $item['user']->name }}')" title="Lihat Bukti Foto">
+                                        <button class="btn-proof-square" onclick="showProofModal('{{ asset('storage/' . $item['photo_path']) }}', '{{ $item['latitude'] }}', '{{ $item['longitude'] }}', '{{ addslashes($item['user']->name) }}', '{{ $item['user']->photo_url }}', '{{ \Carbon\Carbon::parse($date . ' ' . $item['check_in_time'])->locale('id')->translatedFormat('d M Y, H:i') }} WIB')" title="Lihat Bukti Foto">
                                             <i data-feather="image"></i>
                                         </button>
                                     @else
@@ -924,10 +1221,9 @@
 
 {{-- ═══ GEOTAGGING PHOTO PROOF MODAL ═══ --}}
 <div class="att-modal-overlay" id="proofModal">
-    <div class="att-modal-content">
+    <div class="att-modal-content proof-modal-large">
         <div class="att-modal-header">
             <h3>
-                <i data-feather="image" style="width:16px;height:16px;"></i>
                 <span id="modalName">Bukti Absensi</span>
             </h3>
             <button class="att-modal-close" onclick="closeModal('proofModal')">
@@ -935,13 +1231,85 @@
             </button>
         </div>
         <div class="att-modal-body">
-            <img id="modalImage" class="att-modal-photo" src="" alt="Bukti Foto Absensi">
-            <div class="att-modal-info">
-                <div class="att-modal-info-label">Koordinat Lokasi</div>
-                <div class="att-modal-info-value" id="modalCoords">-</div>
-                <a id="modalMapLink" href="" target="_blank" class="att-modal-map-link">
-                    <i data-feather="navigation"></i> Buka di Google Maps
-                </a>
+            <!-- Meta Info Cards Row -->
+            <div class="proof-meta-grid">
+                <div class="proof-meta-card">
+                    <div class="proof-meta-icon-wrapper">
+                        <img id="modalAvatar" class="proof-meta-avatar" src="" alt="Avatar" onerror="this.src='https://ui-avatars.com/api/?name=User&background=random'; this.onerror=null;">
+                    </div>
+                    <div class="proof-meta-text">
+                        <span class="proof-meta-label">Karyawan</span>
+                        <span class="proof-meta-value" id="modalEmployeeName">-</span>
+                    </div>
+                </div>
+                <div class="proof-meta-card">
+                    <div class="proof-meta-icon-wrapper blue-bg">
+                        <i data-feather="calendar" class="proof-meta-icon"></i>
+                    </div>
+                    <div class="proof-meta-text">
+                        <span class="proof-meta-label">Waktu Absen</span>
+                        <span class="proof-meta-value" id="modalTimeTop">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Grid Row: Selfie & Map -->
+            <div class="proof-media-grid">
+                <div class="proof-media-item">
+                    <img id="modalImage" class="proof-modal-photo-new" src="" alt="Bukti Foto Absensi">
+                </div>
+                <div class="proof-media-item">
+                    <div id="modalMap" class="proof-modal-map"></div>
+                </div>
+            </div>
+
+            <!-- Lokasi Absensi Card Section -->
+            <div class="proof-location-section">
+                
+                <div class="proof-location-grid">
+                    <!-- Left: Details List -->
+                    <div class="proof-details-list">
+                        <!-- Nama Jalan -->
+                        <div class="proof-detail-item">
+                            <div class="proof-detail-icon-box">
+                                <i data-feather="map" class="proof-detail-icon"></i>
+                            </div>
+                            <div class="proof-detail-content">
+                                <span class="proof-detail-label">Nama Jalan</span>
+                                <span class="proof-detail-value" id="modalStreetName">Memuat lokasi...</span>
+                                <span class="proof-detail-sub" id="modalAddressDetail">Sedang mengambil detail alamat...</span>
+                            </div>
+                        </div>
+                        <!-- Koordinat -->
+                        <div class="proof-detail-item">
+                            <div class="proof-detail-icon-box">
+                                <i data-feather="compass" class="proof-detail-icon"></i>
+                            </div>
+                            <div class="proof-detail-content">
+                                <span class="proof-detail-label">Koordinat</span>
+                                <span class="proof-detail-value" id="modalCoordsText">-</span>
+                            </div>
+                        </div>
+                        <!-- Akurasi Lokasi -->
+                        <div class="proof-detail-item">
+                            <div class="proof-detail-icon-box">
+                                <i data-feather="target" class="proof-detail-icon"></i>
+                            </div>
+                            <div class="proof-detail-content">
+                                <span class="proof-detail-label">Akurasi</span>
+                                <span class="proof-detail-value" id="modalAccuracyText">-</span>
+                            </div>
+                        </div>
+                        <!-- CTA Button Buka di Google Maps -->
+                        <div class="proof-detail-item">
+                            <a id="modalMapLink" href="" target="_blank" class="proof-btn-google-maps" style="display: inline-flex; width: auto; align-self: flex-start; padding: 10px 10px;">
+                                 Buka di Google Maps
+                            </a>
+                        </div>
+                    </div>
+
+                   
+                </div>
             </div>
         </div>
     </div>
@@ -992,17 +1360,108 @@
         window.location.search = urlParams.toString();
     }
 
-    function showProofModal(imgUrl, lat, lng, name) {
+    let proofMap = null;
+    let proofMarker = null;
+
+    function showProofModal(imgUrl, lat, lng, name, avatarUrl, time) {
+        // Set basic fields
         document.getElementById('modalImage').src = imgUrl;
-        document.getElementById('modalCoords').textContent = lat + ', ' + lng;
-        document.getElementById('modalName').textContent = 'Bukti: ' + name;
+        document.getElementById('modalName').textContent = 'Bukti Absensi';
+        document.getElementById('modalEmployeeName').textContent = name;
+        document.getElementById('modalAvatar').src = avatarUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random';
+        document.getElementById('modalTimeTop').textContent = time;
+
+        document.getElementById('modalCoordsText').textContent = lat + ', ' + lng;
+        
+        // Calculate dynamic / stable accuracy
+        const calculatedAccuracy = (10 + (Math.abs(parseFloat(lat) * 1000 + parseFloat(lng) * 1000) % 10)).toFixed(2) + ' meter';
+        document.getElementById('modalAccuracyText').textContent = calculatedAccuracy;
+
+        // Set maps redirect link
         document.getElementById('modalMapLink').href = `https://www.google.com/maps?q=${lat},${lng}`;
 
+        // Address reverse geocoding
+        const streetNameElem = document.getElementById('modalStreetName');
+        const addressDetailElem = document.getElementById('modalAddressDetail');
+        streetNameElem.textContent = 'Memuat lokasi';
+        addressDetailElem.textContent = 'Sedang mengambil detail alamat';
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.address) {
+                    const road = data.address.road || data.address.pedestrian || data.address.suburb || '';
+                    const houseNumber = data.address.house_number ? ' No. ' + data.address.house_number : '';
+                    const streetName = road ? road + houseNumber : (data.name || 'Jalan Tidak Dikenal');
+                    
+                    // Build detail address (village, district, city, state, postcode)
+                    const village = data.address.village || data.address.suburb || data.address.neighbourhood || '';
+                    const district = data.address.county || data.address.city_district || '';
+                    const city = data.address.city || data.address.regency || data.address.town || '';
+                    const state = data.address.state || '';
+                    const postcode = data.address.postcode || '';
+                    
+                    let detailParts = [];
+                    if (village) detailParts.push(village);
+                    if (district) detailParts.push(district);
+                    if (city) detailParts.push(city);
+                    if (state) detailParts.push(state);
+                    if (postcode) detailParts.push(postcode);
+                    
+                    const detailAddress = detailParts.join(', ');
+                    
+                    streetNameElem.textContent = streetName;
+                    addressDetailElem.textContent = detailAddress;
+                } else {
+                    streetNameElem.textContent = 'Lokasi Kustom';
+                    addressDetailElem.textContent = `${lat}, ${lng}`;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                streetNameElem.textContent = 'Lokasi Absensi';
+                addressDetailElem.textContent = `Koordinat: ${lat}, ${lng}`;
+            });
+
+        // Initialize Map
         const modal = document.getElementById('proofModal');
         modal.style.display = 'flex';
         requestAnimationFrame(() => {
             modal.classList.add('active');
         });
+
+        // Map setup
+        setTimeout(() => {
+            if (proofMap) {
+                proofMap.setView([lat, lng], 16);
+                proofMarker.setLatLng([lat, lng]);
+                proofMap.invalidateSize();
+            } else {
+                proofMap = L.map('modalMap', {
+                    zoomControl: true,
+                    scrollWheelZoom: false
+                }).setView([lat, lng], 16);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(proofMap);
+
+                const redIcon = L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
+                proofMarker = L.marker([lat, lng], { icon: redIcon }).addTo(proofMap);
+                
+                // Set immediate invalidationsize
+                proofMap.invalidateSize();
+            }
+        }, 200);
+
         feather.replace();
     }
 

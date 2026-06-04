@@ -62,7 +62,7 @@
     @media (max-width: 1200px) {
         .days-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
         .days-grid { grid-template-columns: 1fr; }
     }
     
@@ -245,6 +245,101 @@
         gap: 10px;
         width: 100%;
     }
+
+    @media (max-width: 768px) {
+        .day-col {
+            min-height: auto !important;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .weekly-header-container {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+            margin-bottom: 20px !important;
+        }
+        .weekly-header-title-block {
+            gap: 12px !important;
+        }
+        .weekly-header-icon-box {
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 10px !important;
+        }
+        .weekly-header-icon-box svg {
+            width: 18px !important;
+            height: 18px !important;
+        }
+        .weekly-header-title {
+            font-size: 16px !important;
+        }
+        .weekly-header-subtitle {
+            font-size: 10px !important;
+            margin-top: 2px !important;
+        }
+        .weekly-header-actions {
+            width: 100% !important;
+            justify-content: space-between !important;
+        }
+        .weekly-header-actions button, .weekly-header-actions div {
+            flex: 1 !important;
+            text-align: center !important;
+            justify-content: center !important;
+        }
+        
+        .section-box {
+            margin-bottom: 16px !important;
+            border-radius: 12px !important;
+        }
+        .section-header {
+            padding: 10px 12px !important;
+            font-size: 12px !important;
+        }
+        .section-body {
+            padding: 12px !important;
+        }
+        
+        .day-col {
+            margin-bottom: 16px !important;
+            border-radius: 12px !important;
+        }
+        .day-header {
+            padding: 12px !important;
+            gap: 10px !important;
+        }
+        .day-date {
+            font-size: 24px !important;
+        }
+        .day-body {
+            padding: 12px !important;
+        }
+        .input-line {
+            font-size: 12px !important;
+            padding: 6px 0 !important;
+        }
+        .btn-add-task {
+            padding: 8px !important;
+            margin-top: 12px !important;
+            border-radius: 8px !important;
+        }
+        .btn-save-plan {
+            /* padding: 5px 10px !important; */
+            font-size: 10px !important;
+            border-radius: 8px !important;
+        }
+        .btn-submit-final {
+            width: 100% !important;
+            padding: 10px 24px !important;
+            font-size: 13px !important;
+            border-radius: 8px !important;
+            justify-content: center !important;
+        }
+        .weekly-footer-actions {
+            margin-top: 16px !important;
+            margin-bottom: 24px !important;
+        }
+    }
 </style>
 
 <div>
@@ -283,21 +378,21 @@
     @endif
 
     <!-- Header Section -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="width: 48px; height: 48px; border: 1px solid #dbeafe; border-radius: 12px; background: rgba(37, 99, 235, 0.08); display: flex; align-items: center; justify-content: center;">
+    <div class="weekly-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+        <div class="weekly-header-title-block" style="display: flex; align-items: center; gap: 16px;">
+            <div class="weekly-header-icon-box" style="width: 48px; height: 48px; border: 1px solid #dbeafe; border-radius: 12px; background: rgba(37, 99, 235, 0.08); display: flex; align-items: center; justify-content: center;">
                 <i data-feather="calendar" style="width: 24px; height: 24px; color: #2563eb;"></i>
             </div>
             <div>
-                <h2 style="font-size: 22px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.5px;">Weekly Report Planner</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0; display: flex; align-items: center; gap: 6px; font-weight: 500;">
+                <h2 class="weekly-header-title" style="font-size: 22px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.5px;">Weekly Report Planner</h2>
+                <p class="weekly-header-subtitle" style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0; display: flex; align-items: center; gap: 6px; font-weight: 500;">
                     <i data-feather="calendar" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
                     Minggu, {{ \Carbon\Carbon::parse($report->week_start_date)->locale('id')->translatedFormat('d M Y') }} – {{ \Carbon\Carbon::parse($report->week_start_date)->addDays(4)->locale('id')->translatedFormat('d M Y') }}
                 </p>
             </div>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="weekly-header-actions" style="display: flex; align-items: center; gap: 12px;">
             <div style="font-size: 11px; padding: 6px 14px; border-radius: 8px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
                 {{ $report->status }}
             </div>
@@ -438,7 +533,7 @@
         </div>
 
         <!-- Submit Button Row -->
-        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px; margin-bottom: 40px;">
+        <div class="weekly-footer-actions" style="display: flex; justify-content: flex-end; align-items: center; margin-top: 24px; margin-bottom: 40px;">
             @if($report->status !== 'submitted')
                 <button type="submit" class="btn-submit-final">
                     <!-- <i data-feather="send" style="width: 16px; height: 16px;"></i> -->

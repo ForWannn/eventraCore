@@ -15,7 +15,45 @@
         .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 640px) {
-        .admin-stats-grid { grid-template-columns: 1fr; }
+        .admin-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .admin-stat-card {
+            padding: 12px !important;
+            border-radius: 10px !important;
+            min-height: auto !important;
+            gap: 8px !important;
+        }
+        .admin-stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+        }
+        .admin-stat-icon svg {
+            width: 16px !important;
+            height: 16px !important;
+        }
+        .admin-stat-value {
+            font-size: 20px !important;
+            margin-top: 2px !important;
+        }
+        .admin-stat-label {
+            font-size: 9.5px !important;
+        }
+        .admin-panel {
+            padding: 14px !important;
+            border-radius: 12px !important;
+            margin-bottom: 16px !important;
+        }
+        .panel-header {
+            margin-bottom: 12px !important;
+        }
+        .panel-title {
+            font-size: 13.5px !important;
+        }
     }
 
     .admin-stat-card {

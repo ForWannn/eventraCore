@@ -601,7 +601,7 @@
                <a href="{{ route('events.index') }}"
                    class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
                    <i data-feather="calendar"></i> 
-                   <span>{{ Auth::user()->can('crud_events') ? 'Daftar Event' : 'My Events' }}</span>
+                   <span>{{ Auth::user()->can('crud_events') ? 'Daftar Event' : 'Event' }}</span>
                </a>
 
                <!-- SECTION 2: PENGATURAN -->

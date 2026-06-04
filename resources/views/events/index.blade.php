@@ -15,7 +15,152 @@
         .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 640px) {
-        .stats-grid { grid-template-columns: 1fr; }
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .stat-card {
+            padding: 12px !important;
+            border-radius: 10px !important;
+            min-height: auto !important;
+            gap: 8px !important;
+        }
+        .stat-card .stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+        }
+        .stat-card .stat-icon svg,
+        .stat-card .stat-icon i {
+            width: 16px !important;
+            height: 16px !important;
+        }
+        .stat-card .stat-label {
+            font-size: 10px !important;
+        }
+        .stat-card .stat-value {
+            font-size: 20px !important;
+            margin-top: 2px !important;
+        }
+        .stat-card .stat-sub {
+            font-size: 10px !important;
+            margin-top: 1px !important;
+        }
+
+        /* Card Content */
+        .card {
+            padding: 16px !important;
+            border-radius: 12px !important;
+        }
+        .card > div:first-of-type {
+            margin-bottom: 16px !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+        }
+        .card h2 {
+            font-size: 16px !important;
+        }
+        .card form {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+            width: 100% !important;
+        }
+        .card form select.filter-select {
+            width: 100% !important;
+            padding: 8px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+        }
+        .card form a.btn-create {
+            grid-column: span 2 !important;
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+            border-radius: 8px !important;
+            margin-top: 4px !important;
+        }
+
+        /* Table to Stack Card layout */
+        .table-container {
+            border: none !important;
+            overflow: visible !important;
+        }
+        table, thead, tbody, th, td, tr {
+            display: block !important;
+        }
+        thead {
+            display: none !important;
+        }
+        .event-row {
+            background: var(--bg-color) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px !important;
+            padding: 14px !important;
+            margin-bottom: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
+        [data-theme="dark"] .event-row {
+            background: rgba(30, 41, 59, 0.2) !important;
+        }
+        .event-row td {
+            padding: 0 !important;
+            border: none !important;
+            width: 100% !important;
+        }
+        
+        .event-row td:nth-child(1) {
+            order: 1;
+        }
+        .event-row td:nth-child(1) span {
+            font-size: 13.5px !important;
+        }
+        .event-row td:nth-child(2) {
+            order: 2;
+            padding-top: 8px !important;
+            border-top: 1px dashed var(--border-color) !important;
+            font-size: 12.5px !important;
+        }
+        .event-row td:nth-child(3) {
+            order: 3;
+            padding-top: 8px !important;
+        }
+        .event-row td:nth-child(4) {
+            order: 4;
+            font-size: 12.5px !important;
+        }
+        .event-row td:nth-child(5) {
+            order: 5;
+        }
+        .event-row td:nth-child(6) {
+            order: 6;
+            padding-top: 8px !important;
+            border-top: 1px solid var(--border-color) !important;
+            display: flex !important;
+            justify-content: flex-end !important;
+        }
+        .event-row td:nth-child(6) a {
+            width: 100% !important;
+            justify-content: center !important;
+            background: var(--hover-bg) !important;
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
+            text-align: center !important;
+        }
+
+        .pagination-container {
+            margin-top: 16px !important;
+            padding-top: 12px !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
     }
 
     .stat-card {
@@ -61,7 +206,7 @@
         font-size: 12px;
         color: var(--text-muted);
         font-weight: 600;
-        text-transform: uppercase;
+        text-transform: capitalize;   
         letter-spacing: 0.5px;
     }
     .stat-card .stat-value {
@@ -226,8 +371,8 @@
         <div class="stat-icon blue"><i data-feather="calendar"></i></div>
         <div class="stat-card-content">
             <span class="stat-label">Total Event</span>
-            <span class="stat-value">{{ $events->count() }}</span>
-            <span class="stat-sub">event bulan ini</span>
+            <span class="stat-value">{{ $events->count() }} <span class="stat-sub">event bulan ini</span></span>
+            
         </div>
     </div>
 
@@ -236,8 +381,8 @@
         <div class="stat-icon amber"><i data-feather="play-circle"></i></div>
         <div class="stat-card-content">
             <span class="stat-label">Ongoing</span>
-            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'ongoing')->count() }}</span>
-            <span class="stat-sub">sedang berjalan</span>
+            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'ongoing')->count() }} <span class="stat-sub">sedang berjalan</span></span>
+             
         </div>
     </div>
 
@@ -246,8 +391,8 @@
         <div class="stat-icon violet"><i data-feather="clock"></i></div>
         <div class="stat-card-content">
             <span class="stat-label">Upcoming</span>
-            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'upcoming')->count() }}</span>
-            <span class="stat-sub">akan datang</span>
+            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'upcoming')->count() }} <span class="stat-sub">akan datang</span></span>
+             
         </div>
     </div>
 
@@ -256,8 +401,8 @@
         <div class="stat-icon emerald"><i data-feather="check-circle"></i></div>
         <div class="stat-card-content">
             <span class="stat-label">Completed</span>
-            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'completed')->count() }}</span>
-            <span class="stat-sub">telah selesai</span>
+            <span class="stat-value">{{ $events->filter(fn($e) => $e->status === 'completed')->count() }} <span class="stat-sub">telah selesai</span></span>
+             
         </div>
     </div>
 </div>
@@ -450,7 +595,7 @@
 
         // Show only matching rows on the current page
         for (let i = startIdx; i < endIdx; i++) {
-            eventRows[i].style.display = 'table-row';
+            eventRows[i].style.display = '';
         }
 
         renderPagination(totalItems, totalPages, startIdx + 1, endIdx);

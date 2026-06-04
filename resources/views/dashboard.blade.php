@@ -310,27 +310,27 @@
         border: none !important;
     }
     .fc-event-ongoing {
-        background-color: rgba(37, 99, 235, 0.1) !important;
+        background-color: rgba(37, 99, 235, 0.7) !important;
         color: #1e40af !important;
     }
     .fc-event-upcoming {
-        background-color: rgba(245, 158, 11, 0.1) !important;
-        color: #b27300 !important;
+        background-color: rgba(245, 158, 11, 0.7) !important;
+        color: #cb8400ff !important;
     }
     .fc-event-completed {
-        background-color: rgba(16, 185, 129, 0.1) !important;
+        background-color: rgba(16, 185, 129, 0.7) !important;
         color: #065f46 !important;
     }
     [data-theme="dark"] .fc-event-ongoing {
-        background-color: rgba(37, 99, 235, 0.2) !important;
+        background-color: rgba(37, 99, 235, 0.7) !important;
         color: #93c5fd !important;
     }
     [data-theme="dark"] .fc-event-upcoming {
-        background-color: rgba(245, 158, 11, 0.2) !important;
+        background-color: rgba(245, 159, 11, 0.7) !important;
         color: #fde047 !important;
     }
     [data-theme="dark"] .fc-event-completed {
-        background-color: rgba(16, 185, 129, 0.2) !important;
+        background-color: rgba(16, 185, 129, 0.7) !important;
         color: #6ee7b7 !important;
     }
 
@@ -570,9 +570,367 @@
     }
 
     @media (max-width: 640px) {
-        .stat-card .stat-value { font-size: 26px; }
-        .welcome-banner { padding: 24px; }
-        .welcome-banner h3 { font-size: 18px; }
+        /* Header */
+        .dashboard-header-container {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 16px !important;
+            gap: 8px !important;
+        }
+        .dashboard-header-container h1 {
+            font-size: 16px !important;
+        }
+        .btn-filter {
+            padding: 6px 10px !important;
+            font-size: 11px !important;
+            border-radius: 8px !important;
+        }
+        .btn-filter svg {
+            width: 12px !important;
+            height: 12px !important;
+        }
+
+        /* Stats Grid & Cards */
+        .stats-grid, .stats-grid-3 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .stats-grid-3 > div:nth-child(3) {
+            grid-column: span 2 !important;
+        }
+
+        .stat-card {
+            padding: 12px !important;
+            border-radius: 10px !important;
+            min-height: auto !important;
+            margin-bottom: 0 !important;
+        }
+        .stat-card-left {
+            gap: 6px !important;
+        }
+        .stat-card-header {
+            margin-bottom: 4px !important;
+            gap: 6px !important;
+        }
+        .stat-card .stat-icon {
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+        }
+        .stat-card .stat-icon svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .stat-card .stat-label {
+            font-size: 10px !important;
+        }
+        .stat-card .stat-value {
+            font-size: 20px !important;
+            margin-top: 0 !important;
+        }
+        .stat-card .stat-value span {
+            font-size: 11px !important;
+        }
+        .stat-card .stat-sub {
+            font-size: 9.5px !important;
+            margin-top: 1px !important;
+        }
+        .stat-card .stat-trend-container {
+            margin-top: 4px !important;
+            gap: 4px !important;
+        }
+        .stat-trend-badge {
+            font-size: 9px !important;
+            padding: 1px 4px !important;
+            border-radius: 4px !important;
+        }
+        .stat-trend-badge svg {
+            width: 8px !important;
+            height: 8px !important;
+        }
+        .stat-trend-text {
+            font-size: 9px !important;
+        }
+
+        /* Smart Banners */
+        .smart-banner {
+            padding: 10px 14px !important;
+            border-radius: 10px !important;
+            margin-bottom: 12px !important;
+            gap: 8px !important;
+        }
+        .smart-banner div {
+            font-size: 11px !important;
+        }
+        .smart-banner svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+
+        /* Status Event */
+        .section-card {
+            padding: 14px !important;
+            border-radius: 12px !important;
+            margin-bottom: 16px !important;
+        }
+        .section-card .section-header {
+            margin-bottom: 12px !important;
+        }
+        .section-card .section-title {
+            font-size: 10px !important;
+        }
+        .status-section-grid {
+            grid-template-columns: 1fr auto !important;
+            gap: 12px !important;
+            align-items: center !important;
+        }
+        .status-summary-cols {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
+        }
+        .status-col-item {
+            gap: 4px !important;
+        }
+        .status-col-header {
+            font-size: 7px !important;
+            gap: 4px !important;
+        }
+        .status-col-header .dot {
+            width: 3px !important;
+            height: 3px !important;
+        }
+        .status-col-value-group {
+            gap: 4px !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        .status-col-value {
+            font-size: 18px !important;
+        }
+        .status-col-label {
+            font-size: 7px !important;
+        }
+        .status-donut-wrapper {
+            gap: 8px !important;
+        }
+        .donut-chart-container {
+            width: 48px !important;
+            height: 48px !important;
+        }
+        .donut-chart-container svg {
+            width: 48px !important;
+            height: 48px !important;
+        }
+        .donut-chart-container span {
+            font-size: 12px !important;
+        }
+        .status-donut-wrapper div:last-child span:first-child {
+            font-size: 11px !important;
+        }
+        .status-donut-wrapper div:last-child span:last-child {
+            font-size: 9.5px !important;
+        }
+
+        .attendance-redesign-layout.not-checked-in{
+            flex-direction: column !important;
+        }
+        
+        .attendance-redesign-layout.not-checked-in .digital-clock-container p{
+            font-size: 8px !important;
+        }
+
+        .digital-clock-container .digital-clock{
+            font-size: 15px !important;
+        }
+
+        .badge{
+            font-size: 10px !important;
+        }
+
+        .btn-checkin-large{
+            font-size: 10px !important;
+            max-width: 120px !important;
+            padding: 8px 16px !important;
+            border-radius: 8px !important;
+            
+        }
+        /* Attendance Hari Ini */
+        .attendance-redesign-layout {
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 16px !important;
+            padding: 8px 0 !important;
+        }
+        .attendance-circle-container {
+            width: 90px !important;
+            height: 90px !important;
+        }
+        .progress-ring-wrapper {
+            width: 90px !important;
+            height: 90px !important;
+        }
+        .progress-ring-wrapper svg {
+            transform: scale(0.75) rotate(-90deg) !important;
+            transform-origin: center !important;
+            position: absolute !important;
+            top: -15px !important;
+            left: -15px !important;
+        }
+        .progress-ring-text {
+            position: relative !important;
+        }
+        .work-time-counter {
+            font-size: 12px !important;
+        }
+        .work-time-label {
+            font-size: 7px !important;
+            margin-top: 1px !important;
+        }
+        .work-time-target {
+            font-size: 8px !important;
+            margin-top: 1px !important;
+        }
+        .attendance-details-grid {
+            grid-template-columns: 2fr 2fr !important;
+            gap: 8px !important;
+            justify-content: space-between !important;
+        }
+        .detail-item {
+            gap: 2px !important;
+        }
+        .detail-label {
+            font-size: 11px !important;
+            gap: 4px !important;
+        }
+        .detail-icon {
+            width: 12px !important;
+            height: 12px !important;
+        }
+        .detail-value {
+            font-size: 10px !important;
+            text-align: left !important;
+        }
+
+        /* Calendar Card */
+        .calendar-header-section {
+            margin-bottom: 12px !important;
+        }
+        .calendar-header-section h2 {
+            font-size: 10px !important;
+        }
+        .calendar-header-section h2 svg {
+            width: 18px !important;
+            height: 18px !important;
+        }
+        .calendar-header-section p {
+            font-size: 10.5px !important;
+            margin-top: 2px !important;
+        }
+        .calendar-custom-toolbar {
+            display: grid !important;
+            grid-template-columns: 1fr auto !important;
+            gap: 12px !important;
+            margin-bottom: 12px !important;
+        }
+        .calendar-custom-toolbar > div:nth-child(1) {
+            grid-column: 1 !important;
+            justify-content: flex-start !important;
+        }
+        .calendar-custom-toolbar > div:nth-child(2) {
+            grid-column: 2 !important;
+            justify-content: flex-end !important;
+        }
+        .calendar-custom-toolbar > div:nth-child(3) {
+            grid-column: span 2 !important;
+            width: 100% !important;
+        }
+        #calPrevBtn, #calNextBtn, #calTodayBtn {
+            height: 32px !important;
+            font-size: 10px !important;
+            border-radius: 8px !important;
+        }
+        #calPrevBtn, #calNextBtn {
+            width: 32px !important;
+        }
+        #calMonthTitle {
+            font-size: 14px !important;
+        }
+        .calendar-custom-toolbar a.btn {
+            height: 32px !important;
+            padding: 0 10px !important;
+            font-size: 10px !important;
+            border-radius: 8px !important;
+            justify-content: center !important;
+            width: 100% !important;
+        }
+        
+        .redesigned-calendar-theme .fc-daygrid-day {
+            height: 48px !important;
+        }
+        .redesigned-calendar-theme .fc-daygrid-day-number {
+            font-size: 11px !important;
+            padding: 4px 6px !important;
+        }
+        .fc-day-events-dots-container {
+            margin-top: 1px !important;
+            height: 6px !important;
+        }
+        .day-event-dot {
+            width: 4px !important;
+            height: 4px !important;
+            margin: 0 1px !important;
+        }
+        .redesigned-calendar-theme .fc-day.selected-day .fc-daygrid-day-number {
+            width: 18px !important;
+            height: 18px !important;
+            margin: 2px auto !important;
+        }
+        .redesigned-calendar-theme .fc-col-header-cell {
+            padding: 6px 0 !important;
+        }
+        .redesigned-calendar-theme .fc-col-header-cell-cushion {
+            font-size: 10px !important;
+        }
+        .calendar-sidebar-area {
+            border-top: 1px solid var(--border-color) !important;
+            padding-top: 16px !important;
+            margin-top: 8px !important;
+        }
+        #sidebarListTitle {
+            font-size: 13px !important;
+        }
+        .sidebar-event-card {
+            padding: 10px !important;
+            border-radius: 10px !important;
+            gap: 6px !important;
+        }
+        .sidebar-event-name {
+            font-size: 12px !important;
+        }
+        .sidebar-event-tag {
+            font-size: 9px !important;
+            padding: 2px 6px !important;
+        }
+        .sidebar-event-meta-item {
+            font-size: 10px !important;
+            gap: 6px !important;
+        }
+
+        .sidebar-event-meta-item i{
+            width: 12px !important;
+            height: 12px !important;
+        }
+        .view-all-events-btn {
+            padding: 8px !important;
+            font-size: 11px !important;
+            margin-top: 12px !important;
+        }
+        .welcome-banner { padding: 16px !important; }
+        .welcome-banner h3 { font-size: 16px !important; }
     }
 
     .widget-container {
@@ -843,7 +1201,7 @@
         transition: all 0.2s;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         width: 100%;
-        min-width: 240px;
+        min-width: 100px;
     }
 
     .btn-checkin-large:hover {
@@ -1052,6 +1410,907 @@
         border-top: 1px dashed var(--border-color);
         padding-top: 8px;
     }
+
+    /* Meta info cards layout */
+    .proof-meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .proof-meta-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1.5px solid var(--border-color);
+        background: var(--card-bg);
+        border-radius: 16px;
+        transition: all 0.2s ease;
+    }
+    .proof-meta-icon-wrapper {
+        border-radius: 50%;
+        background: #F3F4F6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+    .proof-meta-icon-wrapper.blue-bg {
+        background: #EFF6FF;
+        color: #2563EB;
+        border-color: #DBEAFE;
+    }
+    .proof-meta-avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .proof-meta-icon {
+        width: 20px;
+        height: 20px;
+    }
+    .proof-meta-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+    .proof-meta-label {
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .proof-meta-value {
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    /* ── Geotagging Photo Capture Modal Redesign ── */
+    .att-capture-content {
+        max-width: 540px !important;
+        width: 100%;
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+        border-radius: 24px !important;
+        overflow: hidden;
+    }
+    .att-capture-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border-color);
+        text-align: center;
+        background: var(--sidebar-bg);
+    }
+    .att-capture-close {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--hover-bg);
+        border: none;
+        cursor: pointer;
+        color: var(--text-muted);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    .att-capture-close:hover {
+        background: var(--border-color);
+        color: var(--text-main);
+    }
+    .att-capture-close svg {
+        width: 16px;
+        height: 16px;
+    }
+    .att-capture-title-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .att-capture-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .att-capture-subtitle {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    
+    .att-capture-body {
+        padding: 20px;
+        max-height: calc(90vh - 80px);
+        overflow-y: auto;
+    }
+    
+    /* Camera Preview Frame */
+    .capture-video-container {
+        position: relative;
+        aspect-ratio: 4/3;
+        background: #000;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1.5px solid var(--border-color);
+        margin-bottom: 20px;
+    }
+    .capture-face-guide {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 190px;
+        height: 250px;
+        border: 2px dashed rgba(255, 255, 255, 0.85);
+        border-radius: 50%;
+        z-index: 5;
+        pointer-events: none;
+    }
+    .capture-top-badge {
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 5;
+        white-space: nowrap;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .capture-top-badge svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    /* Controls overlays */
+    .capture-ctrl-container {
+        position: absolute;
+        bottom: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        z-index: 5;
+    }
+    .capture-ctrl-container.left {
+        left: 16px;
+    }
+    .capture-ctrl-container.right {
+        right: 16px;
+    }
+    .capture-ctrl-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .capture-ctrl-circle:hover {
+        background: rgba(0, 0, 0, 0.85);
+        transform: scale(1.05);
+    }
+    .capture-ctrl-circle svg {
+        width: 18px;
+        height: 18px;
+    }
+    .capture-ctrl-text {
+        font-size: 10px;
+        color: #fff;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    
+    /* GPS/Location details panel */
+    .capture-location-card {
+        border: 1.5px solid var(--border-color);
+        border-radius: 16px;
+        padding: 16px;
+        background: var(--card-bg);
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .capture-loc-top {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    .capture-map-thumbnail {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        flex-shrink: 0;
+        background: #eee;
+    }
+    .capture-loc-address-block {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        text-align: left;
+    }
+    .capture-loc-badge-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #2563EB;
+        margin-bottom: 2px;
+    }
+    .capture-loc-badge-row svg {
+        width: 14px;
+        height: 14px;
+    }
+    .capture-loc-street {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.3;
+    }
+    .capture-loc-sub {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.4;
+    }
+    .capture-loc-divider {
+        height: 1px;
+        background: var(--border-color);
+    }
+    .capture-loc-bottom-cols {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 16px;
+    }
+    .capture-loc-col-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+    }
+    .capture-loc-col-icon-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--hover-bg);
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        flex-shrink: 0;
+    }
+    .capture-loc-col-icon-box svg {
+        width: 15px;
+        height: 15px;
+    }
+    .capture-loc-col-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+    .capture-loc-col-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .capture-loc-col-value {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .capture-loc-col-value.green {
+        color: #10B981 !important;
+    }
+    
+    /* Info/Warning alert banner */
+    .capture-warning-banner {
+        background: #EFF6FF;
+        border: 1px solid #DBEAFE;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #1E40AF;
+        font-size: 12.5px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        line-height: 1.4;
+        text-align: left;
+    }
+    .capture-warning-banner svg {
+        width: 18px;
+        height: 18px;
+        color: #2563EB;
+        flex-shrink: 0;
+    }
+    
+    /* Submit/Action Button */
+    .capture-submit-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 20px;
+        background: #2563EB;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .capture-submit-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    }
+    .capture-submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    .capture-submit-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* Premium Success Alert Modal */
+    .alert-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+    .alert-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+    .alert-modal-content {
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 32px 24px;
+        max-width: 380px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    .alert-modal-overlay.active .alert-modal-content {
+        transform: scale(1);
+    }
+    .alert-success-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #ECFDF5;
+        border: 2.5px solid #10B981;
+        color: #10B981;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+    .alert-success-circle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 3px;
+    }
+    .alert-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0;
+    }
+    .alert-message {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin: 0;
+    }
+    .alert-close-btn {
+        width: 100%;
+        padding: 12px;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .alert-close-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 480px) {
+        .proof-meta-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .capture-loc-bottom-cols {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        .att-capture-body {
+            padding: 14px;
+        }
+    }
+
+    /* ── Geotagging Photo Capture Modal Redesign ── */
+    .att-capture-content {
+        max-width: 540px !important;
+        width: 100%;
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+        border-radius: 24px !important;
+        overflow: hidden;
+    }
+    .att-capture-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border-color);
+        text-align: center;
+        background: var(--sidebar-bg);
+    }
+    .att-capture-close {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--hover-bg);
+        border: none;
+        cursor: pointer;
+        color: var(--text-muted);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    .att-capture-close:hover {
+        background: var(--border-color);
+        color: var(--text-main);
+    }
+    .att-capture-close svg {
+        width: 16px;
+        height: 16px;
+    }
+    .att-capture-title-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .att-capture-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .att-capture-subtitle {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    
+    .att-capture-body {
+        padding: 20px;
+        max-height: calc(90vh - 80px);
+        overflow-y: auto;
+    }
+    
+    /* Camera Preview Frame */
+    .capture-video-container {
+        position: relative;
+        aspect-ratio: 4/3;
+        background: #000;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1.5px solid var(--border-color);
+        margin-bottom: 20px;
+    }
+    .capture-face-guide {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 190px;
+        height: 250px;
+        border: 2px dashed rgba(255, 255, 255, 0.85);
+        border-radius: 50%;
+        z-index: 5;
+        pointer-events: none;
+    }
+    .capture-top-badge {
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 5;
+        white-space: nowrap;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .capture-top-badge svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    /* Controls overlays */
+    .capture-ctrl-container {
+        position: absolute;
+        bottom: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        z-index: 5;
+    }
+    .capture-ctrl-container.left {
+        left: 16px;
+    }
+    .capture-ctrl-container.right {
+        right: 16px;
+    }
+    .capture-ctrl-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .capture-ctrl-circle:hover {
+        background: rgba(0, 0, 0, 0.85);
+        transform: scale(1.05);
+    }
+    .capture-ctrl-circle svg {
+        width: 18px;
+        height: 18px;
+    }
+    .capture-ctrl-text {
+        font-size: 10px;
+        color: #fff;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    
+    /* GPS/Location details panel */
+    .capture-location-card {
+        border: 1.5px solid var(--border-color);
+        border-radius: 16px;
+        padding: 16px;
+        background: var(--card-bg);
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .capture-loc-top {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    .capture-map-thumbnail {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        flex-shrink: 0;
+        background: #eee;
+    }
+    .capture-loc-address-block {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        text-align: left;
+    }
+    .capture-loc-badge-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #2563EB;
+        margin-bottom: 2px;
+    }
+    .capture-loc-badge-row svg {
+        width: 14px;
+        height: 14px;
+    }
+    .capture-loc-street {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.3;
+    }
+    .capture-loc-sub {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.4;
+    }
+    .capture-loc-divider {
+        height: 1px;
+        background: var(--border-color);
+    }
+    .capture-loc-bottom-cols {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 16px;
+    }
+    .capture-loc-col-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+    }
+    .capture-loc-col-icon-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--hover-bg);
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        flex-shrink: 0;
+    }
+    .capture-loc-col-icon-box svg {
+        width: 15px;
+        height: 15px;
+    }
+    .capture-loc-col-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+    .capture-loc-col-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .capture-loc-col-value {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .capture-loc-col-value.green {
+        color: #10B981 !important;
+    }
+    
+    /* Info/Warning alert banner */
+    .capture-warning-banner {
+        background: #EFF6FF;
+        border: 1px solid #DBEAFE;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #1E40AF;
+        font-size: 12.5px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        line-height: 1.4;
+        text-align: left;
+    }
+    .capture-warning-banner svg {
+        width: 18px;
+        height: 18px;
+        color: #2563EB;
+        flex-shrink: 0;
+    }
+    
+    /* Submit/Action Button */
+    .capture-submit-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 20px;
+        background: #2563EB;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .capture-submit-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    }
+    .capture-submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    .capture-submit-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* Premium Success Alert Modal */
+    .alert-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+    .alert-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+    .alert-modal-content {
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 32px 24px;
+        max-width: 380px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    .alert-modal-overlay.active .alert-modal-content {
+        transform: scale(1);
+    }
+    .alert-success-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #ECFDF5;
+        border: 2.5px solid #10B981;
+        color: #10B981;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+    .alert-success-circle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 3px;
+    }
+    .alert-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0;
+    }
+    .alert-message {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin: 0;
+    }
+    .alert-close-btn {
+        width: 100%;
+        padding: 12px;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .alert-close-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 480px) {
+        .capture-loc-bottom-cols {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        .att-capture-body {
+            padding: 14px;
+        }
+    }
 </style>
 
 @role('CEO|GM')
@@ -1060,13 +2319,6 @@
         <div>
             <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Dasbor Utama</h1>
             <!-- <p style="color: var(--text-muted);     font-size: 13px; margin-top: 4px; font-weight: 500;">Ringkasan performa event dan aktivitas perusahaan secara real-time.</p> -->
-        </div>
-        <div>
-            <button class="btn-filter" style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: background 0.2s;">
-                <i data-feather="calendar" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
-                <span>12 - 18 Mei 2026</span>
-                <i data-feather="chevron-down" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
-            </button>
         </div>
     </div>
 
@@ -1231,7 +2483,6 @@
     <div class="section-card" style="margin-bottom: 28px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <i data-feather="map-pin" style="color: var(--primary); width: 20px; height: 20px;"></i>
                 <span class="section-title">Absensi Hari Ini</span>
             </div>
             @if($todayAttendance)
@@ -1281,27 +2532,27 @@
                     <div class="detail-item">
                         <div class="detail-label">
                             <i data-feather="map-pin" class="detail-icon"></i>
-                            <span>Lokasi Presensi</span>
+                            <span>Lokasi</span>
                         </div>
                         <div class="detail-value">
-                            {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor Utama' : 'Luar Kantor (WFA)' }}
+                            {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor' : 'Luar Kantor' }}
                         </div>
                     </div>
 
                     <div class="detail-item">
                         <div class="detail-label">
                             <i data-feather="shield" class="detail-icon"></i>
-                            <span>Metode Presensi</span>
+                            <span>Metode</span>
                         </div>
                         <div class="detail-value">
-                            Selfie & GPS Verification
+                            Web Absen
                         </div>
                     </div>
 
                     <div class="detail-item">
                         <div class="detail-label">
                             <i data-feather="check-circle" class="detail-icon"></i>
-                            <span>Status Kehadiran</span>
+                            <span>Status</span>
                         </div>
                         <div class="detail-value">
                             <span style="color: {{ $todayAttendance->status === 'tepat_waktu' ? '#10b981' : '#f59e0b' }}; font-weight: 700;">
@@ -1334,10 +2585,7 @@
                         <!-- <i data-feather="camera"></i> -->
                         <span>Absen Sekarang</span>
                     </button>
-                    <p class="action-note">
-                        <i data-feather="info" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
-                        Pastikan Anda berada di lokasi kerja saat melakukan absensi.
-                    </p>
+                    
                 </div>
             </div>
         @endif
@@ -1348,10 +2596,8 @@
         <!-- Header Title & Subtitle -->
         <div class="calendar-header-section" style="margin-bottom: 24px;">
             <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 8px;">
-                <i data-feather="calendar" style="width: 22px; height: 22px; color: var(--primary);"></i>
                 Kalender Event
             </h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin: 4px 0 0 0; font-weight: 500;">Lihat dan kelola event perusahaan dalam kalender.</p>
         </div>
 
         <!-- Custom Toolbar -->
@@ -1368,13 +2614,6 @@
                     Today
                 </button>
             </div>
-
-            <!-- Center: Month Year Title Indicator -->
-            <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                <span id="calMonthTitle" style="font-size: 18px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px;">Juni 2026</span>
-                <i data-feather="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
-            </div>
-
             <!-- Right: View Toggle Buttons & Buat Event Baru -->
             <div style="display: flex; align-items: center; gap: 12px;">
                 <!-- <div style="display: flex; background: var(--hover-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border-color);">
@@ -1419,18 +2658,12 @@
                 </a>
             </div>
         </div>
-
-        <!-- Info Banner at bottom -->
-        <div class="calendar-info-banner warning" style="margin-top: 24px; padding: 12px 16px; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 12px; display: flex; align-items: center; gap: 8px;">
-            <i data-feather="info" style="color: #2563eb; width: 16px; height: 16px; flex-shrink: 0;"></i>
-            <span style="font-size: 12px; font-weight: 500; color: #1e40af;">Klik pada tanggal di kalender untuk melihat event pada hari tersebut.</span>
-        </div>
     </div>
 
     <!-- Main Columns: Comparison Trend & Upcoming Events List -->
     <div class="dashboard-cols">
         <!-- Column 1: Comparison Trend Chart -->
-        <div class="section-card" style="display: flex; flex-direction: column;">
+        <!-- <div class="section-card" style="display: flex; flex-direction: column;">
             <div class="section-header" style="align-items: center; margin-bottom: 20px;">
                 <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
                     <i data-feather="trending-up" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
@@ -1446,7 +2679,6 @@
             <div class="chart-container" style="flex: none; height: 280px; margin-bottom: 12px;">
                 <canvas id="eventTrendChart"></canvas>
             </div>
-            <!-- Custom Legend -->
             <div style="display: flex; justify-content: center; gap: 24px; margin-top: 8px;">
                 <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted);">
                     <span style="width: 12px; height: 3px; background: #2563eb; border-radius: 2px; display: inline-block;"></span>
@@ -1457,7 +2689,7 @@
                     <span>{{ $trendYear - 1 }}</span>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Column 2: Event Mendatang -->
         <!-- <div class="section-card" style="display: flex; flex-direction: column;">
@@ -1577,7 +2809,6 @@
     <div class="section-card" style="margin-bottom: 28px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <i data-feather="map-pin" style="color: var(--primary); width: 20px; height: 20px;"></i>
                 <span class="section-title">Absensi Hari Ini</span>
             </div>
             @if($todayAttendance)
@@ -1680,10 +2911,7 @@
                         <!-- <i data-feather="camera"></i> -->
                         <span>Absen Sekarang</span>
                     </button>
-                    <p class="action-note">
-                        <i data-feather="info" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
-                        Pastikan Anda berada di lokasi kerja saat melakukan absensi.
-                    </p>
+                    
                 </div>
             </div>
         @endif
@@ -1695,7 +2923,6 @@
         <!-- Header Title & Subtitle -->
         <div class="calendar-header-section" style="margin-bottom: 24px;">
             <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 8px;">
-                <i data-feather="calendar" style="width: 22px; height: 22px; color: var(--primary);"></i>
                 Kalender Event
             </h2>
             <p style="color: var(--text-muted); font-size: 13px; margin: 4px 0 0 0; font-weight: 500;">Lihat dan kelola event perusahaan dalam kalender.</p>
@@ -1715,13 +2942,6 @@
                     Today
                 </button>
             </div>
-
-            <!-- Center: Month Year Title Indicator -->
-            <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                <span id="calMonthTitle" style="font-size: 18px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px;">Juni 2026</span>
-                <i data-feather="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
-            </div>
-
             <!-- Right: View Toggle Buttons -->
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="display: flex; background: var(--hover-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border-color);">
@@ -1820,44 +3040,229 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <!-- Global Attendance Modal (Accessed by both employees and directors) -->
-<div id="attendanceModal" style="display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); padding: 20px; flex-direction: column; align-items: center; justify-content: center;">
-    <div style="background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; overflow: hidden; position: relative;">
-        <button onclick="closeAttendanceModal()" style="position: absolute; top: 12px; right: 12px; z-index: 110; background: rgba(0,0,0,0.5); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
-        
-        <div style="position: relative; aspect-ratio: 4/3; background: #000;">
-            <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-            <canvas id="photoCanvas" style="display:none;"></canvas>
-            <div id="gpsOverlay" style="position: absolute; bottom: 20px; left: 20px; right: 20px; display: flex; align-items: center; gap: 16px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.55); border-radius: 16px; padding: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 10; max-width: none;">
-                <div style="width: 72px; height: 72px; border-radius: 10px; overflow: hidden; border: 1.5px solid rgba(255,255,255,0.6); flex-shrink: 0;">
-                    <div id="miniMap" style="width: 100%; height: 100%;"></div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; text-align: left;">
-                    <div id="gpsAddress" style="font-size: 11px; font-weight: 700; color: #fff; line-height: 1.3; overflow-wrap: break-word; word-wrap: break-word; white-space: normal;">Proses Lokasi...</div>
-                    <div id="gpsCoords" style="font-size: 9px; font-family: monospace; color: rgba(255,255,255,0.9); font-weight: 500;">—</div>
-                    <div id="gpsClock" style="font-size: 9px; color: rgba(255,255,255,0.8); font-weight: 500;">00:00 WIB</div>
-                </div>
+<div id="attendanceModal" style="display: none; position: fixed; inset: 0; z-index: 100; background: rgba(15,23,42,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); padding: 20px; flex-direction: column; align-items: center; justify-content: center;">
+    <div class="att-capture-content">
+        <div class="att-capture-header">
+            <button class="att-capture-close" onclick="closeAttendanceModal()">
+                <i data-feather="x"></i>
+            </button>
+            <div class="att-capture-title-group">
+                <span class="att-capture-title">Bukti Absensi</span>
+                <span class="att-capture-subtitle">Ambil foto untuk absen</span>
             </div>
         </div>
-        <div style="padding: 20px;">
-            <button id="btnSubmitAbsen" class="btn" style="width:100%; justify-content:center; height: 48px; border-radius: 12px; font-weight: 600;">
-                <i data-feather="camera" style="width:16px; margin-right:8px;"></i> Absen
+        
+        <div class="att-capture-body">
+            <!-- Meta Info Cards Row -->
+            <div class="proof-meta-grid" style="margin-bottom: 16px;">
+                <div class="proof-meta-card" style="padding: 10px 14px;">
+                    <div class="proof-meta-icon-wrapper" style="width: 36px; height: 36px;">
+                        <img id="captureAvatar" class="proof-meta-avatar" src="{{ Auth::user()->photo_url }}" alt="Avatar" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random'; this.onerror=null;">
+                    </div>
+                    <div class="proof-meta-text" style="gap: 1px;">
+                        <span class="proof-meta-label" style="font-size: 10px;">Karyawan</span>
+                        <span class="proof-meta-value" style="font-size: 13px;">{{ Auth::user()->name }}</span>
+                    </div>
+                </div>
+                <div class="proof-meta-card" style="padding: 10px 14px;">
+                    <div class="proof-meta-icon-wrapper blue-bg" style="width: 36px; height: 36px;">
+                        <i data-feather="calendar" class="proof-meta-icon" style="width: 16px; height: 16px;"></i>
+                    </div>
+                    <div class="proof-meta-text" style="gap: 1px;">
+                        <span class="proof-meta-label" style="font-size: 10px;">Waktu Absen</span>
+                        <span class="proof-meta-value" id="gpsClock" style="font-size: 13px;">-- WIB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Preview Container -->
+            <div class="capture-video-container">
+                <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                <canvas id="photoCanvas" style="display:none;"></canvas>
+                
+                <!-- Guidelines & Badge -->
+                <div class="capture-face-guide"></div>
+                <div class="capture-top-badge">
+                    <i data-feather="camera"></i> Posisikan wajah di dalam area
+                </div>
+                
+                <!-- Controls overlays -->
+                <div class="capture-ctrl-container left">
+                    <button class="capture-ctrl-circle" onclick="switchCameraInput(event)" title="Ganti Kamera">
+                        <i data-feather="rotate-cw"></i>
+                    </button>
+                    <span class="capture-ctrl-text">Ganti Kamera</span>
+                </div>
+                <div class="capture-ctrl-container right">
+                    <button class="capture-ctrl-circle" onclick="toggleCameraFlashlight(event)" id="btnFlashlight" title="Lampu">
+                        <i data-feather="zap"></i>
+                    </button>
+                    <span class="capture-ctrl-text">Lampu</span>
+                </div>
+            </div>
+
+            <!-- Lokasi Absen Card -->
+            <div class="capture-location-card">
+                <div class="capture-loc-top">
+                    <div class="capture-map-thumbnail">
+                        <div id="miniMap" style="width: 100%; height: 100%;"></div>
+                    </div>
+                    <div class="capture-loc-address-block">
+                        <div class="capture-loc-badge-row">
+                            <i data-feather="map-pin"></i> Lokasi Absen
+                        </div>
+                        <span class="capture-loc-street" id="gpsStreet">Memuat lokasi...</span>
+                        <span class="capture-loc-sub" id="gpsAddress">Sedang mengambil detail alamat...</span>
+                    </div>
+                </div>
+                
+                <div class="capture-loc-divider"></div>
+                
+                <div class="capture-loc-bottom-cols">
+                    <div class="capture-loc-col-item">
+                        <div class="capture-loc-col-icon-box">
+                            <i data-feather="compass"></i>
+                        </div>
+                        <div class="capture-loc-col-content">
+                            <span class="capture-loc-col-label">Koordinat</span>
+                            <span class="capture-loc-col-value" id="gpsCoords">-</span>
+                        </div>
+                    </div>
+                    <div class="capture-loc-col-item">
+                        <div class="capture-loc-col-icon-box">
+                            <i data-feather="target"></i>
+                        </div>
+                        <div class="capture-loc-col-content">
+                            <span class="capture-loc-col-label">Akurasi</span>
+                            <span class="capture-loc-col-value green" id="gpsAccuracy">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Banner -->
+            <div class="capture-warning-banner">
+                <i data-feather="info"></i> Pastikan wajah terlihat jelas dan lokasi sesuai sebelum absen.
+            </div>
+
+            <!-- Action Button -->
+            <button id="btnSubmitAbsen" class="capture-submit-btn">
+                <i data-feather="camera"></i> Ambil Foto & Absen
             </button>
         </div>
     </div>
 </div>
 
-<!-- Global Attendance Scripts (Available for all roles) -->
+<!-- Premium Success Alert Modal Overlay -->
+<div id="successAlertModal" class="alert-modal-overlay">
+    <div class="alert-modal-content">
+        <div class="alert-success-circle">
+            <i data-feather="check"></i>
+        </div>
+        <h3 class="alert-title">Absensi Berhasil!</h3>
+        <p class="alert-message" id="successAlertMessage">Absensi luar kantor berhasil dikirim!</p>
+        <button class="alert-close-btn" onclick="dismissSuccessAlert()">Selesai</button>
+   <!-- Global Attendance Scripts (Available for all roles) -->
 <script>
+let currentFacingMode = 'user';
+let videoDevices = [];
+let currentDeviceIndex = 0;
+let isFlashlightOn = false;
+
+// Check for media devices enumeration
+if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            videoDevices = devices.filter(d => d.kind === 'videoinput');
+        })
+        .catch(err => console.error("Enumerate video devices error:", err));
+}
+
 function openAttendanceModal() {
-    document.getElementById('attendanceModal').style.display = 'flex';
+    const modal = document.getElementById('attendanceModal');
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        modal.classList.add('active');
+    });
     initCameraAndGps();
 }
 
 function closeAttendanceModal() {
-    document.getElementById('attendanceModal').style.display = 'none';
+    const modal = document.getElementById('attendanceModal');
+    modal.classList.remove('active');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 200);
     if (window.localStream) {
         window.localStream.getTracks().forEach(track => track.stop());
     }
+}
+
+function switchCameraInput(e) {
+    if (e) e.preventDefault();
+    if (videoDevices.length <= 1) {
+        currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+        restartCameraStream({ video: { facingMode: currentFacingMode }, audio: false });
+        return;
+    }
+    currentDeviceIndex = (currentDeviceIndex + 1) % videoDevices.length;
+    restartCameraStream({ video: { deviceId: { exact: videoDevices[currentDeviceIndex].deviceId } }, audio: false });
+}
+
+function toggleCameraFlashlight(e) {
+    if (e) e.preventDefault();
+    if (!window.localStream) return;
+    const track = window.localStream.getVideoTracks()[0];
+    if (!track) return;
+    
+    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+    const btn = document.getElementById('btnFlashlight');
+    if (!capabilities.torch) {
+        isFlashlightOn = !isFlashlightOn;
+        if (isFlashlightOn) {
+            btn.style.color = '#F59E0B';
+            btn.style.background = 'rgba(245, 158, 11, 0.25)';
+        } else {
+            btn.style.color = '#fff';
+            btn.style.background = 'rgba(0, 0, 0, 0.6)';
+        }
+        return;
+    }
+    
+    isFlashlightOn = !isFlashlightOn;
+    track.applyConstraints({
+        advanced: [{ torch: isFlashlightOn }]
+    }).then(() => {
+        if (isFlashlightOn) {
+            btn.style.color = '#F59E0B';
+            btn.style.background = 'rgba(245, 158, 11, 0.25)';
+        } else {
+            btn.style.color = '#fff';
+            btn.style.background = 'rgba(0, 0, 0, 0.6)';
+        }
+    }).catch(err => console.error("Flashlight constraint error:", err));
+}
+
+function restartCameraStream(constraints) {
+    if (window.localStream) {
+        window.localStream.getTracks().forEach(track => track.stop());
+    }
+    navigator.mediaDevices.getUserMedia(constraints)
+        .then(stream => {
+            const video = document.getElementById('webcam');
+            if (video) video.srcObject = stream;
+            window.localStream = stream;
+            
+            isFlashlightOn = false;
+            const btn = document.getElementById('btnFlashlight');
+            if (btn) {
+                btn.style.color = '#fff';
+                btn.style.background = 'rgba(0, 0, 0, 0.6)';
+            }
+        })
+        .catch(err => {
+            console.error('Camera switch error:', err);
+        });
 }
 
 function toggleTask(taskId, btn) {
@@ -1893,12 +3298,35 @@ function toggleTask(taskId, btn) {
     });
 }
 
+function showSuccessAlert(message) {
+    document.getElementById('successAlertMessage').textContent = message;
+    const alertModal = document.getElementById('successAlertModal');
+    alertModal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        alertModal.classList.add('active');
+    });
+    
+    window.successAlertTimeout = setTimeout(() => {
+        location.reload();
+    }, 3500);
+}
+
+function dismissSuccessAlert() {
+    if (window.successAlertTimeout) {
+        clearTimeout(window.successAlertTimeout);
+    }
+    location.reload();
+}
+
 function initCameraAndGps() {
     const video      = document.getElementById('webcam');
     const btnSubmit  = document.getElementById('btnSubmitAbsen');
     const gpsAddress = document.getElementById('gpsAddress');
+    const gpsStreet  = document.getElementById('gpsStreet');
     const gpsCoords  = document.getElementById('gpsCoords');
     const gpsClock   = document.getElementById('gpsClock');
+    const gpsAccuracy = document.getElementById('gpsAccuracy');
+    
     let userCoords   = null;
     let miniMapInst  = null;
     let addressCache = '';
@@ -1952,20 +3380,31 @@ function initCameraAndGps() {
     }
 
     // ── Live clock ──
-    setInterval(() => {
+    function updateClock() {
         const now = new Date();
-        if(gpsClock) gpsClock.textContent = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB';
-    }, 1000);
+        const formatted = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + 
+                          now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+        if(gpsClock) gpsClock.textContent = formatted;
+    }
+    updateClock();
+    const clockInterval = setInterval(updateClock, 1000);
+
+    // Stop clock interval when closing modal
+    const originalClose = window.closeAttendanceModal;
+    window.closeAttendanceModal = function() {
+        clearInterval(clockInterval);
+        originalClose();
+    };
 
     // ── Camera ──
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode }, audio: false })
         .then(stream => { 
             video.srcObject = stream; 
             window.localStream = stream;
         })
         .catch(err => {
             console.error('Camera:', err);
-            if(gpsAddress) gpsAddress.textContent = 'Kamera tidak dapat diakses.';
+            if(gpsStreet) gpsStreet.textContent = 'Kamera tidak dapat diakses.';
         });
 
     // ── Geolocation ──
@@ -1977,18 +3416,50 @@ function initCameraAndGps() {
             
             // Format to DMS for UI
             coordsCache = `${toDMS(lat, true)} ${toDMS(lng, false)}`;
-            if(gpsCoords) gpsCoords.textContent = coordsCache;
+            if(gpsCoords) gpsCoords.textContent = lat.toFixed(4) + ', ' + lng.toFixed(6);
 
-            // Reverse Geocode
-            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+            // Accuracy
+            const accuracyVal = pos.coords.accuracy ? pos.coords.accuracy.toFixed(2) + ' meter' : '14.46 meter';
+            if(gpsAccuracy) gpsAccuracy.textContent = accuracyVal;
+
+            // Reverse Geocode via Nominatim
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2`)
                 .then(r => r.json())
-                .then(d => {
-                    const parts = d.display_name.split(', ');
-                    if (parts.length > 1) {
-                        parts.pop();
+                .then(data => {
+                    if (data && data.address) {
+                        const road = data.address.road || data.address.pedestrian || data.address.suburb || '';
+                        const houseNumber = data.address.house_number ? ' No. ' + data.address.house_number : '';
+                        const streetName = road ? road + houseNumber : (data.name || 'Jalan Tidak Dikenal');
+                        
+                        const village = data.address.village || data.address.suburb || data.address.neighbourhood || '';
+                        const district = data.address.county || data.address.city_district || '';
+                        const city = data.address.city || data.address.regency || data.address.town || '';
+                        const state = data.address.state || '';
+                        const postcode = data.address.postcode || '';
+                        
+                        let detailParts = [];
+                        if (village) detailParts.push(village);
+                        if (district) detailParts.push(district);
+                        if (city) detailParts.push(city);
+                        if (state) detailParts.push(state);
+                        if (postcode) detailParts.push(postcode);
+                        
+                        const detailAddress = detailParts.join(', ');
+                        
+                        if(gpsStreet) gpsStreet.textContent = streetName;
+                        if(gpsAddress) gpsAddress.textContent = detailAddress;
+                        
+                        addressCache = streetName + ', ' + detailAddress;
+                    } else {
+                        if(gpsStreet) gpsStreet.textContent = 'Lokasi Kustom';
+                        if(gpsAddress) gpsAddress.textContent = `${lat}, ${lng}`;
+                        addressCache = `${lat}, ${lng}`;
                     }
-                    addressCache = parts.join(', ');
-                    if(gpsAddress) gpsAddress.textContent = addressCache;
+                })
+                .catch(err => {
+                    console.error("Geocoding error:", err);
+                    if(gpsStreet) gpsStreet.textContent = 'Lokasi Absen';
+                    if(gpsAddress) gpsAddress.textContent = `${lat}, ${lng}`;
                 });
 
             // Mini Map
@@ -1997,6 +3468,11 @@ function initCameraAndGps() {
                 miniMapInst = L.map(mapEl, {zoomControl:false, attributionControl:false}).setView([lat, lng], 15);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMapInst);
                 L.marker([lat, lng]).addTo(miniMapInst);
+                
+                // Small delay to invalidate size
+                setTimeout(() => {
+                    miniMapInst.invalidateSize();
+                }, 100);
             }
         });
     }
@@ -2010,19 +3486,44 @@ function initCameraAndGps() {
             userCoords = { lat: mockLat, lng: mockLng };
             
             coordsCache = `${toDMS(mockLat, true)} ${toDMS(mockLng, false)}`;
-            if(gpsCoords) gpsCoords.textContent = coordsCache;
+            if(gpsCoords) gpsCoords.textContent = mockLat.toFixed(4) + ', ' + mockLng.toFixed(6);
+            if(gpsAccuracy) gpsAccuracy.textContent = '14.46 meter';
             
-            if(gpsAddress) gpsAddress.textContent = 'Menghubungkan Lokasi Simulasi (Jalan Swadaya)...';
+            if(gpsStreet) gpsStreet.textContent = 'Menghubungkan Lokasi Simulasi...';
+            if(gpsAddress) gpsAddress.textContent = 'Jalan Swadaya';
             
-            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${mockLat}&lon=${mockLng}&format=json`)
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${mockLat}&lon=${mockLng}&format=jsonv2`)
                 .then(r => r.json())
-                .then(d => {
-                    const parts = d.display_name.split(', ');
-                    if (parts.length > 1) {
-                        parts.pop();
+                .then(data => {
+                    if (data && data.address) {
+                        const road = data.address.road || data.address.pedestrian || data.address.suburb || '';
+                        const houseNumber = data.address.house_number ? ' No. ' + data.address.house_number : '';
+                        const streetName = road ? road + houseNumber : (data.name || 'Jalan Tidak Dikenal');
+                        
+                        const village = data.address.village || data.address.suburb || data.address.neighbourhood || '';
+                        const district = data.address.county || data.address.city_district || '';
+                        const city = data.address.city || data.address.regency || data.address.town || '';
+                        const state = data.address.state || '';
+                        const postcode = data.address.postcode || '';
+                        
+                        let detailParts = [];
+                        if (village) detailParts.push(village);
+                        if (district) detailParts.push(district);
+                        if (city) detailParts.push(city);
+                        if (state) detailParts.push(state);
+                        if (postcode) detailParts.push(postcode);
+                        
+                        const detailAddress = detailParts.join(', ');
+                        
+                        if(gpsStreet) gpsStreet.textContent = streetName;
+                        if(gpsAddress) gpsAddress.textContent = detailAddress;
+                        
+                        addressCache = streetName + ', ' + detailAddress;
+                    } else {
+                        if(gpsStreet) gpsStreet.textContent = 'Jalan Swadaya';
+                        if(gpsAddress) gpsAddress.textContent = `${mockLat}, ${mockLng}`;
+                        addressCache = `${mockLat}, ${mockLng}`;
                     }
-                    addressCache = parts.join(', ');
-                    if(gpsAddress) gpsAddress.textContent = addressCache;
                 });
                 
             if (miniMapInst) {
@@ -2033,6 +3534,7 @@ function initCameraAndGps() {
                     }
                 });
                 L.marker([mockLat, mockLng]).addTo(miniMapInst);
+                miniMapInst.invalidateSize();
             }
         });
     }
@@ -2040,7 +3542,8 @@ function initCameraAndGps() {
     btnSubmit.onclick = function() {
         if(!userCoords) return alert('Tunggu lokasi...');
         btnSubmit.disabled = true;
-        btnSubmit.innerHTML = 'Mengirim...';
+        btnSubmit.innerHTML = '<i data-feather="loader" style="width:16px; margin-right:8px; animation: spin 1s linear infinite;"></i> Mengirim...';
+        feather.replace();
 
         const canvas = document.getElementById('photoCanvas');
         canvas.width = video.videoWidth;
@@ -2048,139 +3551,7 @@ function initCameraAndGps() {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0);
         
-        const boxWidth = canvas.width - 40;
-        const boxHeight = 110;
-        const boxX = 20;
-        const boxY = canvas.height - boxHeight - 20;
-        const borderRadius = 14;
-
-        ctx.save();
-        drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, borderRadius);
-        ctx.clip();
-        
-        ctx.filter = 'blur(12px)';
-        ctx.drawImage(video, 0, 0);
-        ctx.filter = 'none';
-        
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
-        ctx.restore();
-        
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
-        ctx.lineWidth = 1.5;
-        drawRoundedRect(ctx, boxX, boxY, boxWidth, boxHeight, borderRadius);
-        ctx.stroke();
-
-        const dmsCoords = `${toDMS(userCoords.lat, true)} ${toDMS(userCoords.lng, false)}`;
-
-        const mapImg = new Image();
-        mapImg.crossOrigin = "Anonymous";
-        const zoom = 15;
-        const tileX = Math.floor((userCoords.lng + 180) / 360 * Math.pow(2, zoom));
-        const tileY = Math.floor((1 - Math.log(Math.tan(userCoords.lat * Math.PI / 180) + 1 / Math.cos(userCoords.lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
-        
-        mapImg.onload = function() {
-            const mapSize = 72;
-            const mapX = boxX + 14;
-            const mapY = boxY + (boxHeight - mapSize) / 2;
-            
-            function getTilePercentX(lon, zoom) {
-                const a = (lon + 180) / 360 * Math.pow(2, zoom);
-                return a - Math.floor(a);
-            }
-            function getTilePercentY(lat, zoom) {
-                const a = (1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom);
-                return a - Math.floor(a);
-            }
-            const px = getTilePercentX(userCoords.lng, zoom) * 256;
-            const py = getTilePercentY(userCoords.lat, zoom) * 256;
-            
-            const srcSize = 120;
-            const srcX = Math.max(0, Math.min(256 - srcSize, px - srcSize/2));
-            const srcY = Math.max(0, Math.min(256 - srcSize, py - srcSize/2));
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(mapX + 8, mapY + 8, 8, Math.PI, 1.5 * Math.PI);
-            ctx.arc(mapX + mapSize - 8, mapY + 8, 8, 1.5 * Math.PI, 2 * Math.PI);
-            ctx.arc(mapX + mapSize - 8, mapY + mapSize - 8, 8, 0, 0.5 * Math.PI);
-            ctx.arc(mapX + 8, mapY + mapSize - 8, 8, 0.5 * Math.PI, Math.PI);
-            ctx.closePath();
-            ctx.clip();
-            
-            ctx.drawImage(mapImg, srcX, srcY, srcSize, srcSize, mapX, mapY, mapSize, mapSize);
-            
-            ctx.beginPath();
-            ctx.arc(mapX + mapSize/2, mapY + mapSize/2, 5, 0, 2 * Math.PI);
-            ctx.fillStyle = '#ef4444';
-            ctx.fill();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-            
-            ctx.restore();
-
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.arc(mapX + 8, mapY + 8, 8, Math.PI, 1.5 * Math.PI);
-            ctx.arc(mapX + mapSize - 8, mapY + 8, 8, 1.5 * Math.PI, 2 * Math.PI);
-            ctx.arc(mapX + mapSize - 8, mapY + mapSize - 8, 8, 0, 0.5 * Math.PI);
-            ctx.arc(mapX + 8, mapY + mapSize - 8, 8, 0.5 * Math.PI, Math.PI);
-            ctx.closePath();
-            ctx.stroke();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-            ctx.shadowBlur = 4;
-            
-            const textX = mapX + mapSize + 16;
-            let textY = boxY + 24;
-            
-            ctx.font = 'bold 11px sans-serif';
-            const nextY = wrapText(ctx, addressCache || 'Lokasi Absen', textX, textY, boxWidth - mapSize - 40, 15);
-            
-            ctx.font = 'normal 9px monospace';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            textY = nextY + 14;
-            ctx.fillText(dmsCoords, textX, textY);
-            
-            ctx.font = 'normal 9px sans-serif';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            textY += 12;
-            ctx.fillText(new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB', textX, textY);
-
-            submitPhotoAndCoords();
-        };
-
-        mapImg.onerror = function() {
-            const mapSize = 72;
-            const mapX = boxX + 14;
-            const mapY = boxY + (boxHeight - mapSize) / 2;
-            
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-            ctx.fillRect(mapX, mapY, mapSize, mapSize);
-
-            ctx.fillStyle = '#ffffff';
-            const textX = mapX + mapSize + 16;
-            let textY = boxY + 24;
-            ctx.font = 'bold 11px sans-serif';
-            const nextY = wrapText(ctx, addressCache || 'Lokasi Absen', textX, textY, boxWidth - mapSize - 40, 15);
-            
-            ctx.font = 'normal 9px monospace';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            textY = nextY + 14;
-            ctx.fillText(dmsCoords, textX, textY);
-            
-            ctx.font = 'normal 9px sans-serif';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            textY += 12;
-            ctx.fillText(new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB', textX, textY);
-
-            submitPhotoAndCoords();
-        };
-
-        mapImg.src = `https://a.tile.openstreetmap.org/${zoom}/${tileX}/${tileY}.png`;
+        submitPhotoAndCoords();
 
         function submitPhotoAndCoords() {
             const photo = canvas.toDataURL('image/png');
@@ -2190,8 +3561,16 @@ function initCameraAndGps() {
                 body: JSON.stringify({ photo, latitude: userCoords.lat, longitude: userCoords.lng })
             })
             .then(r => r.json())
-            .then(d => { alert(d.message); location.reload(); })
-            .catch(() => { alert('Gagal absen.'); btnSubmit.disabled = false; btnSubmit.innerHTML = 'Ambil Foto & Absen'; });
+            .then(d => {
+                closeAttendanceModal();
+                showSuccessAlert(d.message || 'Absensi berhasil dikirim!');
+            })
+            .catch(() => {
+                alert('Gagal absen.');
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i data-feather="camera"></i> Ambil Foto & Absen';
+                feather.replace();
+            });
         }
     };
 }
@@ -2381,21 +3760,32 @@ function initCameraAndGps() {
             });
             calendar.render();
 
-            document.getElementById('calPrevBtn').addEventListener('click', () => calendar.prev());
-            document.getElementById('calNextBtn').addEventListener('click', () => calendar.next());
-            document.getElementById('calTodayBtn').addEventListener('click', () => calendar.today());
+            const prevBtn = document.getElementById('calPrevBtn');
+            if (prevBtn) prevBtn.addEventListener('click', () => calendar.prev());
             
-            document.getElementById('calViewMonth').addEventListener('click', function() {
-                calendar.changeView('dayGridMonth');
-                document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-            });
+            const nextBtn = document.getElementById('calNextBtn');
+            if (nextBtn) nextBtn.addEventListener('click', () => calendar.next());
             
-            document.getElementById('calViewList').addEventListener('click', function() {
-                calendar.changeView('listMonth');
-                document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-            });
+            const todayBtn = document.getElementById('calTodayBtn');
+            if (todayBtn) todayBtn.addEventListener('click', () => calendar.today());
+            
+            const calViewMonthBtn = document.getElementById('calViewMonth');
+            if (calViewMonthBtn) {
+                calViewMonthBtn.addEventListener('click', function() {
+                    calendar.changeView('dayGridMonth');
+                    document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            }
+            
+            const calViewListBtn = document.getElementById('calViewList');
+            if (calViewListBtn) {
+                calViewListBtn.addEventListener('click', function() {
+                    calendar.changeView('listMonth');
+                    document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            }
 
             function renderSidebarEvents() {
                 const listContainer = document.getElementById('calendarSidebarList');
@@ -2641,21 +4031,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         calendar.render();
 
-        document.getElementById('calPrevBtn').addEventListener('click', () => calendar.prev());
-        document.getElementById('calNextBtn').addEventListener('click', () => calendar.next());
-        document.getElementById('calTodayBtn').addEventListener('click', () => calendar.today());
+        const prevBtn = document.getElementById('calPrevBtn');
+        if (prevBtn) prevBtn.addEventListener('click', () => calendar.prev());
         
-        document.getElementById('calViewMonth').addEventListener('click', function() {
-            calendar.changeView('dayGridMonth');
-            document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-        });
+        const nextBtn = document.getElementById('calNextBtn');
+        if (nextBtn) nextBtn.addEventListener('click', () => calendar.next());
         
-        document.getElementById('calViewList').addEventListener('click', function() {
-            calendar.changeView('listMonth');
-            document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-        });
+        const todayBtn = document.getElementById('calTodayBtn');
+        if (todayBtn) todayBtn.addEventListener('click', () => calendar.today());
+        
+        const calViewMonthBtn = document.getElementById('calViewMonth');
+        if (calViewMonthBtn) {
+            calViewMonthBtn.addEventListener('click', function() {
+                calendar.changeView('dayGridMonth');
+                document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        }
+        
+        const calViewListBtn = document.getElementById('calViewList');
+        if (calViewListBtn) {
+            calViewListBtn.addEventListener('click', function() {
+                calendar.changeView('listMonth');
+                document.querySelectorAll('.cal-view-toggle').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        }
 
         function renderSidebarEvents() {
             const listContainer = document.getElementById('calendarSidebarList');

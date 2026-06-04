@@ -137,6 +137,58 @@
         font-size: 11.5px;
         letter-spacing: 0.5px;
     }
+
+    /* Tabs Navigation */
+    .navigation-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 20px;
+        gap: 8px;
+        overflow-x: auto;
+    }
+    .tab-button {
+        padding: 10px 16px;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--text-muted);
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .tab-button:hover {
+        color: var(--text-main);
+    }
+    .tab-button.active {
+        color: #2563EB;
+        border-bottom-color: #2563EB;
+    }
+    .tab-badge {
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: var(--hover-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+    }
+    .tab-button.active .tab-badge {
+        background: rgba(37, 99, 235, 0.1);
+        border-color: rgba(37, 99, 235, 0.2);
+        color: #2563EB;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
 </style>
 
 <div style="margin-bottom: 28px;">
@@ -197,62 +249,165 @@
         <h3 class="leave-card-title">
             <span>Riwayat Pengajuan</span>
         </h3>
+
+        <!-- Date Range Filter Form -->
+        <form action="{{ route('leave-requests.index') }}" method="GET" style="margin-bottom: 24px;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block;">Mulai Tanggal</label>
+                    <input type="date" name="filter_start_date" class="form-input" style="height: 40px; padding: 0 12px;" value="{{ request('filter_start_date') }}">
+                </div>
+                <div style="flex: 1; min-width: 140px;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block;">Sampai Tanggal</label>
+                    <input type="date" name="filter_end_date" class="form-input" style="height: 40px; padding: 0 12px;" value="{{ request('filter_end_date') }}">
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit" class="btn-submit" style="width: auto; height: 40px; padding: 0 16px; margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                        <i data-feather="filter" style="width: 14px; height: 14px;"></i> Filter
+                    </button>
+                    <a href="{{ route('leave-requests.index') }}" class="btn-submit" style="width: auto; height: 40px; padding: 0 16px; margin: 0; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; justify-content: center;">
+                        <i data-feather="rotate-ccw" style="width: 14px; height: 14px;"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        @php
+            $izinRequests = $requests->where('type', 'izin');
+            $cutiRequests = $requests->where('type', 'cuti');
+        @endphp
+
+        <!-- Tabs Navigation -->
+        <div class="navigation-tabs">
+            <button type="button" class="tab-button active" onclick="switchTab(event, 'tab-izin')">
+                Izin <span class="tab-badge">{{ $izinRequests->count() }}</span>
+            </button>
+            <button type="button" class="tab-button" onclick="switchTab(event, 'tab-cuti')">
+                Cuti <span class="tab-badge">{{ $cutiRequests->count() }}</span>
+            </button>
+        </div>
         
-        <div class="table-wrapper">
-            <table class="leave-table">
-                <thead>
-                    <tr>
-                        <th style="width: 25%;">Tanggal Range</th>
-                        <th style="width: 15%;">Jenis</th>
-                        <th style="width: 30%;">Alasan</th>
-                        <th style="width: 15%;">Status</th>
-                        <th style="width: 15%;">Disetujui Oleh</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($requests as $req)
+        <!-- Tab Content: Izin -->
+        <div id="tab-izin" class="tab-content active">
+            <div class="table-wrapper">
+                <table class="leave-table">
+                    <thead>
                         <tr>
-                            <td style="font-weight: 600; color: var(--text-main);">
-                                @if($req->start_date->format('Y-m-d') === $req->end_date->format('Y-m-d'))
-                                    {{ $req->start_date->translatedFormat('d M Y') }}
-                                @else
-                                    {{ $req->start_date->translatedFormat('d M') }} - {{ $req->end_date->translatedFormat('d M Y') }}
-                                @endif
-                            </td>
-                            <td>
-                                <span class="badge-type">{{ $req->type }}</span>
-                            </td>
-                            <td style="color: var(--text-main); font-weight: 500;">
-                                {{ $req->reason }}
-                            </td>
-                            <td>
-                                @if($req->status === 'pending')
-                                    <span class="badge-status pending">
-                                        <i data-feather="clock" style="width:12px; height:12px;"></i> Pending
-                                    </span>
-                                @elseif($req->status === 'approved')
-                                    <span class="badge-status approved">
-                                        <i data-feather="check-circle" style="width:12px; height:12px;"></i> Disetujui
-                                    </span>
-                                @else
-                                    <span class="badge-status rejected">
-                                        <i data-feather="x-circle" style="width:12px; height:12px;"></i> Ditolak
-                                    </span>
-                                @endif
-                            </td>
-                            <td style="color: var(--text-muted); font-weight: 600;">
-                                {{ $req->approvedBy->name ?? '-' }}
-                            </td>
+                            <th style="width: 30%;">Tanggal Range</th>
+                            <th style="width: 40%;">Alasan</th>
+                            <th style="width: 15%;">Status</th>
+                            <th style="width: 15%;">Disetujui Oleh</th>
                         </tr>
-                    @empty
+                    </thead>
+                    <tbody>
+                        @forelse($izinRequests as $req)
+                            <tr>
+                                <td style="font-weight: 600; color: var(--text-main);">
+                                    @if($req->start_date->format('Y-m-d') === $req->end_date->format('Y-m-d'))
+                                        {{ $req->start_date->translatedFormat('d M Y') }}
+                                    @else
+                                        {{ $req->start_date->translatedFormat('d M') }} - {{ $req->end_date->translatedFormat('d M Y') }}
+                                    @endif
+                                </td>
+                                <td style="color: var(--text-main); font-weight: 500;">
+                                    {{ $req->reason }}
+                                </td>
+                                <td>
+                                    @if($req->status === 'pending')
+                                        <span class="badge-status pending">
+                                            <i data-feather="clock" style="width:12px; height:12px;"></i> Pending
+                                        </span>
+                                    @elseif($req->status === 'approved')
+                                        <span class="badge-status approved">
+                                            <i data-feather="check-circle" style="width:12px; height:12px;"></i> Disetujui
+                                        </span>
+                                    @else
+                                        <span class="badge-status rejected">
+                                            <i data-feather="x-circle" style="width:12px; height:12px;"></i> Ditolak
+                                        </span>
+                                    @endif
+                                </td>
+                                <td style="color: var(--text-muted); font-weight: 600;">
+                                    {{ $req->approvedBy->name ?? '-' }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 40px 0;">Belum ada riwayat pengajuan izin.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Content: Cuti -->
+        <div id="tab-cuti" class="tab-content">
+            <div class="table-wrapper">
+                <table class="leave-table">
+                    <thead>
                         <tr>
-                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px 0;">Belum ada riwayat pengajuan izin/cuti.</td>
+                            <th style="width: 30%;">Tanggal Range</th>
+                            <th style="width: 40%;">Alasan</th>
+                            <th style="width: 15%;">Status</th>
+                            <th style="width: 15%;">Disetujui Oleh</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($cutiRequests as $req)
+                            <tr>
+                                <td style="font-weight: 600; color: var(--text-main);">
+                                    @if($req->start_date->format('Y-m-d') === $req->end_date->format('Y-m-d'))
+                                        {{ $req->start_date->translatedFormat('d M Y') }}
+                                    @else
+                                        {{ $req->start_date->translatedFormat('d M') }} - {{ $req->end_date->translatedFormat('d M Y') }}
+                                    @endif
+                                </td>
+                                <td style="color: var(--text-main); font-weight: 500;">
+                                    {{ $req->reason }}
+                                </td>
+                                <td>
+                                    @if($req->status === 'pending')
+                                        <span class="badge-status pending">
+                                            <i data-feather="clock" style="width:12px; height:12px;"></i> Pending
+                                        </span>
+                                    @elseif($req->status === 'approved')
+                                        <span class="badge-status approved">
+                                            <i data-feather="check-circle" style="width:12px; height:12px;"></i> Disetujui
+                                        </span>
+                                    @else
+                                        <span class="badge-status rejected">
+                                            <i data-feather="x-circle" style="width:12px; height:12px;"></i> Ditolak
+                                        </span>
+                                    @endif
+                                </td>
+                                <td style="color: var(--text-muted); font-weight: 600;">
+                                    {{ $req->approvedBy->name ?? '-' }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 40px 0;">Belum ada riwayat pengajuan cuti.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function switchTab(evt, tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => {
+            el.style.display = 'none';
+        });
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(tabId).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+    }
+</script>
 
 @endsection

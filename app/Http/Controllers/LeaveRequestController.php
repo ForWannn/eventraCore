@@ -8,12 +8,19 @@ use Illuminate\Support\Facades\Auth;
 
 class LeaveRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $requests = LeaveRequest::where('user_id', $user->id)
-            ->orderBy('start_date', 'desc')
-            ->get();
+        $query = LeaveRequest::where('user_id', $user->id);
+
+        if ($request->filled('filter_start_date')) {
+            $query->where('start_date', '>=', $request->filter_start_date);
+        }
+        if ($request->filled('filter_end_date')) {
+            $query->where('end_date', '<=', $request->filter_end_date);
+        }
+
+        $requests = $query->orderBy('start_date', 'desc')->get();
 
         return view('leave-requests.index', compact('requests'));
     }
@@ -39,7 +46,7 @@ class LeaveRequestController extends Controller
         return redirect()->route('leave-requests.index')->with('success', 'Pengajuan izin/cuti berhasil dikirim.');
     }
 
-    public function approvals()
+    public function approvals(Request $request)
     {
         $user = Auth::user();
         
@@ -57,8 +64,20 @@ class LeaveRequestController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
+        if ($request->filled('filter_start_date')) {
+            $queryHistory->where('start_date', '>=', $request->filter_start_date);
+        }
+        if ($request->filled('filter_end_date')) {
+            $queryHistory->where('end_date', '<=', $request->filter_end_date);
+        }
+
         $pendingRequests = $queryPending->orderBy('created_at', 'asc')->get();
-        $historyRequests = $queryHistory->orderBy('updated_at', 'desc')->take(20)->get();
+
+        if ($request->filled('filter_start_date') || $request->filled('filter_end_date')) {
+            $historyRequests = $queryHistory->orderBy('updated_at', 'desc')->get();
+        } else {
+            $historyRequests = $queryHistory->orderBy('updated_at', 'desc')->take(20)->get();
+        }
 
         return view('leave-requests.approvals', compact('pendingRequests', 'historyRequests'));
     }
