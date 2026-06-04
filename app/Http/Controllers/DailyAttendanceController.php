@@ -41,6 +41,13 @@ class DailyAttendanceController extends Controller
             return response()->json(['message' => 'Hari ini libur.'], 400);
         }
 
+        // Block check-in after attendance close time (12:00)
+        $closeTime = config('attendance.attendance_close_time', '12:00:00');
+        $closeThreshold = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' ' . $closeTime);
+        if ($now->gte($closeThreshold)) {
+            return response()->json(['message' => 'Absensi sudah ditutup. Absensi dibuka kembali pada pukul 00:00.'], 400);
+        }
+
         // Prevent double entry
         $exists = DailyAttendance::where('user_id', $user->id)
                                   ->where('date', $date)
@@ -324,7 +331,7 @@ class DailyAttendanceController extends Controller
         $now = Carbon::now();
         $dateObj = Carbon::parse($date);
         
-        $limit = config('attendance.checkout_threshold', '09:00:00');
+        $limit = config('attendance.attendance_close_time', '12:00:00');
         $threshold = Carbon::parse($date . ' ' . $limit);
         
         $isClosed = false;
@@ -503,7 +510,7 @@ class DailyAttendanceController extends Controller
         $now = Carbon::now();
         $dateObj = Carbon::parse($date);
         
-        $limit = config('attendance.checkout_threshold', '09:00:00');
+        $limit = config('attendance.attendance_close_time', '12:00:00');
         $threshold = Carbon::parse($date . ' ' . $limit);
         
         $isClosed = false;
@@ -628,5 +635,254 @@ class DailyAttendanceController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdfMonthly(Request $request)
+    {
+        $date = $request->input('date', Carbon::now()->format('Y-m-d'));
+        $search = $request->input('search');
+        $divisionId = $request->input('division_id');
+        $statusFilter = $request->input('status', 'all');
+
+        $dateObj = Carbon::parse($date);
+        $startOfMonth = $dateObj->copy()->startOfMonth();
+        $endOfMonth = $dateObj->copy()->endOfMonth();
+        $year = $dateObj->year;
+
+        // Get month name in Indonesian
+        $monthName = $startOfMonth->locale('id')->translatedFormat('F');
+
+        // Fetch users matching search and division filters, excluding Admin and Superadmin roles
+        $usersQuery = \App\Models\User::with(['division', 'roles'])
+            ->whereDoesntHave('roles', function($q) {
+                $q->whereIn('name', ['Admin', 'Superadmin']);
+            })
+            ->orderBy('name', 'asc');
+
+        if ($search) {
+            $usersQuery->where('name', 'like', '%' . $search . '%');
+        }
+
+        if ($divisionId && $divisionId !== 'all') {
+            $usersQuery->where('division_id', $divisionId);
+        }
+
+        $users = $usersQuery->get();
+
+        // If status filter is active, filter users by their status on the selected $date
+        if ($statusFilter && $statusFilter !== 'all') {
+            $dateAttendances = \App\Models\DailyAttendance::where('date', $date)
+                ->get()
+                ->keyBy('user_id');
+
+            $dateLeaves = \App\Models\LeaveRequest::where('status', 'approved')
+                ->where('start_date', '<=', $date)
+                ->where('end_date', '>=', $date)
+                ->get()
+                ->keyBy('user_id');
+
+            $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
+            $isWorkDay = true;
+            if ($calendar) {
+                $isWorkDay = (bool)$calendar->is_working_day;
+            } else {
+                if ($dateObj->dayOfWeek === Carbon::SATURDAY || $dateObj->dayOfWeek === Carbon::SUNDAY) {
+                    $isWorkDay = false;
+                }
+            }
+
+            $limit = config('attendance.attendance_close_time', '12:00:00');
+            $threshold = Carbon::parse($date . ' ' . $limit);
+            
+            $now = Carbon::now();
+            $isClosed = false;
+            if ($dateObj->isPast() && !$dateObj->isToday()) {
+                $isClosed = true;
+            } elseif ($dateObj->isToday() && $now->gt($threshold)) {
+                $isClosed = true;
+            }
+
+            $users = $users->filter(function ($u) use ($dateAttendances, $dateLeaves, $isWorkDay, $isClosed, $statusFilter) {
+                $att = $dateAttendances->get($u->id);
+                $leave = $dateLeaves->get($u->id);
+
+                $status = 'belum_hadir';
+                if ($att) {
+                    $status = $att->status === 'tepat_waktu' ? 'hadir' : 'terlambat';
+                } elseif ($leave) {
+                    $status = 'izin_cuti';
+                } else {
+                    if (!$isWorkDay) {
+                        $status = 'libur';
+                    } else {
+                        $status = $isClosed ? 'absen' : 'belum_hadir';
+                    }
+                }
+
+                return $status === $statusFilter;
+            });
+        }
+
+        // Fetch WorkCalendar overrides for the entire month
+        $overrides = \App\Models\WorkCalendar::whereBetween('date', [
+            $startOfMonth->format('Y-m-d'),
+            $endOfMonth->format('Y-m-d')
+        ])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
+
+        // Fetch all approved leaves for these users during the month
+        $userIds = $users->pluck('id');
+        $approvedLeaves = \App\Models\LeaveRequest::whereIn('user_id', $userIds)
+            ->where('status', 'approved')
+            ->where(function($q) use ($startOfMonth, $endOfMonth) {
+                $q->whereBetween('start_date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
+                  ->orWhereBetween('end_date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
+                  ->orWhere(function($sub) use ($startOfMonth, $endOfMonth) {
+                      $sub->where('start_date', '<=', $startOfMonth->format('Y-m-d'))
+                          ->where('end_date', '>=', $endOfMonth->format('Y-m-d'));
+                  });
+            })
+            ->get();
+
+        $leavesMap = [];
+        foreach ($approvedLeaves as $leave) {
+            $temp = Carbon::parse($leave->start_date);
+            $end = Carbon::parse($leave->end_date);
+            while ($temp->lte($end)) {
+                $leavesMap[$leave->user_id][$temp->format('Y-m-d')] = $leave;
+                $temp->addDay();
+            }
+        }
+
+        // Fetch all attendance records for these users during the month
+        $attendances = \App\Models\DailyAttendance::whereIn('user_id', $userIds)
+            ->whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
+            ->get();
+
+        $attendanceMap = [];
+        foreach ($attendances as $att) {
+            $attendanceMap[$att->user_id][$att->date] = $att;
+        }
+
+        $recapData = [];
+
+        foreach ($users as $user) {
+            // Generate short name (first word with length > 2)
+            $words = explode(' ', trim($user->name));
+            $shortName = '';
+            foreach ($words as $word) {
+                $cleanWord = preg_replace('/[^\w]/', '', $word);
+                if (strlen($cleanWord) > 2) {
+                    $shortName = $cleanWord;
+                    break;
+                }
+            }
+            if (!$shortName) {
+                $shortName = $words[0] ?? $user->name;
+            }
+
+            // Loop through each calendar day of the month
+            $tempDay = $startOfMonth->copy();
+            while ($tempDay->lte($endOfMonth)) {
+                $dateStr = $tempDay->format('Y-m-d');
+                $tanggalLabel = $tempDay->locale('id')->translatedFormat('l, d F Y');
+                
+                $isWeekend = ($tempDay->dayOfWeek === Carbon::SATURDAY || $tempDay->dayOfWeek === Carbon::SUNDAY);
+                
+                $workCalendar = $overrides->get($dateStr);
+                if ($workCalendar) {
+                    $isWorkDay = (bool)$workCalendar->is_working_day;
+                } else {
+                    $isWorkDay = !$isWeekend;
+                }
+                
+                $leave = $leavesMap[$user->id][$dateStr] ?? null;
+                $attendance = $attendanceMap[$user->id][$dateStr] ?? null;
+
+                $rowClass = '';
+                $checkInTimeStr = '';
+                $terlambatStr = '0 Menit';
+                $catatan = '';
+
+                if ($isWeekend) {
+                    // Weekend days (Saturday & Sunday) must display blank check-in times and empty notes (white)
+                    $rowClass = '';
+                    $checkInTimeStr = '';
+                    $terlambatStr = '0 Menit';
+                    $catatan = '';
+                } elseif (!$isWorkDay) {
+                    // Weekday holidays: white, note LIBUR
+                    $rowClass = '';
+                    $checkInTimeStr = '';
+                    $terlambatStr = '0 Menit';
+                    $catatan = 'LIBUR';
+                } elseif ($leave) {
+                    // Approved leave: white, note IZIN/CUTI
+                    $rowClass = '';
+                    $checkInTimeStr = '';
+                    $terlambatStr = '0 Menit';
+                    $catatan = $leave->type === 'izin' ? 'IZIN' : 'CUTI';
+                } else {
+                    // Regular working weekday
+                    if ($attendance) {
+                        $checkInObj = Carbon::parse($attendance->check_in_time);
+                        $checkInTimeStr = $checkInObj->format('H:i');
+                        $checkInTimeOnly = $checkInObj->format('H:i:s');
+                        
+                        // Weekdays where check-in occurred before 07:00 AM or after 12:00 PM: LUPA ABSEN
+                        $isLupaAbsen = ($checkInTimeOnly < '00:00:00' || $checkInTimeOnly > '12:00:00');
+                        $isLate = ($checkInTimeOnly > '09:00:00');
+
+                        if ($isLupaAbsen) {
+                            $rowClass = 'lupa-absen-row'; // yellow
+                            $catatan = '';
+                        } elseif ($isLate) {
+                            $rowClass = 'lupa-absen-row'; // yellow (telat kuning)
+                            $catatan = '';
+                        } else {
+                            $rowClass = 'tepat-waktu-row'; // green
+                            $catatan = '';
+                        }
+
+                        // Lateness calculation against 09:00:00
+                        if ($isLate) {
+                            $thresholdObj = Carbon::parse($dateStr . ' 09:00:00');
+                            $diff = $thresholdObj->diffInMinutes($checkInObj, false);
+                            
+                            if ($diff > 0) {
+                                $hours = intval(floor($diff / 60));
+                                $minutes = intval($diff % 60);
+                                $terlambatStr = $hours . ' Jam ' . $minutes . ' Menit';
+                            }
+                        }
+                    } else {
+                        // Working weekday, no check-in, no leave: ALPA (merah)
+                        $rowClass = 'mangkir-row';
+                        $checkInTimeStr = '';
+                        $terlambatStr = '0 Menit';
+                        $catatan = 'ALPA';
+                    }
+                }
+
+                $recapData[] = [
+                    'tanggal' => $tanggalLabel,
+                    'nama' => $shortName,
+                    'jam_masuk' => $checkInTimeStr,
+                    'terlambat' => $terlambatStr,
+                    'catatan' => $catatan,
+                    'row_class' => $rowClass,
+                ];
+
+                $tempDay->addDay();
+            }
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('daily-attendances.pdf_monthly', [
+            'monthName' => $monthName,
+            'year' => $year,
+            'threshold' => '9:00',
+            'recapData' => $recapData,
+        ]);
+
+        return $pdf->stream('data_absensi_bulan_' . strtolower($monthName) . '_' . $year . '.pdf');
     }
 }

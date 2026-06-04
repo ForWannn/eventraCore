@@ -573,83 +573,177 @@
         }
         .recap-table-wrapper {
             overflow-x: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
         }
         .recap-table thead {
             display: none !important;
         }
-        .recap-table, .recap-table tbody, .recap-table tr, .recap-table td {
+        .recap-table {
             display: block !important;
             width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-table tbody {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
         }
         .recap-table tr:not(:has(.recap-empty-state)) {
             border: 1px solid var(--border-color) !important;
             border-radius: 14px !important;
-            padding: 14px !important;
-            margin-bottom: 14px !important;
+            padding: 12px !important;
+            margin-bottom: 0px !important; /* Managed by grid gap */
             display: flex !important;
             flex-direction: column !important;
-            gap: 10px !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            align-self: stretch !important;
+            height: 100% !important;
+            box-sizing: border-box !important;
+            background: var(--card-bg) !important;
+        }
+        [data-theme="dark"] .recap-table tr:not(:has(.recap-empty-state)) {
+            background: rgba(30, 41, 59, 0.25) !important;
         }
         .recap-table tr td {
             border: none !important;
             padding: 0 !important;
             text-align: left !important;
-            font-size: 11px !important;
-            display: flex !important;
-            align-items: center !important;
+            font-size: 10px !important;
+            display: block !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            word-break: break-word !important;
+            box-sizing: border-box !important;
+        }
+        .recap-table tr:has(.recap-empty-state) {
+            grid-column: span 2 !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .recap-table tr td:has(.recap-empty-state) {
+            display: block !important;
+            width: 100% !important;
+            text-align: center !important;
+            padding: 40px 0 !important;
         }
         /* Column 1: User cell */
         .recap-table tr td:nth-child(1) {
-            margin-bottom: 4px !important;
+            margin-bottom: 2px !important;
         }
         /* Column 2: Divisi */
         .recap-table tr td:nth-child(2) {
             border-top: 1px dashed var(--border-color) !important;
-            padding-top: 8px !important;
+            padding-top: 6px !important;
         }
         .recap-table tr td:nth-child(2):before {
             content: "Divisi: ";
             font-weight: 700;
             color: var(--text-muted);
+            font-size: 9px;
             text-transform: uppercase;
-            margin-right: 6px;
+            margin-right: 4px;
         }
         /* Column 3: Weekly Plan */
         .recap-table tr td:nth-child(3):before {
             content: "Weekly Plan: ";
             font-weight: 700;
             color: var(--text-muted);
+            font-size: 9px;
             text-transform: uppercase;
-            margin-right: 6px;
+            margin-right: 4px;
         }
         /* Column 4: Weekly Report */
         .recap-table tr td:nth-child(4):before {
             content: "Weekly Report: ";
             font-weight: 700;
             color: var(--text-muted);
+            font-size: 9px;
             text-transform: uppercase;
-            margin-right: 6px;
+            margin-right: 4px;
         }
         /* Column 5: Progress */
         .recap-table tr td:nth-child(5):before {
             content: "Progress: ";
             font-weight: 700;
             color: var(--text-muted);
+            font-size: 9px;
             text-transform: uppercase;
-            margin-right: 6px;
+            margin-right: 4px;
+        }
+        .recap-table tr td:nth-child(5) > div {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
         }
         /* Column 6: Aksi link */
         .recap-table tr td:nth-child(6) {
-            margin-top: 6px !important;
+            margin-top: auto !important; /* Pushes button to bottom */
             border-top: 1px dashed var(--border-color) !important;
-            padding-top: 10px !important;
+            padding-top: 8px !important;
         }
         .recap-table tr td:nth-child(6) .btn-review-action {
             width: 100% !important;
             justify-content: center !important;
-            padding: 10px !important;
-            border-radius: 8px !important;
-            font-size: 12.5px !important;
+            padding: 8px !important;
+            border-radius: 6px !important;
+            font-size: 11px !important;
+        }
+        
+        .recap-user-cell {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-user-avatar {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            flex-shrink: 0 !important;
+        }
+        .recap-user-cell > div {
+            min-width: 0 !important;
+            flex: 1 !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1px !important;
+            box-sizing: border-box !important;
+        }
+        .recap-user-name {
+            font-size: 11.5px !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            width: 100% !important;
+        }
+        .recap-user-division {
+            font-size: 9.5px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            width: 100% !important;
+        }
+        .recap-table tr td .badge-status {
+            font-size: 9px !important;
+            padding: 2px 6px !important;
+            border-radius: 6px !important;
         }
         .recap-footer {
             flex-direction: column;
@@ -808,7 +902,7 @@
                             <img src="{{ $u->photo_url }}" class="recap-user-avatar" alt="{{ $u->name }}">
                             <div>
                                 <div class="recap-user-name">{{ $u->name }}</div>
-                                <div class="recap-user-division">NIK: {{ $u->nik ?? '-' }}</div>
+                                <div class="recap-user-division">ID: {{ $u->nik ?? '-' }}</div>
                             </div>
                         </div>
                     </td>

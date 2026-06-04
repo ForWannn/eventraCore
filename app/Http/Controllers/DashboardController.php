@@ -228,6 +228,7 @@ class DashboardController extends Controller
             'showBanner'               => $showBanner,
             'bannerType'               => $bannerType,
             'isWorkingDayToday'        => $isWorkingDayToday,
+            'isAttendanceClosed'       => $now->format('H:i:s') >= config('attendance.attendance_close_time', '12:00:00'),
         ];
     }
 
@@ -452,6 +453,7 @@ class DashboardController extends Controller
                 }
                 return $now->dayOfWeek !== Carbon::SATURDAY && $now->dayOfWeek !== Carbon::SUNDAY;
             })(),
+            'isAttendanceClosed'  => $now->format('H:i:s') >= config('attendance.attendance_close_time', '12:00:00'),
         ];
     }
 

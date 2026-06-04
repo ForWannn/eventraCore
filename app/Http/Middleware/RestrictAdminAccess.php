@@ -42,6 +42,7 @@ class RestrictAdminAccess
 
                     'attendance.recap' => 'rekap_absen',
                     'attendance.recap.export' => 'rekap_absen',
+                    'attendance.recap.export_pdf_monthly' => 'rekap_absen',
 
                     'weekly.recap' => 'rekap_weekly',
                     'weekly.recap.export' => 'rekap_weekly',

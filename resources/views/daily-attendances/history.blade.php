@@ -66,7 +66,7 @@
 <!-- Custom Header -->
 <div style="margin-bottom: 28px;">
     <!-- <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Riwayat Absensi</h1> -->
-    <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 500;">Lihat catatan kehadiran dan absensi Anda.</p>
+    <!-- <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 500;">Lihat catatan kehadiran dan absensi Anda.</p> -->
 </div>
 
 <!-- Statistics Cards -->

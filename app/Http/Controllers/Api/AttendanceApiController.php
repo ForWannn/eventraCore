@@ -86,6 +86,21 @@ class AttendanceApiController extends Controller
             ], 200);
         }
 
+        // Block check-in after attendance close time (12:00)
+        $closeTime = config('attendance.attendance_close_time', '12:00:00');
+        $closeThreshold = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' ' . $closeTime);
+        if ($checkInTime->gte($closeThreshold)) {
+            Log::info("Hikvision Push: Attendance closed after {$closeTime}. Swipe ignored - Name: {$user->name}, ID: {$employeeNo}, Time: " . $checkInTime->format('H:i:s'));
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Attendance closed after ' . $closeTime,
+                'statusCode' => 1,
+                'statusString' => 'OK',
+                'errorCode' => 0,
+                'errorMsg' => 'OK'
+            ], 200);
+        }
+
         $exists = DailyAttendance::where('user_id', $user->id)
                                   ->where('date', $date)
                                   ->exists();

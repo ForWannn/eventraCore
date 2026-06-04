@@ -30,7 +30,8 @@
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        background: var(--primary-soft);
+        background: #EFF6FF;
+        border: 1px solid #DBEAFE;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -55,13 +56,13 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 20px;
+        padding: 10px 24px;
         background: var(--card-bg);
         color: var(--text-main);
         border: 1px solid var(--border-color);
         border-radius: 12px;
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         text-decoration: none;
         transition: all 0.2s;
@@ -73,7 +74,31 @@
         width: 16px;
         height: 16px;
     }
+    .btn-export-pdf {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        background: #ef4444;
+        color: #ffffff;
+        border: 1px solid #ef4444;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-export-pdf:hover {
+        background: #dc2626;
+        border-color: #dc2626;
+    }
+    .btn-export-pdf svg {
+        width: 16px;
+        height: 16px;
+    }
 
+    /* ── Stat Cards Grid ── */
     /* ── Stat Cards Grid ── */
     .att-stats-grid {
         display: grid;
@@ -86,9 +111,6 @@
     }
     @media (max-width: 768px) {
         .att-stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 480px) {
-        .att-stats-grid { grid-template-columns: 1fr; }
     }
 
     .att-stat-card {
@@ -114,16 +136,18 @@
         align-items: center;
         justify-content: center;
         margin-bottom: 12px;
+        border: 1px solid transparent;
+        transition: all 0.2s;
     }
     .att-stat-card .att-stat-icon svg {
         width: 18px;
         height: 18px;
     }
-    .att-stat-card .att-stat-icon.blue    { background: rgba(37,99,235,0.06);  color: #2563eb; }
-    .att-stat-card .att-stat-icon.emerald { background: rgba(16,185,129,0.06); color: #10b981; }
-    .att-stat-card .att-stat-icon.rose    { background: rgba(249,115,22,0.06);  color: #f97316; }
-    .att-stat-card .att-stat-icon.red     { background: rgba(239,68,68,0.06);   color: #ef4444; }
-    .att-stat-card .att-stat-icon.violet  { background: rgba(139,92,246,0.06); color: #8b5cf6; }
+    .att-stat-card .att-stat-icon.blue    { background: #eff6ff; color: #2563eb; border-color: #dbeafe; }
+    .att-stat-card .att-stat-icon.emerald { background: #ecfdf5; color: #10b981; border-color: #d1fae5; }
+    .att-stat-card .att-stat-icon.rose    { background: #fff7ed; color: #f59e0b; border-color: #fed7aa; }
+    .att-stat-card .att-stat-icon.red     { background: #fef2f2; color: #ef4444; border-color: #fee2e2; }
+    .att-stat-card .att-stat-icon.violet  { background: #faf5ff; color: #8b5cf6; border-color: #f3e8ff; }
 
     .att-stat-card .att-stat-label {
         font-size: 13px;
@@ -903,8 +927,8 @@
         font-weight: 700;
     }
     .proof-btn-google-maps {
-        display: flex;
-        align-items: flex-start !important;
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
         gap: 8px;
         padding: 10px 16px;
@@ -916,6 +940,8 @@
         font-weight: 700;
         text-decoration: none;
         transition: all 0.2s ease;
+        align-self: flex-start;
+        width: auto;
     }
     .proof-btn-google-maps:hover {
         background: #EFF6FF;
@@ -925,18 +951,44 @@
 
     /* Responsive overrides */
     @media (max-width: 768px) {
+        .att-modal-body {
+            padding: 12px !important;
+        }
         .proof-meta-grid {
-            grid-template-columns: 1fr;
-            gap: 12px;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+        }
+        .proof-meta-card {
+            padding: 6px 8px !important;
+            gap: 8px !important;
+            border-radius: 12px !important;
+        }
+        .proof-meta-icon-wrapper {
+            width: 32px !important;
+            height: 32px !important;
+        }
+        .proof-meta-icon {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .proof-meta-label {
+            font-size: 10px !important;
+        }
+        .proof-meta-value {
+            font-size: 11.5px !important;
         }
         .proof-media-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+            margin-bottom: 0 !important;
+        }
+        .proof-media-item {
+            aspect-ratio: 1 !important;
         }
         .proof-location-grid {
             grid-template-columns: 1fr;
             gap: 20px;
-            padding: 16px;
+            padding: 12px !important;
         }
         .att-modal-content.proof-modal-large {
             max-height: 95vh;
@@ -944,6 +996,374 @@
         }
         .proof-callout-box {
             margin-top: 8px;
+        }
+        .proof-details-list {
+            flex-direction: column;
+            gap: 12px;
+            padding: 8px 4px;
+        }
+        .proof-detail-item {
+            width: 100%;
+            gap: 12px !important;
+        }
+        .proof-detail-icon-box {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+        }
+        .proof-detail-icon {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .proof-detail-label {
+            font-size: 10px !important;
+        }
+        .proof-detail-value {
+            font-size: 12px !important;
+        }
+        .proof-detail-sub {
+            font-size: 10.5px !important;
+        }
+        .proof-btn-google-maps {
+            width: 100% !important;
+            align-self: stretch !important;
+            justify-content: center;
+            font-size: 11.5px !important;
+            padding: 8px 12px !important;
+            border-radius: 8px !important;
+        }
+
+        /* Recap page responsive overrides */
+        .att-header-card {
+            flex-direction: column;
+            align-items: flex-start !important;
+            padding: 24px !important;
+            gap: 16px !important;
+        }
+        .att-header-left {
+            align-items: center !important;
+            width: 100%;
+        }
+        .btn-export, .btn-export-pdf {
+            width: auto !important;
+            align-self: flex-start !important;
+            justify-content: center;
+        }
+        .att-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+        .att-stat-card {
+            padding: 16px !important;
+            border-radius: 14px !important;
+        }
+        .att-stat-card .att-stat-value {
+            font-size: 24px !important;
+        }
+        .att-section-card {
+            padding: 16px;
+        }
+        .att-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+        .att-toolbar-left {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            width: 100%;
+        }
+        .att-search-box, .att-input-date, .att-select {
+            width: 100% !important;
+        }
+        .att-toolbar-right {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .att-toolbar-right .btn-filter-action {
+            width: 100%;
+            justify-content: center;
+        }
+        /* Card Layout for Attendance Table */
+        .att-table-wrapper {
+            overflow-x: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .att-table thead {
+            display: none !important;
+        }
+        
+        .att-table {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .att-table tbody {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .att-table tr:not(:has(td[colspan])) {
+            border: 1px solid var(--border-color) !important;
+            border-radius: 14px !important;
+            padding: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            align-self: stretch !important;
+            height: 100% !important;
+            box-sizing: border-box !important;
+            background: var(--card-bg) !important;
+        }
+        [data-theme="dark"] .att-table tr:not(:has(td[colspan])) {
+            background: rgba(30, 41, 59, 0.25) !important;
+        }
+        
+        .att-table tr td {
+            display: block !important;
+            border: none !important;
+            padding: 0 !important;
+            text-align: left !important;
+            font-size: 10px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            word-break: break-word !important;
+            box-sizing: border-box !important;
+        }
+        
+        .att-table tr:has(td[colspan]) {
+            grid-column: span 2 !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .att-table tr:has(td[colspan]) td {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+            padding: 40px 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Column 1 (Employee) */
+        .att-table tr td:nth-child(1) {
+            margin-bottom: 2px !important;
+        }
+        
+        /* Labeled division column */
+        .att-table tr td:nth-child(2) {
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 6px !important;
+        }
+        .att-table tr td:nth-child(2):before {
+            content: "Departemen: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled status column */
+        .att-table tr td:nth-child(3):before {
+            content: "Status: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled clock in column */
+        .att-table tr td:nth-child(4):before {
+            content: "Jam Masuk: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled notes column */
+        .att-table tr td:nth-child(5):before {
+            content: "Keterangan: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled method column */
+        .att-table tr td:nth-child(6):before {
+            content: "Metode: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Action buttons column */
+        .att-table tr td:nth-child(7) {
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 8px !important;
+            margin-top: auto !important;
+        }
+        .att-table tr td:nth-child(7) .proof-wrapper {
+            display: flex !important;
+            gap: 6px !important;
+        }
+        
+        /* Shrink status badge, method and proof buttons on mobile */
+        .att-table tr td .badge-status {
+            font-size: 9px !important;
+            padding: 2px 6px !important;
+            border-radius: 6px !important;
+        }
+        .att-table tr td .badge-method {
+            font-size: 10px !important;
+        }
+        .att-table tr td .badge-method svg {
+            width: 12px !important;
+            height: 12px !important;
+        }
+        .att-table tr td .btn-proof-square {
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 6px !important;
+        }
+        .att-table tr td .btn-proof-square svg {
+            width: 12px !important;
+            height: 12px !important;
+        }
+        .att-table tr td .btn-action-dots {
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 6px !important;
+        }
+        .att-table tr td .btn-action-dots svg {
+            width: 12px !important;
+            height: 12px !important;
+        }
+
+        .att-user-cell {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .att-user-avatar {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            flex-shrink: 0 !important;
+        }
+        .att-user-cell > div {
+            min-width: 0 !important;
+            flex: 1 !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1px !important;
+            box-sizing: border-box !important;
+        }
+        .att-user-name {
+            font-size: 11.5px !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            width: 100% !important;
+        }
+        .att-user-division {
+            font-size: 9.5px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            width: 100% !important;
+        }
+
+        .recap-footer {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+        .recap-footer-right {
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            align-items: center;
+        }
+        .per-page-select {
+            width: 100%;
+            max-width: 200px;
+        }
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .recap-footer .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .att-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+        }
+        .att-stat-card {
+            padding: 12px !important;
+            border-radius: 10px !important;
+        }
+        .att-stat-card .att-stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+        }
+        .att-stat-card .att-stat-icon svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .att-stat-card .att-stat-label {
+            font-size: 10.5px !important;
+            margin-bottom: 4px !important;
+        }
+        .att-stat-card .att-stat-value {
+            font-size: 20px !important;
+        }
+        .att-stat-card .att-stat-sub {
+            font-size: 8px !important;
+        }
+        .att-header-card {
+            padding: 16px !important;
+            gap: 12px !important;
         }
     }
     .att-modal-map-link:hover {
@@ -965,10 +1385,16 @@
             <p>Rekapitulasi kehadiran seluruh karyawan secara harian.</p>
         </div>
     </div>
-    <a href="{{ route('attendance.recap.export', request()->query()) }}" class="btn-export">
-        <i data-feather="download"></i>
-        Ekspor
-    </a>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{{ route('attendance.recap.export', request()->query()) }}" class="btn-export">
+            <i data-feather="download"></i>
+            Ekspor CSV
+        </a>
+        <a href="{{ route('attendance.recap.export_pdf_monthly', request()->query()) }}" class="btn-export-pdf">
+            <i data-feather="file-text"></i>
+            Ekspor PDF Bulanan
+        </a>
+    </div>
 </div>
 
 <div class="att-stats-grid">
@@ -1006,11 +1432,6 @@
         <div class="att-stat-value">{{ $leaveCount }}</div>
         <div class="att-stat-sub">{{ $stats['leave_pct'] }}% dari total</div>
     </div>
-</div>
-
-<div class="stats-info-note">
-    <i data-feather="info"></i>
-    <span>Persentase dihitung berdasarkan total karyawan ({{ $totalStaff }})</span>
 </div>
 
 {{-- ═══ MAIN DASHBOARD SECTION ═══ --}}
@@ -1145,12 +1566,13 @@
                         <td>
                             @if($item['method'] === 'kantor')
                                 <span class="badge-method">
-                                    <i data-feather="globe"></i> Kantor
+                                    Kantor
                                 </span>
                             @elseif($item['method'] === 'luar')
                                 <span class="badge-method">
-                                    <i data-feather="globe"></i> Website
+                                    Website
                                 </span>
+                                
                             @else
                                 <span style="color: var(--text-muted); font-weight: 500;">—</span>
                             @endif
@@ -1302,7 +1724,7 @@
                         </div>
                         <!-- CTA Button Buka di Google Maps -->
                         <div class="proof-detail-item">
-                            <a id="modalMapLink" href="" target="_blank" class="proof-btn-google-maps" style="display: inline-flex; width: auto; align-self: flex-start; padding: 10px 10px;">
+                            <a id="modalMapLink" href="" target="_blank" class="proof-btn-google-maps">
                                  Buka di Google Maps
                             </a>
                         </div>

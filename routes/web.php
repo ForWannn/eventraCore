@@ -91,6 +91,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
     Route::middleware(['permission:rekap_absen'])->group(function () {
         Route::get('/daily-attendance-recap', [DailyAttendanceController::class, 'recap'])->name('attendance.recap');
         Route::get('/daily-attendance-recap/export', [DailyAttendanceController::class, 'exportRecap'])->name('attendance.recap.export');
+        Route::get('/daily-attendance-recap/export-pdf-monthly', [DailyAttendanceController::class, 'exportPdfMonthly'])->name('attendance.recap.export_pdf_monthly');
     });
 
     Route::middleware(['role:Superadmin'])->group(function () {

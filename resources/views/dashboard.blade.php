@@ -594,39 +594,65 @@
 
         /* Stats Grid & Cards */
         .stats-grid, .stats-grid-3 {
-            grid-template-columns: repeat(2, 1fr) !important;
+            grid-template-columns: 1fr !important;
             gap: 10px !important;
             margin-bottom: 16px !important;
         }
         .stats-grid-3 > div:nth-child(3) {
-            grid-column: span 2 !important;
+            grid-column: span 1 !important;
         }
 
         .stat-card {
-            padding: 12px !important;
-            border-radius: 10px !important;
+            padding: 14px 16px !important;
+            border-radius: 12px !important;
             min-height: auto !important;
             margin-bottom: 0 !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 0 !important;
+        }
+        /* On mobile, reorganize the card internal layout */
+        .stat-card > div:first-child {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 12px !important;
+            margin-bottom: 0 !important;
+            flex: 1 !important;
+            min-width: 0 !important;
+        }
+        .stat-card > hr {
+            display: none !important;
+        }
+        .stat-card > a {
+            flex-shrink: 0 !important;
+            font-size: 12px !important;
+            white-space: nowrap !important;
+            gap: 4px !important;
+        }
+        .stat-card > a > span {
+            display: none !important;
         }
         .stat-card-left {
-            gap: 6px !important;
+            gap: 4px !important;
         }
         .stat-card-header {
             margin-bottom: 4px !important;
             gap: 6px !important;
         }
         .stat-card .stat-icon {
-            width: 30px !important;
-            height: 30px !important;
-            border-radius: 8px !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
             font-size: 13px !important;
         }
         .stat-card .stat-icon svg {
-            width: 14px !important;
-            height: 14px !important;
+            width: 16px !important;
+            height: 16px !important;
         }
         .stat-card .stat-label {
-            font-size: 10px !important;
+            font-size: 11px !important;
+            white-space: nowrap !important;
         }
         .stat-card .stat-value {
             font-size: 20px !important;
@@ -636,8 +662,9 @@
             font-size: 11px !important;
         }
         .stat-card .stat-sub {
-            font-size: 9.5px !important;
-            margin-top: 1px !important;
+            font-size: 10px !important;
+            margin-top: 0 !important;
+            white-space: nowrap !important;
         }
         .stat-card .stat-trend-container {
             margin-top: 4px !important;
@@ -2581,6 +2608,13 @@
                     Nikmati hari istirahat dengan baik!
                 </p>
             </div>
+        @elseif($isAttendanceClosed)
+            <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
+                
+                <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
+                    Absensi ditutup jam 12:00 dan akan dibuka kembali jam 00:00
+                </p>
+            </div>
         @else
             <div class="attendance-redesign-layout not-checked-in">
                 <div class="digital-clock-container">
@@ -2908,6 +2942,13 @@
                 <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0 0 6px 0;">Hari Ini Libur</h3>
                 <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
                     Nikmati hari libur kamu dengan baik!
+                </p>
+            </div>
+        @elseif($isAttendanceClosed)
+            <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
+                
+                <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
+                    Absensi ditutup jam 12:00 dan akan dibuka kembali jam 00:00
                 </p>
             </div>
         @else
