@@ -704,7 +704,7 @@
                <div class="nav-section-label" style="margin-top: 16px;">SUPERADMIN</div>
                <a href="{{ route('users.permissions') }}"
                    class="nav-link {{ request()->routeIs('users.permissions') ? 'active' : '' }}">
-                   <i data-feather="shield"></i> <span>Hak Akses Pengguna</span>
+                   <i data-feather="shield"></i> <span>Hak Akses User</span>
                </a>
                @endif
            </div>

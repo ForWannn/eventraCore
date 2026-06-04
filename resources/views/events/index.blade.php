@@ -45,7 +45,7 @@
             margin-top: 2px !important;
         }
         .stat-card .stat-sub {
-            font-size: 10px !important;
+            font-size: 8px !important;
             margin-top: 1px !important;
         }
 
@@ -61,7 +61,7 @@
             gap: 12px !important;
         }
         .card h2 {
-            font-size: 16px !important;
+            font-size: 14px !important;
         }
         .card form {
             display: grid !important;
@@ -72,7 +72,7 @@
         .card form select.filter-select {
             width: 100% !important;
             padding: 8px !important;
-            font-size: 12px !important;
+            font-size: 10px !important;
             border-radius: 8px !important;
         }
         .card form a.btn-create {
@@ -161,6 +161,12 @@
             align-items: center !important;
             gap: 12px !important;
         }
+        .empty-state p{
+            font-size: 10px !important;;
+        }
+        .btn-create span{
+            font-size: 10px !important;
+        }
     }
 
     .stat-card {
@@ -173,10 +179,6 @@
         gap: 16px;
         min-height: 108px;
         transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.03);
     }
     .stat-card-content {
         display: flex;
@@ -443,7 +445,6 @@
 
             @can('crud_events')
             <a href="{{ route('events.create') }}" class="btn-create">
-                <i data-feather="plus" style="width: 16px; height: 16px;"></i>
                 <span>Buat Event Baru</span>
             </a>
             @endcan

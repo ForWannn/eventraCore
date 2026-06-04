@@ -246,13 +246,16 @@
         width: 100%;
     }
 
+    @media (max-width: 960px) {
+        .top-responsive {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
     @media (max-width: 768px) {
         .day-col {
             min-height: auto !important;
         }
-    }
-
-    @media (max-width: 640px) {
         .weekly-header-container {
             flex-direction: column !important;
             align-items: flex-start !important;
@@ -339,6 +342,9 @@
             margin-top: 16px !important;
             margin-bottom: 24px !important;
         }
+        .objectives-responsive {
+            grid-template-columns: 1fr !important;
+        }
     }
 </style>
 
@@ -410,7 +416,6 @@
         
         <!-- Top Row Grid: Objectives & Monthly Deadlines -->
         <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 24px;" class="top-responsive">
-            <style>@media (max-width: 960px) { .top-responsive { grid-template-columns: 1fr !important; } }</style>
             
             <!-- Weekly Objective Card -->
             <div class="section-box" style="margin-bottom: 0;">
@@ -421,7 +426,6 @@
                     </span>
                 </div>
                 <div class="section-body objectives-responsive" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
-                    <style>@media (max-width: 640px) { .objectives-responsive { grid-template-columns: 1fr !important; } }</style>
                     @for($i = 0; $i < 10; $i++)
                         @php $item = $report->items->where('type', 'objective')->values()->get($i); @endphp
                         <div class="objective-row">

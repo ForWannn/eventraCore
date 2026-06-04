@@ -199,9 +199,6 @@
         position: relative;
         width: 280px;
     }
-    @media (max-width: 640px) {
-        .recap-search-box { width: 100%; }
-    }
     .recap-search-box svg {
         position: absolute;
         left: 12px;
@@ -497,17 +494,195 @@
         opacity: 0.2;
         margin-bottom: 8px;
     }
+
+    @media (max-width: 768px) {
+        .recap-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .recap-stat-card {
+            padding: 12px !important;
+            border-radius: 10px !important;
+            min-height: auto !important;
+            margin-bottom: 0 !important;
+            gap: 8px !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        .recap-stat-card .recap-stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            margin-bottom: 4px !important;
+        }
+        .recap-stat-card .recap-stat-icon svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .recap-stat-card .recap-stat-label {
+            font-size: 10px !important;
+            margin-bottom: 2px !important;
+        }
+        .recap-stat-card .recap-stat-value {
+            font-size: 18px !important;
+            margin-top: 0 !important;
+        }
+        .recap-stat-card .recap-stat-sub {
+            font-size: 9.5px !important;
+            margin-top: 1px !important;
+        }
+        .recap-toolbar-left {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .recap-search-box {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-search-box .form-control {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-input-date {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-input-date .form-control {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-select {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-toolbar-right {
+            width: 100%;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .recap-toolbar-right button {
+            flex: 1;
+            justify-content: center;
+        }
+        .recap-table-wrapper {
+            overflow-x: visible !important;
+        }
+        .recap-table thead {
+            display: none !important;
+        }
+        .recap-table, .recap-table tbody, .recap-table tr, .recap-table td {
+            display: block !important;
+            width: 100% !important;
+        }
+        .recap-table tr:not(:has(.recap-empty-state)) {
+            border: 1px solid var(--border-color) !important;
+            border-radius: 14px !important;
+            padding: 14px !important;
+            margin-bottom: 14px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
+        .recap-table tr td {
+            border: none !important;
+            padding: 0 !important;
+            text-align: left !important;
+            font-size: 11px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        /* Column 1: User cell */
+        .recap-table tr td:nth-child(1) {
+            margin-bottom: 4px !important;
+        }
+        /* Column 2: Divisi */
+        .recap-table tr td:nth-child(2) {
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 8px !important;
+        }
+        .recap-table tr td:nth-child(2):before {
+            content: "Divisi: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-right: 6px;
+        }
+        /* Column 3: Weekly Plan */
+        .recap-table tr td:nth-child(3):before {
+            content: "Weekly Plan: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-right: 6px;
+        }
+        /* Column 4: Weekly Report */
+        .recap-table tr td:nth-child(4):before {
+            content: "Weekly Report: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-right: 6px;
+        }
+        /* Column 5: Progress */
+        .recap-table tr td:nth-child(5):before {
+            content: "Progress: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-right: 6px;
+        }
+        /* Column 6: Aksi link */
+        .recap-table tr td:nth-child(6) {
+            margin-top: 6px !important;
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 10px !important;
+        }
+        .recap-table tr td:nth-child(6) .btn-review-action {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 10px !important;
+            border-radius: 8px !important;
+            font-size: 12.5px !important;
+        }
+        .recap-footer {
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+        }
+        .recap-footer-right {
+            flex-direction: column;
+            width: 100%;
+            gap: 12px;
+            align-items: center;
+        }
+        .per-page-select {
+            width: 100%;
+            text-align: center;
+        }
+        .grid-search-filter {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+            width: 100% !important;
+        }
+    }
 </style>
 
-{{-- ═══ TOP HEADER & EXPORT ═══ --}}
 <div class="recap-header-card">
     <div class="recap-header-left">
         <div class="recap-header-icon">
             <i data-feather="file-text"></i>
         </div>
         <div class="recap-header-text">
-            <h2>Monitoring Log Kerja Staf</h2>
-            <p>Pantau perencanaan tujuan dan hasil akhir kerja mingguan karyawan.</p>
+            <h2>Recap Weekly report</h2>
         </div>
     </div>
     <a href="{{ route('weekly.recap.export', request()->query()) }}" class="btn-export">
@@ -564,18 +739,18 @@
     <form action="{{ route('weekly.recap') }}" method="GET" id="filterForm">
         <div class="recap-toolbar">
             <div class="recap-toolbar-left">
+                <div class="grid-search-filter">
                 {{-- Search Box --}}
-                <div class="recap-search-box">
-                    <i data-feather="search"></i>
-                    <input type="text" name="search" class="form-control" placeholder="Cari nama staf..." value="{{ $filters['search'] }}">
-                </div>
+                    <div class="recap-search-box">
+                        <input type="text" name="search" class="form-control" placeholder="Cari nama" value="{{ $filters['search'] }}">
+                    </div>
 
-                {{-- Week selector input --}}
-                <div class="recap-input-date">
-                    <input type="date" name="week" class="form-control" value="{{ $weekStart }}" required>
-                    <!-- <i data-feather="calendar" style="width: 14px; height: 14px;"></i> -->
+                    {{-- Week selector input --}}
+                    <div class="recap-input-date">
+                        <input type="date" name="week" class="form-control" value="{{ $weekStart }}" required>
+                        <!-- <i data-feather="calendar" style="width: 14px; height: 14px;"></i> -->
+                    </div>
                 </div>
-
                 {{-- Division Filter --}}
                 <select name="division_id" class="form-control recap-select">
                     <option value="all">Semua Departemen</option>
@@ -599,10 +774,10 @@
 
             <div class="recap-toolbar-right">
                 <button type="submit" class="btn-filter-action blue">
-                    <i data-feather="filter"></i> Filter
+                     Filter
                 </button>
                 <button type="button" class="btn-filter-action reset" onclick="resetFilters()">
-                    <i data-feather="rotate-ccw"></i> Reset Filter
+                     Reset Filter
                 </button>
             </div>
         </div>

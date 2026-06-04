@@ -312,6 +312,80 @@
         background: #dbeafe;
         border-color: #93c5fd;
     }
+
+    @media (max-width: 992px) {
+        .dashboard-stats {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-stats {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .stat-card {
+            padding: 12px !important;
+            border-radius: 10px !important;
+            min-height: auto !important;
+            margin-bottom: 0 !important;
+            gap: 8px !important;
+        }
+        .stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+        }
+        .stat-icon svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .stat-label {
+            font-size: 10px !important;
+        }
+        .stat-value {
+            font-size: 18px !important;
+            margin-top: 0 !important;
+        }
+        .stat-desc {
+            font-size: 9.5px !important;
+            margin-top: 1px !important;
+        }
+        .report-card-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 16px;
+            padding: 16px;
+        }
+        .row-left, .row-middle, .row-right {
+            min-width: auto !important;
+            width: 100% !important;
+        }
+        .row-middle {
+            border-top: 1px dashed var(--border-color);
+            padding-top: 12px;
+        }
+        .row-right {
+            border-top: 1px dashed var(--border-color);
+            padding-top: 12px;
+        }
+        .btn-detail-cta {
+            width: 100%;
+            justify-content: center;
+            margin-left: 0 !important;
+            margin-top: 8px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .meta-details {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
 </style>
 
 <!-- Top Statistics Dashboard -->

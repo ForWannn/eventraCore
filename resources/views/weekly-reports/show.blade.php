@@ -59,6 +59,14 @@
         .day-col .section-body {
             padding: 12px !important;
         }
+        h3{
+            font-size: 16px !important;;
+        }
+        p,
+        .day-name,
+        .progress-badge{
+            font-size: 10px !important;
+        }
     }
 </style>
 
@@ -79,12 +87,12 @@
 <div class="card">
     <div class="show-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
         <div>
-            <h3 style="margin-bottom: 4px;">Laporan Mingguan: {{ $user->name }}</h3>
+            <h3 style="margin-bottom: 4px;">Weekly Report: {{ $user->name }}</h3>
             <p style="font-size: 13px; color: var(--text-muted);">Divisi: {{ optional($user->division)->name ?? '-' }} &nbsp;&bull;&nbsp; Minggu: {{ $report->week_start_date->format('d/m/Y') }}</p>
         </div>
         <div class="show-header-percentage" style="text-align: right;">
-            <div style="font-size: 14px; font-weight: 700; background: #10b981; color: white; padding: 6px 16px; border-radius: 8px;">
-                Penyelesaian: {{ $report->completion_percentage }}%
+            <div style="font-size: 14px; font-weight: 700; background: #10b981; color: white; padding: 6px 16px; border-radius: 8px;" class="progress-badge">
+                Progress: {{ $report->completion_percentage }}%
             </div>
         </div>
     </div>
