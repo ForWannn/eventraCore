@@ -491,7 +491,141 @@
         .btn-confirm-delete:hover {
             opacity: 0.9;
         }
+        
+        /* Premium Success/Warning/Danger Alert Modal */
+        .alert-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .alert-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .alert-modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .alert-modal-overlay.active .alert-modal-content {
+            transform: scale(1);
+        }
+        .alert-success-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #ECFDF5;
+            border: 2.5px solid #10B981;
+            color: #10B981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .alert-success-circle svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 3px;
+        }
+        .alert-warning-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #FEF3C7;
+            border: 2.5px solid #D97706;
+            color: #D97706;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .alert-warning-circle svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 3px;
+        }
+        .alert-danger-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #FEE2E2;
+            border: 2.5px solid #DC2626;
+            color: #DC2626;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .alert-danger-circle svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 3px;
+        }
+        .alert-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+        }
+        .alert-message {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+        .alert-close-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2563EB;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        .alert-close-btn:hover {
+            background: #1d4ed8;
+        }
     </style>
+
+    {{-- Premium Custom Alert/Confirm Modal --}}
+    <div id="customConfirmModal" class="alert-modal-overlay">
+        <div class="alert-modal-content">
+            <div id="confirm-icon-circle" class="alert-success-circle">
+                <i id="confirm-icon" data-feather="help-circle"></i>
+            </div>
+            <h3 class="alert-title" id="confirm-title">Konfirmasi</h3>
+            <p class="alert-message" id="confirm-message">Apakah Anda yakin?</p>
+            <div style="display: flex; gap: 12px; width: 100%; margin-top: 10px;">
+                <button type="button" id="btn-confirm-cancel" class="alert-close-btn" style="background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main); margin-top: 0; box-shadow: none;">Batal</button>
+                <button type="button" id="btn-confirm-action" class="alert-close-btn" style="margin-top: 0;">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Header Section -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -1198,7 +1332,7 @@
                     // Update global progress bar
                     updateGlobalProgressBar(data.completion_percentage);
                 } else {
-                    alert(data.error || "Gagal menyimpan To Do");
+                    showCustomAlert({ title: 'Gagal!', message: data.error || "Gagal menyimpan To Do", type: 'danger' });
                 }
             } catch (err) {
                 console.error("Gagal menambah tugas:", err);
@@ -1287,46 +1421,54 @@
         }
 
         async function deleteTask(taskId, memberId, category, wasCompleted) {
-            if (!confirm('Hapus tugas ini?')) return;
-            try {
-                const response = await fetch(`/event-tasks/${taskId}`, {
-                    method: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    const taskItem = document.getElementById(`task-item-${taskId}`);
-                    if (taskItem) {
-                        taskItem.remove();
-                    }
-                    
-                    // Update checklist count bubble
-                    const countSpan = document.getElementById(`count-${memberId}-${category}`);
-                    if (countSpan) {
-                        let completed = parseInt(countSpan.getAttribute('data-completed'), 10);
-                        let total = parseInt(countSpan.getAttribute('data-total'), 10);
-                        
-                        total--;
-                        if (wasCompleted) {
-                            completed--;
+            showCustomConfirm({
+                title: 'Hapus Tugas?',
+                message: 'Apakah Anda yakin ingin menghapus tugas ini?',
+                type: 'danger',
+                confirmText: 'Ya, Hapus',
+                confirmBg: '#DC2626',
+                onConfirm: async () => {
+                    try {
+                        const response = await fetch(`/event-tasks/${taskId}`, {
+                            method: 'DELETE',
+                            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            const taskItem = document.getElementById(`task-item-${taskId}`);
+                            if (taskItem) {
+                                taskItem.remove();
+                            }
+                            
+                            // Update checklist count bubble
+                            const countSpan = document.getElementById(`count-${memberId}-${category}`);
+                            if (countSpan) {
+                                let completed = parseInt(countSpan.getAttribute('data-completed'), 10);
+                                let total = parseInt(countSpan.getAttribute('data-total'), 10);
+                                
+                                total--;
+                                if (wasCompleted) {
+                                    completed--;
+                                }
+                                
+                                countSpan.setAttribute('data-completed', completed);
+                                countSpan.setAttribute('data-total', total);
+                                countSpan.innerText = `${completed} / ${total} tugas`;
+                            }
+                            
+                            const taskList = document.getElementById(`task-list-${memberId}-${category}`);
+                            if (taskList && taskList.children.length === 0) {
+                                taskList.innerHTML = `<div class="empty-state" style="font-size: 12px; color: var(--text-muted); font-weight: 500; padding: 8px 0;">Tidak ada tugas.</div>`;
+                            }
+                            
+                            // Update global progress bar
+                            updateGlobalProgressBar(data.completion_percentage);
                         }
-                        
-                        countSpan.setAttribute('data-completed', completed);
-                        countSpan.setAttribute('data-total', total);
-                        countSpan.innerText = `${completed} / ${total} tugas`;
+                    } catch (err) {
+                        console.error("Gagal menghapus tugas:", err);
                     }
-                    
-                    const taskList = document.getElementById(`task-list-${memberId}-${category}`);
-                    if (taskList && taskList.children.length === 0) {
-                        taskList.innerHTML = `<div class="empty-state" style="font-size: 12px; color: var(--text-muted); font-weight: 500; padding: 8px 0;">Tidak ada tugas.</div>`;
-                    }
-                    
-                    // Update global progress bar
-                    updateGlobalProgressBar(data.completion_percentage);
                 }
-            } catch (err) {
-                console.error("Gagal menghapus tugas:", err);
-            }
+            });
         }
 
         function viewFullImage(src) {
@@ -1344,6 +1486,110 @@
             const delModal = document.getElementById('deleteModal');
             if (event.target == delModal) closeDeleteModal();
         });
+
+        // Custom Confirm & Alert Modals
+        function showCustomConfirm({ title, message, type, confirmText, confirmBg, onConfirm }) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            
+            const circle = document.getElementById('confirm-icon-circle');
+            const icon = document.getElementById('confirm-icon');
+            
+            if (type === 'danger') {
+                circle.className = 'alert-danger-circle';
+                icon.setAttribute('data-feather', 'trash-2');
+            } else if (type === 'warning') {
+                circle.className = 'alert-warning-circle';
+                icon.setAttribute('data-feather', 'alert-triangle');
+            } else {
+                circle.className = 'alert-success-circle';
+                icon.setAttribute('data-feather', 'help-circle');
+            }
+            feather.replace();
+            
+            const actionBtn = document.getElementById('btn-confirm-action');
+            actionBtn.innerText = confirmText || 'Ya, Lanjutkan';
+            actionBtn.style.background = confirmBg || '#2563EB';
+            if (type === 'danger') {
+                actionBtn.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.15)';
+            } else {
+                actionBtn.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.15)';
+            }
+            actionBtn.style.width = ''; // Reset full-width overrides
+            
+            const cancelBtn = document.getElementById('btn-confirm-cancel');
+            cancelBtn.style.display = 'block';
+            
+            const modal = document.getElementById('customConfirmModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    modal.classList.add('active');
+                });
+            }
+            
+            actionBtn.onclick = function() {
+                closeCustomConfirm();
+                if (onConfirm) onConfirm();
+            };
+            
+            cancelBtn.onclick = function() {
+                closeCustomConfirm();
+            };
+        }
+
+        function showCustomAlert({ title, message, type, buttonText, onConfirm }) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            
+            const circle = document.getElementById('confirm-icon-circle');
+            const icon = document.getElementById('confirm-icon');
+            
+            if (type === 'danger') {
+                circle.className = 'alert-danger-circle';
+                icon.setAttribute('data-feather', 'alert-circle');
+            } else if (type === 'success') {
+                circle.className = 'alert-success-circle';
+                icon.setAttribute('data-feather', 'check');
+            } else {
+                circle.className = 'alert-warning-circle';
+                icon.setAttribute('data-feather', 'info');
+            }
+            feather.replace();
+            
+            const actionBtn = document.getElementById('btn-confirm-action');
+            actionBtn.innerText = buttonText || 'Selesai';
+            actionBtn.style.background = '#2563EB';
+            actionBtn.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.15)';
+            actionBtn.style.width = '100%';
+            
+            const cancelBtn = document.getElementById('btn-confirm-cancel');
+            cancelBtn.style.display = 'none'; // Hide cancel button for alerts
+            
+            const modal = document.getElementById('customConfirmModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    modal.classList.add('active');
+                });
+            }
+            
+            actionBtn.onclick = function() {
+                closeCustomConfirm();
+                cancelBtn.style.display = 'block'; // Restore cancel button display
+                if (onConfirm) onConfirm();
+            };
+        }
+
+        function closeCustomConfirm() {
+            const modal = document.getElementById('customConfirmModal');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 200);
+            }
+        }
     </script>
 
     <!-- Webcam Geotag Absensi Script -->
@@ -1389,7 +1635,7 @@
                         locText.innerText = `Menerjemahkan koordinat (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})...`;
                         
                         try {
-                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&zoom=18&addressdetails=1`);
+                            const res = await fetch(`https://us1.locationiq.com/v1/reverse?key=${window.LOCATIONIQ_API_KEY}&lat=${currentLat}&lon=${currentLon}&format=json&zoom=18&addressdetails=1`);
                             const data = await res.json();
                             if(data && data.display_name) {
                                 const parts = data.display_name.split(', ');
@@ -1537,14 +1783,14 @@
                         if (stream) stream.getTracks().forEach(track => track.stop());
                         window.location.reload();
                     } else {
-                        alert(data.error || "Terjadi kesalahan.");
+                        showCustomAlert({ title: 'Gagal!', message: data.error || "Terjadi kesalahan.", type: 'danger' });
                         btnSubmit.disabled = false;
                         btnSubmit.innerText = "Kirim Absensi";
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Gagal mengirim data. Coba lagi.');
+                    showCustomAlert({ title: 'Gagal!', message: 'Gagal mengirim data. Coba lagi.', type: 'danger' });
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = "Kirim Absensi";
                 });

@@ -32,45 +32,49 @@ class UserSeeder extends Seeder
         ];
 
         // 2. Seed Admin user
-        $admin = User::create([
-            'nik' => 'ADM-001',
-            'employee_id' => 'ADM-001',
-            'division_id' => $reelSeven->id,
-            'name' => 'Admin Ops',
-            'email' => 'admin@eventracore.com',
-            'password' => Hash::make('password123'),
-            'base_salary' => 10000000,
-            'phone' => '081234567890',
-            'birth_date' => '1990-01-01',
-            'gender' => 'Laki-laki',
-            'employee_type' => 'Full Time',
-            'join_date' => '2024-01-01',
-        ]);
-        $admin->assignRole('Admin');
-        $admin->givePermissionTo(['view_dashboard']);
+        $admin = User::updateOrCreate(
+            ['nik' => 'ADM-001'],
+            [
+                'employee_id' => 'ADM-001',
+                'division_id' => $reelSeven->id,
+                'name' => 'Admin Ops',
+                'email' => 'admin@eventracore.com',
+                'password' => Hash::make('password123'),
+                'base_salary' => 10000000,
+                'phone' => '081234567890',
+                'birth_date' => '1990-01-01',
+                'gender' => 'Laki-laki',
+                'employee_type' => 'Full Time',
+                'join_date' => '2024-01-01',
+            ]
+        );
+        $admin->syncRoles(['Admin']);
+        $admin->syncPermissions(['view_dashboard', 'crud_users', 'manage_calendar']);
 
         // 2b. Seed Superadmin user
-        $superadmin = User::create([
-            'nik' => 'SAD-001',
-            'employee_id' => 'SAD-001',
-            'division_id' => $reelSeven->id,
-            'name' => 'Superadmin',
-            'email' => 'superadmin@eventracore.com',
-            'password' => Hash::make('password123'),
-            'base_salary' => 12000000,
-            'phone' => '081234567891',
-            'birth_date' => '1988-08-08',
-            'gender' => 'Laki-laki',
-            'employee_type' => 'Full Time',
-            'join_date' => '2024-01-01',
-        ]);
-        $superadmin->assignRole('Superadmin');
+        $superadmin = User::updateOrCreate(
+            ['nik' => 'SAD-001'],
+            [
+                'employee_id' => 'SAD-001',
+                'division_id' => $reelSeven->id,
+                'name' => 'Superadmin',
+                'email' => 'superadmin@eventracore.com',
+                'password' => Hash::make('password123'),
+                'base_salary' => 12000000,
+                'phone' => '081234567891',
+                'birth_date' => '1988-08-08',
+                'gender' => 'Laki-laki',
+                'employee_type' => 'Full Time',
+                'join_date' => '2024-01-01',
+            ]
+        );
+        $superadmin->syncRoles(['Superadmin']);
 
-        // 3. User Seed Definition List (Mapped to Hikvision IDs from user image)
+        // 3. User Seed Definition List (Mapped to IDs from user image)
         $usersToSeed = [
             [
                 'id_num' => '1',
-                'name' => 'M. Agus Idham',
+                'name' => 'M Agus Idham',
                 'email' => 'agus@eventracore.com',
                 'role' => 'GM',
                 'division' => 'Leader',
@@ -79,7 +83,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id_num' => '2',
-                'name' => 'Bobby hendra saputra',
+                'name' => 'Bobby Hendra Saputra',
                 'email' => 'bobby@eventracore.com',
                 'role' => 'CEO',
                 'division' => 'Leader',
@@ -107,12 +111,12 @@ class UserSeeder extends Seeder
             ],
             [
                 'id_num' => '5',
-                'name' => 'Econ',
-                'email' => 'econ@eventracore.com',
-                'role' => 'Head',
-                'division' => 'Finance',
-                'salary' => 18000000,
-                'gender' => 'Perempuan',
+                'name' => 'Aidil Septiansyah',
+                'email' => 'aidil@eventracore.com',
+                'role' => 'Employee',
+                'division' => 'Operasional',
+                'salary' => 7500000,
+                'gender' => 'Laki-laki',
             ],
             [
                 'id_num' => '6',
@@ -125,35 +129,26 @@ class UserSeeder extends Seeder
             ],
             [
                 'id_num' => '7',
-                'name' => 'Hanifah (Nana)',
-                'email' => 'nana@eventracore.com',
-                'role' => 'Employee',
-                'division' => 'Account Executive',
-                'salary' => 8500000,
+                'name' => 'Sherina Andriana',
+                'email' => 'sherina@eventracore.com',
+                'role' => 'Head',
+                'division' => 'Finance',
+                'salary' => 15000000,
                 'gender' => 'Perempuan',
             ],
             [
                 'id_num' => '8',
-                'name' => 'Siti Nuraziza Saskia',
-                'email' => 'saskia@eventracore.com',
-                'role' => 'Employee',
-                'division' => 'Finance',
-                'salary' => 8000000,
-                'gender' => 'Perempuan',
-            ],
-            [
-                'id_num' => '9',
-                'name' => 'M Aditya Arbie',
-                'email' => 'arbie@eventracore.com',
+                'name' => 'Hanifah',
+                'email' => 'hanifah@eventracore.com',
                 'role' => 'Employee',
                 'division' => 'Account Executive',
                 'salary' => 8500000,
-                'gender' => 'Laki-laki',
+                'gender' => 'Perempuan',
             ],
             [
                 'id_num' => '10',
-                'name' => 'Ayu',
-                'email' => 'ayu@eventracore.com',
+                'name' => 'Astri Ayu Ningsih',
+                'email' => 'astri@eventracore.com',
                 'role' => 'Employee',
                 'division' => 'Finance',
                 'salary' => 8000000,
@@ -170,8 +165,8 @@ class UserSeeder extends Seeder
             ],
             [
                 'id_num' => '12',
-                'name' => 'M Rifai (Fai)',
-                'email' => 'fai@eventracore.com',
+                'name' => 'M Rifai',
+                'email' => 'rifai@eventracore.com',
                 'role' => 'Employee',
                 'division' => 'Creative',
                 'salary' => 8000000,
@@ -179,8 +174,8 @@ class UserSeeder extends Seeder
             ],
             [
                 'id_num' => '13',
-                'name' => 'Reza Desten Paltama (Ejak)',
-                'email' => 'ejak@eventracore.com',
+                'name' => 'Reza Desten Paltama',
+                'email' => 'reza@eventracore.com',
                 'role' => 'Employee',
                 'division' => 'Creative',
                 'salary' => 8000000,
@@ -255,27 +250,38 @@ class UserSeeder extends Seeder
         $createdUsers = [];
         foreach ($usersToSeed as $uData) {
             $divId = $divisionMap[$uData['division']];
-            $joinDate = $uData['join_date'] ?? $faker->dateTimeBetween('-5 years', '-1 months')->format('Y-m-d');
-            $birthDate = $faker->dateTimeBetween('-40 years', '-22 years')->format('Y-m-d');
-            $phone = '08' . $faker->numerify('##########');
+            
+            $existingUser = User::where('nik', $uData['id_num'])->first();
+            $phone = $existingUser ? $existingUser->phone : ('08' . $faker->numerify('##########'));
+            $birthDate = $existingUser ? ($existingUser->birth_date ? $existingUser->birth_date->format('Y-m-d') : null) : null;
+            $joinDate = $existingUser ? ($existingUser->join_date ? $existingUser->join_date->format('Y-m-d') : null) : null;
 
-            $user = User::create([
-                'nik' => $uData['id_num'],
-                'employee_id' => $uData['id_num'],
-                'division_id' => $divId,
-                'name' => $uData['name'],
-                'email' => $uData['email'],
-                'password' => Hash::make('password123'),
-                'base_salary' => $uData['salary'],
-                'phone' => $phone,
-                'birth_date' => $birthDate,
-                'gender' => $uData['gender'],
-                'employee_type' => 'Full Time',
-                'join_date' => $joinDate,
-            ]);
+            if (!$birthDate) {
+                $birthDate = $faker->dateTimeBetween('-40 years', '-22 years')->format('Y-m-d');
+            }
+            if (!$joinDate) {
+                $joinDate = $uData['join_date'] ?? $faker->dateTimeBetween('-5 years', '-1 months')->format('Y-m-d');
+            }
 
-            $user->assignRole($uData['role']);
-            $user->givePermissionTo(['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history']);
+            $user = User::updateOrCreate(
+                ['nik' => $uData['id_num']],
+                [
+                    'employee_id' => $uData['id_num'],
+                    'division_id' => $divId,
+                    'name' => $uData['name'],
+                    'email' => $uData['email'],
+                    'password' => Hash::make('password123'),
+                    'base_salary' => $uData['salary'],
+                    'phone' => $phone,
+                    'birth_date' => $birthDate,
+                    'gender' => $uData['gender'],
+                    'employee_type' => 'Full Time',
+                    'join_date' => $joinDate,
+                ]
+            );
+
+            $user->syncRoles([$uData['role']]);
+            $user->syncPermissions(['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history']);
             $createdUsers[$uData['id_num']] = $user;
         }
 
@@ -290,7 +296,7 @@ class UserSeeder extends Seeder
         // Heads report to GM (ID 1)
         $gmId = $createdUsers['1']->id ?? null;
         if ($gmId) {
-            $heads = ['5', '3', '14', '17'];
+            $heads = ['7', '3', '14', '17'];
             foreach ($heads as $headIdNum) {
                 if (isset($createdUsers[$headIdNum])) {
                     $createdUsers[$headIdNum]->update(['direct_manager_id' => $gmId]);
@@ -300,10 +306,10 @@ class UserSeeder extends Seeder
 
         // Employees report to their respective Head
         $relations = [
-            '5' => ['8', '10', '11', '19'],
-            '3' => ['4', '6', '20'],
+            '7' => ['10', '11', '19'],
+            '3' => ['4', '5', '6', '20'],
             '14' => ['12', '13', '15', '16', '18'],
-            '17' => ['7', '9'],
+            '17' => ['8'],
         ];
 
         foreach ($relations as $headIdNum => $employeeIdNums) {
@@ -324,9 +330,8 @@ class UserSeeder extends Seeder
         if (isset($createdUsers['1'])) {
             $createdUsers['1']->givePermissionTo(['rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'crud_users']);
         }
-        if (isset($createdUsers['5'])) {
-            $createdUsers['5']->givePermissionTo(['rekap_weekly', 'weekly_history', 'leave_approvals', 'rekap_absen']);
+        if (isset($createdUsers['7'])) {
+            $createdUsers['7']->givePermissionTo(['rekap_weekly', 'weekly_history', 'leave_approvals', 'rekap_absen']);
         }
-        $admin->givePermissionTo(['crud_users', 'manage_calendar']);
     }
 }

@@ -1881,6 +1881,40 @@
         height: 28px;
         stroke-width: 3px;
     }
+    .alert-danger-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #FEE2E2;
+        border: 2.5px solid #DC2626;
+        color: #DC2626;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+    .alert-danger-circle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 3px;
+    }
+    .alert-warning-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #FEF3C7;
+        border: 2.5px solid #D97706;
+        color: #D97706;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+    .alert-warning-circle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 3px;
+    }
     .alert-title {
         font-size: 18px;
         font-weight: 700;
@@ -2372,8 +2406,8 @@
                     <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event</div>
                 </div>
                 <div class="stat-trend-container">
-                    <span class="stat-trend-badge blue"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 20%</span>
-                    <span class="stat-trend-text">vs minggu lalu</span>
+                    <!-- <span class="stat-trend-badge blue"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 20%</span> -->
+                    <!-- <span class="stat-trend-text">vs minggu lalu</span> -->
                 </div>
             </div>
 
@@ -2391,8 +2425,8 @@
                     <div class="stat-sub">event on-going</div>
                 </div>
                 <div class="stat-trend-container">
-                    <span class="stat-trend-badge emerald"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 50%</span>
-                    <span class="stat-trend-text">vs minggu lalu</span>
+                    <!-- <span class="stat-trend-badge emerald"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 50%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span> -->
                 </div>
             </div>
 
@@ -2410,8 +2444,8 @@
                     <div class="stat-sub">karyawan bertugas event</div>
                 </div>
                 <div class="stat-trend-container">
-                    <span class="stat-trend-badge amber"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 12%</span>
-                    <span class="stat-trend-text">vs minggu lalu</span>
+                    <!-- <span class="stat-trend-badge amber"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 12%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span> -->
                 </div>
             </div>
 
@@ -2429,8 +2463,8 @@
                     <div class="stat-sub">karyawan sudah absen</div>
                 </div>
                 <div class="stat-trend-container">
-                    <span class="stat-trend-badge violet"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 8%</span>
-                    <span class="stat-trend-text">vs kemarin</span>
+                    <!-- <span class="stat-trend-badge violet"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 8%</span>
+                    <span class="stat-trend-text">vs kemarin</span> -->
                 </div>
             </div>
 
@@ -3349,22 +3383,72 @@ function toggleTask(taskId, btn) {
         }
     })
     .catch(() => {
-        alert('Gagal memperbarui tugas.');
+        showErrorAlert('Gagal!', 'Gagal memperbarui tugas.');
         btn.disabled = false;
     });
 }
 
 function showSuccessAlert(message) {
+    const modal = document.getElementById('successAlertModal');
+    const circle = modal.querySelector('.alert-success-circle, .alert-danger-circle, .alert-warning-circle');
+    if (circle) {
+        circle.className = 'alert-success-circle';
+        circle.innerHTML = '<i data-feather="check"></i>';
+    }
+    const title = modal.querySelector('.alert-title');
+    if (title) title.textContent = 'Absensi Berhasil!';
+    
     document.getElementById('successAlertMessage').textContent = message;
-    const alertModal = document.getElementById('successAlertModal');
-    alertModal.style.display = 'flex';
+    
+    const closeBtn = modal.querySelector('.alert-close-btn');
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            dismissSuccessAlert();
+        };
+    }
+    
+    feather.replace();
+    modal.style.display = 'flex';
     requestAnimationFrame(() => {
-        alertModal.classList.add('active');
+        modal.classList.add('active');
     });
     
     window.successAlertTimeout = setTimeout(() => {
         location.reload();
     }, 3500);
+}
+
+function showErrorAlert(titleText, message) {
+    const modal = document.getElementById('successAlertModal');
+    const circle = modal.querySelector('.alert-success-circle, .alert-danger-circle, .alert-warning-circle');
+    if (circle) {
+        circle.className = 'alert-danger-circle';
+        circle.innerHTML = '<i data-feather="x"></i>';
+    }
+    const title = modal.querySelector('.alert-title');
+    if (title) title.textContent = titleText || 'Gagal!';
+    
+    document.getElementById('successAlertMessage').textContent = message;
+    
+    const closeBtn = modal.querySelector('.alert-close-btn');
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 200);
+        };
+    }
+    
+    feather.replace();
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        modal.classList.add('active');
+    });
+    
+    if (window.successAlertTimeout) {
+        clearTimeout(window.successAlertTimeout);
+    }
 }
 
 function dismissSuccessAlert() {
@@ -3478,15 +3562,14 @@ function initCameraAndGps() {
             const accuracyVal = pos.coords.accuracy ? pos.coords.accuracy.toFixed(2) + ' meter' : '14.46 meter';
             if(gpsAccuracy) gpsAccuracy.textContent = accuracyVal;
 
-            // Reverse Geocode via Nominatim
-            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2`)
+            // Reverse Geocode via LocationIQ
+            fetch(`https://us1.locationiq.com/v1/reverse?key=${window.LOCATIONIQ_API_KEY}&lat=${lat}&lon=${lng}&format=json&addressdetails=1&zoom=18`)
                 .then(r => r.json())
                 .then(data => {
                     if (data && data.address) {
-                        const road = data.address.road || data.address.pedestrian || data.address.suburb || '';
+                        const road = data.address.road || data.address.pedestrian || data.address.footway || data.address.cycleway || data.address.path || data.address.residential || '';
                         const houseNumber = data.address.house_number ? ' No. ' + data.address.house_number : '';
-                        const streetName = road ? road + houseNumber : (data.name || 'Jalan Tidak Dikenal');
-                        
+
                         const village = data.address.village || data.address.suburb || data.address.neighbourhood || '';
                         const district = data.address.county || data.address.city_district || '';
                         const city = data.address.city || data.address.regency || data.address.town || '';
@@ -3501,11 +3584,38 @@ function initCameraAndGps() {
                         if (postcode) detailParts.push(postcode);
                         
                         const detailAddress = detailParts.join(', ');
-                        
-                        if(gpsStreet) gpsStreet.textContent = streetName;
-                        if(gpsAddress) gpsAddress.textContent = detailAddress;
-                        
-                        addressCache = streetName + ', ' + detailAddress;
+
+                        if (road) {
+                            const streetName = road + houseNumber;
+                            if(gpsStreet) gpsStreet.textContent = streetName;
+                            if(gpsAddress) gpsAddress.textContent = detailAddress;
+                            addressCache = streetName + ', ' + detailAddress;
+                        } else {
+                            // Road not found — fetch nearest street with zoom=17
+                            if(gpsStreet) gpsStreet.textContent = 'Mencari jalan terdekat...';
+                            if(gpsAddress) gpsAddress.textContent = detailAddress;
+                            
+                            fetch(`https://us1.locationiq.com/v1/reverse?key=${window.LOCATIONIQ_API_KEY}&lat=${lat}&lon=${lng}&format=json&zoom=17`)
+                                .then(r2 => r2.json())
+                                .then(streetData => {
+                                    const nearestRoad = streetData?.address?.road || streetData?.address?.pedestrian || streetData?.address?.footway || streetData?.name || '';
+                                    if (nearestRoad) {
+                                        const streetName = nearestRoad + houseNumber;
+                                        if(gpsStreet) gpsStreet.textContent = streetName;
+                                        addressCache = streetName + ', ' + detailAddress;
+                                    } else {
+                                        // Last resort: use amenity/building/neighbourhood from original data
+                                        const fallbackName = data.address.amenity || data.address.building || data.address.neighbourhood || data.address.hamlet || village || data.name || (data.display_name ? data.display_name.split(',')[0] : null) || `Lokasi (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+                                        if(gpsStreet) gpsStreet.textContent = fallbackName;
+                                        addressCache = fallbackName + ', ' + detailAddress;
+                                    }
+                                })
+                                .catch(() => {
+                                    const fallbackName = data.address.amenity || data.address.building || data.address.neighbourhood || data.address.hamlet || village || data.name || (data.display_name ? data.display_name.split(',')[0] : null) || `Lokasi (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+                                    if(gpsStreet) gpsStreet.textContent = fallbackName;
+                                    addressCache = fallbackName + ', ' + detailAddress;
+                                });
+                        }
                     } else {
                         if(gpsStreet) gpsStreet.textContent = 'Lokasi Kustom';
                         if(gpsAddress) gpsAddress.textContent = `${lat}, ${lng}`;
@@ -3548,14 +3658,13 @@ function initCameraAndGps() {
             if(gpsStreet) gpsStreet.textContent = 'Menghubungkan Lokasi Simulasi...';
             if(gpsAddress) gpsAddress.textContent = 'Jalan Swadaya';
             
-            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${mockLat}&lon=${mockLng}&format=jsonv2`)
+            fetch(`https://us1.locationiq.com/v1/reverse?key=${window.LOCATIONIQ_API_KEY}&lat=${mockLat}&lon=${mockLng}&format=json&addressdetails=1&zoom=18`)
                 .then(r => r.json())
                 .then(data => {
                     if (data && data.address) {
-                        const road = data.address.road || data.address.pedestrian || data.address.suburb || '';
+                        const road = data.address.road || data.address.pedestrian || data.address.footway || data.address.cycleway || data.address.path || data.address.residential || '';
                         const houseNumber = data.address.house_number ? ' No. ' + data.address.house_number : '';
-                        const streetName = road ? road + houseNumber : (data.name || 'Jalan Tidak Dikenal');
-                        
+
                         const village = data.address.village || data.address.suburb || data.address.neighbourhood || '';
                         const district = data.address.county || data.address.city_district || '';
                         const city = data.address.city || data.address.regency || data.address.town || '';
@@ -3570,11 +3679,36 @@ function initCameraAndGps() {
                         if (postcode) detailParts.push(postcode);
                         
                         const detailAddress = detailParts.join(', ');
-                        
-                        if(gpsStreet) gpsStreet.textContent = streetName;
-                        if(gpsAddress) gpsAddress.textContent = detailAddress;
-                        
-                        addressCache = streetName + ', ' + detailAddress;
+
+                        if (road) {
+                            const streetName = road + houseNumber;
+                            if(gpsStreet) gpsStreet.textContent = streetName;
+                            if(gpsAddress) gpsAddress.textContent = detailAddress;
+                            addressCache = streetName + ', ' + detailAddress;
+                        } else {
+                            // Road not found — fetch nearest street with zoom=17
+                            fetch(`https://us1.locationiq.com/v1/reverse?key=${window.LOCATIONIQ_API_KEY}&lat=${mockLat}&lon=${mockLng}&format=json&zoom=17`)
+                                .then(r2 => r2.json())
+                                .then(streetData => {
+                                    const nearestRoad = streetData?.address?.road || streetData?.address?.pedestrian || streetData?.address?.footway || streetData?.name || '';
+                                    if (nearestRoad) {
+                                        const streetName = nearestRoad + houseNumber;
+                                        if(gpsStreet) gpsStreet.textContent = streetName;
+                                        addressCache = streetName + ', ' + detailAddress;
+                                    } else {
+                                        const fallbackName = data.address.amenity || data.address.building || data.address.neighbourhood || data.address.hamlet || village || data.name || (data.display_name ? data.display_name.split(',')[0] : null) || `Lokasi (${mockLat.toFixed(5)}, ${mockLng.toFixed(5)})`;
+                                        if(gpsStreet) gpsStreet.textContent = fallbackName;
+                                        addressCache = fallbackName + ', ' + detailAddress;
+                                    }
+                                    if(gpsAddress) gpsAddress.textContent = detailAddress;
+                                })
+                                .catch(() => {
+                                    const fallbackName = data.address.amenity || data.address.building || data.address.neighbourhood || data.address.hamlet || village || data.name || (data.display_name ? data.display_name.split(',')[0] : null) || `Lokasi (${mockLat.toFixed(5)}, ${mockLng.toFixed(5)})`;
+                                    if(gpsStreet) gpsStreet.textContent = fallbackName;
+                                    if(gpsAddress) gpsAddress.textContent = detailAddress;
+                                    addressCache = fallbackName + ', ' + detailAddress;
+                                });
+                        }
                     } else {
                         if(gpsStreet) gpsStreet.textContent = 'Jalan Swadaya';
                         if(gpsAddress) gpsAddress.textContent = `${mockLat}, ${mockLng}`;
@@ -3596,7 +3730,7 @@ function initCameraAndGps() {
     }
 
     btnSubmit.onclick = function() {
-        if(!userCoords) return alert('Tunggu lokasi...');
+        if(!userCoords) return showErrorAlert('Tunggu Lokasi', 'Harap tunggu hingga koordinat lokasi GPS Anda terdeteksi.');
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = '<i data-feather="loader" style="width:16px; margin-right:8px; animation: spin 1s linear infinite;"></i> Mengirim...';
         feather.replace();
@@ -3622,7 +3756,7 @@ function initCameraAndGps() {
                 showSuccessAlert(d.message || 'Absensi berhasil dikirim!');
             })
             .catch(() => {
-                alert('Gagal absen.');
+                showErrorAlert('Gagal Absen', 'Gagal mengirim data absensi ke server. Silakan coba lagi.');
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = '<i data-feather="camera"></i> Ambil Foto & Absen';
                 feather.replace();

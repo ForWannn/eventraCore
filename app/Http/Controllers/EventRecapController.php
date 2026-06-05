@@ -201,12 +201,10 @@ class EventRecapController extends Controller
 
         $request->validate([
             'initial_nominal' => 'required|numeric|min:0',
-            'expected_receipts_count' => 'required|integer|min:1',
         ]);
 
         $recap = $event->recap ?: new EventRecap(['event_id' => $event->id]);
         $recap->initial_nominal = $request->initial_nominal;
-        $recap->expected_receipts_count = $request->expected_receipts_count;
 
         // If status was draft, transition to dalam_rekap since budget is set
         if ($recap->status === 'draft') {
@@ -215,7 +213,7 @@ class EventRecapController extends Controller
 
         $recap->save();
 
-        return redirect()->route('event-recaps.show', $event->id)->with('success', 'Anggaran dan target nota berhasil diperbarui.');
+        return redirect()->route('event-recaps.show', $event->id)->with('success', 'Anggaran berhasil diperbarui.');
     }
 
     /**

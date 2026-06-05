@@ -1386,13 +1386,8 @@
         </div>
     </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="{{ route('attendance.recap.export', request()->query()) }}" class="btn-export">
-            <i data-feather="download"></i>
-            Ekspor CSV
-        </a>
         <a href="{{ route('attendance.recap.export_pdf_monthly', request()->query()) }}" class="btn-export-pdf">
-            <i data-feather="file-text"></i>
-            Ekspor PDF Bulanan
+            Ekspor PDF
         </a>
     </div>
 </div>
@@ -1808,13 +1803,12 @@
         streetNameElem.textContent = 'Memuat lokasi';
         addressDetailElem.textContent = 'Sedang mengambil detail alamat';
 
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+        fetch(`https://us1.locationiq.com/v1/reverse?key=${window.LOCATIONIQ_API_KEY}&lat=${lat}&lon=${lng}&format=json&addressdetails=1&zoom=18`)
             .then(response => response.json())
             .then(data => {
                 if (data && data.address) {
-                    const road = data.address.road || data.address.pedestrian || data.address.suburb || '';
+                    const road = data.address.road || data.address.pedestrian || data.address.footway || data.address.cycleway || data.address.path || data.address.residential || '';
                     const houseNumber = data.address.house_number ? ' No. ' + data.address.house_number : '';
-                    const streetName = road ? road + houseNumber : (data.name || 'Jalan Tidak Dikenal');
                     
                     // Build detail address (village, district, city, state, postcode)
                     const village = data.address.village || data.address.suburb || data.address.neighbourhood || '';
@@ -1831,9 +1825,29 @@
                     if (postcode) detailParts.push(postcode);
                     
                     const detailAddress = detailParts.join(', ');
-                    
-                    streetNameElem.textContent = streetName;
-                    addressDetailElem.textContent = detailAddress;
+
+                    if (road) {
+                        streetNameElem.textContent = road + houseNumber;
+                        addressDetailElem.textContent = detailAddress;
+                    } else {
+                        // Road not found — fetch nearest street with zoom=17
+                        streetNameElem.textContent = 'Mencari jalan terdekat...';
+                        addressDetailElem.textContent = detailAddress;
+                        
+                        fetch(`https://us1.locationiq.com/v1/reverse?key=${window.LOCATIONIQ_API_KEY}&lat=${lat}&lon=${lng}&format=json&zoom=17`)
+                            .then(r2 => r2.json())
+                            .then(streetData => {
+                                const nearestRoad = streetData?.address?.road || streetData?.address?.pedestrian || streetData?.address?.footway || streetData?.name || '';
+                                if (nearestRoad) {
+                                    streetNameElem.textContent = nearestRoad + houseNumber;
+                                } else {
+                                    streetNameElem.textContent = data.address.amenity || data.address.building || data.address.neighbourhood || data.address.hamlet || village || data.name || (data.display_name ? data.display_name.split(',')[0] : null) || `Lokasi (${lat}, ${lng})`;
+                                }
+                            })
+                            .catch(() => {
+                                streetNameElem.textContent = data.address.amenity || data.address.building || data.address.neighbourhood || data.address.hamlet || village || data.name || (data.display_name ? data.display_name.split(',')[0] : null) || `Lokasi (${lat}, ${lng})`;
+                            });
+                    }
                 } else {
                     streetNameElem.textContent = 'Lokasi Kustom';
                     addressDetailElem.textContent = `${lat}, ${lng}`;

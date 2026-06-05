@@ -12,6 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        window.LOCATIONIQ_API_KEY = "{{ config('services.locationiq.key') }}";
+    </script>
     <style>
         :root {
             --bg-color: #F8FAFC;

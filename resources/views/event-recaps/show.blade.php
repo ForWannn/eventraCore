@@ -11,6 +11,14 @@
         gap: 24px;
         align-items: start;
     }
+    .recap-left-column {
+        min-width: 0;
+        width: 100%;
+    }
+    .recap-right-column {
+        min-width: 0;
+        width: 100%;
+    }
     @media (max-width: 1024px) {
         .recap-detail-grid { grid-template-columns: 1fr; }
     }
@@ -133,7 +141,7 @@
         .summary-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 480px) {
-        .summary-grid { grid-template-columns: 1fr; }
+        .summary-grid { grid-template-columns: repeat(2, 1fr); }
     }
     .summary-card {
         background: var(--card-bg);
@@ -221,6 +229,8 @@
         border-radius: 20px;
         padding: 24px;
         margin-bottom: 24px;
+        min-width: 0;
+        box-sizing: border-box;
     }
     .section-header {
         display: flex;
@@ -248,6 +258,9 @@
         font-weight: 600;
         cursor: pointer;
         transition: background 0.15s;
+    }
+    .btn-primary{
+        text-decoration: none !important;
     }
     .btn-primary:hover {
         background: #1d4ed8;
@@ -690,11 +703,568 @@
         font-weight: 700;
         margin-bottom: 2px;
     }
-    .preview-detail-value {
+
+    @media (max-width: 768px) {
+        .recap-detail-grid {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+        }
+        
+        .event-info-card {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 16px !important;
+            gap: 16px !important;
+        }
+        .event-info-left {
+            min-width: 0 !important;
+        }
+        .event-details-text h2 {
+            font-size: 18px !important;
+        }
+        .event-info-right {
+            align-items: flex-start !important;
+            min-width: 0 !important;
+        }
+        .pic-badge-card {
+            text-align: left !important;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+        .summary-card {
+            padding: 12px !important;
+            border-radius: 14px !important;
+            gap: 10px !important;
+        }
+        .summary-card-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+        }
+        .summary-card-icon svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .summary-card-label {
+            font-size: 9px !important;
+        }
+        .summary-card-value {
+            font-size: 13.5px !important;
+            margin-top: 2px !important;
+        }
+        .summary-card-sub {
+            font-size: 9px !important;
+        }
+        
+        .navigation-tabs {
+            gap: 4px !important;
+            margin-bottom: 16px !important;
+        }
+        .tab-button {
+            padding: 10px 14px !important;
+            font-size: 12.5px !important;
+        }
+
+        .recap-section {
+            padding: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px !important;
+        }
+        .section-header .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .filter-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .search-input-wrapper {
+            width: 100% !important;
+        }
+        .select-control {
+            width: 100% !important;
+        }
+
+        /* Card Layout for Expenditures Table */
+        .items-table-wrapper {
+            overflow-x: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .items-table thead {
+            display: none !important;
+        }
+        
+        .items-table {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .items-table tbody {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .items-table tr:not(:has(td[colspan])) {
+            border: 1px solid var(--border-color) !important;
+            border-radius: 14px !important;
+            padding: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            align-self: stretch !important;
+            height: 100% !important;
+            box-sizing: border-box !important;
+            background: var(--card-bg) !important;
+        }
+        [data-theme="dark"] .items-table tr:not(:has(td[colspan])) {
+            background: rgba(30, 41, 59, 0.25) !important;
+        }
+        
+        .items-table tr td {
+            display: block !important;
+            border: none !important;
+            padding: 0 !important;
+            text-align: left !important;
+            font-size: 11.5px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            word-break: break-word !important;
+            box-sizing: border-box !important;
+        }
+        
+        .items-table tr:has(td[colspan]) {
+            grid-column: 1 / -1 !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .items-table tr:has(td[colspan]) td {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+            padding: 40px 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Column 1 (No) */
+        .items-table tr td:nth-child(1):before {
+            content: "No: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled date column */
+        .items-table tr td:nth-child(2) {
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 6px !important;
+        }
+        .items-table tr td:nth-child(2):before {
+            content: "Tanggal: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled category column */
+        .items-table tr td:nth-child(3):before {
+            content: "Kategori: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .items-table tr td:nth-child(3) .category-badge {
+            display: inline-flex !important;
+            vertical-align: middle;
+        }
+        
+        /* Labeled vendor column */
+        .items-table tr td:nth-child(4):before {
+            content: "Vendor: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled nominal column */
+        .items-table tr td:nth-child(5):before {
+            content: "Nominal: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled receipt column */
+        .items-table tr td:nth-child(6) {
+            padding-bottom: 6px !important;
+        }
+        .items-table tr td:nth-child(6):before {
+            content: "Bukti: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .items-table tr td:nth-child(6) .receipt-thumbnail {
+            display: inline-block !important;
+            vertical-align: middle;
+        }
+        
+        /* Action buttons column */
+        .items-table tr td:nth-child(7) {
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 8px !important;
+            margin-top: auto !important;
+        }
+        .items-table tr td:nth-child(7) form {
+            display: block !important;
+            width: 100% !important;
+        }
+        .items-table tr td:nth-child(7) .btn-icon.delete {
+            display: flex !important;
+            width: 100% !important;
+            justify-content: center;
+            box-sizing: border-box !important;
+        }
+
+        /* Table Card Layout for Tab Summary */
+        .breakdown-table tr td:nth-child(1):before {
+            content: "Kategori: ";
+        }
+        .breakdown-table tr td:nth-child(2):before {
+            content: "Transaksi: ";
+        }
+        .breakdown-table tr td:nth-child(3):before {
+            content: "Total Belanja: ";
+        }
+
+        /* Sidebar Column Right Adjustments */
+        .recap-left-column {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+        .recap-right-column {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+        
+        /* Modals mobile bounds */
+        .modal-box {
+            max-width: 100% !important;
+            width: 100% !important;
+            border-radius: 16px !important;
+        }
+        .modal-body {
+            padding: 16px !important;
+        }
+        .preview-modal-box {
+            max-width: 95vw !important;
+        }
+        .preview-modal-layout {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+        }
+        .preview-image-panel img {
+            max-height: 250px !important;
+        }
+        .btn-action-block {
+            padding: 10px !important;
+            font-size: 13px !important;
+        }
+    }
+
+    /* Premium Upload Modal Redesign Styles */
+    .upload-modal-box {
+        max-width: 520px !important;
+        width: 100% !important;
+        background: var(--card-bg);
+        border-radius: 20px !important;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important;
+    }
+    .upload-drag-area-new {
+        border: 2px dashed rgba(37, 99, 235, 0.15);
+        background: rgba(37, 99, 235, 0.02);
+        border-radius: 16px;
+        padding: 32px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 180px;
+        box-sizing: border-box;
+    }
+    .upload-drag-area-new:hover {
+        border-color: #2563eb;
+        background: rgba(37, 99, 235, 0.05);
+    }
+    .upload-icon-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .upload-alert-banner {
+        background: rgba(37, 99, 235, 0.04);
+        border: 1.5px solid rgba(37, 99, 235, 0.12);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .upload-alert-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #2563eb;
+    }
+    .upload-modal-input {
+        width: 100%;
+        height: 44px;
+        padding: 0 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 14px;
+        color: var(--text-main);
+        outline: none;
+        background: var(--input-bg);
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+    .upload-modal-input:focus {
+        border-color: #2563eb !important;
+    }
+    .upload-modal-textarea {
+        width: 100%;
+        height: 100px;
+        padding: 12px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 14px;
+        color: var(--text-main);
+        outline: none;
+        background: var(--input-bg);
+        resize: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+    .upload-modal-textarea:focus {
+        border-color: #2563eb !important;
+    }
+    .btn-remove-preview {
+        background: rgba(239, 68, 68, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-remove-preview:hover {
+        background: #dc2626;
+        transform: scale(1.1);
+    }
+    
+    /* Premium Success/Warning/Danger Alert Modal */
+    .alert-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+    .alert-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+    .alert-modal-content {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 32px 24px;
+        max-width: 380px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    .alert-modal-overlay.active .alert-modal-content {
+        transform: scale(1);
+    }
+    .alert-success-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #ECFDF5;
+        border: 2.5px solid #10B981;
+        color: #10B981;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+    .alert-success-circle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 3px;
+    }
+    .alert-warning-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #FEF3C7;
+        border: 2.5px solid #D97706;
+        color: #D97706;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+    .alert-warning-circle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 3px;
+    }
+    .alert-danger-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #FEE2E2;
+        border: 2.5px solid #DC2626;
+        color: #DC2626;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+    .alert-danger-circle svg {
+        width: 28px;
+        height: 28px;
+        stroke-width: 3px;
+    }
+    .alert-title {
+        font-size: 18px;
         font-weight: 700;
         color: var(--text-main);
+        margin: 0;
+    }
+    .alert-message {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin: 0;
+    }
+    .alert-close-btn {
+        width: 100%;
+        padding: 12px;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .alert-close-btn:hover {
+        background: #1d4ed8;
     }
 </style>
+
+{{-- Premium Custom Alert/Confirm Modal --}}
+<div id="customConfirmModal" class="alert-modal-overlay">
+    <div class="alert-modal-content">
+        <div id="confirm-icon-circle" class="alert-success-circle">
+            <i id="confirm-icon" data-feather="help-circle"></i>
+        </div>
+        <h3 class="alert-title" id="confirm-title">Konfirmasi</h3>
+        <p class="alert-message" id="confirm-message">Apakah Anda yakin?</p>
+        <div style="display: flex; gap: 12px; width: 100%; margin-top: 10px;">
+            <button type="button" id="btn-confirm-cancel" class="alert-close-btn" style="background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main); margin-top: 0; box-shadow: none;">Batal</button>
+            <button type="button" id="btn-confirm-action" class="alert-close-btn" style="margin-top: 0;">Ya, Lanjutkan</button>
+        </div>
+    </div>
+</div>
 
 {{-- ═══ NOTIFICATION ALERTS ═══ --}}
 @if(session('success'))
@@ -759,7 +1329,6 @@
     </div>
 </div>
 
-{{-- ═══ 2. SUMMARY CARDS ═══ --}}
 @php
     $spentPercentage = $recap->initial_nominal > 0 ? min(100, round(($totalSpent / $recap->initial_nominal) * 100, 1)) : 0;
     $remainingPercentage = 100 - $spentPercentage;
@@ -787,13 +1356,11 @@
     }
 @endphp
 <div class="summary-grid">
-    {{-- Card 1: Total Anggaran --}}
     <div class="summary-card">
         <div class="summary-card-icon blue"><i data-feather="dollar-sign"></i></div>
         <div class="summary-card-info" style="flex: 1;">
             <div class="summary-card-label">Total Anggaran</div>
             <div class="summary-card-value">Rp {{ number_format($recap->initial_nominal, 0, ',', '.') }}</div>
-            <!-- <div class="summary-card-sub">Nominal awal</div> -->
         </div>
         @if($isFinance && $recap->status !== 'selesai')
             <button class="btn-icon" onclick="openBudgetModal()" title="Edit Anggaran" style="border-color: #2563eb; color: #2563eb;">
@@ -802,7 +1369,6 @@
         @endif
     </div>
 
-    {{-- Card 2: Total Pengeluaran ── --}}
     <div class="summary-card">
         <div class="summary-card-icon rose"><i data-feather="shopping-bag"></i></div>
         <div class="summary-card-info">
@@ -812,7 +1378,6 @@
         </div>
     </div>
 
-    {{-- Card 3: Sisa Anggaran ── --}}
     <div class="summary-card">
         <div class="summary-card-icon emerald"><i data-feather="credit-card"></i></div>
         <div class="summary-card-info">
@@ -824,7 +1389,6 @@
         </div>
     </div>
 
-    {{-- Card 4: Status Rekap ── --}}
     <div class="summary-card">
         <div class="summary-card-icon {{ $statusColor }}"><i data-feather="check-square"></i></div>
         <div class="summary-card-info">
@@ -835,7 +1399,6 @@
     </div>
 </div>
 
-{{-- ═══ 3. NAVIGATION TABS ═══ --}}
 <div class="navigation-tabs">
     <a href="?tab=recap" class="tab-button {{ $activeTab === 'recap' ? 'active' : '' }}">Rekapitulasi Pengeluaran</a>
     <a href="?tab=summary" class="tab-button {{ $activeTab === 'summary' ? 'active' : '' }}">Ringkasan</a>
@@ -843,13 +1406,10 @@
     <a href="?tab=export" class="tab-button {{ $activeTab === 'export' ? 'active' : '' }}">Dokumen Export</a>
 </div>
 
-{{-- ═══ MAIN LAYOUT ── --}}
 <div class="recap-detail-grid">
     
-    {{-- Left Side: Active Tab View (70%) --}}
     <div class="recap-left-column">
         
-        {{-- TAB: REKAPITULASI PENGELUARAN --}}
         @if($activeTab === 'recap')
         <div class="recap-section">
             <div class="section-header">
@@ -861,7 +1421,6 @@
                 @endif
             </div>
 
-            {{-- Filters toolbar --}}
             <form action="{{ url()->current() }}" method="GET">
                 <input type="hidden" name="tab" value="recap">
                 <div class="filter-toolbar">
@@ -889,7 +1448,6 @@
                 </div>
             </form>
 
-            {{-- Table --}}
             <div class="items-table-wrapper">
                 <table class="items-table">
                     <thead>
@@ -929,7 +1487,14 @@
                             </td>
                             @if($isPic && in_array($recap->status, ['draft', 'dalam_rekap', 'direvisi']))
                             <td>
-                                <form action="{{ route('event-recaps.items.destroy', [$event->id, $item->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus bukti pengeluaran ini?')">
+                                <form action="{{ route('event-recaps.items.destroy', [$event->id, $item->id]) }}" method="POST" onsubmit="event.preventDefault(); const form = this; showCustomConfirm({
+                                    title: 'Hapus Bukti Pengeluaran?',
+                                    message: 'Apakah Anda yakin ingin menghapus bukti pengeluaran ini?',
+                                    type: 'danger',
+                                    confirmText: 'Ya, Hapus',
+                                    confirmBg: '#DC2626',
+                                    onConfirm: () => form.submit()
+                                });">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn-icon delete" title="Hapus Nota">
@@ -975,13 +1540,12 @@
 
             <h3 class="section-title" style="margin-bottom: 16px;">Breakdown Berdasarkan Kategori</h3>
             <div class="items-table-wrapper">
-                <table class="items-table">
+                <table class="items-table breakdown-table">
                     <thead>
                         <tr>
                             <th>Kategori</th>
                             <th>Jumlah Transaksi</th>
                             <th>Total Nominal Belanja</th>
-                            <th>Rata-rata Transaksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1009,9 +1573,6 @@
                             </td>
                             <td style="font-weight: 600; color: var(--text-main);">{{ $data['count'] }} nota</td>
                             <td style="font-weight: 700; color: var(--text-main);">Rp {{ number_format($data['sum'], 0, ',', '.') }}</td>
-                            <td style="color: var(--text-muted);">
-                                Rp {{ number_format($data['sum'] / $data['count'], 0, ',', '.') }}
-                            </td>
                         </tr>
                         @endif
                         @endforeach
@@ -1066,7 +1627,6 @@
         </div>
         @endif
 
-        {{-- TAB: DOKUMEN EXPORT PREVIEW --}}
         @if($activeTab === 'export')
         <div class="recap-section">
             <div class="section-header">
@@ -1078,73 +1638,74 @@
                 @endif
             </div>
 
-            {{-- Kop Surat Preview --}}
-            <div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 32px; background: #fff; color: #000; font-family: 'Arial', sans-serif; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                <div style="text-align: center; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">EVENTRA CORE</div>
-                <div style="text-align: center; font-size: 10px; color: #64748b; margin-top: 4px; border-bottom: 2px solid #000; padding-bottom: 12px;">
-                    Jl. Raya Kenangan No. 7, Jakarta Selatan | Telp: (021) 1234567 | Email: finance@eventracore.com
-                </div>
-                
-                <h4 style="text-align: center; font-size: 13px; text-transform: uppercase; font-weight: 700; margin: 20px 0 10px 0;">LAPORAN REKAPITULASI KEUANGAN EVENT</h4>
-                
-                <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px;">
-                    <tr>
-                        <td style="width: 15%; padding: 4px 0; font-weight: bold;">Nama Event</td>
-                        <td style="width: 35%; padding: 4px 0;">: {{ $event->name }}</td>
-                        <td style="width: 15%; padding: 4px 0; font-weight: bold;">Anggaran Awal</td>
-                        <td style="width: 35%; padding: 4px 0;">: Rp {{ number_format($recap->initial_nominal, 0, ',', '.') }}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 4px 0; font-weight: bold;">Pelaksana</td>
-                        <td style="padding: 4px 0;">: {{ $picDetails ? $picDetails->name : '-' }}</td>
-                        <td style="padding: 4px 0; font-weight: bold;">Total Belanja</td>
-                        <td style="padding: 4px 0;">: Rp {{ number_format($totalSpent, 0, ',', '.') }}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 4px 0; font-weight: bold;">Tanggal Event</td>
-                        <td style="padding: 4px 0;">
-                            : @if(!empty($dates))
-                                {{ \Carbon\Carbon::parse($dates[0])->translatedFormat('d M Y') }}
-                                @if(count($dates) > 1) - {{ \Carbon\Carbon::parse(end($dates))->translatedFormat('d M Y') }}@endif
-                            @else
-                                -
-                            @endif
-                        </td>
-                        <td style="padding: 4px 0; font-weight: bold;">Sisa Anggaran</td>
-                        <td style="padding: 4px 0; font-weight: bold; color: {{ $remainingBudget < 0 ? '#b91c1c' : 'inherit' }}">
-                            : {{ $remainingBudget < 0 ? '-' : '' }}Rp {{ number_format(abs($remainingBudget), 0, ',', '.') }}
-                        </td>
-                    </tr>
-                </table>
-
-                <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 20px;">
-                    <thead>
-                        <tr style="background: #f1f5f9;">
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">No</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Tanggal</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Kategori</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Vendor</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Keterangan</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: right;">Nominal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($items as $iIndex => $item)
+            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border-radius: 12px; border: 1px solid var(--border-color);">
+                <div style="padding: 32px; background: #fff; color: #000; font-family: 'Arial', sans-serif; min-width: 800px;">
+                    <div style="text-align: center; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">EVENTRA CORE</div>
+                    <div style="text-align: center; font-size: 10px; color: #64748b; margin-top: 4px; border-bottom: 2px solid #000; padding-bottom: 12px;">
+                        Jl. Raya Kenangan No. 7, Jakarta Selatan | Telp: (021) 1234567 | Email: finance@eventracore.com
+                    </div>
+                    
+                    <h4 style="text-align: center; font-size: 13px; text-transform: uppercase; font-weight: 700; margin: 20px 0 10px 0;">LAPORAN REKAPITULASI KEUANGAN EVENT</h4>
+                    
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px;">
                         <tr>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $iIndex + 1 }}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->date->translatedFormat('d/m/Y') }}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->category }}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->vendor }}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->description ?? '-' }}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: right; font-weight: bold;">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                            <td style="width: 15%; padding: 4px 0; font-weight: bold;">Nama Event</td>
+                            <td style="width: 35%; padding: 4px 0;">: {{ $event->name }}</td>
+                            <td style="width: 15%; padding: 4px 0; font-weight: bold;">Anggaran Awal</td>
+                            <td style="width: 35%; padding: 4px 0;">: Rp {{ number_format($recap->initial_nominal, 0, ',', '.') }}</td>
                         </tr>
-                        @endforeach
-                        <tr style="background: #f8fafc; font-weight: bold;">
-                            <td colspan="5" style="border: 1px solid #cbd5e1; padding: 6px; text-align: right;">Total Pengeluaran:</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: right;">Rp {{ number_format($totalSpent, 0, ',', '.') }}</td>
+                        <tr>
+                            <td style="padding: 4px 0; font-weight: bold;">Pelaksana</td>
+                            <td style="padding: 4px 0;">: {{ $picDetails ? $picDetails->name : '-' }}</td>
+                            <td style="padding: 4px 0; font-weight: bold;">Total Belanja</td>
+                            <td style="padding: 4px 0;">: Rp {{ number_format($totalSpent, 0, ',', '.') }}</td>
                         </tr>
-                    </tbody>
-                </table>
+                        <tr>
+                            <td style="padding: 4px 0; font-weight: bold;">Tanggal Event</td>
+                            <td style="padding: 4px 0;">
+                                : @if(!empty($dates))
+                                    {{ \Carbon\Carbon::parse($dates[0])->translatedFormat('d M Y') }}
+                                    @if(count($dates) > 1) - {{ \Carbon\Carbon::parse(end($dates))->translatedFormat('d M Y') }}@endif
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td style="padding: 4px 0; font-weight: bold;">Sisa Anggaran</td>
+                            <td style="padding: 4px 0; font-weight: bold; color: {{ $remainingBudget < 0 ? '#b91c1c' : 'inherit' }}">
+                                : {{ $remainingBudget < 0 ? '-' : '' }}Rp {{ number_format(abs($remainingBudget), 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">No</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Tanggal</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Kategori</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Vendor</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: left;">Keterangan</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: right;">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($items as $iIndex => $item)
+                            <tr>
+                                <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $iIndex + 1 }}</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->date->translatedFormat('d/m/Y') }}</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->category }}</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->vendor }}</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 6px;">{{ $item->description ?? '-' }}</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: right; font-weight: bold;">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                            </tr>
+                            @endforeach
+                            <tr style="background: #f8fafc; font-weight: bold;">
+                                <td colspan="5" style="border: 1px solid #cbd5e1; padding: 6px; text-align: right;">Total Pengeluaran:</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: right;">Rp {{ number_format($totalSpent, 0, ',', '.') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         @endif
@@ -1211,7 +1772,7 @@
             <div class="progress-metrics">
                 <div class="metric-row">
                     <i data-feather="check-circle"></i>
-                    <span>Kelengkapan Nota ({{ $items->count() }} dari {{ $recap->expected_receipts_count }} nota)</span>
+                    <span>Kelengkapan Nota ({{ $items->count() }} nota)</span>
                 </div>
                 <div class="metric-row">
                     <i data-feather="clock"></i>
@@ -1250,7 +1811,14 @@
             <div class="action-button-box">
                 @if($isPic)
                     @if(in_array($recap->status, ['draft', 'dalam_rekap', 'direvisi']))
-                        <form action="{{ route('event-recaps.submit', $event->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyelesaikan rekapitulasi belanja event ini dan mengirimkannya ke Finance?')">
+                        <form action="{{ route('event-recaps.submit', $event->id) }}" method="POST" onsubmit="event.preventDefault(); const form = this; showCustomConfirm({
+                            title: 'Selesaikan Rekapitulasi?',
+                            message: 'Apakah Anda yakin ingin menyelesaikan rekapitulasi belanja event ini dan mengirimkannya ke Finance?',
+                            type: 'warning',
+                            confirmText: 'Ya, Selesaikan',
+                            confirmBg: '#2563EB',
+                            onConfirm: () => form.submit()
+                        });">
                             @csrf
                             <button type="submit" class="btn-action-block blue">
                                  Selesai Rekap
@@ -1316,10 +1884,6 @@
                     <label for="initial_nominal">Nominal Anggaran Awal (Rp)</label>
                     <input type="number" id="initial_nominal" name="initial_nominal" class="form-control" value="{{ $recap->initial_nominal }}" required>
                 </div>
-                <div class="form-group">
-                    <label for="expected_receipts_count">Jumlah Target Nota Nota Pembelian</label>
-                    <input type="number" id="expected_receipts_count" name="expected_receipts_count" class="form-control" value="{{ $recap->expected_receipts_count }}" required>
-                </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
                     <button type="button" class="btn-primary" style="background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);" onclick="closeBudgetModal()">Batal</button>
                     <button type="submit" class="btn-primary">Simpan Anggaran</button>
@@ -1333,33 +1897,61 @@
 {{-- ═══ MODAL: TAMBAH PENGELUARAN (PIC ONLY) ── --}}
 @if($isPic)
 <div class="modal-overlay" id="uploadModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <div class="modal-title">Upload Nota Belanja Baru</div>
-            <button class="modal-close-btn" onclick="closeUploadModal()"><i data-feather="x"></i></button>
+    <div class="modal-box upload-modal-box">
+        <!-- Header -->
+        <div style="padding: 24px 24px 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin: 0;">Unggah Foto/Berkas Nota Fisik</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0;">Upload foto atau berkas nota fisik Anda.</p>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="closeUploadModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px;"><i data-feather="x" style="width: 20px; height: 20px;"></i></button>
         </div>
-        <form action="{{ route('event-recaps.items.store', $event->id) }}" method="POST" enctype="multipart/form-data">
+        
+        <form action="{{ route('event-recaps.items.store', $event->id) }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; overflow: hidden; margin: 0;">
             @csrf
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Unggah Foto/Berkas Nota Fisik</label>
-                    <div class="upload-drag-area" onclick="document.getElementById('receipt').click()">
-                        <i data-feather="upload-cloud"></i>
-                        <p>Klik untuk memilih file nota</p>
-                        <span>Mendukung file JPG, PNG, JPEG (Maks. 5MB)</span>
-                        <div id="file-name-preview" style="margin-top: 8px; font-weight: 700; color: #2563EB;"></div>
+            <!-- Scrollable Body -->
+            <div class="modal-body" style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px;">
+                <!-- Drag and drop zone -->
+                <div class="form-group" style="margin: 0;">
+                    <div class="upload-drag-area-new" id="dragArea" onclick="document.getElementById('receipt').click()">
+                        <div id="upload-placeholder">
+                            <div class="upload-icon-circle">
+                                <i data-feather="upload-cloud" style="width: 24px; height: 24px; color: #2563EB;"></i>
+                            </div>
+                            <p style="font-weight: 700; color: var(--text-main); font-size: 14px; margin: 0 0 6px 0;">Klik untuk memilih file nota</p>
+                            <span style="font-size: 11.5px; color: var(--text-muted);">Mendukung JPG, PNG, JPEG (Maks. 5MB)</span>
+                        </div>
+                        <div id="upload-preview-container" style="display: none; width: 100%; height: 100%; justify-content: center; align-items: center; flex-direction: column; position: relative;">
+                            <img id="upload-preview-img" src="" style="max-width: 100%; max-height: 160px; border-radius: 8px; object-fit: contain; border: 1px solid var(--border-color);">
+                            <div id="upload-file-name" style="margin-top: 8px; font-weight: 700; font-size: 12px; color: #2563EB; word-break: break-all;"></div>
+                            <button type="button" class="btn-remove-preview" onclick="removeUploadPreview(event)" style="position: absolute; top: -8px; right: -8px; background: rgba(239, 68, 68, 0.9); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; transition: all 0.2s;">
+                                <i data-feather="trash-2" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
                     </div>
                     <input type="file" id="receipt" name="receipt" style="display: none;" accept="image/*" onchange="previewUploadFileName(this)" required>
                 </div>
-                
-                <div class="form-group">
-                    <label for="date">Tanggal Transaksi Pembelian</label>
-                    <input type="date" id="date" name="date" class="form-control" value="{{ date('Y-m-d') }}" required>
+
+                <!-- Info banner -->
+                <div class="upload-alert-banner">
+                    <div class="upload-alert-icon">
+                        <i data-feather="info" style="width: 18px; height: 18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 12.5px; font-weight: 700; color: var(--text-main); line-height: 1.4;">Pastikan foto jelas dan seluruh informasi nota terbaca.</div>
+                        <div style="font-size: 11.5px; color: var(--text-muted); opacity: 0.8; margin-top: 2px;">File maksimal 5MB dengan format JPG, PNG, atau JPEG.</div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="category">Kategori Pengeluaran</label>
-                    <select id="category" name="category" class="form-control" style="appearance: none;" required>
+                <!-- Form inputs -->
+                <div class="form-group" style="margin: 0;">
+                    <label for="date" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Tanggal Transaksi</label>
+                    <input type="date" id="date" name="date" class="upload-modal-input" value="{{ date('Y-m-d') }}" required>
+                </div>
+
+                <div class="form-group" style="position: relative; margin: 0;">
+                    <label for="category" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Kategori Pengeluaran</label>
+                    <select id="category" name="category" class="upload-modal-input" style="appearance: none; -webkit-appearance: none; padding-right: 36px;" required>
                         <option value="Konsumsi">Konsumsi</option>
                         <option value="Transportasi">Transportasi</option>
                         <option value="Perlengkapan">Perlengkapan</option>
@@ -1367,27 +1959,33 @@
                         <option value="Sewa">Sewa</option>
                         <option value="Operasional">Operasional</option>
                     </select>
+                    <i data-feather="chevron-down" style="position: absolute; right: 14px; bottom: 14px; width: 16px; height: 16px; color: var(--text-muted); pointer-events: none;"></i>
                 </div>
 
-                <div class="form-group">
-                    <label for="vendor">Vendor</label>
-                    <input type="text" id="vendor" name="vendor" class="form-control" placeholder="Vendor Produksi ataupun tempat makan" required>
+                <!-- Vendor and Nominal Belanja row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group" style="margin: 0;">
+                        <label for="vendor" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Vendor</label>
+                        <input type="text" id="vendor" name="vendor" class="upload-modal-input" placeholder="Contoh: Tempat makan / toko susu" required>
+                    </div>
+
+                    <div class="form-group" style="margin: 0;">
+                        <label for="nominal" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Nominal Belanja (Rp)</label>
+                        <input type="number" id="nominal" name="nominal" class="upload-modal-input" placeholder="100000" required>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="nominal">Nominal Belanja</label>
-                    <input type="number" id="nominal" name="nominal" class="form-control" placeholder="" required>
+                <div class="form-group" style="position: relative; margin: 0;">
+                    <label for="description" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Keterangan (Opsional)</label>
+                    <textarea id="description" name="description" class="upload-modal-textarea" placeholder="Deskripsikan barang atau layanan yang dibeli..." maxlength="200" oninput="updateCharCount(this)"></textarea>
+                    <span id="char-count" style="position: absolute; right: 12px; bottom: 10px; font-size: 11px; color: var(--text-muted);">0/200</span>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="description">Keterangan </label>
-                    <textarea id="description" name="description" class="form-control" placeholder="Deskripsikan barang atau layanan yang dibeli..."></textarea>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
-                    <button type="button" class="btn-primary" style="background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);" onclick="closeUploadModal()">Batal</button>
-                    <button type="submit" class="btn-primary">Upload Bukti Nota</button>
-                </div>
+            <!-- Footer Action Buttons -->
+            <div style="padding: 16px 24px 24px 24px; display: flex; flex-direction: column; align-items: center; border-top: 1px solid var(--border-color); background: var(--card-bg);">
+                <button type="submit" style="width: 100%; height: 46px; background: #1D4ED8; color: #FFFFFF; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1E40AF'" onmouseout="this.style.background='#1D4ED8'">Simpan Nota</button>
+                <button type="button" onclick="closeUploadModal()" style="margin-top: 16px; background: none; border: none; color: #2563EB; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none;">Batal</button>
             </div>
         </form>
     </div>
@@ -1454,12 +2052,63 @@
     }
     function closeUploadModal() {
         const modal = document.getElementById('uploadModal');
-        if (modal) modal.style.display = 'none';
+        if (modal) {
+            modal.style.display = 'none';
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+                removeUploadPreview();
+                const charCount = document.getElementById('char-count');
+                if (charCount) charCount.innerText = '0/200';
+            }
+        }
     }
     function previewUploadFileName(input) {
-        const preview = document.getElementById('file-name-preview');
-        if (preview && input.files.length > 0) {
-            preview.innerText = 'File dipilih: ' + input.files[0].name;
+        const placeholder = document.getElementById('upload-placeholder');
+        const container = document.getElementById('upload-preview-container');
+        const img = document.getElementById('upload-preview-img');
+        const fileName = document.getElementById('upload-file-name');
+        
+        if (placeholder && container && img && fileName && input.files && input.files[0]) {
+            const file = input.files[0];
+            fileName.innerText = file.name;
+            
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                img.style.display = 'none';
+            }
+            
+            placeholder.style.display = 'none';
+            container.style.display = 'flex';
+        }
+    }
+
+    function removeUploadPreview(event) {
+        if (event) event.stopPropagation(); // Prevent trigger click on dragArea
+        const input = document.getElementById('receipt');
+        const placeholder = document.getElementById('upload-placeholder');
+        const container = document.getElementById('upload-preview-container');
+        const img = document.getElementById('upload-preview-img');
+        const fileName = document.getElementById('upload-file-name');
+        
+        if (input) input.value = '';
+        if (img) img.src = '';
+        if (fileName) fileName.innerText = '';
+        
+        if (container) container.style.display = 'none';
+        if (placeholder) placeholder.style.display = 'block';
+    }
+
+    function updateCharCount(textarea) {
+        const counter = document.getElementById('char-count');
+        if (counter) {
+            counter.innerText = textarea.value.length + '/200';
         }
     }
 
@@ -1478,6 +2127,110 @@
     function closePreviewModal() {
         const modal = document.getElementById('previewModal');
         if (modal) modal.style.display = 'none';
+    }
+
+    // Custom Confirm & Alert Modals
+    function showCustomConfirm({ title, message, type, confirmText, confirmBg, onConfirm }) {
+        document.getElementById('confirm-title').innerText = title;
+        document.getElementById('confirm-message').innerText = message;
+        
+        const circle = document.getElementById('confirm-icon-circle');
+        const icon = document.getElementById('confirm-icon');
+        
+        if (type === 'danger') {
+            circle.className = 'alert-danger-circle';
+            icon.setAttribute('data-feather', 'trash-2');
+        } else if (type === 'warning') {
+            circle.className = 'alert-warning-circle';
+            icon.setAttribute('data-feather', 'alert-triangle');
+        } else {
+            circle.className = 'alert-success-circle';
+            icon.setAttribute('data-feather', 'help-circle');
+        }
+        feather.replace();
+        
+        const actionBtn = document.getElementById('btn-confirm-action');
+        actionBtn.innerText = confirmText || 'Ya, Lanjutkan';
+        actionBtn.style.background = confirmBg || '#2563EB';
+        if (type === 'danger') {
+            actionBtn.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.15)';
+        } else {
+            actionBtn.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.15)';
+        }
+        actionBtn.style.width = ''; // Reset alert full-width overrides
+        
+        const cancelBtn = document.getElementById('btn-confirm-cancel');
+        cancelBtn.style.display = 'block';
+        
+        const modal = document.getElementById('customConfirmModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                modal.classList.add('active');
+            });
+        }
+        
+        actionBtn.onclick = function() {
+            closeCustomConfirm();
+            if (onConfirm) onConfirm();
+        };
+        
+        cancelBtn.onclick = function() {
+            closeCustomConfirm();
+        };
+    }
+
+    function showCustomAlert({ title, message, type, buttonText, onConfirm }) {
+        document.getElementById('confirm-title').innerText = title;
+        document.getElementById('confirm-message').innerText = message;
+        
+        const circle = document.getElementById('confirm-icon-circle');
+        const icon = document.getElementById('confirm-icon');
+        
+        if (type === 'danger') {
+            circle.className = 'alert-danger-circle';
+            icon.setAttribute('data-feather', 'alert-circle');
+        } else if (type === 'success') {
+            circle.className = 'alert-success-circle';
+            icon.setAttribute('data-feather', 'check');
+        } else {
+            circle.className = 'alert-warning-circle';
+            icon.setAttribute('data-feather', 'info');
+        }
+        feather.replace();
+        
+        const actionBtn = document.getElementById('btn-confirm-action');
+        actionBtn.innerText = buttonText || 'Selesai';
+        actionBtn.style.background = '#2563EB';
+        actionBtn.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.15)';
+        actionBtn.style.width = '100%';
+        
+        const cancelBtn = document.getElementById('btn-confirm-cancel');
+        cancelBtn.style.display = 'none'; // Hide cancel button for alerts
+        
+        const modal = document.getElementById('customConfirmModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                modal.classList.add('active');
+            });
+        }
+        
+        actionBtn.onclick = function() {
+            closeCustomConfirm();
+            cancelBtn.style.display = 'block'; // Restore cancel button display
+            if (onConfirm) onConfirm();
+        };
+    }
+
+    function closeCustomConfirm() {
+        const modal = document.getElementById('customConfirmModal');
+        if (modal) {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 200);
+        }
     }
 
     window.addEventListener('DOMContentLoaded', () => {

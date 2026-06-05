@@ -53,9 +53,9 @@ class EventRecap extends Model
     public function getCompletionScoreAttribute(): int
     {
         // 1. Completeness of Notes (Weight: 40%)
-        $expected = $this->expected_receipts_count ?: 10;
+        // Since there is no target nota, if at least 1 receipt is uploaded, completeness is 40%, otherwise 0%
         $uploaded = $this->event->recapItems()->count();
-        $completenessScore = min(40, ($uploaded / $expected) * 40);
+        $completenessScore = $uploaded > 0 ? 40 : 0;
 
         // 2. Ketepatan Waktu (Weight: 30%)
         // Days elapsed since event completion

@@ -60,7 +60,7 @@
         .recap-stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 480px) {
-        .recap-stats-grid { grid-template-columns: 1fr; }
+        .recap-stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     .recap-stat-card {
@@ -410,6 +410,270 @@
         height: 40px;
         opacity: 0.2;
         margin-bottom: 8px;
+    }
+
+    /* ── Mobile Responsive Overrides ── */
+    @media (max-width: 768px) {
+        .recap-header-card {
+            flex-direction: column;
+            align-items: flex-start !important;
+            padding: 16px !important;
+            gap: 12px !important;
+        }
+        .recap-header-left {
+            align-items: center !important;
+            width: 100%;
+        }
+        
+        .recap-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+        .recap-stat-card {
+            padding: 16px !important;
+            border-radius: 14px !important;
+        }
+        .recap-stat-card .recap-stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            margin-bottom: 8px !important;
+        }
+        .recap-stat-card .recap-stat-icon svg {
+            width: 14px !important;
+            height: 14px !important;
+        }
+        .recap-stat-card .recap-stat-label {
+            font-size: 11px !important;
+            margin-bottom: 4px !important;
+        }
+        .recap-stat-card .recap-stat-value {
+            font-size: 18px !important;
+        }
+
+        .recap-section-card {
+            padding: 16px !important;
+        }
+        .recap-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+        .recap-toolbar-left {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            width: 100%;
+        }
+        .recap-search-box, .recap-select {
+            width: 100% !important;
+        }
+        .recap-toolbar-right {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .recap-toolbar-right .btn-filter-action {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Card Layout for Event Recaps Table */
+        .recap-table-wrapper {
+            overflow-x: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .recap-table thead {
+            display: none !important;
+        }
+        
+        .recap-table {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .recap-table tbody {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        @media (max-width: 576px) {
+            .recap-table tbody {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        .recap-table tr:not(:has(td[colspan])) {
+            border: 1px solid var(--border-color) !important;
+            border-radius: 14px !important;
+            padding: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            align-self: stretch !important;
+            height: 100% !important;
+            box-sizing: border-box !important;
+            background: var(--card-bg) !important;
+        }
+        [data-theme="dark"] .recap-table tr:not(:has(td[colspan])) {
+            background: rgba(30, 41, 59, 0.25) !important;
+        }
+        
+        .recap-table tr td {
+            display: block !important;
+            border: none !important;
+            padding: 0 !important;
+            text-align: left !important;
+            font-size: 11.5px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            word-break: break-word !important;
+            box-sizing: border-box !important;
+        }
+        
+        .recap-table tr:has(td[colspan]) {
+            grid-column: 1 / -1 !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .recap-table tr:has(td[colspan]) td {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+            padding: 40px 0 !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Column 1 (Event Name & Location) */
+        .recap-table tr td:nth-child(1) {
+            margin-bottom: 2px !important;
+        }
+        
+        /* Labeled date column */
+        .recap-table tr td:nth-child(2) {
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 6px !important;
+        }
+        .recap-table tr td:nth-child(2):before {
+            content: "Pelaksanaan: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled PIC column */
+        .recap-table tr td:nth-child(3) {
+            padding-top: 4px !important;
+        }
+        .recap-table tr td:nth-child(3):before {
+            content: "PIC: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .recap-table tr td:nth-child(3) .recap-user-cell {
+            display: inline-flex !important;
+            vertical-align: middle;
+        }
+        .recap-table tr td:nth-child(3) .recap-user-avatar {
+            width: 24px !important;
+            height: 24px !important;
+        }
+        .recap-table tr td:nth-child(3) .recap-user-name {
+            font-size: 11.5px !important;
+        }
+        
+        /* Labeled budget column */
+        .recap-table tr td:nth-child(4):before {
+            content: "Anggaran Awal: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled spend column */
+        .recap-table tr td:nth-child(5):before {
+            content: "Pengeluaran: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Labeled status column */
+        .recap-table tr td:nth-child(6) {
+            padding-bottom: 6px !important;
+        }
+        .recap-table tr td:nth-child(6):before {
+            content: "Status: ";
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-right: 4px;
+        }
+        
+        /* Action buttons column */
+        .recap-table tr td:nth-child(7) {
+            border-top: 1px dashed var(--border-color) !important;
+            padding-top: 8px !important;
+            margin-top: auto !important;
+        }
+        .recap-table tr td:nth-child(7) .btn-review-action {
+            display: flex !important;
+            width: 100% !important;
+            justify-content: center;
+            box-sizing: border-box !important;
+        }
+
+        .recap-footer {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+        .recap-footer-right {
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            align-items: center;
+        }
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .recap-footer .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
     }
 </style>
 
