@@ -72,35 +72,6 @@ class AttendanceApiController extends Controller
         $checkInTime = $timeString ? Carbon::parse($timeString) : Carbon::now();
         $date = $checkInTime->format('Y-m-d');
 
-        // Only accept attendance from today onwards
-        $today = Carbon::today()->format('Y-m-d');
-        if ($date < $today) {
-            Log::warning("Hikvision Push: Event date {$date} is in the past (Today is {$today}). ID: {$employeeNo}");
-            return response()->json([
-                'status' => 'success', 
-                'message' => 'Event acknowledged but skipped because it is in the past',
-                'statusCode' => 1,
-                'statusString' => 'OK',
-                'errorCode' => 0,
-                'errorMsg' => 'OK'
-            ], 200);
-        }
-
-        // Block check-in after attendance close time (12:00)
-        $closeTime = config('attendance.attendance_close_time', '12:00:00');
-        $closeThreshold = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' ' . $closeTime);
-        if ($checkInTime->gte($closeThreshold)) {
-            Log::info("Hikvision Push: Attendance closed after {$closeTime}. Swipe ignored - Name: {$user->name}, ID: {$employeeNo}, Time: " . $checkInTime->format('H:i:s'));
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Attendance closed after ' . $closeTime,
-                'statusCode' => 1,
-                'statusString' => 'OK',
-                'errorCode' => 0,
-                'errorMsg' => 'OK'
-            ], 200);
-        }
-
         $exists = DailyAttendance::where('user_id', $user->id)
                                   ->where('date', $date)
                                   ->exists();
@@ -130,7 +101,7 @@ class AttendanceApiController extends Controller
         ]);
 
         // Only log when attendance is successfully recorded
-        Log::info("Hikvision Attendance Recorded - Name: {$user->name}, ID: {$employeeNo}, Time: {$attendance->check_in_time}, Status: {$attendance->status}");
+        Log::info("Hikvision Attendance Recorded - Date: {$attendance->date}, Name: {$user->name}, ID: {$employeeNo}, Time: {$attendance->check_in_time}, Status: {$attendance->status}");
 
         return response()->json([
             'status' => 'success',
