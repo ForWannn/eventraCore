@@ -517,6 +517,13 @@
                         </td>
                         <td style="color: var(--text-main); font-weight: 500;">
                             {{ $req->reason }}
+                            @if($req->proof_path)
+                                <div style="margin-top: 4px;">
+                                    <a href="{{ asset($req->proof_path) }}" target="_blank" style="font-size: 11.5px; color: #2563eb; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600;">
+                                        <i data-feather="file-text" style="width: 12px; height: 12px;"></i> Lihat Bukti
+                                    </a>
+                                </div>
+                            @endif
                         </td>
                         <td>
                             <div class="btn-action-group">
@@ -630,6 +637,13 @@
                             </td>
                             <td style="color: var(--text-main); font-weight: 500;">
                                 {{ $req->reason }}
+                                @if($req->proof_path)
+                                    <div style="margin-top: 4px;">
+                                        <a href="{{ asset($req->proof_path) }}" target="_blank" style="font-size: 11.5px; color: #2563eb; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600;">
+                                            <i data-feather="file-text" style="width: 12px; height: 12px;"></i> Lihat Bukti
+                                        </a>
+                                    </div>
+                                @endif
                             </td>
                             <td>
                                 @if($req->status === 'approved')
@@ -694,6 +708,13 @@
                             </td>
                             <td style="color: var(--text-main); font-weight: 500;">
                                 {{ $req->reason }}
+                                @if($req->proof_path)
+                                    <div style="margin-top: 4px;">
+                                        <a href="{{ asset($req->proof_path) }}" target="_blank" style="font-size: 11.5px; color: #2563eb; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600;">
+                                            <i data-feather="file-text" style="width: 12px; height: 12px;"></i> Lihat Bukti
+                                        </a>
+                                    </div>
+                                @endif
                             </td>
                             <td>
                                 @if($req->status === 'approved')

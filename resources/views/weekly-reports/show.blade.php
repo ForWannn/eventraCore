@@ -90,8 +90,12 @@
             <h3 style="margin-bottom: 4px;">Weekly Report: {{ $user->name }}</h3>
             <p style="font-size: 13px; color: var(--text-muted);">Divisi: {{ optional($user->division)->name ?? '-' }} &nbsp;&bull;&nbsp; Minggu: {{ $report->week_start_date->format('d/m/Y') }}</p>
         </div>
-        <div class="show-header-percentage" style="text-align: right;">
-            <div style="font-size: 14px; font-weight: 700; background: #10b981; color: white; padding: 6px 16px; border-radius: 8px;" class="progress-badge">
+        <div class="show-header-percentage" style="text-align: right; display: flex; align-items: center; gap: 12px;">
+            <a href="{{ route('weekly.export_pdf', [$user->id, $report->week_start_date->format('Y-m-d')]) }}" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #2563eb; border-radius: 8px; font-size: 13px; font-weight: 600; color: white; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                <i data-feather="file-text" style="width: 14px; height: 14px; stroke-width: 2.5;"></i>
+                Ekspor PDF
+            </a>
+            <div style="font-size: 14px; font-weight: 700; background: #10b981; color: white; padding: 8px 16px; border-radius: 8px;" class="progress-badge">
                 Progress: {{ $report->completion_percentage }}%
             </div>
         </div>

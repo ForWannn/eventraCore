@@ -86,4 +86,39 @@ class EventRecapTest extends TestCase
         // Total score = completenessScore (40) + speedScore (5 default min) + statusScore (10 draft/dalam_rekap) = 55
         $this->assertEquals(55, $recap->completion_score);
     }
+
+    public function test_ceo_with_rekap_event_permission_can_access_event_recaps()
+    {
+        Role::firstOrCreate(['name' => 'CEO']);
+        
+        $ceo = User::factory()->create();
+        $ceo->assignRole('CEO');
+        $ceo->givePermissionTo('rekap_event');
+
+        $response = $this->actingAs($ceo)->get('/event-recaps');
+        $response->assertStatus(200);
+    }
+
+    public function test_ceo_without_rekap_event_permission_cannot_access_event_recaps()
+    {
+        Role::firstOrCreate(['name' => 'CEO']);
+        
+        $ceo = User::factory()->create();
+        $ceo->assignRole('CEO');
+
+        $response = $this->actingAs($ceo)->get('/event-recaps');
+        $response->assertStatus(403);
+    }
+
+    public function test_finance_without_rekap_event_permission_can_access_event_recaps()
+    {
+        $division = Division::create(['name' => 'Finance']);
+        $finance = User::factory()->create([
+            'division_id' => $division->id,
+        ]);
+
+        $response = $this->actingAs($finance)->get('/event-recaps');
+        $response->assertStatus(200);
+    }
 }
+

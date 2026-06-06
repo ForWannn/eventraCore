@@ -36,7 +36,7 @@ class UserController extends Controller
             'join_date'     => 'required|date',
             'phone'         => 'nullable|string|max:20',
             'birth_date'    => 'nullable|date',
-            'employee_type' => 'required|string|in:Full Time,Part Time,Contract,Internship,Freelance',
+            'employee_type' => 'required|string|in:Full Time,Part Time,Contract,Internship',
             'gender'        => 'required|string|in:Laki-laki,Perempuan',
         ]);
 
@@ -96,7 +96,7 @@ class UserController extends Controller
             'join_date'     => 'required|date',
             'phone'         => 'nullable|string|max:20',
             'birth_date'    => 'nullable|date',
-            'employee_type' => 'required|string|in:Full Time,Part Time,Contract,Internship,Freelance',
+            'employee_type' => 'required|string|in:Full Time,Part Time,Contract,Internship',
             'gender'        => 'required|string|in:Laki-laki,Perempuan',
         ]);
 

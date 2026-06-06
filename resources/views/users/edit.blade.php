@@ -495,15 +495,15 @@
         justify-content: flex-end;
     }
     .btn-cancel-modal {
-        padding: 8px 18px;
-        background: var(--hover-bg);
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.15s;
+        padding: 8px 18px !important;
+        background: var(--hover-bg) !important;
+        color: var(--text-main) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 10px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.15s !important;
     }
     .btn-cancel-modal:hover {
         background: var(--border-color);
@@ -695,7 +695,6 @@
                         <option value="Part Time" {{ old('employee_type', $user->employee_type) === 'Part Time' ? 'selected' : '' }}>Part Time</option>
                         <option value="Contract" {{ old('employee_type', $user->employee_type) === 'Contract' ? 'selected' : '' }}>Contract</option>
                         <option value="Internship" {{ old('employee_type', $user->employee_type) === 'Internship' ? 'selected' : '' }}>Internship</option>
-                        <option value="Freelance" {{ old('employee_type', $user->employee_type) === 'Freelance' ? 'selected' : '' }}>Freelance</option>
                     </select>
                     @error('employee_type')<span class="error-text">{{ $message }}</span>@enderror
                 </div>
@@ -716,7 +715,6 @@
                             elseif ($role->name === 'Head') $icon = 'shield';
                             elseif ($role->name === 'Employee') $icon = 'user';
                             elseif ($role->name === 'Intern') $icon = 'book-open';
-                            elseif ($role->name === 'Freelance') $icon = 'briefcase';
                         @endphp
                         <div class="role-selection-card">
                             <input type="radio" id="role_{{ $role->id }}" name="role" value="{{ $role->name }}"
@@ -793,7 +791,7 @@
     <div class="modal-box">
         <h4>Konfirmasi Hapus Karyawan</h4>
         <p>
-            Anda akan menghapus data karyawan <strong>{{ $user->name }}</strong> (NIK: {{ $user->nik ?? '-' }}) secara permanen. Tindakan ini tidak dapat dibatalkan. Apakah Anda yakin?
+            Anda akan menghapus data karyawan <strong>{{ $user->name }}</strong> (ID: {{ $user->nik ?? '-' }}) secara permanen. Tindakan ini tidak dapat dibatalkan. Apakah Anda yakin?
         </p>
         <div class="modal-actions">
             <button class="btn-cancel-modal" onclick="closeDeleteModal()">Batal</button>

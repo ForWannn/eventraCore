@@ -458,7 +458,6 @@
                             <option value="Part Time" {{ old('employee_type') === 'Part Time' ? 'selected' : '' }}>Part Time</option>
                             <option value="Contract" {{ old('employee_type') === 'Contract' ? 'selected' : '' }}>Contract</option>
                             <option value="Internship" {{ old('employee_type') === 'Internship' ? 'selected' : '' }}>Internship</option>
-                            <option value="Freelance" {{ old('employee_type') === 'Freelance' ? 'selected' : '' }}>Freelance</option>
                         </select>
                         @error('employee_type')<div class="error-text">{{ $message }}</div>@enderror
                     </div>
@@ -505,8 +504,6 @@
                         $icon = 'user';
                     } elseif ($role->name === 'Intern') {
                         $icon = 'book-open';
-                    } elseif ($role->name === 'Freelance') {
-                        $icon = 'briefcase';
                     } elseif ($role->name === 'Admin') {
                         $icon = 'settings';
                     }

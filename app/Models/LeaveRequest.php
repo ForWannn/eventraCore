@@ -15,6 +15,7 @@ class LeaveRequest extends Model
         'start_date',
         'end_date',
         'reason',
+        'proof_path',
         'status',
         'approved_by_id',
     ];

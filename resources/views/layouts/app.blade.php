@@ -603,6 +603,13 @@
                    <i data-feather="grid"></i> <span>Dashboard</span>
                </a>
                @endcan
+
+               @if(Auth::user()->hasAnyRole(['CEO', 'Superadmin', 'GM']))
+               <a href="{{ route('executive-dashboard') }}"
+                   class="nav-link {{ request()->routeIs('executive-dashboard') ? 'active' : '' }}">
+                   <i data-feather="pie-chart"></i> <span>Evaluasi Tahunan</span>
+               </a>
+               @endif
                
                <a href="{{ route('events.index') }}"
                    class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
@@ -656,7 +663,7 @@
                @endif
 
                <!-- SECTION 4: REKAPITULASI -->
-               @if(Auth::user()->can('rekap_weekly') || Auth::user()->can('rekap_absen') || (Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->hasRole(['CEO', 'GM']) || Auth::user()->can('rekap_event') || Auth::user()->events()->wherePivot('is_pic', true)->exists())
+               @if(Auth::user()->can('rekap_weekly') || Auth::user()->can('rekap_absen') || (Auth::user()->hasRole('Head') && optional(Auth::user()->division)->name === 'Finance') || Auth::user()->can('rekap_event') || Auth::user()->events()->wherePivot('is_pic', true)->exists())
                <div class="nav-section-label" style="margin-top: 16px;">REKAPITULASI</div>
                @can('rekap_weekly')
                <a href="{{ route('weekly.recap') }}"
@@ -673,7 +680,7 @@
                </a>
                @endcan
 
-               @if(optional(Auth::user()->division)->name === 'Finance' || Auth::user()->hasRole(['CEO', 'GM']) || Auth::user()->events()->wherePivot('is_pic', true)->exists() || Auth::user()->can('rekap_event'))
+               @if(optional(Auth::user()->division)->name === 'Finance' || Auth::user()->events()->wherePivot('is_pic', true)->exists() || Auth::user()->can('rekap_event'))
                <a href="{{ route('event-recaps.index') }}"
                    class="nav-link {{ request()->routeIs('event-recaps.index') ? 'active' : '' }}">
                    <i data-feather="bar-chart-2"></i> <span>Rekap Event</span>

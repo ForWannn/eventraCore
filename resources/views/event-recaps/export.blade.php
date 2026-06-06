@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>Rekapitulasi Event - {{ $event->name }}</title>
     <style>
-        /* CSS rules compatible with Microsoft Excel HTML rendering */
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;

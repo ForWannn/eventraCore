@@ -1066,6 +1066,7 @@
         display: flex;
         align-items: center;
         padding: 16px 0;
+        gap: 48px;
     }
     @media (max-width: 768px) {
         .attendance-redesign-layout {
@@ -1146,6 +1147,7 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 24px 40px;
+        max-width: 560px;
         flex: 1;
     }
     @media (max-width: 480px) {
@@ -2388,7 +2390,7 @@
     <div class="dashboard-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
         <div>
             <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Dasbor Utama</h1>
-            <!-- <p style="color: var(--text-muted);     font-size: 13px; margin-top: 4px; font-weight: 500;">Ringkasan performa event dan aktivitas perusahaan secara real-time.</p> -->
+            <p style="color: var(--text-muted);     font-size: 13px; margin-top: 4px; font-weight: 500;">Ringkasan performa event dan aktivitas perusahaan secara real-time.</p>
         </div>
     </div>
 
@@ -2406,8 +2408,8 @@
                     <div class="stat-sub">dari {{ $totalEvents ?? 0 }} event</div>
                 </div>
                 <div class="stat-trend-container">
-                    <!-- <span class="stat-trend-badge blue"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 20%</span> -->
-                    <!-- <span class="stat-trend-text">vs minggu lalu</span> -->
+                    <span class="stat-trend-badge blue"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 20%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span>
                 </div>
             </div>
 
@@ -2425,8 +2427,8 @@
                     <div class="stat-sub">event on-going</div>
                 </div>
                 <div class="stat-trend-container">
-                    <!-- <span class="stat-trend-badge emerald"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 50%</span>
-                    <span class="stat-trend-text">vs minggu lalu</span> -->
+                    <span class="stat-trend-badge emerald"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 50%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span>
                 </div>
             </div>
 
@@ -2444,8 +2446,8 @@
                     <div class="stat-sub">karyawan bertugas event</div>
                 </div>
                 <div class="stat-trend-container">
-                    <!-- <span class="stat-trend-badge amber"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 12%</span>
-                    <span class="stat-trend-text">vs minggu lalu</span> -->
+                    <span class="stat-trend-badge amber"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 12%</span>
+                    <span class="stat-trend-text">vs minggu lalu</span>
                 </div>
             </div>
 
@@ -2463,8 +2465,8 @@
                     <div class="stat-sub">karyawan sudah absen</div>
                 </div>
                 <div class="stat-trend-container">
-                    <!-- <span class="stat-trend-badge violet"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 8%</span>
-                    <span class="stat-trend-text">vs kemarin</span> -->
+                    <span class="stat-trend-badge violet"><i data-feather="arrow-up" style="width: 10px; height: 10px;"></i> 8%</span>
+                    <span class="stat-trend-text">vs kemarin</span>
                 </div>
             </div>
 
@@ -2634,9 +2636,9 @@
             </div>
         @elseif(!$isWorkingDayToday)
             <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
-                <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--hover-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                <!-- <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--hover-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
                     <i data-feather="coffee" style="width: 32px; height: 32px; color: #2563eb;"></i>
-                </div>
+                </div> -->
                 <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0 0 6px 0;">Hari Ini Libur</h3>
                 <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
                     Nikmati hari istirahat dengan baik!
@@ -2808,6 +2810,12 @@
         </div> -->
     </div>
 @else
+    <div class="dashboard-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
+        <div>
+            <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Dasbor Utama</h1>
+            <p style="color: var(--text-muted);     font-size: 13px; margin-top: 4px; font-weight: 500;">Ringkasan Dasbor dan performa karyawan.</p>
+        </div>
+    </div>
     @if($showBanner)
         @if($bannerType === 'plan')
             <div class="smart-banner warning" style="margin-bottom: 20px;">
@@ -2834,8 +2842,8 @@
                 <div class="stat-icon blue" style="margin-bottom: 0;"><i data-feather="calendar"></i></div>
                 <div>
                     <div class="stat-label" style="margin-bottom: 4px;">Total Event</div>
-                    <div class="stat-value">{{ $totalEventsThisMonth }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Event</span></div>
-                    <div class="stat-sub" style="margin-top: 2px;">Bulan ini</div>
+                    <div class="stat-value">{{ $totalEventsThisMonth }} </div>
+                    <div class="stat-sub" style="margin-top: 2px;">Event Bulan ini</div>
                 </div>
             </div>
             <hr style="border: none; border-top: 1px solid var(--border-color); margin: 0 -24px 16px -24px;">
@@ -2853,8 +2861,8 @@
                 <div class="stat-icon emerald" style="margin-bottom: 0;"><i data-feather="user"></i></div>
                 <div>
                     <div class="stat-label" style="margin-bottom: 4px;">Absensi Bulan Ini</div>
-                    <div class="stat-value">{{ $attendanceCountThisMonth }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Hari</span></div>
-                    <div class="stat-sub" style="margin-top: 2px;">dari {{ $workDays }} hari kerja</div>
+                    <div class="stat-value">{{ $attendanceCountThisMonth }}</div>
+                    <div class="stat-sub" style="margin-top: 2px;">Hari dari {{ $workDays }} hari kerja</div>
                 </div>
             </div>
             <hr style="border: none; border-top: 1px solid var(--border-color); margin: 0 -24px 16px -24px;">
@@ -2872,8 +2880,8 @@
                 <div class="stat-icon violet" style="margin-bottom: 0; background: rgba(236, 72, 153, 0.1); color: var(--danger);"><i data-feather="clipboard"></i></div>
                 <div>
                     <div class="stat-label" style="margin-bottom: 4px;">To Do</div>
-                    <div class="stat-value">{{ $pendingTasksCount }} <span style="font-size: 14px; font-weight: 500; color: var(--text-muted);">Jobdesk</span></div>
-                    <div class="stat-sub" style="margin-top: 2px;">Perlu diselesaikan</div>
+                    <div class="stat-value">{{ $pendingTasksCount }}</div>
+                    <div class="stat-sub" style="margin-top: 2px;">Jobdesk perlu diselesaikan</div>
                 </div>
             </div>
             <hr style="border: none; border-top: 1px solid var(--border-color); margin: 0 -24px 16px -24px;">
@@ -2885,123 +2893,173 @@
     </div>
 
     @unless(Auth::user()->hasRole('Intern'))
-    <!-- Redesigned Absensi Hari Ini Widget (Full Width) -->
-    <div class="section-card" style="margin-bottom: 28px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="section-title">Absensi Hari Ini</span>
+    <div class="dashboard-cols">
+        <!-- Redesigned Absensi Hari Ini Widget -->
+        <div class="section-card" style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="section-title">Absensi Hari Ini</span>
+                </div>
+                @if($todayAttendance)
+                    <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                        Hadir
+                    </span>
+                @elseif(!$isWorkingDayToday)
+                    <span class="badge" style="background: var(--hover-bg); color: var(--text-muted); border: 1px solid var(--border-color); font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                        Libur
+                    </span>
+                @else
+                    <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
+                        Belum Absen
+                    </span>
+                @endif
             </div>
+
             @if($todayAttendance)
-                <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
-                    Hadir
-                </span>
+                <div class="attendance-redesign-layout">
+                    <!-- Left: Circular Progress Timer -->
+                    <div class="attendance-circle-container">
+                        <div class="progress-ring-wrapper">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__background" stroke="var(--border-color)" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
+                                <circle class="progress-ring__bar" id="progressRingBar" stroke="#2563eb" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
+                            </svg>
+                            <div class="progress-ring-text">
+                                <span id="elapsedWorkTime" class="work-time-counter">00:00:00</span>
+                                <span class="work-time-label">Jam Kerja</span>
+                                <span class="work-time-target">/ 08:00:00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Detail Info Grid -->
+                    <div class="attendance-details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-feather="clock" class="detail-icon"></i>
+                                <span>Jam Masuk</span>
+                            </div>
+                            <div class="detail-value" style="color: #10b981;">
+                                {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }} WIB
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-feather="map-pin" class="detail-icon"></i>
+                                <span>Lokasi Presensi</span>
+                            </div>
+                            <div class="detail-value">
+                                {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor Utama' : 'Luar Kantor (WFA)' }}
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-feather="shield" class="detail-icon"></i>
+                                <span>Metode Presensi</span>
+                            </div>
+                            <div class="detail-value">
+                                Selfie & GPS Verification
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i data-feather="check-circle" class="detail-icon"></i>
+                                <span>Status Kehadiran</span>
+                            </div>
+                            <div class="detail-value">
+                                <span style="color: {{ $todayAttendance->status === 'tepat_waktu' ? '#10b981' : '#f59e0b' }}; font-weight: 700;">
+                                    {{ $todayAttendance->status === 'tepat_waktu' ? 'Tepat Waktu' : 'Terlambat' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @elseif(!$isWorkingDayToday)
-                <span class="badge" style="background: var(--hover-bg); color: var(--text-muted); border: 1px solid var(--border-color); font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
-                    Libur
-                </span>
+                <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
+                    <!-- <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--hover-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <i data-feather="coffee" style="width: 32px; height: 32px; color: #2563eb;"></i>
+                    </div> -->
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0 0 6px 0;">Hari Ini Libur</h3>
+                    <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
+                        Nikmati hari libur kamu dengan baik!
+                    </p>
+                </div>
+            @elseif($isAttendanceClosed)
+                <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
+                    
+                    <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
+                        Absensi ditutup jam 12:00 dan akan dibuka kembali jam 00:00
+                    </p>
+                </div>
             @else
-                <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; font-size: 11px; padding: 6px 14px; text-transform: none; border-radius: 8px; font-weight: 600;">
-                    Belum Absen
-                </span>
+                <div class="attendance-redesign-layout not-checked-in">
+                    <div class="digital-clock-container">
+                        <div class="digital-clock" id="digitalClock" style="font-size: 40px; font-weight: 700; color: var(--text-main); font-family: monospace; letter-spacing: 1px;">00:00:00</div>
+                        <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 500;">
+                            Silakan lakukan absensi kehadiran untuk hari ini.
+                        </p>
+                    </div>
+                    <div class="attendance-action-container">
+                        <button class="btn-checkin-large" onclick="openAttendanceModal()">
+                            <!-- <i data-feather="camera"></i> -->
+                            <span>Absen Sekarang</span>
+                        </button>
+                        
+                    </div>
+                </div>
             @endif
         </div>
 
-        @if($todayAttendance)
-            <div class="attendance-redesign-layout">
-                <!-- Left: Circular Progress Timer -->
-                <div class="attendance-circle-container">
-                    <div class="progress-ring-wrapper">
-                        <svg class="progress-ring" width="120" height="120">
-                            <circle class="progress-ring__background" stroke="var(--border-color)" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
-                            <circle class="progress-ring__bar" id="progressRingBar" stroke="#2563eb" stroke-width="6" fill="transparent" r="50" cx="60" cy="60" />
-                        </svg>
-                        <div class="progress-ring-text">
-                            <span id="elapsedWorkTime" class="work-time-counter">00:00:00</span>
-                            <span class="work-time-label">Jam Kerja</span>
-                            <span class="work-time-target">/ 08:00:00</span>
-                        </div>
-                    </div>
+        <!-- Riwayat Absen Terbaru -->
+        <div class="section-card" style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i data-feather="calendar" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                    <span class="section-title">Riwayat Absen Terbaru</span>
                 </div>
-
-                <!-- Right: Detail Info Grid -->
-                <div class="attendance-details-grid">
-                    <div class="detail-item">
-                        <div class="detail-label">
-                            <i data-feather="clock" class="detail-icon"></i>
-                            <span>Jam Masuk</span>
+                <a href="{{ route('attendance.history') }}" class="btn btn-sm" style="font-size: 12px; padding: 6px 12px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 4px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);">
+                    Lihat Semua
+                </a>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                @forelse($recentAttendances as $att)
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16,185,129,0.1); color: #10b981; display: flex; align-items: center; justify-content: center;">
+                                <i data-feather="check" style="width: 18px; height: 18px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-main);">
+                                    {{ \Carbon\Carbon::parse($att->date)->locale('id')->translatedFormat('l, d M Y') }}
+                                </div>
+                            </div>
                         </div>
-                        <div class="detail-value" style="color: #10b981;">
-                            {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }} WIB
-                        </div>
-                    </div>
-
-                    <div class="detail-item">
-                        <div class="detail-label">
-                            <i data-feather="map-pin" class="detail-icon"></i>
-                            <span>Lokasi Presensi</span>
-                        </div>
-                        <div class="detail-value">
-                            {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor Utama' : 'Luar Kantor (WFA)' }}
-                        </div>
-                    </div>
-
-                    <div class="detail-item">
-                        <div class="detail-label">
-                            <i data-feather="shield" class="detail-icon"></i>
-                            <span>Metode Presensi</span>
-                        </div>
-                        <div class="detail-value">
-                            Selfie & GPS Verification
-                        </div>
-                    </div>
-
-                    <div class="detail-item">
-                        <div class="detail-label">
-                            <i data-feather="check-circle" class="detail-icon"></i>
-                            <span>Status Kehadiran</span>
-                        </div>
-                        <div class="detail-value">
-                            <span style="color: {{ $todayAttendance->status === 'tepat_waktu' ? '#10b981' : '#f59e0b' }}; font-weight: 700;">
-                                {{ $todayAttendance->status === 'tepat_waktu' ? 'Tepat Waktu' : 'Terlambat' }}
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span style="font-size: 13px; font-weight: 600; color: var(--text-main);">
+                                {{ \Carbon\Carbon::parse($att->check_in_time)->format('H.i') }} WIB
                             </span>
+                            <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 9px; padding: 2px 6px; text-transform: uppercase;">Masuk</span>
+                            
+                            @php
+                                $checkin = \Carbon\Carbon::parse($att->date . ' ' . $att->check_in_time);
+                                $checkout = $checkin->copy()->addHours(9)->addMinutes(rand(-10, 15));
+                            @endphp
+                            <span style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-left: 8px;">
+                                {{ $checkout->format('H.i') }} WIB
+                            </span>
+                            <span class="badge" style="background: rgba(37,99,235,0.1); color: #2563eb; border: none; font-size: 9px; padding: 2px 6px; text-transform: uppercase;">Pulang</span>
                         </div>
                     </div>
-                </div>
+                @empty
+                    <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
+                        Belum ada riwayat absensi.
+                    </div>
+                @endforelse
             </div>
-        @elseif(!$isWorkingDayToday)
-            <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
-                <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--hover-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-                    <i data-feather="coffee" style="width: 32px; height: 32px; color: #2563eb;"></i>
-                </div>
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin: 0 0 6px 0;">Hari Ini Libur</h3>
-                <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
-                    Nikmati hari libur kamu dengan baik!
-                </p>
-            </div>
-        @elseif($isAttendanceClosed)
-            <div class="attendance-redesign-layout holiday-mode" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; width: 100%;">
-                
-                <p style="color: var(--text-muted); font-size: 13px; max-width: 440px; line-height: 1.5; margin: 0;">
-                    Absensi ditutup jam 12:00 dan akan dibuka kembali jam 00:00
-                </p>
-            </div>
-        @else
-            <div class="attendance-redesign-layout not-checked-in">
-                <div class="digital-clock-container">
-                    <div class="digital-clock" id="digitalClock" style="font-size: 40px; font-weight: 700; color: var(--text-main); font-family: monospace; letter-spacing: 1px;">00:00:00</div>
-                    <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 500;">
-                        Silakan lakukan absensi kehadiran untuk hari ini.
-                    </p>
-                </div>
-                <div class="attendance-action-container">
-                    <button class="btn-checkin-large" onclick="openAttendanceModal()">
-                        <!-- <i data-feather="camera"></i> -->
-                        <span>Absen Sekarang</span>
-                    </button>
-                    
-                </div>
-            </div>
-        @endif
+        </div>
     </div>
     @endunless
 
@@ -3073,55 +3131,7 @@
         </div>
     </div>
 
-    @unless(Auth::user()->hasRole('Intern'))
-    <!-- Riwayat Absen Terbaru (Full Width) -->
-    <div class="section-card" style="margin-bottom: 28px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <i data-feather="calendar" style="color: var(--primary); width: 20px; height: 20px;"></i>
-                <span class="section-title">Riwayat Absen Terbaru</span>
-            </div>
-            <a href="{{ route('attendance.history') }}" class="btn btn-sm" style="font-size: 12px; padding: 6px 12px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 4px; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--text-main);">
-                Lihat Semua
-            </a>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-            @forelse($recentAttendances as $att)
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; flex-wrap: wrap; gap: 12px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16,185,129,0.1); color: #10b981; display: flex; align-items: center; justify-content: center;">
-                            <i data-feather="check" style="width: 18px; height: 18px;"></i>
-                        </div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 600; color: var(--text-main);">
-                                {{ \Carbon\Carbon::parse($att->date)->locale('id')->translatedFormat('l, d M Y') }}
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="font-size: 13px; font-weight: 600; color: var(--text-main);">
-                            {{ \Carbon\Carbon::parse($att->check_in_time)->format('H.i') }} WIB
-                        </span>
-                        <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: none; font-size: 9px; padding: 2px 6px; text-transform: uppercase;">Masuk</span>
-                        
-                        @php
-                            $checkin = \Carbon\Carbon::parse($att->date . ' ' . $att->check_in_time);
-                            $checkout = $checkin->copy()->addHours(9)->addMinutes(rand(-10, 15));
-                        @endphp
-                        <span style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-left: 8px;">
-                            {{ $checkout->format('H.i') }} WIB
-                        </span>
-                        <span class="badge" style="background: rgba(37,99,235,0.1); color: #2563eb; border: none; font-size: 9px; padding: 2px 6px; text-transform: uppercase;">Pulang</span>
-                    </div>
-                </div>
-            @empty
-                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
-                    Belum ada riwayat absensi.
-                </div>
-            @endforelse
-        </div>
-    </div>
-    @endunless
+
 
 @endrole
 

@@ -431,19 +431,16 @@
         </div>
     </div>
 </div>
-
 <div class="card">
     <div class="filters-wrapper">
         <div class="filters-left">
             <h3 style="margin-bottom: 4px;">{{ $isDirector ? 'Riwayat Laporan Mingguan Seluruh Staf' : 'Riwayat Laporan Mingguan Saya' }}</h3>
             <p style="font-size: 13px; color: var(--text-muted);">{{ $isDirector ? 'Manajemen dan peninjauan riwayat laporan mingguan yang diserahkan staf.' : 'Daftar riwayat plan, progress, dan pencapaian laporan kerja mingguan Anda.' }}</p>
         </div>
-        
         <form method="GET" action="{{ route('weekly.history') }}" class="filters-right">
             <div class="search-container">
-                <input type="text" name="search" value="{{ $search }}" placeholder="{{ $isDirector ? 'Cari nama, divisi, atau isi...' : 'Cari isi Weekly Report' }}" onkeydown="if(event.key === 'Enter') this.form.submit()">
+                <input type="text" name="search" value="{{ $search }}" placeholder="{{ $isDirector ? 'Cari nama, divisi, atau isi' : 'Cari isi Weekly Report' }}" onkeydown="if(event.key === 'Enter') this.form.submit()">
             </div>
-
             @if(!$isDirector)
                 <select name="status" class="filter-select" onchange="this.form.submit()">
                     <option value="">Semua Status</option>
@@ -451,7 +448,6 @@
                     <option value="draft" {{ $status == 'draft' ? 'selected' : '' }}>Draft</option>
                 </select>
             @endif
-
             <select name="month" class="filter-select" onchange="this.form.submit()">
                 <option value="">Semua Bulan</option>
                 @foreach($months as $mNum => $mName)
@@ -467,7 +463,6 @@
             </select>
         </form>
     </div>
-
     <!-- Weekly Report Stack List -->
     <div style="margin-top: 16px;">
         @forelse($reports as $r)
@@ -475,7 +470,6 @@
                 $totalObjs = $r->items->where('type', 'objective')->count();
                 $completedObjs = $r->items->where('type', 'objective')->where('is_completed', true)->count();
                 $progressPercent = $r->completion_percentage;
-                
                 // Determine border and colors based on status and completion
                 if ($r->status === 'draft') {
                     $borderClass = 'border-info';
@@ -515,7 +509,6 @@
                         $fillClass = 'fill-danger';
                     }
                 }
-
                 $weekStartDate = \Carbon\Carbon::parse($r->week_start_date);
                 $weekEndDate = $weekStartDate->copy()->addDays(4);
             @endphp

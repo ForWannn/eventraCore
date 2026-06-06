@@ -325,10 +325,10 @@ class UserSeeder extends Seeder
 
         // 6. Assign default direct permissions for backward compatibility
         if (isset($createdUsers['2'])) {
-            $createdUsers['2']->givePermissionTo(['crud_events', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'crud_users']);
+            $createdUsers['2']->givePermissionTo(['crud_events', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'crud_users', 'rekap_event']);
         }
         if (isset($createdUsers['1'])) {
-            $createdUsers['1']->givePermissionTo(['rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'crud_users']);
+            $createdUsers['1']->givePermissionTo(['rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'crud_users', 'rekap_event']);
         }
         if (isset($createdUsers['7'])) {
             $createdUsers['7']->givePermissionTo(['rekap_weekly', 'weekly_history', 'leave_approvals', 'rekap_absen']);

@@ -34,8 +34,6 @@
         height: 20px;
         color: var(--text-muted);
     }
-
-    /* Form Fields */
     .form-group {
         display: flex;
         flex-direction: column;
@@ -87,7 +85,6 @@
         opacity: 0.9;
     }
 
-    /* Table Badges */
     .badge-status {
         display: inline-flex;
         align-items: center;
@@ -116,7 +113,6 @@
         text-transform: uppercase;
     }
 
-    /* Table styling */
     .table-wrapper {
         overflow-x: auto;
     }
@@ -138,7 +134,6 @@
         letter-spacing: 0.5px;
     }
 
-    /* Tabs Navigation */
     .navigation-tabs {
         display: flex;
         border-bottom: 1px solid var(--border-color);
@@ -224,7 +219,7 @@
             border: 1px solid var(--border-color) !important;
             border-radius: 14px !important;
             padding: 14px !important;
-            margin-bottom: 0px !important; /* managed by grid gap */
+            margin-bottom: 0px !important;
             display: flex !important;
             flex-direction: column !important;
             gap: 10px !important;
@@ -233,7 +228,7 @@
             max-width: 100% !important;
             width: 100% !important;
             overflow: hidden !important;
-            align-self: start; /* Prevents cards from stretching vertically */
+            align-self: start;
             box-sizing: border-box !important;
         }
         .leave-table tr td {
@@ -248,7 +243,6 @@
             box-sizing: border-box !important;
         }
         
-        /* Empty results row spanning 2 columns */
         .leave-table tr:has(td[colspan]) {
             grid-column: span 2 !important;
             display: block !important;
@@ -265,7 +259,6 @@
             box-sizing: border-box !important;
         }
         
-        /* Column 1 (Date range) - main header */
         .leave-table tr td:nth-child(1) {
             font-weight: 700 !important;
             font-size: 13px !important;
@@ -351,6 +344,119 @@
             padding: 12px !important;
         }
     }
+    .upload-drag-area {
+        border: 2px dashed rgba(37, 99, 235, 0.15);
+        background: rgba(37, 99, 235, 0.02);
+        border-radius: 16px;
+        padding: 24px 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+        box-sizing: border-box;
+        margin-top: 8px;
+    }
+    .upload-drag-area:hover {
+        border-color: #2563eb;
+        background: rgba(37, 99, 235, 0.05);
+    }
+    .upload-icon-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+    .preview-container {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .preview-img {
+        max-width: 100%;
+        max-height: 120px;
+        border-radius: 8px;
+        object-fit: contain;
+        border: 1px solid var(--border-color);
+    }
+    .preview-doc {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #2563eb;
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    }
+    .btn-remove-preview {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: rgba(239, 68, 68, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-remove-preview:hover {
+        background: rgb(239, 68, 68);
+    }
+    .cuti-info-box {
+        background: rgba(37, 99, 235, 0.04);
+        border: 1.5px solid rgba(37, 99, 235, 0.12);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .cuti-info-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #2563eb;
+    }
+    .cuti-info-content {
+        flex: 1;
+    }
+    .cuti-info-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .cuti-info-value {
+        font-size: 13.5px;
+        color: #2563eb;
+        font-weight: 800;
+        margin-top: 2px;
+    }
 </style>
 
 <div style="margin-bottom: 28px;">
@@ -369,49 +475,73 @@
         <h3 class="leave-card-title">
             <span>Form Pengajuan</span>
         </h3>
-        
-        <form action="{{ route('leave-requests.store') }}" method="POST">
+        <form action="{{ route('leave-requests.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            
             <div class="form-group">
                 <label for="type">Jenis Pengajuan</label>
                 <select id="type" name="type" class="form-select" required>
                     <option value="izin">Izin</option>
-                    <option value="cuti">Cuti</option>
+                    @unless(Auth::user()->hasRole('Intern'))
+                        <option value="cuti">Cuti</option>
+                    @endunless
                 </select>
                 @error('type')<span style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</span>@enderror
             </div>
-
             <div class="form-group">
                 <label for="start_date">Tanggal Mulai</label>
                 <input type="date" id="start_date" name="start_date" class="form-input" required value="{{ date('Y-m-d') }}">
                 @error('start_date')<span style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</span>@enderror
             </div>
-
             <div class="form-group">
                 <label for="end_date">Tanggal Selesai</label>
                 <input type="date" id="end_date" name="end_date" class="form-input" required value="{{ date('Y-m-d') }}">
                 @error('end_date')<span style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</span>@enderror
             </div>
-
             <div class="form-group">
                 <label for="reason">Alasan / Keterangan</label>
                 <textarea id="reason" name="reason" class="form-textarea" required placeholder="Alasan pengajuan"></textarea>
                 @error('reason')<span style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</span>@enderror
             </div>
-
+            <div class="cuti-info-box" id="cuti-info-group" style="display: none;">
+                <div class="cuti-info-icon">
+                    <i data-feather="calendar" style="width: 18px; height: 18px;"></i>
+                </div>
+                <div class="cuti-info-content">
+                    <div class="cuti-info-title">Sisa Cuti Tahun{{ date('Y') }}</div>
+                    <div class="cuti-info-value" id="cuti-remaining-val">{{ $remainingCuti }} Hari</div>
+                </div>
+            </div>
+            <div class="form-group" id="proof-group">
+                <label for="proof" id="proof-label">Bukti</label>
+                <div class="upload-drag-area" onclick="document.getElementById('proof').click()">
+                    <div id="upload-placeholder">
+                        <div class="upload-icon-circle" style="margin-left: auto; margin-right: auto;">
+                            <i data-feather="upload-cloud" style="width: 20px; height: 20px; color: #2563eb;"></i>
+                        </div>
+                        <p style="font-weight: 700; color: var(--text-main); font-size: 13px; margin: 0 0 4px 0;">Klik untuk unggah dokumen bukti</p>
+                        <span style="font-size: 11px; color: var(--text-muted);">Mendukung Gambar, PDF, DOC, DOCX (Maks. 5MB)</span>
+                    </div>
+                    <div id="preview-container" class="preview-container">
+                        <div id="preview-content"></div>
+                        <div id="preview-filename" style="margin-top: 8px; font-weight: 700; font-size: 11.5px; color: #2563eb; word-break: break-all;"></div>
+                        <button type="button" class="btn-remove-preview" onclick="clearUpload(event)">
+                            <i data-feather="x" style="width: 12px; height: 12px;"></i>
+                        </button>
+                    </div>
+                </div>
+                <input type="file" id="proof" name="proof" style="display: none;" accept="image/*,.pdf,.doc,.docx" onchange="previewUpload(this)">
+                @error('proof')<span style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</span>@enderror
+            </div>
             <button type="submit" class="btn-submit">
                  Kirim
             </button>
         </form>
     </div>
-
     <!-- Right Column: History -->
     <div class="leave-card">
         <h3 class="leave-card-title">
             <span>Riwayat Pengajuan</span>
         </h3>
-
         <!-- Date Range Filter Form -->
         <form action="{{ route('leave-requests.index') }}" method="GET" style="margin-bottom: 24px;">
             <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
@@ -433,22 +563,21 @@
                 </div>
             </div>
         </form>
-
         @php
             $izinRequests = $requests->where('type', 'izin');
             $cutiRequests = $requests->where('type', 'cuti');
         @endphp
-
         <!-- Tabs Navigation -->
         <div class="navigation-tabs">
             <button type="button" class="tab-button active" onclick="switchTab(event, 'tab-izin')">
                 Izin <span class="tab-badge">{{ $izinRequests->count() }}</span>
             </button>
+            @unless(Auth::user()->hasRole('Intern'))
             <button type="button" class="tab-button" onclick="switchTab(event, 'tab-cuti')">
                 Cuti <span class="tab-badge">{{ $cutiRequests->count() }}</span>
             </button>
+            @endunless
         </div>
-        
         <!-- Tab Content: Izin -->
         <div id="tab-izin" class="tab-content active">
             <div class="table-wrapper">
@@ -473,6 +602,13 @@
                                 </td>
                                 <td style="color: var(--text-main); font-weight: 500;">
                                     {{ $req->reason }}
+                                    @if($req->proof_path)
+                                        <div style="margin-top: 6px;">
+                                            <a href="{{ asset($req->proof_path) }}" target="_blank" style="font-size: 11.5px; color: #2563eb; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600;">
+                                                <i data-feather="file-text" style="width: 12px; height: 12px;"></i> Lihat Bukti
+                                            </a>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td>
                                     @if($req->status === 'pending')
@@ -502,7 +638,6 @@
                 </table>
             </div>
         </div>
-
         <!-- Tab Content: Cuti -->
         <div id="tab-cuti" class="tab-content">
             <div class="table-wrapper">
@@ -527,6 +662,13 @@
                                 </td>
                                 <td style="color: var(--text-main); font-weight: 500;">
                                     {{ $req->reason }}
+                                    @if($req->proof_path)
+                                        <div style="margin-top: 6px;">
+                                            <a href="{{ asset($req->proof_path) }}" target="_blank" style="font-size: 11.5px; color: #2563eb; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600;">
+                                                <i data-feather="file-text" style="width: 12px; height: 12px;"></i> Lihat Bukti
+                                            </a>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td>
                                     @if($req->status === 'pending')
@@ -537,6 +679,11 @@
                                         <span class="badge-status approved">
                                             <i data-feather="check-circle" style="width:12px; height:12px;"></i> Disetujui
                                         </span>
+                                        <div style="margin-top: 6px;">
+                                            <a href="{{ route('leave-requests.download-pdf', $req->id) }}" style="font-size: 11.5px; color: #10b981; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; font-weight: 600;">
+                                                <i data-feather="download" style="width: 12px; height: 12px;"></i> Unduh Surat
+                                            </a>
+                                        </div>
                                     @else
                                         <span class="badge-status rejected">
                                             <i data-feather="x-circle" style="width:12px; height:12px;"></i> Ditolak
@@ -558,7 +705,6 @@
         </div>
     </div>
 </div>
-
 <script>
     function switchTab(evt, tabId) {
         document.querySelectorAll('.tab-content').forEach(el => {
@@ -570,6 +716,72 @@
         document.getElementById(tabId).style.display = 'block';
         evt.currentTarget.classList.add('active');
     }
-</script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.getElementById('type');
+        const proofGroup = document.getElementById('proof-group');
+        const cutiInfoGroup = document.getElementById('cuti-info-group');
+        const proofInput = document.getElementById('proof');
+        if (typeSelect) {
+            function updateFormLayout() {
+                if (typeSelect.value === 'izin') {
+                    if (proofGroup) proofGroup.style.display = 'block';
+                    if (cutiInfoGroup) cutiInfoGroup.style.display = 'none';
+                    if (proofInput) proofInput.required = true;
+                } else {
+                    if (proofGroup) proofGroup.style.display = 'none';
+                    if (cutiInfoGroup) cutiInfoGroup.style.display = 'flex';
+                    if (proofInput) {
+                        proofInput.required = false;
+                        // Clear upload if they switched from izin to cuti
+                        const clearBtn = document.querySelector('.btn-remove-preview');
+                        if (clearBtn && proofInput.value) {
+                            clearBtn.click();
+                        }
+                    }
+                }
+            }
+            typeSelect.addEventListener('change', updateFormLayout);
+            updateFormLayout();
+        }
+    });
+    function previewUpload(input) {
+        const file = input.files[0];
+        const placeholder = document.getElementById('upload-placeholder');
+        const container = document.getElementById('preview-container');
+        const content = document.getElementById('preview-content');
+        const filename = document.getElementById('preview-filename');
+        if (file) {
+            placeholder.style.display = 'none';
+            container.style.display = 'flex';
+            filename.textContent = file.name;
 
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    content.innerHTML = `<img src="${e.target.result}" class="preview-img">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                const extension = file.name.split('.').pop().toUpperCase();
+                content.innerHTML = `<div class="preview-doc">${extension}</div>`;
+            }
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        }
+    }
+    function clearUpload(event) {
+        event.stopPropagation();
+        const input = document.getElementById('proof');
+        const placeholder = document.getElementById('upload-placeholder');
+        const container = document.getElementById('preview-container');
+        const content = document.getElementById('preview-content');
+        const filename = document.getElementById('preview-filename');
+        if (input) input.value = '';
+        if (content) content.innerHTML = '';
+        if (filename) filename.textContent = '';
+        if (container) container.style.display = 'none';
+        if (placeholder) placeholder.style.display = 'block';
+    }
+</script>
 @endsection

@@ -217,7 +217,7 @@ class AdminAccessRestrictionTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_employee_with_weekly_history_permission_can_view_all_submitted_reports()
+    public function test_employee_with_weekly_history_permission_cannot_view_other_submitted_reports()
     {
         $employee = User::factory()->create();
         $employee->assignRole('Employee');
@@ -235,9 +235,22 @@ class AdminAccessRestrictionTest extends TestCase
             'final_submitted_at' => now(),
         ]);
 
-        // Employee with weekly_history permission can access weekly-history and should see other's report
+        // Employee with weekly_history permission can access weekly-history but should only see their own
         $response = $this->actingAs($employee)->get('/weekly-history');
         $response->assertStatus(200);
-        $response->assertSee($otherEmployee->name);
+        $response->assertDontSee($otherEmployee->name);
+    }
+
+    public function test_ceo_with_admin_role_can_access_employee_restricted_routes()
+    {
+        Role::firstOrCreate(['name' => 'CEO']);
+        
+        $ceo = User::factory()->create();
+        $ceo->assignRole('CEO');
+        $ceo->assignRole('Admin');
+
+        // CEO should be able to access profile because they bypass the Admin restrictions
+        $response = $this->actingAs($ceo)->get('/profile');
+        $response->assertStatus(200);
     }
 }

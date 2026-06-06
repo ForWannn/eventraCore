@@ -20,7 +20,6 @@ class RoleSeeder extends Seeder
             'PIC Event',
             'Employee',
             'Intern',
-            'Freelance',
             'Admin',
             'Superadmin'
         ];

@@ -386,6 +386,20 @@
     .btn-submit-blue:hover {
         opacity: 0.9;
     }
+    .btn-cancel-modal {
+        padding: 8px 18px !important;
+        background: var(--hover-bg) !important;
+        color: var(--text-main) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 10px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.15s !important;
+    }
+    .btn-cancel-modal:hover {
+        background: var(--border-color);
+    }
 
     /* Modal Styling */
     .modal-overlay {
@@ -515,7 +529,7 @@
             <div class="detail-item">
                 <i data-feather="user" class="detail-icon"></i>
                 <div class="detail-info">
-                    <span class="detail-label">NIK</span>
+                    <span class="detail-label">ID</span>
                     <span class="detail-value">{{ $user->nik ?? '-' }}</span>
                 </div>
             </div>
@@ -652,9 +666,8 @@
                     <select id="job_emp_type" class="form-select" disabled>
                         <option value="Full Time" {{ ($user->employee_type ?? 'Full Time') === 'Full Time' ? 'selected' : '' }}>Full Time</option>
                         <option value="Part Time" {{ ($user->employee_type ?? '') === 'Part Time' ? 'selected' : '' }}>Part Time</option>
-                        <option value="Intern" {{ ($user->employee_type ?? '') === 'Intern' ? 'selected' : '' }}>Intern</option>
+                        <option value="Internship" {{ ($user->employee_type ?? '') === 'Internship' ? 'selected' : '' }}>Internship</option>
                         <option value="Contract" {{ ($user->employee_type ?? '') === 'Contract' ? 'selected' : '' }}>Contract</option>
-                        <option value="Freelance" {{ ($user->employee_type ?? '') === 'Freelance' ? 'selected' : '' }}>Freelance</option>
                     </select>
                 </div>
             </div>

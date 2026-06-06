@@ -476,7 +476,7 @@
                 </div>
             </div>
 
-            <!-- Row 5: Backup Terakhir -->
+            <!-- Row 5: Backup Terakhir
             <div class="system-summary-row" style="align-items: center;">
                 <div class="system-icon-badge blue"><i data-feather="clock" style="width: 18px; height: 18px;"></i></div>
                 <div style="flex: 1; min-width: 0;">
@@ -484,7 +484,7 @@
                     <div style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $lastBackupFormatted }}</div>
                 </div>
                 <span class="status-val-badge success" style="margin-left: 8px;">Sukses</span>
-            </div>
+            </div> -->
 
             <!-- Row 6: Status Sistem -->
             <div class="system-summary-row">

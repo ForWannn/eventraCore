@@ -14,6 +14,7 @@ use App\Http\Controllers\WorkCalendarController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\EventRecapController;
+use App\Http\Controllers\ExecutiveDashboardController;
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/', [AuthController::class, 'processLogin']);
 
@@ -26,6 +27,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware(['permission:view_dashboard'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::middleware(['role:CEO|Superadmin|GM'])->get('/executive-dashboard', [ExecutiveDashboardController::class, 'index'])->name('executive-dashboard');
 
     // Daily Attendance (Web Geotagging)
     Route::post('/daily-attendance/store-luar', [DailyAttendanceController::class, 'storeLuar'])->name('attendance.storeLuar');
@@ -55,6 +57,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
     Route::middleware(['permission:leave_request'])->group(function () {
         Route::get('/leave-requests', [LeaveRequestController::class, 'index'])->name('leave-requests.index');
         Route::post('/leave-requests', [LeaveRequestController::class, 'store'])->name('leave-requests.store');
+        Route::get('/leave-requests/{leaveRequest}/download-pdf', [LeaveRequestController::class, 'downloadPdf'])->name('leave-requests.download-pdf');
     });
 
     Route::middleware(['permission:leave_approvals'])->group(function () {
@@ -82,6 +85,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
 
     Route::get('/weekly-history', [WeeklyReportController::class, 'history'])->name('weekly.history');
     Route::get('/weekly-recap/user/{user}/{week}', [WeeklyReportController::class, 'showUserReport'])->name('weekly.show_user');
+    Route::get('/weekly-recap/user/{user}/{week}/export-pdf', [WeeklyReportController::class, 'exportPdf'])->name('weekly.export_pdf');
 
     Route::middleware(['permission:rekap_weekly'])->group(function () {
         Route::get('/weekly-recap', [WeeklyReportController::class, 'recap'])->name('weekly.recap');

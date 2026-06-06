@@ -48,7 +48,7 @@ class EventRecapController extends Controller
         $searchPattern = '%"' . $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-%';
 
         $isPicOfAny = $user->events()->wherePivot('is_pic', true)->exists();
-        $hasPermission = $user->can('rekap_event');
+        $hasPermission = $user->can('rekap_event') || optional($user->division)->name === 'Finance';
 
         if (!$isPicOfAny && !$hasPermission) {
             abort(403, 'Anda tidak memiliki akses ke rekapitulasi event.');
@@ -104,7 +104,7 @@ class EventRecapController extends Controller
         // Authorization check
         $isFinance = $this->isFinance($user);
         $isPic = $this->isPic($user, $event);
-        $hasPermission = $user->can('rekap_event');
+        $hasPermission = $user->can('rekap_event') || $isFinance;
 
         if (!$isPic && !$hasPermission) {
             abort(403, 'Anda tidak memiliki akses ke rekapitulasi event ini.');
@@ -414,7 +414,7 @@ class EventRecapController extends Controller
         $user = Auth::user();
         $isFinance = $this->isFinance($user);
         $isLeader = $user->hasAnyRole(['CEO', 'GM']);
-        $hasPermission = $user->can('rekap_event');
+        $hasPermission = $user->can('rekap_event') || $isFinance;
 
         if ((!$isFinance && !$isLeader) || !$hasPermission) {
             abort(403, 'Anda tidak memiliki hak untuk mengekspor dokumen rekap.');

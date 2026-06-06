@@ -365,7 +365,10 @@
     .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
     .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
 </style>
-
+<div>
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Event</h1>
+    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px; font-weight: 500;">Ringkasan performa event.</p>
+</div>
 <!-- 4 Top KPI Cards -->
 <div class="stats-grid">
     <!-- Card 1: Total Event -->
@@ -377,7 +380,6 @@
             
         </div>
     </div>
-
     <!-- Card 2: Ongoing -->
     <div class="stat-card">
         <div class="stat-icon amber"><i data-feather="play-circle"></i></div>

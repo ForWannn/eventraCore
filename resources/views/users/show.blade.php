@@ -475,7 +475,6 @@
                         elseif ($role->name === 'Head') $icon = 'shield';
                         elseif ($role->name === 'Employee') $icon = 'user';
                         elseif ($role->name === 'Intern') $icon = 'book-open';
-                        elseif ($role->name === 'Freelance') $icon = 'briefcase';
                     @endphp
                     <div class="role-selection-card">
                         <input type="radio" id="role_{{ $role->id }}" name="role" value="{{ $role->name }}" disabled

@@ -315,6 +315,9 @@ class WeeklyReportController extends Controller
     {
         $user = Auth::user();
         $isDirector = $user->hasRole(['CEO', 'GM']) || $user->can('weekly_history');
+        if ($user->hasRole(['Employee', 'Intern'])) {
+            $isDirector = false;
+        }
         
         $search = $request->query('search');
         $status = $request->query('status');
@@ -414,6 +417,9 @@ class WeeklyReportController extends Controller
     public function showUserReport($userId, $weekStart)
     {
         $currentUser = Auth::user();
+        if ($currentUser->hasRole(['Employee', 'Intern']) && $currentUser->id != $userId) {
+            abort(403);
+        }
         if (!$currentUser->hasRole(['CEO', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
             abort(403);
         }
@@ -425,6 +431,35 @@ class WeeklyReportController extends Controller
             ->firstOrFail();
 
         return view('weekly-reports.show', compact('report', 'user'));
+    }
+
+    public function exportPdf($userId, $weekStart)
+    {
+        $currentUser = Auth::user();
+        if ($currentUser->hasRole(['Employee', 'Intern']) && $currentUser->id != $userId) {
+            abort(403);
+        }
+        if (!$currentUser->hasRole(['CEO', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
+            abort(403);
+        }
+
+        $user = User::with('division')->findOrFail($userId);
+        $report = WeeklyReport::where('user_id', $userId)
+            ->whereDate('week_start_date', $weekStart)
+            ->with(['items', 'dailyLogs'])
+            ->firstOrFail();
+
+        $weekStartDate = Carbon::parse($report->week_start_date);
+        $weekEndDate = $weekStartDate->copy()->addDays(4); // Monday to Friday
+
+        // Formatted range in Indonesian
+        $dateRangeString = $weekStartDate->locale('id')->translatedFormat('d F Y') . ' - ' . $weekEndDate->locale('id')->translatedFormat('d F Y');
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('weekly-reports.pdf', compact('report', 'user', 'dateRangeString'));
+
+        $filename = 'weekly_report_' . strtolower(str_replace(' ', '_', $user->name)) . '_' . $report->week_start_date->format('Y-m-d') . '.pdf';
+        
+        return $pdf->stream($filename);
     }
 
     public function updatePlan(Request $request, WeeklyReport $report)

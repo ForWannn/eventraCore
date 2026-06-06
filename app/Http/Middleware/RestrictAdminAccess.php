@@ -11,7 +11,7 @@ class RestrictAdminAccess
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->hasRole('Admin') && !Auth::user()->hasRole('Superadmin')) {
+        if (Auth::check() && Auth::user()->hasRole('Admin') && !Auth::user()->hasRole('Superadmin') && !Auth::user()->hasAnyRole(['CEO', 'GM'])) {
             $allowedRoutesWithoutPermission = [
                 'logout',
                 'events.index',
@@ -57,6 +57,17 @@ class RestrictAdminAccess
                     'events.create' => 'crud_events',
                     'events.store' => 'crud_events',
                     'events.destroy' => 'crud_events',
+
+                    'event-recaps.index' => 'rekap_event',
+                    'event-recaps.history' => 'rekap_event',
+                    'event-recaps.show' => 'rekap_event',
+                    'event-recaps.budget' => 'rekap_event',
+                    'event-recaps.items.store' => 'rekap_event',
+                    'event-recaps.items.destroy' => 'rekap_event',
+                    'event-recaps.submit' => 'rekap_event',
+                    'event-recaps.approve' => 'rekap_event',
+                    'event-recaps.reopen' => 'rekap_event',
+                    'event-recaps.export' => 'rekap_event',
                 ];
 
                 if (array_key_exists($routeName, $routePermissionMap)) {

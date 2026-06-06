@@ -923,10 +923,9 @@
                 <i data-feather="chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted); pointer-events: none;"></i>
             </div>
         </div>
-
         <!-- Search Input -->
         <div style="position: relative; flex: 1; min-width: 200px;">
-            <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Cari tanggal atau status..." style="width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); padding: 8px 14px 8px 36px; border-radius: 10px; font-size: 13px; font-weight: 500; color: var(--text-main); outline: none; min-height: 38px;" />
+            <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Cari tanggal atau status" style="width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); padding: 8px 14px 8px 36px; border-radius: 10px; font-size: 13px; font-weight: 500; color: var(--text-main); outline: none; min-height: 38px;" />
             <i data-feather="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted);"></i>
         </div>
 
@@ -1127,8 +1126,8 @@
                             </div>
                             <div class="proof-detail-content">
                                 <span class="proof-detail-label">Nama Jalan</span>
-                                <span class="proof-detail-value" id="modalStreetName">Memuat lokasi...</span>
-                                <span class="proof-detail-sub" id="modalAddressDetail">Sedang mengambil detail alamat...</span>
+                                <span class="proof-detail-value" id="modalStreetName">Memuat lokasi</span>
+                                <span class="proof-detail-sub" id="modalAddressDetail">Sedang mengambil detail alamat</span>
                             </div>
                         </div>
                         <!-- Koordinat -->
