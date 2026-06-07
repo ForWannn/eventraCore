@@ -167,11 +167,8 @@ class UserController extends Controller
         $user = auth()->user();
         $divisions = Division::all();
         $roles = Role::all();
-        $managers = User::whereHas('roles', function($q) {
-            $q->whereIn('name', ['CEO', 'GM', 'Head']);
-        })->where('id', '!=', $user->id)->orderBy('name')->get();
 
-        return view('users.profile', compact('user', 'divisions', 'roles', 'managers'));
+        return view('users.profile', compact('user', 'divisions', 'roles'));
     }
 
     public function updateProfile(Request $request)
@@ -236,11 +233,8 @@ class UserController extends Controller
     {
         $divisions = Division::all();
         $roles = Role::all();
-        $managers = User::whereHas('roles', function($q) {
-            $q->whereIn('name', ['CEO', 'GM', 'Head']);
-        })->where('id', '!=', $user->id)->orderBy('name')->get();
 
-        return view('users.show', compact('user', 'divisions', 'roles', 'managers'));
+        return view('users.show', compact('user', 'divisions', 'roles'));
     }
 
     public function editPermissions(Request $request)

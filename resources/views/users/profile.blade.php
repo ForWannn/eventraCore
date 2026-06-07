@@ -651,17 +651,6 @@
 
             <div class="form-grid-2">
                 <div class="form-group">
-                    <label for="job_manager">Atasan Langsung</label>
-                    <select id="job_manager" class="form-select" disabled>
-                        <option value="">-</option>
-                        @foreach($managers as $mgr)
-                            <option value="{{ $mgr->id }}" {{ $user->direct_manager_id == $mgr->id ? 'selected' : '' }}>
-                                {{ $mgr->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="job_emp_type">Tipe Karyawan</label>
                     <select id="job_emp_type" class="form-select" disabled>
                         <option value="Full Time" {{ ($user->employee_type ?? 'Full Time') === 'Full Time' ? 'selected' : '' }}>Full Time</option>

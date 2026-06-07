@@ -5,7 +5,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WeeklyReportController;
 use App\Http\Controllers\EventTaskController;
@@ -74,8 +73,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
 
     Route::resource('events', EventController::class)->only(['index', 'show']);
 
-    Route::post('/events/{event}/attend',[AttendanceController::class, 'store'])->name('attendances.store');
-    Route::post('/events/{event}/attend-manual', [AttendanceController::class, 'storeManual'])->name('attendances.store.manual');
+
     Route::middleware(['permission:weekly_report'])->group(function () {
         Route::get('/weekly-report', [WeeklyReportController::class, 'index'])->name('weekly.index');
         Route::post('/weekly-report/{report}/plan', [WeeklyReportController::class, 'updatePlan'])->name('weekly.plan');

@@ -69,12 +69,6 @@ class Event extends Model
         return $this->hasMany(EventPosition::class);
     }
 
-    /** Attendance records for this event */
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class);
-    }
-
     /** Tasks (official & personal) for this event */
     public function tasks()
     {

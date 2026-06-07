@@ -40,7 +40,6 @@ class UserSeeder extends Seeder
                 'name' => 'Admin Ops',
                 'email' => 'admin@eventracore.com',
                 'password' => Hash::make('password123'),
-                'base_salary' => 10000000,
                 'phone' => '081234567890',
                 'birth_date' => '1990-01-01',
                 'gender' => 'Laki-laki',
@@ -60,7 +59,6 @@ class UserSeeder extends Seeder
                 'name' => 'Superadmin',
                 'email' => 'superadmin@eventracore.com',
                 'password' => Hash::make('password123'),
-                'base_salary' => 12000000,
                 'phone' => '081234567891',
                 'birth_date' => '1988-08-08',
                 'gender' => 'Laki-laki',
@@ -271,7 +269,6 @@ class UserSeeder extends Seeder
                     'name' => $uData['name'],
                     'email' => $uData['email'],
                     'password' => Hash::make('password123'),
-                    'base_salary' => $uData['salary'],
                     'phone' => $phone,
                     'birth_date' => $birthDate,
                     'gender' => $uData['gender'],
@@ -285,45 +282,7 @@ class UserSeeder extends Seeder
             $createdUsers[$uData['id_num']] = $user;
         }
 
-        // 5. Update direct_manager_id relationships
-        // CEO (ID 2) has no direct manager (null)
-        
-        // GM (ID 1) reports to CEO (ID 2)
-        if (isset($createdUsers['1']) && isset($createdUsers['2'])) {
-            $createdUsers['1']->update(['direct_manager_id' => $createdUsers['2']->id]);
-        }
-
-        // Heads report to GM (ID 1)
-        $gmId = $createdUsers['1']->id ?? null;
-        if ($gmId) {
-            $heads = ['7', '3', '14', '17'];
-            foreach ($heads as $headIdNum) {
-                if (isset($createdUsers[$headIdNum])) {
-                    $createdUsers[$headIdNum]->update(['direct_manager_id' => $gmId]);
-                }
-            }
-        }
-
-        // Employees report to their respective Head
-        $relations = [
-            '7' => ['10', '11', '19'],
-            '3' => ['4', '5', '6', '20'],
-            '14' => ['12', '13', '15', '16', '18'],
-            '17' => ['8'],
-        ];
-
-        foreach ($relations as $headIdNum => $employeeIdNums) {
-            $headId = $createdUsers[$headIdNum]->id ?? null;
-            if ($headId) {
-                foreach ($employeeIdNums as $empIdNum) {
-                    if (isset($createdUsers[$empIdNum])) {
-                        $createdUsers[$empIdNum]->update(['direct_manager_id' => $headId]);
-                    }
-                }
-            }
-        }
-
-        // 6. Assign default direct permissions for backward compatibility
+        // 5. Assign default direct permissions for backward compatibility
         if (isset($createdUsers['2'])) {
             $createdUsers['2']->givePermissionTo(['crud_events', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'crud_users', 'rekap_event']);
         }
@@ -331,7 +290,7 @@ class UserSeeder extends Seeder
             $createdUsers['1']->givePermissionTo(['rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'crud_users', 'rekap_event']);
         }
         if (isset($createdUsers['7'])) {
-            $createdUsers['7']->givePermissionTo(['rekap_weekly', 'weekly_history', 'leave_approvals', 'rekap_absen']);
+            $createdUsers['7']->givePermissionTo(['rekap_weekly', 'weekly_history', 'rekap_absen']);
         }
     }
 }

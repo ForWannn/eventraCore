@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\EventPosition;
 use App\Models\User;
@@ -208,16 +207,11 @@ class EventController extends Controller
         $event->load([
             'participants.division',
             'positions.members.division',
-            'attendances.user',
-            'attendances.recorder',
         ]);
 
         $authUser = Auth::user();
         $pic = $event->participants->where('pivot.is_pic', true)->first();
         $isPic = $pic && $pic->id === $authUser->id;
-        $myAttendance = $event->attendances->where('user_id', $authUser->id)
-            ->filter(fn($att) => $att->attended_at->isToday())
-            ->first();
         $isLeader = $authUser->hasAnyRole(['CEO', 'GM']);
 
         // All users assigned to this event (PIC + position members)
@@ -233,27 +227,13 @@ class EventController extends Controller
 
         $isAssigned = $assignedUsers->contains('id', $authUser->id);
 
-        $now = now();
-        $attendanceOpen = true;
-        if ($event->attendance_start && $event->attendance_end) {
-            $startTime = \Carbon\Carbon::parse($event->attendance_start);
-            $endTime = \Carbon\Carbon::parse($event->attendance_end);
-            $currentTime = \Carbon\Carbon::createFromTime($now->hour, $now->minute, 0);
-
-            if ($currentTime < $startTime || $currentTime > $endTime) {
-                $attendanceOpen = false;
-            }
-        }
-
         return view('events.show', compact(
             'event',
             'pic',
             'isPic',
-            'myAttendance',
             'isLeader',
             'assignedUsers',
-            'isAssigned',
-            'attendanceOpen'
+            'isAssigned'
         ));
     }
 
