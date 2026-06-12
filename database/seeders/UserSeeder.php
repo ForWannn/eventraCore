@@ -278,7 +278,7 @@ class UserSeeder extends Seeder
             );
 
             $user->syncRoles([$uData['role']]);
-            $user->syncPermissions(['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history']);
+            $user->syncPermissions(['view_dashboard', 'weekly_report', 'weekly_history', 'leave_request', 'attendance_history']);
             $createdUsers[$uData['id_num']] = $user;
         }
 

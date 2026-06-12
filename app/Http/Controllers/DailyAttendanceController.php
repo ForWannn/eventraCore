@@ -10,11 +10,30 @@ use Carbon\Carbon;
 
 class DailyAttendanceController extends Controller
 {
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // in meters
+
+        $latFrom = deg2rad($lat1);
+        $lonFrom = deg2rad($lon1);
+        $latTo = deg2rad($lat2);
+        $lonTo = deg2rad($lon2);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+
+        return $angle * $earthRadius;
+    }
+
     public function storeLuar(Request $request)
     {
         $user = Auth::user();
-        if ($user->hasRole('Intern')) {
-            return response()->json(['message' => 'Intern tidak diperbolehkan melakukan absensi.'], 403);
+        if ($user->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+            $roleName = $user->hasRole('Intern') ? 'Intern' : ($user->hasRole('Superadmin') ? 'Superadmin' : 'Admin');
+            return response()->json(['message' => "$roleName tidak diperbolehkan melakukan absensi."], 403);
         }
 
         $request->validate([
@@ -69,19 +88,41 @@ class DailyAttendanceController extends Controller
         $threshold = Carbon::createFromFormat('Y-m-d H:i:s', $date . ' ' . $limit);
         $status = $now->gt($threshold) ? 'terlambat' : 'tepat_waktu';
 
+        // Check if user is in/near the office
+        $lat = $request->latitude;
+        $lng = $request->longitude;
+        $isOffice = false;
+
+        // Coordinates configuration: Palembang (-2.9507, 104.7454) and Jakarta (-6.2088, 106.8456)
+        $offices = [
+            ['lat' => -2.9507, 'lng' => 104.7454], // Palembang Office
+            ['lat' => -6.2088, 'lng' => 106.8456], // Jakarta Office
+        ];
+
+        foreach ($offices as $office) {
+            $distance = $this->calculateDistance($lat, $lng, $office['lat'], $office['lng']);
+            if ($distance <= 100) { // Radius 100 meters
+                $isOffice = true;
+                break;
+            }
+        }
+
+        $attendanceType = $isOffice ? 'kantor' : 'luar';
+        $message = $isOffice ? 'Absensi kantor berhasil dikirim!' : 'Absensi luar kantor berhasil dikirim!';
+
         DailyAttendance::create([
             'user_id' => $user->id,
             'date' => $date,
             'check_in_time' => $now->format('H:i:s'),
-            'attendance_type' => 'luar',
+            'attendance_type' => $attendanceType,
             'photo_path' => 'attendances/' . $imageName,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
+            'latitude' => $lat,
+            'longitude' => $lng,
             'status' => $status,
         ]);
 
         return response()->json([
-            'message' => 'Absensi luar kantor berhasil dikirim!',
+            'message' => $message,
             'status' => $status,
             'time' => $now->format('H:i:s')
         ]);
@@ -90,8 +131,9 @@ class DailyAttendanceController extends Controller
     public function myHistory(Request $request)
     {
         $user = Auth::user();
-        if ($user->hasRole('Intern')) {
-            abort(403, 'Intern tidak memiliki akses ke riwayat absensi.');
+        if ($user->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+            $roleName = $user->hasRole('Intern') ? 'Intern' : ($user->hasRole('Superadmin') ? 'Superadmin' : 'Admin');
+            abort(403, "$roleName tidak memiliki akses ke riwayat absensi.");
         }
         $now = Carbon::now();
 
@@ -194,6 +236,8 @@ class DailyAttendanceController extends Controller
                 $status = 'Tidak Hadir';
                 if ($leave) {
                     $status = $leave->type === 'izin' ? 'Izin' : 'Cuti';
+                } elseif ($user->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+                    $status = 'Bebas Absen';
                 }
 
                 $historyData[] = [
@@ -252,6 +296,8 @@ class DailyAttendanceController extends Controller
                     return $item['status'] === 'Izin';
                 } elseif ($statusFilter === 'cuti') {
                     return $item['status'] === 'Cuti';
+                } elseif ($statusFilter === 'bebas_absen') {
+                    return $item['status'] === 'Bebas Absen';
                 }
                 return true;
             });
@@ -306,6 +352,48 @@ class DailyAttendanceController extends Controller
         ]);
     }
 
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+            'manual_status' => 'nullable|string',
+            'admin_note' => 'nullable|string',
+        ]);
+
+        // Cari record absensi hari itu
+        $attendance = DailyAttendance::where('user_id', $request->user_id)
+                                      ->where('date', $request->date)
+                                      ->first();
+
+        if (!$attendance) {
+            // Tentukan jam masuk dummy agar database tidak error (karena check_in_time NOT NULL)
+            $dummyTime = '00:00:00'; // Default jika Lupa Absen / Alpa
+            if ($request->manual_status === 'hadir') {
+                $dummyTime = '08:00:00';
+            } elseif ($request->manual_status === 'terlambat') {
+                $dummyTime = '09:01:00'; // Anggap telat 1 menit sebagai default
+            }
+
+            // Buat record baru agar bisa diberi catatan oleh GM
+            $attendance = DailyAttendance::create([
+                'user_id' => $request->user_id,
+                'date' => $request->date,
+                'check_in_time' => $dummyTime,
+                'attendance_type' => 'kantor', // Anggap absen kantor karena diubah oleh GM
+                'status' => 'tepat_waktu', // Akan dioverride oleh manual_status di bawah
+            ]);
+        }
+
+        // Update status manual dan catatan dari GM
+        $attendance->update([
+            'manual_status' => $request->manual_status ?: null,
+            'admin_note' => $request->admin_note,
+        ]);
+
+        return redirect()->back()->with('success', 'Status dan catatan absensi karyawan berhasil diperbarui!');
+    }
+
     public function recap(Request $request)
     {
         $date = $request->input('date', Carbon::now()->format('Y-m-d'));
@@ -313,8 +401,11 @@ class DailyAttendanceController extends Controller
         $divisionId = $request->input('division_id');
         $statusFilter = $request->input('status', 'all');
 
-        // Query ALL active users with their division & attendance for the selected date
+        // Query active users with their division & attendance for the selected date, excluding Admin, Superadmin, and Intern roles
         $users = \App\Models\User::with(['division'])
+            ->whereDoesntHave('roles', function($q) {
+                $q->whereIn('name', ['Admin', 'Superadmin', 'Intern']);
+            })
             ->with(['dailyAttendances' => function ($q) use ($date) {
                 $q->where('date', $date);
             }])
@@ -353,6 +444,7 @@ class DailyAttendanceController extends Controller
         }
 
         // Map and compute status details for all users
+        // Map and compute status details for all users
         $usersData = $users->map(function ($u) use ($leaves, $isClosed, $date, $isWorkDay) {
             $attendance = $u->dailyAttendances->first();
             $leave = $leaves->get($u->id);
@@ -367,15 +459,17 @@ class DailyAttendanceController extends Controller
             $reason = null;
             
             if ($attendance) {
-                $status = $attendance->status === 'tepat_waktu' ? 'hadir' : 'terlambat';
+                // Gunakan manual_status dari GM jika tersedia, jika tidak kembali ke logic asli
+                $status = $attendance->manual_status ?? ($attendance->status === 'tepat_waktu' ? 'hadir' : 'terlambat');
                 $checkInTime = $attendance->check_in_time;
                 $method = $attendance->attendance_type;
                 $photoPath = $attendance->photo_path;
                 $latitude = $attendance->latitude;
                 $longitude = $attendance->longitude;
+                $reason = $attendance->admin_note; // Tampilkan catatan admin
                 
-                // Calculate lateness minutes
-                if ($attendance->status === 'terlambat') {
+                // Hitung durasi keterlambatan hanya jika statusnya memang terlambat
+                if ($status === 'terlambat') {
                     $checkIn = Carbon::parse($attendance->check_in_time);
                     $schedule = Carbon::parse($date . ' 08:00:00');
                     $diff = $schedule->diffInMinutes($checkIn, false);
@@ -391,6 +485,10 @@ class DailyAttendanceController extends Controller
             } else {
                 if (!$isWorkDay) {
                     $status = 'libur';
+                } elseif ($u->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+                    $status = 'bebas_absen';
+                    $roleName = $u->hasRole('Intern') ? 'Intern' : ($u->hasRole('Superadmin') ? 'Superadmin' : 'Admin');
+                    $reason = "Tidak wajib absen ($roleName)";
                 } else {
                     $status = $isClosed ? 'absen' : 'belum_hadir';
                 }
@@ -407,6 +505,8 @@ class DailyAttendanceController extends Controller
                 'longitude' => $longitude,
                 'reason' => $reason,
                 'leave' => $leave,
+                'admin_note' => $attendance ? $attendance->admin_note : '',
+                'manual_status' => $attendance ? $attendance->manual_status : null,
             ];
         });
 
@@ -495,6 +595,9 @@ class DailyAttendanceController extends Controller
         $statusFilter = $request->input('status', 'all');
 
         $users = \App\Models\User::with(['division'])
+            ->whereDoesntHave('roles', function($q) {
+                $q->whereIn('name', ['Admin', 'Superadmin', 'Intern']);
+            })
             ->with(['dailyAttendances' => function ($q) use ($date) {
                 $q->where('date', $date);
             }])
@@ -562,6 +665,10 @@ class DailyAttendanceController extends Controller
             } else {
                 if (!$isWorkDay) {
                     $status = 'libur';
+                } elseif ($u->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+                    $status = 'bebas_absen';
+                    $roleName = $u->hasRole('Intern') ? 'Intern' : ($u->hasRole('Superadmin') ? 'Superadmin' : 'Admin');
+                    $reason = "Tidak wajib absen ($roleName)";
                 } else {
                     $status = $isClosed ? 'absen' : 'belum_hadir';
                 }
@@ -618,6 +725,7 @@ class DailyAttendanceController extends Controller
                 elseif ($row['status'] === 'terlambat') $statusLabel = 'Terlambat';
                 elseif ($row['status'] === 'absen') $statusLabel = '-';
                 elseif ($row['status'] === 'izin_cuti') $statusLabel = 'Izin/Cuti';
+                elseif ($row['status'] === 'bebas_absen') $statusLabel = 'Bebas Absen';
                 elseif ($row['status'] === 'belum_hadir') $statusLabel = 'Belum Hadir';
                 elseif ($row['status'] === 'libur') $statusLabel = 'Libur';
 
@@ -652,10 +760,10 @@ class DailyAttendanceController extends Controller
         // Get month name in Indonesian
         $monthName = $startOfMonth->locale('id')->translatedFormat('F');
 
-        // Fetch users matching search and division filters, excluding Admin and Superadmin roles
+        // Fetch users matching search and division filters, excluding Admin, Superadmin, and Intern roles
         $usersQuery = \App\Models\User::with(['division', 'roles'])
             ->whereDoesntHave('roles', function($q) {
-                $q->whereIn('name', ['Admin', 'Superadmin']);
+                $q->whereIn('name', ['Admin', 'Superadmin', 'Intern']);
             })
             ->orderBy('name', 'asc');
 
@@ -825,41 +933,54 @@ class DailyAttendanceController extends Controller
                     // Regular working weekday
                     if ($attendance) {
                         $checkInObj = Carbon::parse($attendance->check_in_time);
-                        $checkInTimeStr = $checkInObj->format('H:i');
-                        $checkInTimeOnly = $checkInObj->format('H:i:s');
+                        $checkInTimeStr = $attendance->check_in_time ? $checkInObj->format('H:i') : '-';
+                        $checkInTimeOnly = $attendance->check_in_time ? $checkInObj->format('H:i:s') : '00:00:00';
                         
-                        // Weekdays where check-in occurred before 07:00 AM or after 12:00 PM: LUPA ABSEN
-                        $isLupaAbsen = ($checkInTimeOnly < '00:00:00' || $checkInTimeOnly > '12:00:00');
                         $isLate = ($checkInTimeOnly > '09:00:00');
+                        
+                        // Cek status akhir (manual maupun otomatis)
+                        $effectiveStatus = $attendance->manual_status ?? ($isLate ? 'terlambat' : 'hadir');
 
-                        if ($isLupaAbsen) {
-                            $rowClass = 'lupa-absen-row'; // yellow
-                            $catatan = '';
-                        } elseif ($isLate) {
-                            $rowClass = 'lupa-absen-row'; // yellow (telat kuning)
-                            $catatan = '';
-                        } else {
-                            $rowClass = 'tepat-waktu-row'; // green
-                            $catatan = '';
-                        }
-
-                        // Lateness calculation against 09:00:00
-                        if ($isLate) {
-                            $thresholdObj = Carbon::parse($dateStr . ' 09:00:00');
-                            $diff = $thresholdObj->diffInMinutes($checkInObj, false);
+                        if ($effectiveStatus === 'hadir') {
+                            $rowClass = 'tepat-waktu-row'; // Hijau
+                            $catatan = $attendance->admin_note ?? 'Tepat Waktu';
+                            $terlambatStr = '0 Menit';
+                        } elseif ($effectiveStatus === 'terlambat') {
+                            $rowClass = 'lupa-absen-row'; // Kuning
+                            $catatan = $attendance->admin_note ?? 'Terlambat';
                             
-                            if ($diff > 0) {
-                                $hours = intval(floor($diff / 60));
-                                $minutes = intval($diff % 60);
-                                $terlambatStr = $hours . ' Jam ' . $minutes . ' Menit';
+                            if ($attendance->check_in_time) {
+                                $thresholdObj = Carbon::parse($dateStr . ' 09:00:00');
+                                $diff = $thresholdObj->diffInMinutes($checkInObj, false);
+                                if ($diff > 0) {
+                                        $hours = intval(floor($diff / 60));
+                                        $minutes = intval($diff % 60);
+                                        $terlambatStr = $hours . ' Jam ' . $minutes . ' Menit';
+                                }
                             }
+                        } elseif ($effectiveStatus === 'lupa_absen') {
+                            $rowClass = 'lupa-absen-row'; // Kuning
+                            $catatan = $attendance->admin_note ?? 'LUPA ABSEN';
+                            $terlambatStr = '0 Menit';
+                        } elseif ($effectiveStatus === 'absen') {
+                            $rowClass = 'mangkir-row'; // Merah
+                            $catatan = $attendance->admin_note ?? 'ALPA';
+                            $terlambatStr = '0 Menit';
                         }
                     } else {
-                        // Working weekday, no check-in, no leave: ALPA (merah)
-                        $rowClass = 'mangkir-row';
-                        $checkInTimeStr = '';
-                        $terlambatStr = '0 Menit';
-                        $catatan = 'ALPA';
+                        // Working weekday, no check-in, no leave: ALPA (merah), unless bebas absen
+                        if ($user->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+                            $rowClass = '';
+                            $checkInTimeStr = '';
+                            $terlambatStr = '0 Menit';
+                            $roleName = $user->hasRole('Intern') ? 'Intern' : ($user->hasRole('Superadmin') ? 'Superadmin' : 'Admin');
+                            $catatan = "BEBAS ABSEN ($roleName)";
+                        } else {
+                            $rowClass = 'mangkir-row';
+                            $checkInTimeStr = '';
+                            $terlambatStr = '0 Menit';
+                            $catatan = 'ALPA';
+                        }
                     }
                 }
 
@@ -884,5 +1005,223 @@ class DailyAttendanceController extends Controller
         ]);
 
         return $pdf->stream('data_absensi_bulan_' . strtolower($monthName) . '_' . $year . '.pdf');
+    }
+    public function exportExcelMonthly(Request $request)
+    {
+        $date = $request->input('date', \Carbon\Carbon::now()->format('Y-m-d'));
+        $search = $request->input('search');
+        $divisionId = $request->input('division_id');
+        $statusFilter = $request->input('status', 'all');
+
+        $dateObj = \Carbon\Carbon::parse($date);
+        $startOfMonth = $dateObj->copy()->startOfMonth();
+        $endOfMonth = $dateObj->copy()->endOfMonth();
+        $year = $dateObj->year;
+        $monthName = $startOfMonth->locale('id')->translatedFormat('F');
+
+        // Ambil Data Karyawan
+        $usersQuery = \App\Models\User::with(['division', 'roles'])
+            ->whereDoesntHave('roles', function($q) {
+                $q->whereIn('name', ['Admin', 'Superadmin', 'Intern']);
+            })
+            ->orderBy('name', 'asc');
+
+        if ($search) $usersQuery->where('name', 'like', '%' . $search . '%');
+        if ($divisionId && $divisionId !== 'all') $usersQuery->where('division_id', $divisionId);
+
+        $users = $usersQuery->get();
+
+        // Jika ada filter status
+        if ($statusFilter && $statusFilter !== 'all') {
+            $dateAttendances = \App\Models\DailyAttendance::where('date', $date)->get()->keyBy('user_id');
+            $dateLeaves = \App\Models\LeaveRequest::where('status', 'approved')
+                ->where('start_date', '<=', $date)->where('end_date', '>=', $date)->get()->keyBy('user_id');
+            $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
+            
+            $isWorkDay = $calendar ? (bool)$calendar->is_working_day : !in_array($dateObj->dayOfWeek, [\Carbon\Carbon::SATURDAY, \Carbon\Carbon::SUNDAY]);
+            
+            $threshold = \Carbon\Carbon::parse($date . ' ' . config('attendance.attendance_close_time', '12:00:00'));
+            $isClosed = ($dateObj->isPast() && !$dateObj->isToday()) || ($dateObj->isToday() && \Carbon\Carbon::now()->gt($threshold));
+
+            $users = $users->filter(function ($u) use ($dateAttendances, $dateLeaves, $isWorkDay, $isClosed, $statusFilter) {
+                $att = $dateAttendances->get($u->id);
+                $leave = $dateLeaves->get($u->id);
+                $status = 'belum_hadir';
+                
+                if ($att) {
+                    $status = $att->manual_status ?? ($att->status === 'tepat_waktu' ? 'hadir' : 'terlambat');
+                } elseif ($leave) {
+                    $status = 'izin_cuti';
+                } else {
+                    $status = !$isWorkDay ? 'libur' : ($isClosed ? 'absen' : 'belum_hadir');
+                }
+                return $status === $statusFilter;
+            });
+        }
+
+        // Ambil Kalender dan Cuti
+        $overrides = \App\Models\WorkCalendar::whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
+        $userIds = $users->pluck('id');
+        
+        $approvedLeaves = \App\Models\LeaveRequest::whereIn('user_id', $userIds)
+            ->where('status', 'approved')
+            ->where(function($q) use ($startOfMonth, $endOfMonth) {
+                $q->whereBetween('start_date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
+                  ->orWhereBetween('end_date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
+                  ->orWhere(function($sub) use ($startOfMonth, $endOfMonth) {
+                      $sub->where('start_date', '<=', $startOfMonth->format('Y-m-d'))->where('end_date', '>=', $endOfMonth->format('Y-m-d'));
+                  });
+            })->get();
+
+        $leavesMap = [];
+        foreach ($approvedLeaves as $leave) {
+            $temp = \Carbon\Carbon::parse($leave->start_date);
+            $end = \Carbon\Carbon::parse($leave->end_date);
+            while ($temp->lte($end)) {
+                $leavesMap[$leave->user_id][$temp->format('Y-m-d')] = $leave;
+                $temp->addDay();
+            }
+        }
+
+        $attendances = \App\Models\DailyAttendance::whereIn('user_id', $userIds)->whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])->get();
+        $attendanceMap = [];
+        foreach ($attendances as $att) {
+            $attendanceMap[$att->user_id][$att->date] = $att;
+        }
+
+        // --- PEMBUATAN TABEL HTML UNTUK EXCEL ---
+        $html = '<html><head><meta charset="utf-8"></head><body>';
+        $html .= '<table border="1" style="border-collapse: collapse; width: 100%; font-family: sans-serif; font-size: 12px;">';
+        $html .= '<thead>';
+        $html .= '<tr><th colspan="6" style="font-size: 16px; text-align: left; padding: 10px;"><b>Data Absensi Bulan ' . $monthName . ' ' . $year . '</b></th></tr>';
+        $html .= '<tr>';
+        $html .= '<th style="background-color: #e8b61c; color: #ffffff; font-weight: bold; padding: 8px;">Tanggal</th>';
+        $html .= '<th style="background-color: #e8b61c; color: #ffffff; font-weight: bold; padding: 8px;">Nama Karyawan</th>';
+        $html .= '<th style="background-color: #e8b61c; color: #ffffff; font-weight: bold; padding: 8px;">Jam Masuk</th>';
+        $html .= '<th style="background-color: #e8b61c; color: #ffffff; font-weight: bold; padding: 8px;">Terlambat</th>';
+        $html .= '<th style="background-color: #e8b61c; color: #ffffff; font-weight: bold; padding: 8px;">Keterangan</th>';
+        $html .= '<th style="background-color: #e8b61c; color: #ffffff; font-weight: bold; padding: 8px;">Status</th>';
+        $html .= '</tr></thead><tbody>';
+
+        foreach ($users as $user) {
+            $tempDay = $startOfMonth->copy();
+            while ($tempDay->lte($endOfMonth)) {
+                $dateStr = $tempDay->format('Y-m-d');
+                $tanggalLabel = $tempDay->locale('id')->translatedFormat('l, d F Y');
+                
+                $isWeekend = ($tempDay->dayOfWeek === \Carbon\Carbon::SATURDAY || $tempDay->dayOfWeek === \Carbon\Carbon::SUNDAY);
+                $workCalendar = $overrides->get($dateStr);
+                $isWorkDay = $workCalendar ? (bool)$workCalendar->is_working_day : !$isWeekend;
+                
+                $leave = $leavesMap[$user->id][$dateStr] ?? null;
+                $attendance = $attendanceMap[$user->id][$dateStr] ?? null;
+
+                $checkInTimeStr = '-';
+                $terlambatStr = '0 Menit';
+                $catatan = '-';
+                $statusSistem = '-';
+                
+                // Styling Default (Putih)
+                $bgColor = '#ffffff';
+                $textColor = '#333333';
+                $fontWeight = 'normal';
+
+                if ($isWeekend) {
+                    $statusSistem = 'Weekend';
+                    $bgColor = '#f3f4f6'; // Abu-abu muda
+                } elseif (!$isWorkDay) {
+                    $catatan = 'LIBUR';
+                    $statusSistem = 'Libur Nasional';
+                    $bgColor = '#f3f4f6';
+                } elseif ($leave) {
+                    $catatan = $leave->type === 'izin' ? 'IZIN' : 'CUTI';
+                    $statusSistem = 'Izin/Cuti';
+                    $bgColor = '#e0e7ff'; // Biru pudar
+                } else {
+                    if ($attendance) {
+                        $checkInObj = \Carbon\Carbon::parse($attendance->check_in_time);
+                        $checkInTimeStr = $attendance->check_in_time ? $checkInObj->format('H:i') : '-';
+                        $checkInTimeOnly = $attendance->check_in_time ? $checkInObj->format('H:i:s') : '00:00:00';
+                        
+                        $isLate = ($checkInTimeOnly > '09:00:00');
+                        $effectiveStatus = $attendance->manual_status ?? ($isLate ? 'terlambat' : 'hadir');
+
+                        // Pewarnaan Sesuai Status (Mirip PDF)
+                        if ($effectiveStatus === 'hadir') {
+                            $statusSistem = 'Tepat Waktu';
+                            $catatan = $attendance->admin_note ?? 'Tepat Waktu';
+                            $bgColor = '#8ae05e'; // Hijau Tepat Waktu
+                            $textColor = '#000000';
+                            $fontWeight = 'bold';
+                        } elseif ($effectiveStatus === 'terlambat') {
+                            $statusSistem = 'Terlambat';
+                            $catatan = $attendance->admin_note ?? 'Terlambat';
+                            $bgColor = '#f0e813'; // Kuning Telat
+                            $textColor = '#000000';
+                            $fontWeight = 'bold';
+                            
+                            if ($attendance->check_in_time) {
+                                $thresholdObj = \Carbon\Carbon::parse($dateStr . ' 09:00:00');
+                                $diff = $thresholdObj->diffInMinutes($checkInObj, false);
+                                if ($diff > 0) {
+                                    $hours = intval(floor($diff / 60));
+                                    $minutes = intval($diff % 60);
+                                    $terlambatStr = ($hours > 0 ? $hours . ' Jam ' : '') . $minutes . ' Menit';
+                                }
+                            }
+                        } elseif ($effectiveStatus === 'lupa_absen') {
+                            $statusSistem = 'Lupa Absen';
+                            $catatan = $attendance->admin_note ?? 'LUPA ABSEN';
+                            $bgColor = '#f0e813'; // Kuning Lupa Absen
+                            $textColor = '#000000';
+                            $fontWeight = 'bold';
+                        } elseif ($effectiveStatus === 'absen') {
+                            $statusSistem = 'Alpa';
+                            $catatan = $attendance->admin_note ?? 'ALPA';
+                            $bgColor = '#fee2e2'; // Merah Mangkir
+                            $textColor = '#991b1b';
+                            $fontWeight = 'bold';
+                        }
+                    } else {
+                        if ($user->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+                            $catatan = 'BEBAS ABSEN (' . ($user->hasRole('Intern') ? 'Intern' : ($user->hasRole('Superadmin') ? 'Superadmin' : 'Admin')) . ')';
+                            $statusSistem = 'Bebas Absen';
+                            $bgColor = '#f3f4f6'; // Abu-abu muda
+                            $textColor = '#475569';
+                            $fontWeight = 'normal';
+                        } else {
+                            $catatan = 'ALPA';
+                            $statusSistem = 'Alpa';
+                            $bgColor = '#fee2e2'; // Merah Mangkir
+                            $textColor = '#991b1b';
+                            $fontWeight = 'bold';
+                        }
+                    }
+                }
+
+                $style = "background-color: {$bgColor}; color: {$textColor}; font-weight: {$fontWeight}; padding: 6px 8px; border: 1px solid #d1d5db;";
+                
+                $html .= '<tr>';
+                $html .= "<td style=\"{$style}\">{$tanggalLabel}</td>";
+                $html .= "<td style=\"{$style}\">{$user->name}</td>";
+                $html .= "<td style=\"{$style} text-align: center;\">{$checkInTimeStr}</td>";
+                $html .= "<td style=\"{$style}\">{$terlambatStr}</td>";
+                $html .= "<td style=\"{$style}\">{$catatan}</td>";
+                $html .= "<td style=\"{$style}\">{$statusSistem}</td>";
+                $html .= '</tr>';
+
+                $tempDay->addDay();
+            }
+        }
+
+        $html .= '</tbody></table></body></html>';
+
+        $fileName = 'Rekap_Absensi_' . $monthName . '_' . $year . '.xls';
+
+        return response($html)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 }

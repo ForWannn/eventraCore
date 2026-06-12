@@ -8,7 +8,7 @@ Kami menerima permintaan untuk merreset password akun Anda di **eventraCore**. S
 # {{ $code }}
 </x-mail::panel>
 
-Kode ini akan kadaluwarsa dalam **10 menit**. Jika Anda tidak merasa melakukan permintaan ini, abaikan email ini.
+Kode ini akan kadaluwarsa dalam **5 menit**. Jika Anda tidak merasa melakukan permintaan ini, abaikan email ini.
 
 Terima kasih,<br>
 Tim {{ config('app.name') }}

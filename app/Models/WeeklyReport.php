@@ -14,7 +14,13 @@ class WeeklyReport extends Model
         'final_submitted_at' => 'datetime',
     ];
 
-    public function user() { return $this->belongsTo(User::class); }
-    public function items() { return $this->hasMany(WeeklyItem::class); }
-    public function dailyLogs() { return $this->hasMany(DailyLog::class); }
+    public function user() { 
+        return $this->belongsTo(User::class);
+    }
+    public function items() {
+        return $this->hasMany(WeeklyItem::class);
+    }
+    public function dailyLogs() {
+        return $this->hasMany(DailyLog::class);
+    }
 }

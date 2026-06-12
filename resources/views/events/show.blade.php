@@ -632,10 +632,18 @@
         <div>
             <h1 style="font-size: 24px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin: 0;">Detail Event</h1>
         </div>
-        <a href="{{ route('events.index') }}" style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); text-decoration: none; transition: background 0.2s;">
-            <i data-feather="arrow-left" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
-            <span>Kembali</span>
-        </a>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            @can('crud_events')
+                <a href="{{ route('events.edit', $event->id) }}" style="display: flex; align-items: center; gap: 8px; background: #d97706; border: none; padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: #fff; text-decoration: none; transition: background 0.2s;">
+                    <i data-feather="edit" style="width: 16px; height: 16px; color: #fff;"></i>
+                    <span>Edit Event</span>
+                </a>
+            @endcan
+            <a href="{{ route('events.index') }}" style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); text-decoration: none; transition: background 0.2s;">
+                <i data-feather="arrow-left" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
     </div>
 
     <!-- 1. Top Card: Event Main Info -->

@@ -30,8 +30,9 @@ class PasswordResetController extends Controller
         $email = $request->email;
         $code = (string) random_int(100000, 999999);
 
-        // Store code in cache for 10 minutes
-        Cache::put('password_reset_code_' . $email, $code, now()->addMinutes(10));
+        // Store code in cache for 5 minutes
+        Cache::put('password_reset_code_' . $email, $code, now()->addMinutes(5));
+        session(['code_sent_at' => now()->timestamp]);
 
         // Send email
         Mail::to($email)->send(new ResetPasswordCode($code));
@@ -46,6 +47,12 @@ class PasswordResetController extends Controller
     public function showResetForm(Request $request)
     {
         $email = session('email') ?? $request->email;
+        
+        if ($email) {
+            session(['password_reset_email' => $email]);
+        } else {
+            $email = session('password_reset_email');
+        }
         
         return view('auth.reset-password')->with(['email' => $email]);
     }
@@ -74,9 +81,31 @@ class PasswordResetController extends Controller
             'remember_token' => Str::random(60),
         ])->save();
 
-        // Clear cache
+        // Clear cache and session
         Cache::forget('password_reset_code_' . $request->email);
+        session()->forget(['password_reset_email', 'code_sent_at']);
 
         return redirect()->route('login')->with('status', 'Password Anda telah berhasil diperbarui.');
+    }
+
+    /**
+     * Resend the password reset code.
+     */
+    public function resendCode(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:users,email']);
+
+        $email = $request->email;
+        $code = (string) random_int(100000, 999999);
+
+        // Store code in cache for 5 minutes
+        Cache::put('password_reset_code_' . $email, $code, now()->addMinutes(5));
+        session(['code_sent_at' => now()->timestamp]);
+
+        // Send email
+        Mail::to($email)->send(new ResetPasswordCode($code));
+
+        return redirect()->route('password.reset')
+            ->with(['email' => $email, 'status' => 'Kode reset baru telah dikirim ke email Anda.']);
     }
 }

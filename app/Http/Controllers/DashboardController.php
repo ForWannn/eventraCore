@@ -51,8 +51,6 @@ class DashboardController extends Controller
         $totalAssignments = $allAssignedEvents->count();
         $activeCount = $activeAssignments->count();
         
-        // Attendance count (total clock-ins)
-        $attendanceCount = \App\Models\Attendance::where('user_id', $user->id)->count();
 
         // Weekly Report Status for current week
         $startOfWeek = $now->copy()->startOfWeek();
@@ -215,7 +213,6 @@ class DashboardController extends Controller
             'totalAssignments'         => $totalAssignments,
             'totalEventsThisMonth'     => $totalEventsThisMonth,
             'activeCount'              => $activeCount,
-            'attendanceCount'          => $attendanceCount,
             'attendanceCountThisMonth' => $attendanceCountThisMonth,
             'workDays'                 => $workDays,
             'recentAttendances'        => $recentAttendances,
@@ -255,12 +252,17 @@ class DashboardController extends Controller
         }
         $activeEmployeesCount = $activeEmployeeIds->unique()->count();
 
-        // Total unique employees attended today
-        $todayAttendancesCount = DailyAttendance::whereDate('date', $now->toDateString())->distinct('user_id')->count();
+        // Total unique employees attended today (excluding CEO, GM, Admin, Superadmin, and Intern)
+        $todayAttendancesCount = DailyAttendance::whereDate('date', $now->toDateString())
+            ->whereHas('user.roles', function($q) {
+                $q->whereNotIn('name', ['CEO', 'GM', 'Admin', 'Superadmin', 'Intern']);
+            })
+            ->distinct('user_id')
+            ->count();
         
-        // Total unique staff (excluding CEO and GM)
+        // Total unique staff (excluding CEO, GM, Admin, Superadmin, and Intern)
         $totalStaff = User::whereHas('roles', function($q) {
-            $q->whereNotIn('name', ['CEO', 'GM']);
+            $q->whereNotIn('name', ['CEO', 'GM', 'Admin', 'Superadmin', 'Intern']);
         })->count();
         $attendanceRate = $totalStaff > 0 ? round(($todayAttendancesCount / $totalStaff) * 100) : 0;
 
@@ -461,9 +463,9 @@ class DashboardController extends Controller
     {
         $now = Carbon::now();
 
-        // 1. Top Card Stats (Excluding Admin from active employee counts)
+        // 1. Top Card Stats (Excluding Admin, Superadmin, and Intern from active employee counts)
         $totalEmployees = User::whereDoesntHave('roles', function($q) {
-            $q->whereIn('name', ['Admin', 'Superadmin']);
+            $q->whereIn('name', ['Admin', 'Superadmin', 'Intern']);
         })->count();
         $activeEmployees = $totalEmployees;
         $totalDivisions = Division::where('name', '!=', 'reel_seven')->count();
@@ -481,9 +483,10 @@ class DashboardController extends Controller
 
         while ($daysCounted < 7) {
             $dateStr = $tempDate->format('Y-m-d');
+            $calendar = $calendarOverrides->get($dateStr);
             $isWork = true;
-            if (isset($calendarOverrides[$dateStr])) {
-                $isWork = $calendarOverrides[$dateStr]->is_working_day;
+            if ($calendar) {
+                $isWork = (bool)$calendar->is_working_day;
             } else {
                 if ($tempDate->dayOfWeek === Carbon::SATURDAY || $tempDate->dayOfWeek === Carbon::SUNDAY) {
                     $isWork = false;
@@ -491,7 +494,13 @@ class DashboardController extends Controller
             }
 
             if ($isWork) {
-                $count = DailyAttendance::where('date', $dateStr)->count();
+                // Count attendance for this day (excluding Admin, Superadmin, and Intern)
+                $count = DailyAttendance::whereDate('date', $dateStr)
+                    ->whereHas('user.roles', function($q) {
+                        $q->whereNotIn('name', ['Admin', 'Superadmin', 'Intern']);
+                    })
+                    ->count();
+
                 $attendanceTrend[] = [
                     'date' => $dateStr,
                     'label' => $tempDate->locale('id')->translatedFormat('d M'),
@@ -503,7 +512,7 @@ class DashboardController extends Controller
         }
         $attendanceTrend = array_reverse($attendanceTrend);
 
-        // 3. Jumlah Karyawan per Divisi (Doughnut Chart data with colors and percentages, excluding Admin/reel_seven)
+        // 3. Jumlah Karyawan per Divisi (Doughnut Chart data with colors and percentages, excluding Admin/reel_seven/Superadmin/Intern)
         $colors = [
             '#2563eb', // Blue
             '#10b981', // Emerald
@@ -518,7 +527,7 @@ class DashboardController extends Controller
 
         $divisionsData = Division::withCount(['users' => function($q) {
             $q->whereDoesntHave('roles', function($sub) {
-                $sub->whereIn('name', ['Admin', 'Superadmin']);
+                $sub->whereIn('name', ['Admin', 'Superadmin', 'Intern']);
             });
         }])->get()->filter(function($div) {
             return $div->users_count > 0;
@@ -555,35 +564,67 @@ class DashboardController extends Controller
         $leavesSubmittedToday = \App\Models\LeaveRequest::whereDate('created_at', Carbon::today())->count();
         $totalActivitiesToday = $attendancesToday + $weeklyReportsToday + $tasksCompletedToday + $leavesSubmittedToday;
 
-        // c. Real App Uploads Directory Storage Details
-        $uploadPath = storage_path('app/public');
-        $totalUploadSize = 0;
-        if (is_dir($uploadPath)) {
-            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($uploadPath)) as $file) {
-                if ($file->isFile()) {
-                    $totalUploadSize += $file->getSize();
+        // c. Real Hosting Storage / Disk Space Details (calculated by directory size & cached for 1 hour)
+        $quotaGB = (float)env('HOSTING_DISK_QUOTA_GB', 20);
+        
+        $projectSizeBytes = \Illuminate\Support\Facades\Cache::remember('hosting_disk_usage_bytes', 3600, function () {
+            $path = base_path();
+            $size = 0;
+            if (is_dir($path)) {
+                try {
+                    foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)) as $file) {
+                        if ($file->isFile()) {
+                            $size += $file->getSize();
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    $size = 250 * 1024 * 1024; // 250 MB default fallback
                 }
             }
-        }
-        $usedUploadSizeMB = round($totalUploadSize / (1024 * 1024), 1);
-        $uploadQuotaGB = 2; // Soft quota limit (2 GB)
-        $uploadQuotaMB = $uploadQuotaGB * 1024;
-        $storagePercentage = min(round(($usedUploadSizeMB / $uploadQuotaMB) * 100), 100);
+            return $size;
+        });
 
-        // Calculate database size in MB
-        $connection = config('database.default');
-        $dbSizeMB = 0;
-        if ($connection === 'mysql') {
-            $dbName = config("database.connections.{$connection}.database");
-            $dbQuery = \DB::select("
-                SELECT SUM(data_length + index_length) AS size 
-                FROM information_schema.TABLES 
-                WHERE table_schema = ?
-            ", [$dbName]);
-            $dbSizeBytes = $dbQuery[0]->size ?? 0;
-            $dbSizeMB = round($dbSizeBytes / (1024 * 1024), 2);
+        $usedGB = round($projectSizeBytes / (1024 * 1024 * 1024), 2);
+        
+        if ($usedGB < 0.1) {
+            $usedMB = round($projectSizeBytes / (1024 * 1024), 1);
+            $storageUsedText = $usedMB . ' MB';
         } else {
-            $dbSizeMB = 0.5; // Fallback for tests/other connections
+            $storageUsedText = $usedGB . ' GB';
+        }
+
+        $storageTotalText = $quotaGB . ' GB';
+        $quotaBytes = $quotaGB * 1024 * 1024 * 1024;
+        $storagePercentage = $quotaBytes > 0 ? min(round(($projectSizeBytes / $quotaBytes) * 100, 1), 100) : 0;
+
+        // Calculate database size dynamically
+        $connection = config('database.default');
+        $dbSizeText = '0.5 MB';
+        if ($connection === 'mysql') {
+            try {
+                $dbName = config("database.connections.{$connection}.database");
+                $dbQuery = \DB::select("
+                    SELECT data_length, index_length 
+                    FROM information_schema.TABLES 
+                    WHERE table_schema = ?
+                ", [$dbName]);
+                
+                $dbSizeBytes = 0;
+                foreach ($dbQuery as $table) {
+                    $tArray = array_change_key_case((array)$table, CASE_LOWER);
+                    $logical = ($tArray['data_length'] ?? 0) + ($tArray['index_length'] ?? 0);
+                    // Estimate InnoDB tablespace (.ibd) + file system overhead (minimum 140KB per table)
+                    $dbSizeBytes += max(140 * 1024, $logical);
+                }
+
+                if ($dbSizeBytes >= 1024 * 1024) {
+                    $dbSizeText = round($dbSizeBytes / (1024 * 1024), 2) . ' MB';
+                } else {
+                    $dbSizeText = round($dbSizeBytes / 1024, 1) . ' KB';
+                }
+            } catch (\Throwable $e) {
+                $dbSizeText = '0.5 MB';
+            }
         }
 
         // d. Last Backup Time (dynamic, nightly 02:30 WIB)
@@ -619,10 +660,10 @@ class DashboardController extends Controller
             'divisionsData' => $divisionsData,
             'activeSessionsCount' => $activeSessionsCount,
             'totalActivitiesToday' => $totalActivitiesToday,
-            'usedUploadSizeMB' => $usedUploadSizeMB,
-            'uploadQuotaGB' => $uploadQuotaGB,
+            'storageUsedText' => $storageUsedText,
+            'storageTotalText' => $storageTotalText,
             'storagePercentage' => $storagePercentage,
-            'dbSizeMB' => $dbSizeMB,
+            'dbSizeText' => $dbSizeText,
             'lastBackupFormatted' => $lastBackupFormatted,
             'latestEmployees' => $latestEmployees,
             'latestActivities' => $latestActivities,

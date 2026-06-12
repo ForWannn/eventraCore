@@ -54,8 +54,14 @@ class UserController extends Controller
         ]);
 
         $user->assignRole($request->role);
+        $user->syncPermissions($this->getDefaultPermissionsForRole($request->role, $request->division_id));
 
         // Handle photo upload — saved as user_{id}.png
+        $imagesDir = public_path('assets/Images');
+        if (!file_exists($imagesDir)) {
+            mkdir($imagesDir, 0755, true);
+        }
+
         if ($request->filled('cropped_photo')) {
             $data = $request->input('cropped_photo');
             if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
@@ -64,12 +70,12 @@ class UserController extends Controller
                 if (in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
                     $data = base64_decode($data);
                     if ($data !== false) {
-                        file_put_contents(public_path('assets/Images/user_' . $user->id . '.png'), $data);
+                        file_put_contents($imagesDir . '/user_' . $user->id . '.png', $data);
                     }
                 }
             }
         } elseif ($request->hasFile('photo')) {
-            $request->file('photo')->move(public_path('assets/Images'), 'user_' . $user->id . '.png');
+            $request->file('photo')->move($imagesDir, 'user_' . $user->id . '.png');
         }
 
         return redirect()->route('users.index')->with('success', "Karyawan \"{$user->name}\" berhasil ditambahkan.");
@@ -119,6 +125,11 @@ class UserController extends Controller
         $user->update($updateData);
 
         // Handle photo upload — saved as user_{id}.png
+        $imagesDir = public_path('assets/Images');
+        if (!file_exists($imagesDir)) {
+            mkdir($imagesDir, 0755, true);
+        }
+
         if ($request->filled('cropped_photo')) {
             $data = $request->input('cropped_photo');
             if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
@@ -127,18 +138,24 @@ class UserController extends Controller
                 if (in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
                     $data = base64_decode($data);
                     if ($data !== false) {
-                        file_put_contents(public_path('assets/Images/user_' . $user->id . '.png'), $data);
+                        file_put_contents($imagesDir . '/user_' . $user->id . '.png', $data);
                     }
                 }
             }
         } elseif ($request->hasFile('photo')) {
             $filename = 'user_' . $user->id . '.png';
-            $destination = public_path('assets/Images');
-            $request->file('photo')->move($destination, $filename);
+            $request->file('photo')->move($imagesDir, $filename);
         }
+
+        $oldRole = $user->roles->first()?->name;
+        $oldDivisionId = $user->division_id;
 
         // Reset & assign new role
         $user->syncRoles([$request->role]);
+
+        if ($oldRole !== $request->role || $oldDivisionId != $request->division_id) {
+            $user->syncPermissions($this->getDefaultPermissionsForRole($request->role, $request->division_id));
+        }
 
         return redirect()->route('users.index')->with('success', 'Data karyawan berhasil diperbarui.');
     }
@@ -268,5 +285,99 @@ class UserController extends Controller
         }
 
         return redirect()->route('users.permissions');
+    }
+
+    /**
+     * Get default permissions for a role and division.
+     */
+    private function getDefaultPermissionsForRole(string $role, ?int $divisionId): array
+    {
+        $permissions = [
+            'Intern' => [
+                'view_dashboard',
+                'weekly_report',
+                'weekly_history',
+                'leave_request',
+            ],
+            'Employee' => [
+                'view_dashboard',
+                'weekly_report',
+                'weekly_history',
+                'leave_request',
+                'attendance_history',
+            ],
+            'PIC Event' => [
+                'view_dashboard',
+                'weekly_report',
+                'weekly_history',
+                'leave_request',
+                'attendance_history',
+            ],
+            'Head' => [
+                'view_dashboard',
+                'weekly_report',
+                'weekly_history',
+                'leave_request',
+                'attendance_history',
+            ],
+            'GM' => [
+                'view_dashboard',
+                'weekly_report',
+                'weekly_history',
+                'leave_request',
+                'attendance_history',
+                'rekap_absen',
+                'rekap_weekly',
+                'leave_approvals',
+                'crud_users',
+                'rekap_event',
+            ],
+            'CEO' => [
+                'view_dashboard',
+                'weekly_report',
+                'weekly_history',
+                'leave_request',
+                'attendance_history',
+                'crud_events',
+                'rekap_absen',
+                'rekap_weekly',
+                'leave_approvals',
+                'crud_users',
+                'rekap_event',
+            ],
+            'Admin' => [
+                'view_dashboard',
+                'crud_users',
+                'manage_calendar',
+            ],
+            'Superadmin' => [
+                'view_dashboard',
+                'weekly_report',
+                'weekly_history',
+                'leave_request',
+                'attendance_history',
+                'crud_users',
+                'crud_events',
+                'manage_calendar',
+                'rekap_absen',
+                'rekap_weekly',
+                'leave_approvals',
+                'rekap_event',
+            ],
+        ];
+
+        $rolePerms = $permissions[$role] ?? [];
+
+        // Additional permissions based on division
+        if ($divisionId) {
+            $division = \App\Models\Division::find($divisionId);
+            if ($division && $division->name === 'Finance') {
+                if (in_array($role, ['Employee', 'Intern', 'Head', 'PIC Event'])) {
+                    $rolePerms[] = 'rekap_event';
+                }
+            }
+        }
+
+        return array_unique($rolePerms);
     }
 }

@@ -314,6 +314,9 @@ class WeeklyReportController extends Controller
     public function history(Request $request)
     {
         $user = Auth::user();
+        if ($user->hasRole('Superadmin')) {
+            abort(403);
+        }
         $isDirector = $user->hasRole(['CEO', 'GM']) || $user->can('weekly_history');
         if ($user->hasRole(['Employee', 'Intern'])) {
             $isDirector = false;

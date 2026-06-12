@@ -52,28 +52,33 @@
         color: var(--text-muted);
         margin-top: 2px;
     }
-    .btn-export {
+    .btn-export-outline {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 24px;
-        background: var(--card-bg);
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
+        padding: 10px 20px;
+        background: #FFFFFF;
+        color: #003B7A; /* Warna teks biru gelap premium */
+        border: 1px solid #E2E8F0; /* Border abu-abu terang */
+        border-radius: 14px; /* Sudut membulat seperti di gambar */
         font-size: 14px;
-        font-weight: 700;
+        font-weight: 600;
         cursor: pointer;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
-    .btn-export:hover {
-        background: var(--hover-bg);
+    .btn-export-outline:hover {
+        background: #F8FAFC;
+        border-color: #CBD5E1;
+        color: #003B7A;
     }
-    .btn-export svg {
+    .btn-export-outline svg {
         width: 16px;
         height: 16px;
+        color: inherit;
     }
+    
     .btn-export-pdf {
         display: inline-flex;
         align-items: center;
@@ -415,12 +420,14 @@
     .badge-status.izin { background: #FAF5FF; color: #6D28D9; border: 1px solid rgba(109,40,217,0.15); }
     .badge-status.belum { background: #F8FAFC; color: #475569; border: 1px solid var(--border-color); }
     .badge-status.libur { background: #F1F5F9; color: #475569; border: 1px solid var(--border-color); }
+    .badge-status.bebas { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
     
     [data-theme="dark"] .badge-status.hadir { background: rgba(16,185,129,0.1); }
     [data-theme="dark"] .badge-status.terlambat { background: rgba(239,68,68,0.1); }
     [data-theme="dark"] .badge-status.izin { background: rgba(139,92,246,0.1); }
     [data-theme="dark"] .badge-status.belum { background: rgba(71,85,105,0.1); }
     [data-theme="dark"] .badge-status.libur { background: rgba(71,85,105,0.15); }
+    [data-theme="dark"] .badge-status.bebas { background: rgba(30, 58, 138, 0.2); color: #93C5FD; border-color: rgba(30, 58, 138, 0.4); }
 
     .badge-method {
         display: inline-flex;
@@ -1044,7 +1051,7 @@
             align-items: center !important;
             width: 100%;
         }
-        .btn-export, .btn-export-pdf {
+        .btn-export, .btn-export-pdf, .btn-export-outline {
             width: auto !important;
             align-self: flex-start !important;
             justify-content: center;
@@ -1386,8 +1393,11 @@
         </div>
     </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="{{ route('attendance.recap.export_pdf_monthly', request()->query()) }}" class="btn-export-pdf">
-            Ekspor PDF
+        <a href="{{ route('attendance.recap.export_excel_monthly', request()->query()) }}" class="btn-export-outline">
+            <i data-feather="download"></i> Ekspor Excel
+        </a>
+        <a href="{{ route('attendance.recap.export_pdf_monthly', request()->query()) }}" class="btn-export-outline">
+            <i data-feather="download"></i> Ekspor PDF
         </a>
     </div>
 </div>
@@ -1443,7 +1453,6 @@
                 {{-- Date input with icon --}}
                 <div class="att-input-date">
                     <input type="date" name="date" class="form-control" value="{{ $date }}" required>
-                    <!-- <i data-feather="calendar" style="width: 14px; height: 14px;"></i> -->
                 </div>
 
                 {{-- Division Filter --}}
@@ -1489,7 +1498,7 @@
                     <th>Jam Masuk</th>
                     <th>Keterangan</th>
                     <th>Metode</th>
-                    <th>Bukti</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -1513,18 +1522,22 @@
                             </span>
                         </td>
 
-                        {{-- Status --}}
+                        {{-- Status (Disesuaikan dengan manual override) --}}
                         <td>
                             @if($item['status'] === 'hadir')
                                 <span class="badge-status hadir">Hadir</span>
                             @elseif($item['status'] === 'terlambat')
                                 <span class="badge-status terlambat">Terlambat</span>
+                            @elseif($item['status'] === 'lupa_absen')
+                                <span class="badge-status libur" style="background: #FFF7ED; color: #C2410C; border: 1px solid rgba(194,65,12,0.15);">Lupa Absen</span>
                             @elseif($item['status'] === 'absen')
-                                <span style="color: var(--text-muted); font-weight: 500;">—</span>
+                                <span class="badge-status terlambat" style="background: #FEF2F2; color: #B91C1C;">Alpa</span>
                             @elseif($item['status'] === 'izin_cuti')
                                 <span class="badge-status izin">{{ $item['leave']->type === 'izin' ? 'Izin' : 'Cuti' }}</span>
                             @elseif($item['status'] === 'libur')
                                 <span class="badge-status libur">Libur</span>
+                            @elseif($item['status'] === 'bebas_absen')
+                                <span class="badge-status bebas">Bebas Absen</span>
                             @else
                                 <span class="badge-status belum">Belum Hadir</span>
                             @endif
@@ -1541,16 +1554,22 @@
                             @endif
                         </td>
 
-                        {{-- Keterangan --}}
+                        {{-- Keterangan (Memprioritaskan admin_note) --}}
                         <td>
-                            @if($item['status'] === 'hadir')
+                            @if($item['admin_note'])
+                                <span style="color: #2563EB; font-weight: 600;">{{ $item['admin_note'] }}</span>
+                            @elseif($item['status'] === 'hadir')
                                 <span style="color: var(--text-muted); font-weight: 500;">Tepat waktu</span>
                             @elseif($item['status'] === 'terlambat')
                                 <span style="color: #DC2626; font-weight: 600;">Terlambat {{ $item['lateness'] }}</span>
+                            @elseif($item['status'] === 'lupa_absen')
+                                <span style="color: #C2410C; font-weight: 600;">Lupa Absen</span>
                             @elseif($item['status'] === 'izin_cuti')
                                 <span style="color: #7C3AED; font-weight: 600; font-style: italic;">{{ $item['reason'] }}</span>
+                            @elseif($item['status'] === 'bebas_absen')
+                                <span style="color: var(--text-muted); font-weight: 500; font-style: italic;">{{ $item['reason'] }}</span>
                             @elseif($item['status'] === 'absen')
-                                <span style="color: var(--text-muted); font-weight: 500;">—</span>
+                                <span style="color: #B91C1C; font-weight: 600;">Alpa</span>
                             @elseif($item['status'] === 'libur')
                                 <span style="color: var(--text-muted); font-weight: 500;">Hari libur</span>
                             @else
@@ -1558,26 +1577,23 @@
                             @endif
                         </td>
 
+                        {{-- Metode --}}
                         <td>
                             @if($item['method'] === 'kantor')
-                                <span class="badge-method">
-                                    Kantor
-                                </span>
+                                <span class="badge-method">Kantor</span>
                             @elseif($item['method'] === 'luar')
-                                <span class="badge-method">
-                                    Website
-                                </span>
-                                
+                                <span class="badge-method">Website</span>
                             @else
                                 <span style="color: var(--text-muted); font-weight: 500;">—</span>
                             @endif
                         </td>
 
+                        {{-- Kolom Aksi (Tombol Bukti & Edit) --}}
                         <td>
-                            @if($item['status'] === 'hadir' || $item['status'] === 'terlambat')
-                                <div class="proof-wrapper">
+                            <div class="proof-wrapper">
+                                @if($item['status'] === 'hadir' || $item['status'] === 'terlambat' || $item['status'] === 'lupa_absen')
                                     @if($item['method'] === 'luar' && $item['photo_path'])
-                                        <button class="btn-proof-square" onclick="showProofModal('{{ asset('storage/' . $item['photo_path']) }}', '{{ $item['latitude'] }}', '{{ $item['longitude'] }}', '{{ addslashes($item['user']->name) }}', '{{ $item['user']->photo_url }}', '{{ \Carbon\Carbon::parse($date . ' ' . $item['check_in_time'])->locale('id')->translatedFormat('d M Y, H:i') }} WIB')" title="Lihat Bukti Foto">
+                                        <button type="button" class="btn-proof-square" onclick="showProofModal('{{ asset('storage/' . $item['photo_path']) }}', '{{ $item['latitude'] }}', '{{ $item['longitude'] }}', '{{ addslashes($item['user']->name) }}', '{{ $item['user']->photo_url }}', '{{ \Carbon\Carbon::parse($date . ' ' . $item['check_in_time'])->locale('id')->translatedFormat('d M Y, H:i') }} WIB')" title="Lihat Bukti Foto">
                                             <i data-feather="image"></i>
                                         </button>
                                     @else
@@ -1585,24 +1601,17 @@
                                             <i data-feather="shield"></i>
                                         </span>
                                     @endif
-                                    
-                                    <!-- <button class="btn-action-dots" title="Tindakan">
-                                        <i data-feather="more-horizontal"></i>
-                                    </button> -->
-                                </div>
-                            @elseif($item['status'] === 'izin_cuti' && $item['leave'])
-                                <div class="proof-wrapper">
-                                    <button class="btn-proof-square" onclick="showLeaveModal('{{ $item['user']->name }}', '{{ $item['leave']->type }}', '{{ $item['leave']->start_date->format('d M Y') }} - {{ $item['leave']->end_date->format('d M Y') }}', '{{ $item['reason'] }}', '{{ $item['leave']->approvedBy->name ?? 'Sistem' }}')" title="Lihat Pengajuan">
+                                @elseif($item['status'] === 'izin_cuti' && $item['leave'])
+                                    <button type="button" class="btn-proof-square" onclick="showLeaveModal('{{ $item['user']->name }}', '{{ $item['leave']->type }}', '{{ $item['leave']->start_date->format('d M Y') }} - {{ $item['leave']->end_date->format('d M Y') }}', '{{ $item['reason'] }}', '{{ $item['leave']->approvedBy->name ?? 'Sistem' }}')" title="Lihat Pengajuan">
                                         <i data-feather="file-text"></i>
                                     </button>
-                                    
-                                    <button class="btn-action-dots" title="Tindakan">
-                                        <i data-feather="more-horizontal"></i>
-                                    </button>
-                                </div>
-                            @else
-                                <span style="color: var(--text-muted); font-weight: 500;">—</span>
-                            @endif
+                                @endif
+
+                                {{-- Tombol Tindakan Edit untuk GM selalu aktif --}}
+                                <button type="button" class="btn-action-dots" onclick="showEditStatusModal('{{ $item['user']->id }}', '{{ addslashes($item['user']->name) }}', '{{ $item['status'] }}', '{{ addslashes($item['admin_note']) }}')" title="Ubah Status / Keterangan">
+                                    <i data-feather="edit-2"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 @empty
@@ -1636,7 +1645,56 @@
     </div>
 </div>
 
-{{-- ═══ GEOTAGGING PHOTO PROOF MODAL ═══ --}}
+
+{{-- ═══ MODAL EDIT STATUS & KETERANGAN ABSENSI (GM ACTION) ═══ --}}
+<div class="att-modal-overlay" id="editStatusModal">
+    <div class="att-modal-content">
+        <div class="att-modal-header">
+            <h3>
+                <i data-feather="edit-3" style="width:16px;height:16px;color:#2563EB;"></i>
+                <span>Sesuaikan Kehadiran Karyawan</span>
+            </h3>
+            <button class="att-modal-close" onclick="closeModal('editStatusModal')">
+                <i data-feather="x"></i>
+            </button>
+        </div>
+        <form action="{{ route('attendance.recap.update_status') }}" method="POST">
+            @csrf
+            <input type="hidden" name="user_id" id="editUserId">
+            <input type="hidden" name="date" value="{{ $date }}">
+
+            <div class="att-modal-body">
+                <div style="margin-bottom: 16px;">
+                    <label style="display:block; margin-bottom:6px; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--text-muted);">Nama Karyawan</label>
+                    <div id="editTargetName" style="font-size:14px; font-weight:700; color:var(--text-main);">—</div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label for="manual_status" style="display:block; margin-bottom:6px; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--text-muted);">Paksa Status Kehadiran (Override)</label>
+                    <select name="manual_status" id="editManualStatus" class="form-control att-select" style="width: 100%;">
+                        <option value="">Auto Detect System</option>
+                        <option value="hadir">Hadir</option>
+                        <option value="terlambat">Terlambat</option>
+                        <option value="lupa_absen">Lupa Absen</option>
+                        <option value="absen">Alpa</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 8px;">
+                    <label for="admin_note" style="display:block; margin-bottom:6px; font-size:11px; font-weight:600; text-transform:uppercase; color:var(--text-muted);">Catatan Admin / Keterangan Tambahan</label>
+                    <textarea name="admin_note" id="editAdminNote" class="form-control" rows="3" style="width: 100%; border-radius: 10px; padding: 10px; font-size: 13px;" placeholder="Contoh: Karyawan tugas luar mendadak / Lupa fingerprint karena buru-buru..."></textarea>
+                </div>
+            </div>
+            <div class="att-modal-header" style="border-top: 1px solid var(--border-color); border-bottom: none; justify-content: flex-end; gap: 8px; padding: 12px 20px;">
+                <button type="button" class="btn-filter-action reset" style="height:36px;" onclick="closeModal('editStatusModal')">Batal</button>
+                <button type="submit" class="btn-filter-action blue" style="height:36px;">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- ═══ OTHER MODALS (Bukti Foto & Leave) ═══ --}}
+<!-- Geotagging Photo Proof Modal -->
 <div class="att-modal-overlay" id="proofModal">
     <div class="att-modal-content proof-modal-large">
         <div class="att-modal-header">
@@ -1682,9 +1740,8 @@
 
             <!-- Lokasi Absensi Card Section -->
             <div class="proof-location-section">
-                
                 <div class="proof-location-grid">
-                    <!-- Left: Details List -->
+                    <!-- Details List -->
                     <div class="proof-details-list">
                         <!-- Nama Jalan -->
                         <div class="proof-detail-item">
@@ -1693,8 +1750,8 @@
                             </div>
                             <div class="proof-detail-content">
                                 <span class="proof-detail-label">Nama Jalan</span>
-                                <span class="proof-detail-value" id="modalStreetName">Memuat lokasi...</span>
-                                <span class="proof-detail-sub" id="modalAddressDetail">Sedang mengambil detail alamat...</span>
+                                <span class="proof-detail-value" id="modalStreetName">Memuat lokasi</span>
+                                <span class="proof-detail-sub" id="modalAddressDetail">Sedang mengambil detail alamat</span>
                             </div>
                         </div>
                         <!-- Koordinat -->
@@ -1724,15 +1781,12 @@
                             </a>
                         </div>
                     </div>
-
-                   
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-{{-- ═══ LEAVE DETAILS MODAL ═══ --}}
 <div class="att-modal-overlay" id="leaveModal">
     <div class="att-modal-content">
         <div class="att-modal-header">
@@ -1775,6 +1829,26 @@
         urlParams.set('per_page', select.value);
         urlParams.set('page', 1); // Reset page to 1
         window.location.search = urlParams.toString();
+    }
+
+    function showEditStatusModal(userId, name, currentStatus, currentNote) {
+        document.getElementById('editUserId').value = userId;
+        document.getElementById('editTargetName').textContent = name;
+        document.getElementById('editAdminNote').value = currentNote || '';
+        
+        const statusSelect = document.getElementById('editManualStatus');
+        if (['hadir', 'terlambat', 'lupa_absen', 'absen'].includes(currentStatus)) {
+            statusSelect.value = currentStatus;
+        } else {
+            statusSelect.value = '';
+        }
+
+        const modal = document.getElementById('editStatusModal');
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.classList.add('active');
+        });
+        feather.replace();
     }
 
     let proofMap = null;

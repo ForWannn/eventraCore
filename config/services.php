@@ -39,4 +39,8 @@ return [
         'key' => env('LOCATIONIQ_API_KEY'),
     ],
 
+    'fonnte' => [
+        'token' => env('FONNTE_TOKEN'),
+    ],
+
 ];

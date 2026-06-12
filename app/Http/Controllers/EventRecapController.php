@@ -204,7 +204,48 @@ class EventRecapController extends Controller
         ]);
 
         $recap = $event->recap ?: new EventRecap(['event_id' => $event->id]);
-        $recap->initial_nominal = $request->initial_nominal;
+        
+        $oldNominal = (float) $recap->initial_nominal;
+        $newNominal = (float) $request->initial_nominal;
+
+        if ($oldNominal > 0 && $newNominal !== $oldNominal) {
+            $diff = $newNominal - $oldNominal;
+            if ($diff > 0) {
+                // Penambahan anggaran
+                EventRecapItem::create([
+                    'event_id' => $event->id,
+                    'date' => now()->format('Y-m-d'),
+                    'category' => 'Pemasukan',
+                    'item_name' => 'Penyesuaian Anggaran (Otomatis)',
+                    'vendor' => 'Finance',
+                    'quantity' => 1,
+                    'unit_price' => $diff,
+                    'nominal' => $diff,
+                    'description' => 'Penambahan anggaran otomatis oleh tim Finance',
+                    'notes' => 'Pemberian anggaran tambahan oleh Finance',
+                    'receipt_path' => '',
+                    'uploader_id' => $user->id,
+                ]);
+            } else {
+                // Pengurangan anggaran
+                EventRecapItem::create([
+                    'event_id' => $event->id,
+                    'date' => now()->format('Y-m-d'),
+                    'category' => 'Pengurangan Anggaran',
+                    'item_name' => 'Penyesuaian Anggaran (Otomatis)',
+                    'vendor' => 'Finance',
+                    'quantity' => 1,
+                    'unit_price' => abs($diff),
+                    'nominal' => abs($diff),
+                    'description' => 'Pengurangan anggaran otomatis oleh tim Finance',
+                    'notes' => 'Pengurangan anggaran oleh Finance',
+                    'receipt_path' => '',
+                    'uploader_id' => $user->id,
+                ]);
+            }
+        }
+
+        $recap->initial_nominal = $newNominal;
 
         // If status was draft, transition to dalam_rekap since budget is set
         if ($recap->status === 'draft') {
@@ -228,52 +269,56 @@ class EventRecapController extends Controller
 
         $recap = $event->recap;
         if (!$recap || in_array($recap->status, ['menunggu_finance', 'selesai'])) {
-            return redirect()->back()->with('error', 'Tidak dapat menambahkan nota. Rekap sedang ditinjau atau telah diselesaikan.');
+            return redirect()->back()->with('error', 'Tidak dapat menambahkan nota.');
         }
 
+        // 1. Validasi (tambahkan kategori baru jika perlu)
         $request->validate([
             'date' => 'required|date',
-            'category' => 'required|string|in:Konsumsi,Transportasi,Perlengkapan,Dekorasi,Sewa,Operasional',
+            'category' => 'required|string', 
             'vendor' => 'required|string|max:255',
-            'nominal' => 'required|numeric|min:0',
+            'item_name' => 'required|string|max:255', // Kolom baru
+            'quantity' => 'required|integer|min:1',   // Kolom baru
+            'unit_price' => 'required|numeric|min:0', // Kolom baru
             'description' => 'nullable|string',
+            'notes' => 'nullable|string',             // Kolom baru
             'receipt' => 'required|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
-        // Upload receipt file
-        if ($request->hasFile('receipt')) {
-            $file = $request->file('receipt');
-            $filename = 'receipt_' . $event->id . '_' . time() . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-            
-            $destinationPath = public_path('assets/receipts');
-            if (!File::isDirectory($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true, true);
-            }
-            
-            $file->move($destinationPath, $filename);
-            $receiptPath = '/assets/receipts/' . $filename;
-        } else {
-            return redirect()->back()->with('error', 'File nota wajib diunggah.');
+        if (in_array(strtolower(trim($request->category)), ['pemasukan', 'pengurangan anggaran', 'penyesuaian anggaran'])) {
+            return redirect()->back()->with('error', 'Kategori ini hanya dapat ditambahkan secara otomatis oleh sistem/Finance.');
         }
 
-        // Create item
+        if ($request->item_name === 'Penyesuaian Anggaran (Otomatis)') {
+            return redirect()->back()->with('error', 'Nama item ini dicadangkan untuk penyesuaian anggaran otomatis.');
+        }
+
+        // 2. Upload ke Storage (Menggunakan storage/app/public)
+        $filename = 'receipt_' . $event->id . '_' . time() . '_' . Str::random(5) . '.' . $request->file('receipt')->getClientOriginalExtension();
+        // Simpan ke storage/app/public/receipts
+        $path = $request->file('receipt')->storeAs('receipts', $filename, 'public');
+
+        // 3. Simpan ke Database
         EventRecapItem::create([
             'event_id' => $event->id,
             'date' => $request->date,
             'category' => $request->category,
             'vendor' => $request->vendor,
-            'nominal' => $request->nominal,
+            'item_name' => $request->item_name,
+            'quantity' => $request->quantity,
+            'unit_price' => $request->unit_price,
+            'nominal' => $request->quantity * $request->unit_price, // Total
             'description' => $request->description,
-            'receipt_path' => $receiptPath,
+            'notes' => $request->notes,
+            'receipt_path' => $path, // Contoh isi: 'receipts/namafile.jpg'
             'uploader_id' => $user->id,
         ]);
 
-        // Automatically set status to 'dalam_rekap' if it was 'draft' or 'direvisi'
         if (in_array($recap->status, ['draft', 'direvisi'])) {
             $recap->update(['status' => 'dalam_rekap']);
         }
 
-        return redirect()->route('event-recaps.show', $event->id)->with('success', 'Nota belanja berhasil ditambahkan.');
+        return redirect()->route('event-recaps.show', $event->id)->with('success', 'Berhasil.');
     }
 
     /**
@@ -293,6 +338,10 @@ class EventRecapController extends Controller
 
         if ($item->event_id !== $event->id) {
             abort(404);
+        }
+
+        if ($item->item_name === 'Penyesuaian Anggaran (Otomatis)') {
+            return redirect()->back()->with('error', 'Tidak dapat menghapus item penyesuaian anggaran otomatis.');
         }
 
         // Delete physical file
@@ -409,36 +458,54 @@ class EventRecapController extends Controller
     /**
      * Export recap to Excel format (Finance and CEO/GM only).
      */
-    public function export(Event $event)
+    // public function export(Event $event)
+    // {
+    //     $user = Auth::user();
+    //     $isFinance = $this->isFinance($user);
+    //     $isLeader = $user->hasAnyRole(['CEO', 'GM']);
+    //     $hasPermission = $user->can('rekap_event') || $isFinance;
+
+    //     if ((!$isFinance && !$isLeader) || !$hasPermission) {
+    //         abort(403, 'Anda tidak memiliki hak untuk mengekspor dokumen rekap.');
+    //     }
+
+    //     $recap = $event->recap;
+    //     if (!$recap) {
+    //         abort(404, 'Rekapitulasi belum diinisialisasi.');
+    //     }
+
+    //     $items = $event->recapItems()->orderBy('date', 'asc')->get();
+    //     $picDetails = $event->participants()->where('is_pic', true)->first();
+
+    //     // Export filename
+    //     $filename = 'Rekap_Event_' . Str::slug($event->name) . '_' . date('Ymd_His') . '.xls';
+
+    //     // Return view as an Excel download
+    //     return response()->view('event-recaps.export', [
+    //         'event' => $event,
+    //         'recap' => $recap,
+    //         'items' => $items,
+    //         'picDetails' => $picDetails,
+    //     ])
+    //     ->header('Content-Type', 'application/vnd.ms-excel')
+    //     ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    // }
+    public function export(\App\Models\Event $event)
     {
-        $user = Auth::user();
-        $isFinance = $this->isFinance($user);
-        $isLeader = $user->hasAnyRole(['CEO', 'GM']);
-        $hasPermission = $user->can('rekap_event') || $isFinance;
-
-        if ((!$isFinance && !$isLeader) || !$hasPermission) {
-            abort(403, 'Anda tidak memiliki hak untuk mengekspor dokumen rekap.');
-        }
-
-        $recap = $event->recap;
-        if (!$recap) {
-            abort(404, 'Rekapitulasi belum diinisialisasi.');
-        }
-
+        $event->load(['recap']);
         $items = $event->recapItems()->orderBy('date', 'asc')->get();
-        $picDetails = $event->participants()->where('is_pic', true)->first();
+        
+        $cleanName = preg_replace('/[^A-Za-z0-9\-]/', '_', $event->name);
+        $fileName = 'Rekap_Pengeluaran_Ops_' . $cleanName . '.xls';
 
-        // Export filename
-        $filename = 'Rekap_Event_' . Str::slug($event->name) . '_' . date('Ymd_His') . '.xls';
-
-        // Return view as an Excel download
         return response()->view('event-recaps.export', [
             'event' => $event,
-            'recap' => $recap,
-            'items' => $items,
-            'picDetails' => $picDetails,
+            'recap' => $event->recap,
+            'items' => $items
         ])
         ->header('Content-Type', 'application/vnd.ms-excel')
-        ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', '0');
     }
 }

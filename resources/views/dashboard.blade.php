@@ -19,7 +19,7 @@
         .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 640px) {
-        .stats-grid { grid-template-columns: 1fr; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     .stats-grid-3 {
@@ -593,7 +593,12 @@
         }
 
         /* Stats Grid & Cards */
-        .stats-grid, .stats-grid-3 {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .stats-grid-3 {
             grid-template-columns: 1fr !important;
             gap: 10px !important;
             margin-bottom: 16px !important;
@@ -2617,7 +2622,7 @@
                             <span>Metode</span>
                         </div>
                         <div class="detail-value">
-                            Web Absen
+                            {{ $todayAttendance->attendance_type === 'kantor' ? 'Absen Kantor' : 'Absen Luar Kantor' }}
                         </div>
                     </div>
 
@@ -2744,7 +2749,6 @@
 
     <!-- Main Columns: Comparison Trend & Upcoming Events List -->
     <div class="dashboard-cols">
-        <!-- Column 1: Comparison Trend Chart -->
         <!-- <div class="section-card" style="display: flex; flex-direction: column;">
             <div class="section-header" style="align-items: center; margin-bottom: 20px;">
                 <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
@@ -2774,7 +2778,7 @@
         </div> -->
 
         <!-- Column 2: Event Mendatang -->
-        <!-- <div class="section-card" style="display: flex; flex-direction: column;">
+        <div class="section-card" style="display: flex; flex-direction: column;">
             <div class="section-header" style="margin-bottom: 20px; align-items: center;">
                 <span class="section-title">Event Mendatang</span>
                 <a href="{{ route('events.index') }}" style="font-size: 12px; color: #2563eb; text-decoration: none; font-weight: 600; transition: color 0.2s;">
@@ -2807,7 +2811,7 @@
                     </div>
                 @endforelse
             </div>
-        </div> -->
+        </div>
     </div>
 @else
     <div class="dashboard-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
@@ -2950,7 +2954,7 @@
                                 <span>Lokasi Presensi</span>
                             </div>
                             <div class="detail-value">
-                                {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor Utama' : 'Luar Kantor (WFA)' }}
+                                {{ $todayAttendance->attendance_type === 'kantor' ? 'Kantor' : 'Luar Kantor' }}
                             </div>
                         </div>
 
@@ -2960,7 +2964,7 @@
                                 <span>Metode Presensi</span>
                             </div>
                             <div class="detail-value">
-                                Selfie & GPS Verification
+                                {{ $todayAttendance->attendance_type === 'kantor' ? 'Absen Kantor' : 'Absen Luar Kantor' }}
                             </div>
                         </div>
 

@@ -14,7 +14,7 @@ class EventRecap extends Model
         'event_id',
         'initial_nominal',
         'expected_receipts_count',
-        'status', // draft, dalam_rekap, menunggu_finance, direvisi, selesai
+        'status', 
         'speed_percentage',
         'completed_at',
     ];
@@ -36,7 +36,9 @@ class EventRecap extends Model
      */
     public function getTotalSpentAttribute(): float
     {
-        return (float) $this->event->recapItems()->sum('nominal');
+        return (float) $this->event->recapItems()
+            ->whereNotIn('category', ['Tambahan Ops', 'Penambahan Saldo', 'Pemasukan', 'Refund', 'Pengurangan Anggaran'])
+            ->sum('nominal');
     }
 
     /**
@@ -52,14 +54,10 @@ class EventRecap extends Model
      */
     public function getCompletionScoreAttribute(): int
     {
-        // 1. Completeness of Notes (Weight: 40%)
-        // Since there is no target nota, if at least 1 receipt is uploaded, completeness is 40%, otherwise 0%
         $uploaded = $this->event->recapItems()->count();
         $completenessScore = $uploaded > 0 ? 40 : 0;
 
-        // 2. Ketepatan Waktu (Weight: 30%)
-        // Days elapsed since event completion
-        $speedScore = 5; // default minimum
+        $speedScore = 5; 
         $eventDates = $this->event->event_dates ?? [];
         if (!empty($eventDates)) {
             sort($eventDates);
@@ -71,7 +69,7 @@ class EventRecap extends Model
             $compareDate = $this->completed_at ?: now();
             
             if ($compareDate <= $eventEnd) {
-                $speedScore = 30; // completed before or exactly at event end
+                $speedScore = 30;
             } else {
                 $daysLate = $eventEnd->diffInDays($compareDate);
                 if ($daysLate <= 1) {
@@ -88,8 +86,7 @@ class EventRecap extends Model
             }
         }
 
-        // 3. Status Validasi (Weight: 30%)
-        $statusScore = 10; // draft / dalam_rekap
+        $statusScore = 10; 
         if ($this->status === 'menunggu_finance') {
             $statusScore = 20;
         } elseif ($this->status === 'selesai') {

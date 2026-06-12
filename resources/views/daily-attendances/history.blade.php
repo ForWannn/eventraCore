@@ -543,6 +543,34 @@
         width: 12px;
         height: 12px;
     }
+    .btn-export-outline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 20px;
+        background: #FFFFFF;
+        color: #003B7A; /* Warna teks biru gelap premium */
+        border: 1px solid #E2E8F0; /* Border abu-abu terang */
+        border-radius: 14px; /* Sudut membulat seperti di gambar */
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        min-height: 38px;
+    }
+    .btn-export-outline:hover {
+        background: #F8FAFC;
+        border-color: #CBD5E1;
+        color: #003B7A;
+    }
+    .btn-export-outline svg {
+        width: 16px;
+        height: 16px;
+        color: inherit;
+    }
 
     /* ── Mobile Responsive Overrides ── */
     @media (max-width: 768px) {
@@ -930,10 +958,10 @@
         </div>
 
         <!-- Download Button -->
-        <!-- <button type="button" onclick="exportData()" class="btn btn-secondary" style="display: flex; align-items: center; gap: 8px; background: var(--input-bg); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: background 0.2s; min-height: 38px;">
-            <i data-feather="download" style="width: 15px; height: 15px; color: var(--text-muted);"></i>
+        <button type="button" onclick="exportData()" class="btn-export-outline">
+            <i data-feather="download"></i>
             <span>Unduh</span>
-        </button> -->
+        </button>
     </form>
 
     <!-- Table -->
@@ -964,6 +992,10 @@
                                 <span style="background: rgba(16,185,129,0.1); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Hadir</span>
                             @elseif($att['status'] === 'Terlambat')
                                 <span style="background: rgba(239,68,68,0.1); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Terlambat</span>
+                            @elseif($att['status'] === 'Bebas Absen')
+                                <span style="background: rgba(100,116,139,0.1); color: #475569; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Bebas Absen</span>
+                            @elseif($att['status'] === 'Izin' || $att['status'] === 'Cuti')
+                                <span style="background: rgba(139,92,246,0.1); color: #7c3aed; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">{{ $att['status'] }}</span>
                             @else
                                 <span style="background: rgba(244,63,94,0.1); color: #f43f5e; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">Tidak Hadir</span>
                             @endif

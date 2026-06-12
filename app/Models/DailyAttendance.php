@@ -15,6 +15,8 @@ class DailyAttendance extends Model
         'latitude',
         'longitude',
         'status',
+        'manual_status', 
+        'admin_note',
     ];
 
     public function user()

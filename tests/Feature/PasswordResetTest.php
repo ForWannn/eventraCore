@@ -57,7 +57,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $code = '123456';
-        Cache::put('password_reset_code_ichwan.r7@gmail.com', $code, now()->addMinutes(10));
+        Cache::put('password_reset_code_ichwan.r7@gmail.com', $code, now()->addMinutes(5));
 
         $response = $this->post('/reset-password', [
             'email' => 'ichwan.r7@gmail.com',
@@ -80,7 +80,7 @@ class PasswordResetTest extends TestCase
             'password' => Hash::make('old-password'),
         ]);
 
-        Cache::put('password_reset_code_ichwan.r7@gmail.com', '123456', now()->addMinutes(10));
+        Cache::put('password_reset_code_ichwan.r7@gmail.com', '123456', now()->addMinutes(5));
 
         $response = $this->post('/reset-password', [
             'email' => 'ichwan.r7@gmail.com',
@@ -91,5 +91,38 @@ class PasswordResetTest extends TestCase
 
         $response->assertSessionHasErrors('code');
         $this->assertFalse(Hash::check('new-password', $user->refresh()->password));
+    }
+
+    public function test_password_reset_code_can_be_resent()
+    {
+        Mail::fake();
+
+        $user = User::factory()->create([
+            'email' => 'ichwan.r7@gmail.com',
+        ]);
+
+        $response = $this->post('/resend-password-code', [
+            'email' => 'ichwan.r7@gmail.com',
+        ]);
+
+        $response->assertRedirect(route('password.reset'));
+        $response->assertSessionHas('status');
+        $response->assertSessionHas('email', 'ichwan.r7@gmail.com');
+        
+        $this->assertNotNull(Cache::get('password_reset_code_ichwan.r7@gmail.com'));
+        $this->assertNotNull(session('code_sent_at'));
+        
+        Mail::assertSent(ResetPasswordCode::class, function ($mail) {
+            return $mail->hasTo('ichwan.r7@gmail.com');
+        });
+    }
+
+    public function test_password_reset_code_cannot_be_resent_for_non_existent_email()
+    {
+        $response = $this->post('/resend-password-code', [
+            'email' => 'nonexistent@gmail.com',
+        ]);
+
+        $response->assertSessionHasErrors('email');
     }
 }

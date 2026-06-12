@@ -59,6 +59,13 @@ class WorkCalendarController extends Controller
             $isWorking = isset($data['is_working_day']) ? (bool) $data['is_working_day'] : false;
             $desc = isset($data['description']) ? trim($data['description']) : null;
 
+            // Check if it's changing from non-working to working
+            $carbon = Carbon::parse($dateStr);
+            $isWeekend = $carbon->isWeekend();
+            
+            $existing = WorkCalendar::where('date', $dateStr)->first();
+            $wasWorking = $existing ? (bool)$existing->is_working_day : !$isWeekend;
+
             WorkCalendar::updateOrCreate(
                 ['date' => $dateStr],
                 [
@@ -66,6 +73,26 @@ class WorkCalendarController extends Controller
                     'description' => $desc
                 ]
             );
+
+            if (!$wasWorking && $isWorking) {
+                // Send WhatsApp notification
+                $namaHari = $carbon->locale('id')->translatedFormat('l');
+                $tanggal = $carbon->locale('id')->translatedFormat('d F Y');
+
+                $users = \App\Models\User::whereDoesntHave('roles', function($q) {
+                    $q->whereIn('name', ['Intern', 'Admin', 'Superadmin']);
+                })->get();
+
+                foreach ($users as $user) {
+                    if (!empty($user->phone)) {
+                        $message = "📅 [INFO KALENDER KERJA]\n\n"
+                                 . "Hai {$user->name}, ada pemberitahuan penting!\n"
+                                 . "Hari {$namaHari}, tanggal {$tanggal} berstatus TETAP MASUK KERJA operasional ya.\n\n"
+                                 . "Jangan lupa untuk tetap melakukan absen pada tanggal tersebut. Terima kasih!";
+                        \App\Services\FonnteService::send($user->phone, $message);
+                    }
+                }
+            }
         }
 
         return redirect()->back()->with('success', 'Kalender kerja berhasil diperbarui.');

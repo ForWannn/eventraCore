@@ -93,4 +93,87 @@ class InternDashboardTest extends TestCase
             'message' => 'Intern tidak diperbolehkan melakukan absensi.'
         ]);
     }
+
+    public function test_admin_is_blocked_from_submitting_attendance_and_history()
+    {
+        Role::firstOrCreate(['name' => 'Admin']);
+        $admin = User::factory()->create();
+        $admin->assignRole('Admin');
+
+        // Submitting attendance should return 403 Forbidden
+        $response = $this->actingAs($admin)->postJson('/daily-attendance/store-luar', [
+            'photo' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+            'latitude' => '-2.9507',
+            'longitude' => '104.7454',
+        ]);
+
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Akses ditolak untuk Admin.'
+        ]);
+
+        // Accessing history should return 403
+        $response = $this->actingAs($admin)->get('/attendance-history');
+        $response->assertStatus(403);
+    }
+
+    public function test_superadmin_is_blocked_from_submitting_attendance_and_history()
+    {
+        Role::firstOrCreate(['name' => 'Superadmin']);
+        $superadmin = User::factory()->create();
+        $superadmin->assignRole('Superadmin');
+
+        // Submitting attendance should return 403 Forbidden
+        $response = $this->actingAs($superadmin)->postJson('/daily-attendance/store-luar', [
+            'photo' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+            'latitude' => '-2.9507',
+            'longitude' => '104.7454',
+        ]);
+
+        $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'Superadmin tidak diperbolehkan melakukan absensi.'
+        ]);
+
+        // Accessing history should return 403
+        $response = $this->actingAs($superadmin)->get('/attendance-history');
+        $response->assertStatus(403);
+    }
+
+    public function test_recap_page_excludes_admin_superadmin_and_intern_from_list_and_statistics()
+    {
+        Role::firstOrCreate(['name' => 'Admin']);
+        Role::firstOrCreate(['name' => 'Superadmin']);
+        Role::firstOrCreate(['name' => 'GM']);
+        Permission::firstOrCreate(['name' => 'rekap_absen']);
+
+        $gm = User::factory()->create();
+        $gm->assignRole('GM');
+        $gm->givePermissionTo('rekap_absen');
+
+        $adminUser = User::factory()->create(['name' => 'Admin User Name']);
+        $adminUser->assignRole('Admin');
+
+        $superadminUser = User::factory()->create(['name' => 'Superadmin User Name']);
+        $superadminUser->assignRole('Superadmin');
+
+        $internUser = User::factory()->create(['name' => 'Intern User Name']);
+        $internUser->assignRole('Intern');
+
+        $employeeUser = User::factory()->create(['name' => 'Employee User Name']);
+        $employeeUser->assignRole('Employee');
+
+        $response = $this->actingAs($gm)->get('/daily-attendance-recap');
+
+        $response->assertStatus(200);
+
+        // Verify employee is seen, but others are not
+        $response->assertSee('Employee User Name');
+        $response->assertDontSee('Admin User Name');
+        $response->assertDontSee('Superadmin User Name');
+        $response->assertDontSee('Intern User Name');
+
+        // Total staff count on the card should be 2 (employeeUser and gm)
+        $response->assertViewHas('totalStaff', 2);
+    }
 }

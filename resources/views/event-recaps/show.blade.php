@@ -4,6 +4,33 @@
 
 @section('content')
 <style>
+    .btn-export-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: #FFFFFF;
+        color: #003B7A; /* Warna teks biru gelap premium */
+        border: 1px solid #E2E8F0; /* Border abu-abu terang */
+        border-radius: 14px; /* Sudut membulat seperti di gambar */
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .btn-export-outline:hover {
+        background: #F8FAFC;
+        border-color: #CBD5E1;
+        color: #003B7A;
+    }
+    .btn-export-outline svg {
+        width: 16px;
+        height: 16px;
+        color: inherit;
+    }
+
     /* ── Main Container ── */
     .recap-detail-grid {
         display: grid;
@@ -356,6 +383,8 @@
     .category-badge.dekorasi { background: rgba(236,72,153,0.06); color: #ec4899; border: 1px solid rgba(236,72,153,0.15); }
     .category-badge.sewa { background: rgba(245,158,11,0.06); color: #f59e0b; border: 1px solid rgba(245,158,11,0.15); }
     .category-badge.operasional { background: rgba(100,116,139,0.06); color: #64748b; border: 1px solid rgba(100,116,139,0.15); }
+    .category-badge.pemasukan { background: rgba(16,185,129,0.06); color: #10b981; border: 1px solid rgba(16,185,129,0.15); }
+    .category-badge.pengurangan { background: rgba(239,68,68,0.06); color: #ef4444; border: 1px solid rgba(239,68,68,0.15); }
 
     .receipt-thumbnail {
         width: 48px;
@@ -1481,12 +1510,17 @@
                                 Rp {{ number_format($item->nominal, 0, ',', '.') }}
                             </td>
                             <td>
-                                <img src="{{ asset($item->receipt_path) }}" class="receipt-thumbnail" 
+                                @if($item->receipt_path)
+                                <img src="{{ asset('storage/' . $item->receipt_path) }}" class="receipt-thumbnail" 
                                      alt="Nota {{ $item->vendor }}" 
-                                     onclick="openPreviewModal('{{ asset($item->receipt_path) }}', '{{ number_format($item->nominal, 0, ',', '.') }}', '{{ $item->category }}', '{{ $item->vendor }}', '{{ $item->date->translatedFormat('d F Y') }}', '{{ optional($item->uploader)->name ?? '-' }}')">
+                                     onclick="openPreviewModal('{{ asset('storage/' . $item->receipt_path) }}', '{{ number_format($item->nominal, 0, ',', '.') }}', '{{ $item->category }}', '{{ $item->vendor }}', '{{ $item->date->translatedFormat('d F Y') }}', '{{ optional($item->uploader)->name ?? '-' }}')">
+                                @else
+                                <span style="font-size: 11.5px; color: var(--text-muted); font-style: italic;">Tidak ada nota</span>
+                                @endif
                             </td>
                             @if($isPic && in_array($recap->status, ['draft', 'dalam_rekap', 'direvisi']))
                             <td>
+                                @if($item->item_name !== 'Penyesuaian Anggaran (Otomatis)')
                                 <form action="{{ route('event-recaps.items.destroy', [$event->id, $item->id]) }}" method="POST" onsubmit="event.preventDefault(); const form = this; showCustomConfirm({
                                     title: 'Hapus Bukti Pengeluaran?',
                                     message: 'Apakah Anda yakin ingin menghapus bukti pengeluaran ini?',
@@ -1501,6 +1535,9 @@
                                         <i data-feather="trash-2"></i>
                                     </button>
                                 </form>
+                                @else
+                                <span style="font-size: 11.5px; color: var(--text-muted); font-style: italic;">Otomatis</span>
+                                @endif
                             </td>
                             @endif
                         </tr>
@@ -1632,7 +1669,7 @@
             <div class="section-header">
                 <div class="section-title">Preview Format Excel</div>
                 @if($isFinance || $isLeader)
-                <a href="{{ route('event-recaps.export', $event->id) }}" class="btn-primary">
+                <a href="{{ route('event-recaps.export', $event->id) }}" class="btn-export-outline">
                     <i data-feather="download"></i> Download File Excel
                 </a>
                 @endif
@@ -1908,86 +1945,103 @@
         </div>
         
         <form action="{{ route('event-recaps.items.store', $event->id) }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; overflow: hidden; margin: 0;">
-            @csrf
-            <!-- Scrollable Body -->
-            <div class="modal-body" style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px;">
-                <!-- Drag and drop zone -->
-                <div class="form-group" style="margin: 0;">
-                    <div class="upload-drag-area-new" id="dragArea" onclick="document.getElementById('receipt').click()">
-                        <div id="upload-placeholder">
-                            <div class="upload-icon-circle">
-                                <i data-feather="upload-cloud" style="width: 24px; height: 24px; color: #2563EB;"></i>
-                            </div>
-                            <p style="font-weight: 700; color: var(--text-main); font-size: 14px; margin: 0 0 6px 0;">Klik untuk memilih file nota</p>
-                            <span style="font-size: 11.5px; color: var(--text-muted);">Mendukung JPG, PNG, JPEG (Maks. 5MB)</span>
-                        </div>
-                        <div id="upload-preview-container" style="display: none; width: 100%; height: 100%; justify-content: center; align-items: center; flex-direction: column; position: relative;">
-                            <img id="upload-preview-img" src="" style="max-width: 100%; max-height: 160px; border-radius: 8px; object-fit: contain; border: 1px solid var(--border-color);">
-                            <div id="upload-file-name" style="margin-top: 8px; font-weight: 700; font-size: 12px; color: #2563EB; word-break: break-all;"></div>
-                            <button type="button" class="btn-remove-preview" onclick="removeUploadPreview(event)" style="position: absolute; top: -8px; right: -8px; background: rgba(239, 68, 68, 0.9); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; transition: all 0.2s;">
-                                <i data-feather="trash-2" style="width: 14px; height: 14px;"></i>
-                            </button>
-                        </div>
+    @csrf
+    <div class="modal-body" style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px;">
+        
+        <div class="form-group" style="margin: 0;">
+            <div class="upload-drag-area-new" id="dragArea" onclick="document.getElementById('receipt').click()">
+                <div id="upload-placeholder">
+                    <div class="upload-icon-circle">
+                        <i data-feather="upload-cloud" style="width: 24px; height: 24px; color: #2563EB;"></i>
                     </div>
-                    <input type="file" id="receipt" name="receipt" style="display: none;" accept="image/*" onchange="previewUploadFileName(this)" required>
+                    <p style="font-weight: 700; color: var(--text-main); font-size: 14px; margin: 0 0 6px 0;">Klik untuk memilih file nota</p>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Mendukung JPG, PNG, JPEG (Maks. 5MB)</span>
                 </div>
-
-                <!-- Info banner -->
-                <div class="upload-alert-banner">
-                    <div class="upload-alert-icon">
-                        <i data-feather="info" style="width: 18px; height: 18px;"></i>
-                    </div>
-                    <div>
-                        <div style="font-size: 12.5px; font-weight: 700; color: var(--text-main); line-height: 1.4;">Pastikan foto jelas dan seluruh informasi nota terbaca.</div>
-                        <div style="font-size: 11.5px; color: var(--text-muted); opacity: 0.8; margin-top: 2px;">File maksimal 5MB dengan format JPG, PNG, atau JPEG.</div>
-                    </div>
-                </div>
-
-                <!-- Form inputs -->
-                <div class="form-group" style="margin: 0;">
-                    <label for="date" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Tanggal Transaksi</label>
-                    <input type="date" id="date" name="date" class="upload-modal-input" value="{{ date('Y-m-d') }}" required>
-                </div>
-
-                <div class="form-group" style="position: relative; margin: 0;">
-                    <label for="category" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Kategori Pengeluaran</label>
-                    <select id="category" name="category" class="upload-modal-input" style="appearance: none; -webkit-appearance: none; padding-right: 36px;" required>
-                        <option value="Konsumsi">Konsumsi</option>
-                        <option value="Transportasi">Transportasi</option>
-                        <option value="Perlengkapan">Perlengkapan</option>
-                        <option value="Dekorasi">Dekorasi</option>
-                        <option value="Sewa">Sewa</option>
-                        <option value="Operasional">Operasional</option>
-                    </select>
-                    <i data-feather="chevron-down" style="position: absolute; right: 14px; bottom: 14px; width: 16px; height: 16px; color: var(--text-muted); pointer-events: none;"></i>
-                </div>
-
-                <!-- Vendor and Nominal Belanja row -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="form-group" style="margin: 0;">
-                        <label for="vendor" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Vendor</label>
-                        <input type="text" id="vendor" name="vendor" class="upload-modal-input" placeholder="Contoh: Tempat makan / toko susu" required>
-                    </div>
-
-                    <div class="form-group" style="margin: 0;">
-                        <label for="nominal" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Nominal Belanja (Rp)</label>
-                        <input type="number" id="nominal" name="nominal" class="upload-modal-input" placeholder="100000" required>
-                    </div>
-                </div>
-
-                <div class="form-group" style="position: relative; margin: 0;">
-                    <label for="description" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Keterangan (Opsional)</label>
-                    <textarea id="description" name="description" class="upload-modal-textarea" placeholder="Deskripsikan barang atau layanan yang dibeli..." maxlength="200" oninput="updateCharCount(this)"></textarea>
-                    <span id="char-count" style="position: absolute; right: 12px; bottom: 10px; font-size: 11px; color: var(--text-muted);">0/200</span>
+                <div id="upload-preview-container" style="display: none; width: 100%; height: 100%; justify-content: center; align-items: center; flex-direction: column; position: relative;">
+                    <img id="upload-preview-img" src="" style="max-width: 100%; max-height: 160px; border-radius: 8px; object-fit: contain; border: 1px solid var(--border-color);">
+                    <div id="upload-file-name" style="margin-top: 8px; font-weight: 700; font-size: 12px; color: #2563EB; word-break: break-all;"></div>
+                    <button type="button" class="btn-remove-preview" onclick="removeUploadPreview(event)" style="position: absolute; top: -8px; right: -8px; background: rgba(239, 68, 68, 0.9); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; transition: all 0.2s;">
+                        <i data-feather="trash-2" style="width: 14px; height: 14px;"></i>
+                    </button>
                 </div>
             </div>
+            <input type="file" id="receipt" name="receipt" style="display: none;" accept="image/*" onchange="previewUploadFileName(this)">
+        </div>
 
-            <!-- Footer Action Buttons -->
-            <div style="padding: 16px 24px 24px 24px; display: flex; flex-direction: column; align-items: center; border-top: 1px solid var(--border-color); background: var(--card-bg);">
-                <button type="submit" style="width: 100%; height: 46px; background: #1D4ED8; color: #FFFFFF; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1E40AF'" onmouseout="this.style.background='#1D4ED8'">Simpan Nota</button>
-                <button type="button" onclick="closeUploadModal()" style="margin-top: 16px; background: none; border: none; color: #2563EB; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none;">Batal</button>
+        <div class="upload-alert-banner">
+            <div class="upload-alert-icon">
+                <i data-feather="info" style="width: 18px; height: 18px;"></i>
             </div>
-        </form>
+            <div>
+                <div style="font-size: 12.5px; font-weight: 700; color: var(--text-main); line-height: 1.4;">Pastikan foto jelas dan seluruh informasi nota terbaca.</div>
+                <div style="font-size: 11.5px; color: var(--text-muted); opacity: 0.8; margin-top: 2px;">File maksimal 5MB dengan format JPG, PNG, atau JPEG. Boleh dikosongkan jika tidak ada nota fisik.</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group" style="margin: 0;">
+                <label for="date" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Tanggal Transaksi</label>
+                <input type="date" id="date" name="date" class="upload-modal-input" value="{{ date('Y-m-d') }}" required>
+            </div>
+
+            <div class="form-group" style="position: relative; margin: 0;">
+                <label for="category" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Kategori</label>
+                <select id="category" name="category" class="upload-modal-input" style="appearance: none; -webkit-appearance: none; padding-right: 36px;" required>
+                    <option value="Konsumsi">Konsumsi</option>
+                    <option value="Transportasi">Transportasi</option>
+                    <option value="Perlengkapan">Perlengkapan</option>
+                    <option value="Dekorasi">Dekorasi</option>
+                    <option value="Sewa">Sewa</option>
+                    <option value="Operasional">Operasional</option>
+                </select>
+                <i data-feather="chevron-down" style="position: absolute; right: 14px; bottom: 14px; width: 16px; height: 16px; color: var(--text-muted); pointer-events: none;"></i>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+            <label for="item_name" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Nama Item / Barang</label>
+            <input type="text" id="item_name" name="item_name" class="upload-modal-input" placeholder="Contoh: Cetak stiker / Konsumsi crew" required>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+            <label for="vendor" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Vendor / Penerima Dana</label>
+            <input type="text" id="vendor" name="vendor" class="upload-modal-input" placeholder="Contoh: Percetakan Mulia / Tempat makan" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 80px 1fr; gap: 16px;">
+            <div class="form-group" style="margin: 0;">
+                <label for="quantity" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">QTY</label>
+                <input type="number" id="inputQty" name="quantity" class="upload-modal-input" value="1" min="1" required oninput="calculateTotal()">
+            </div>
+
+            <div class="form-group" style="margin: 0;">
+                <label for="unit_price" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Harga Satuan (Rp)</label>
+                <input type="number" id="inputUnitPrice" name="unit_price" class="upload-modal-input" placeholder="0" min="0" required oninput="calculateTotal()">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+            <label for="nominal" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Total Harga (Nominal)</label>
+            <input type="text" id="displayTotal" class="upload-modal-input" placeholder="Rp 0" readonly style="background-color: #F8FAFC; border-color: #DBEAFE; font-weight: 700; color: #2563EB;">
+        </div>
+
+        <div class="form-group" style="position: relative; margin: 0;">
+            <label for="description" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Deskripsi Pembelian (Opsional)</label>
+            <textarea id="description" name="description" class="upload-modal-textarea" placeholder="Rincian barang atau layanan yang dibeli..." maxlength="200" oninput="updateCharCount(this)"></textarea>
+            <span id="char-count" style="position: absolute; right: 12px; bottom: 10px; font-size: 11px; color: var(--text-muted);">0/200</span>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+            <label for="notes" style="display: block; font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Keterangan Tambahan (Opsional)</label>
+            <input type="text" id="notes" name="notes" class="upload-modal-input" placeholder="Contoh: Lunas / Screenshot Transfer">
+        </div>
+    </div>
+
+    <div style="padding: 16px 24px 24px 24px; display: flex; flex-direction: column; align-items: center; border-top: 1px solid var(--border-color); background: var(--card-bg);">
+        <button type="submit" style="width: 100%; height: 46px; background: #1D4ED8; color: #FFFFFF; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1E40AF'" onmouseout="this.style.background='#1D4ED8'">Simpan Transaksi</button>
+        <button type="button" onclick="closeUploadModal()" style="margin-top: 16px; background: none; border: none; color: #2563EB; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none;">Batal</button>
+    </div>
+</form>
     </div>
 </div>
 @endif
@@ -2232,6 +2286,22 @@
             }, 200);
         }
     }
+    function calculateTotal() {
+    // Gunakan parseInt untuk memastikan input adalah angka bulat
+    let qty = parseInt(document.getElementById('inputQty').value) || 0;
+    let price = parseInt(document.getElementById('inputUnitPrice').value) || 0;
+    let total = qty * price;
+    
+    // Format ke Rupiah
+    let formattedTotal = new Intl.NumberFormat('id-ID', { 
+        style: 'currency', 
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0 
+    }).format(total);
+    
+    document.getElementById('displayTotal').value = formattedTotal;
+}
 
     window.addEventListener('DOMContentLoaded', () => {
         feather.replace();

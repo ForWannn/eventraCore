@@ -16,6 +16,7 @@ class AttendanceApiController extends Controller
      */
     public function hikvisionPush(Request $request)
     {
+        Log::info("Hikvision Push Hit: " . json_encode($request->all()));
         $data = $request->all();
 
         // Check if payload is wrapped inside event_log (which can be a JSON string)
@@ -62,6 +63,19 @@ class AttendanceApiController extends Controller
             return response()->json([
                 'status' => 'success', 
                 'message' => 'Event acknowledged but User not found with ID: ' . $employeeNo,
+                'statusCode' => 1,
+                'statusString' => 'OK',
+                'errorCode' => 0,
+                'errorMsg' => 'OK'
+            ], 200);
+        }
+
+        if ($user->hasRole(['Admin', 'Superadmin', 'Intern'])) {
+            $roleName = $user->hasRole('Intern') ? 'Intern' : ($user->hasRole('Superadmin') ? 'Superadmin' : 'Admin');
+            Log::info("Hikvision Push: Skipped recording attendance for $roleName: " . $user->name);
+            return response()->json([
+                'status' => 'success', 
+                'message' => 'Attendance skipped for ' . $roleName,
                 'statusCode' => 1,
                 'statusString' => 'OK',
                 'errorCode' => 0,

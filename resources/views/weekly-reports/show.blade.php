@@ -91,8 +91,8 @@
             <p style="font-size: 13px; color: var(--text-muted);">Divisi: {{ optional($user->division)->name ?? '-' }} &nbsp;&bull;&nbsp; Minggu: {{ $report->week_start_date->format('d/m/Y') }}</p>
         </div>
         <div class="show-header-percentage" style="text-align: right; display: flex; align-items: center; gap: 12px;">
-            <a href="{{ route('weekly.export_pdf', [$user->id, $report->week_start_date->format('Y-m-d')]) }}" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #2563eb; border-radius: 8px; font-size: 13px; font-weight: 600; color: white; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                <i data-feather="file-text" style="width: 14px; height: 14px; stroke-width: 2.5;"></i>
+            <a href="{{ route('weekly.export_pdf', [$user->id, $report->week_start_date->format('Y-m-d')]) }}" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; font-size: 14px; font-weight: 600; color: #003B7A; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#F8FAFC'; this.style.borderColor='#CBD5E1';" onmouseout="this.style.background='#FFFFFF'; this.style.borderColor='#E2E8F0';">
+                <i data-feather="file-text" style="width: 16px; height: 16px; color: #003B7A;"></i>
                 Ekspor PDF
             </a>
             <div style="font-size: 14px; font-weight: 700; background: #10b981; color: white; padding: 8px 16px; border-radius: 8px;" class="progress-badge">

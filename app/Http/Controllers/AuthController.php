@@ -24,7 +24,6 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Support login by email or NIK
         $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'nik';
         
         $attemptData = [

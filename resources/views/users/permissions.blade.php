@@ -504,6 +504,7 @@
                 <tbody>
                     @php
                         $availablePermissions = ['view_dashboard', 'weekly_report', 'leave_request', 'attendance_history', 'crud_users', 'crud_events', 'manage_calendar', 'rekap_absen', 'rekap_weekly', 'weekly_history', 'leave_approvals', 'rekap_event'];
+                        $superadminRestricted = ['leave_request', 'leave_approvals', 'crud_events', 'rekap_absen', 'rekap_weekly', 'rekap_event', 'attendance_history', 'weekly_history'];
                     @endphp
                     @foreach($users as $user)
                         @php
@@ -535,13 +536,18 @@
                             </td>
                             @foreach($availablePermissions as $perm)
                                 <td style="text-align: center;">
-                                    <label class="switch" title="{{ $isSelf ? 'Anda tidak dapat mengubah hak akses sendiri' : ($isSuperadmin ? 'Superadmin memiliki akses penuh' : '') }}">
-                                        @if($isSelf)
-                                            <!-- Checkbox is disabled but checked to represent full access and prevent self-revocation -->
-                                            <input type="checkbox" disabled checked>
+                                    <label class="switch" title="{{ $isSelf ? 'Anda tidak dapat mengubah hak akses sendiri' : ($isSuperadmin ? (in_array($perm, $superadminRestricted) ? 'Superadmin tidak memiliki akses ke fitur ini' : 'Superadmin memiliki akses penuh') : '') }}">
+                                        @if($isSuperadmin)
+                                            @if(in_array($perm, $superadminRestricted))
+                                                <!-- Disabled and unchecked for restricted superadmin permissions -->
+                                                <input type="checkbox" disabled>
+                                            @else
+                                                <!-- Disabled and checked since Superadmin has these permissions -->
+                                                <input type="checkbox" disabled checked>
+                                            @endif
                                             <span class="slider"></span>
-                                        @elseif($isSuperadmin)
-                                            <!-- Disabled and checked since Superadmin has all permissions -->
+                                        @elseif($isSelf)
+                                            <!-- Checkbox is disabled but checked to represent full access and prevent self-revocation -->
                                             <input type="checkbox" disabled checked>
                                             <span class="slider"></span>
                                         @else

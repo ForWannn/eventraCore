@@ -449,18 +449,18 @@
                 </div>
             </div>
 
-            <!-- Row 3: Penyimpanan Upload -->
+            <!-- Row 3: Penyimpanan Hosting -->
             <div class="system-summary-row">
-                <div class="system-icon-badge green"><i data-feather="folder" style="width: 18px; height: 18px;"></i></div>
+                <div class="system-icon-badge green"><i data-feather="server" style="width: 18px; height: 18px;"></i></div>
                 <div style="flex: 1;">
-                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Penyimpanan Upload</div>
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Penyimpanan Hosting</div>
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
-                        <span>{{ $usedUploadSizeMB }} MB <span style="font-weight: 500; font-size: 12px; color: var(--text-muted);">/ {{ $uploadQuotaGB }} GB</span></span>
+                        <span>{{ $storageUsedText }} <span style="font-weight: 500; font-size: 12px; color: var(--text-muted);">/ {{ $storageTotalText }}</span></span>
                     </div>
                     <!-- Progress Bar -->
                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
                         <div style="flex: 1; height: 6px; background: var(--border-color); border-radius: 10px; overflow: hidden;">
-                            <div style="width: {{ $storagePercentage }}%; height: 100%; background: #2563eb; border-radius: 10px;"></div>
+                            <div style="width: {{ $storagePercentage }}%; height: 100%; background: #10b981; border-radius: 10px;"></div>
                         </div>
                         <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); min-width: 28px; text-align: right;">{{ $storagePercentage }}%</span>
                     </div>
@@ -472,7 +472,7 @@
                 <div class="system-icon-badge blue"><i data-feather="database" style="width: 18px; height: 18px;"></i></div>
                 <div style="flex: 1;">
                     <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Ukuran Basis Data</div>
-                    <div style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $dbSizeMB }} MB</div>
+                    <div style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-top: 2px;">{{ $dbSizeText }}</div>
                 </div>
             </div>
 

@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $publicHtmlPath = base_path('../public_html');
+        if (file_exists($publicHtmlPath) && is_dir($publicHtmlPath)) {
+            $this->app->usePublicPath($publicHtmlPath);
+        }
     }
 
     /**
@@ -19,8 +22,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
-            return $user->hasRole('Superadmin') ? true : null;
+        $restrictedAbilities = [
+            'leave_request',
+            'leave_approvals',
+            'crud_events',
+            'rekap_absen',
+            'rekap_weekly',
+            'rekap_event',
+            'attendance_history',
+            'weekly_history',
+        ];
+
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) use ($restrictedAbilities) {
+            if ($user->hasRole('Superadmin')) {
+                if (in_array($ability, $restrictedAbilities)) {
+                    return false;
+                }
+                return true;
+            }
+            return null;
         });
     }
 }

@@ -13,15 +13,21 @@ class EventRecapItem extends Model
         'event_id',
         'date',
         'category',
+        'item_name',
         'vendor',
-        'nominal',
         'description',
+        'quantity',
+        'unit_price',
+        'nominal',
+        'notes',
         'receipt_path',
         'uploader_id',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'quantity' => 'integer',
+        'unit_price' => 'decimal:2',
         'nominal' => 'decimal:2',
     ];
 

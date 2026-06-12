@@ -5,6 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - eventraCore</title>
+    <script>
+        (function() {
+            let currentTheme = localStorage.getItem('theme');
+            if (!currentTheme) {
+                const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+                currentTheme = prefersDarkScheme.matches ? 'dark' : 'light';
+            }
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        })();
+    </script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="icon" href="{{ asset('assets/images/Logor7web.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,7 +169,6 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
-            transition: background-color 0.15s, color 0.15s;
         }
 
         @guest
@@ -186,7 +199,6 @@
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            transition: all 0.15s;
         }
 
         .sidebar-header {
@@ -604,7 +616,7 @@
                </a>
                @endcan
 
-               @if(Auth::user()->hasAnyRole(['CEO', 'Superadmin', 'GM']))
+               @if(Auth::user()->hasAnyRole(['CEO', 'GM']))
                <a href="{{ route('executive-dashboard') }}"
                    class="nav-link {{ request()->routeIs('executive-dashboard') ? 'active' : '' }}">
                    <i data-feather="pie-chart"></i> <span>Evaluasi Tahunan</span>
@@ -803,22 +815,15 @@
  
          const updateThemeUI = (theme) => {
              if (theme === 'dark') {
-                 document.body.setAttribute('data-theme', 'dark');
+                 document.documentElement.setAttribute('data-theme', 'dark');
              } else {
-                 document.body.removeAttribute('data-theme');
+                 document.documentElement.removeAttribute('data-theme');
              }
          };
  
-         let currentTheme = localStorage.getItem('theme');
-         if (!currentTheme) {
-             const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-             currentTheme = prefersDarkScheme.matches ? 'dark' : 'light';
-         }
-         updateThemeUI(currentTheme);
- 
          if (themeToggle) {
              themeToggle.addEventListener('click', () => {
-                 const isDark = document.body.hasAttribute('data-theme');
+                 const isDark = document.documentElement.hasAttribute('data-theme');
                  const newTheme = isDark ? 'light' : 'dark';
  
                  updateThemeUI(newTheme);

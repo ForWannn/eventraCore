@@ -36,6 +36,18 @@ class EventTaskController extends Controller
 
         $task->load('assignee');
 
+        // Send WhatsApp notification
+        if ($task->assignee && !empty($task->assignee->phone)) {
+            $url = url('/');
+            $message = "[INFO PENUGASAN EVENT]\n\n"
+                     . "Halo {$task->assignee->name},\n"
+                     . "Terdapat penambahan tugas baru pada event {$event->name}.\n\n"
+                     . "Harap segera mengecek rincian dan tenggat waktu tugas tersebut di sistem:\n"
+                     . "{$url}\n\n"
+                     . "Terima kasih!";
+            \App\Services\FonnteService::send($task->assignee->phone, $message);
+        }
+
         return response()->json([
             'success' => true, 
             'task' => $task,

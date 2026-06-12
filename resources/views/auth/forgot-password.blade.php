@@ -169,7 +169,7 @@
             <input type="email" id="email" name="email" required autofocus placeholder="email" style="border-radius: 20px; padding: 12px 16px;">
         </div>
 
-        <button type="submit" class="btn">Kirim Link Reset</button>
+        <button type="submit" class="btn">Kirim OTP</button>
     </form>
 
     <a href="{{ route('login') }}" class="back-link">Kembali ke Login</a>

@@ -253,4 +253,154 @@ class AdminAccessRestrictionTest extends TestCase
         $response = $this->actingAs($ceo)->get('/profile');
         $response->assertStatus(200);
     }
+
+    public function test_creating_new_user_assigns_default_permissions_based_on_role_and_division()
+    {
+        $superadmin = User::factory()->create();
+        $superadmin->assignRole('Superadmin');
+
+        // Create standard Division and a Finance Division
+        $division = \App\Models\Division::create(['name' => 'Operasional']);
+        $financeDivision = \App\Models\Division::create(['name' => 'Finance']);
+
+        // Create role Intern if not exists
+        Role::firstOrCreate(['name' => 'Intern']);
+
+        // 1. Create Intern user
+        $response = $this->actingAs($superadmin)->post('/users', [
+            'name' => 'New Intern',
+            'email' => 'intern@example.com',
+            'nik' => 'INT-099',
+            'password' => 'password123',
+            'division_id' => $division->id,
+            'role' => 'Intern',
+            'join_date' => '2026-06-09',
+            'employee_type' => 'Internship',
+            'gender' => 'Laki-laki',
+        ]);
+        $response->assertRedirect('/users');
+        $intern = User::where('nik', 'INT-099')->firstOrFail();
+        $this->assertTrue($intern->hasRole('Intern'));
+        $this->assertTrue($intern->hasDirectPermission('view_dashboard'));
+        $this->assertTrue($intern->hasDirectPermission('weekly_report'));
+        $this->assertTrue($intern->hasDirectPermission('weekly_history'));
+        $this->assertTrue($intern->hasDirectPermission('leave_request'));
+        $this->assertFalse($intern->hasDirectPermission('attendance_history'));
+        $this->assertFalse($intern->hasDirectPermission('rekap_event'));
+
+        // 2. Create Employee user in Finance Division
+        $response = $this->actingAs($superadmin)->post('/users', [
+            'name' => 'Finance Employee',
+            'email' => 'finance@example.com',
+            'nik' => 'EMP-099',
+            'password' => 'password123',
+            'division_id' => $financeDivision->id,
+            'role' => 'Employee',
+            'join_date' => '2026-06-09',
+            'employee_type' => 'Full Time',
+            'gender' => 'Perempuan',
+        ]);
+        $response->assertRedirect('/users');
+        $financeEmp = User::where('nik', 'EMP-099')->firstOrFail();
+        $this->assertTrue($financeEmp->hasRole('Employee'));
+        $this->assertTrue($financeEmp->hasDirectPermission('view_dashboard'));
+        $this->assertTrue($financeEmp->hasDirectPermission('weekly_report'));
+        $this->assertTrue($financeEmp->hasDirectPermission('weekly_history'));
+        $this->assertTrue($financeEmp->hasDirectPermission('leave_request'));
+        $this->assertTrue($financeEmp->hasDirectPermission('attendance_history'));
+        $this->assertTrue($financeEmp->hasDirectPermission('rekap_event')); // Finance gets rekap_event
+    }
+
+    public function test_updating_user_role_or_division_syncs_new_default_permissions()
+    {
+        $superadmin = User::factory()->create();
+        $superadmin->assignRole('Superadmin');
+
+        $division = \App\Models\Division::create(['name' => 'Operasional']);
+        $financeDivision = \App\Models\Division::create(['name' => 'Finance']);
+
+        Role::firstOrCreate(['name' => 'Intern']);
+
+        // Create an Intern
+        $user = User::factory()->create([
+            'nik' => 'INT-101',
+            'division_id' => $division->id,
+            'employee_type' => 'Internship',
+            'join_date' => '2026-06-09',
+            'gender' => 'Laki-laki',
+        ]);
+        $user->assignRole('Intern');
+        $user->syncPermissions(['view_dashboard', 'weekly_report', 'weekly_history', 'leave_request']);
+
+        // Update user: change role to Employee, keep same division
+        $response = $this->actingAs($superadmin)->put("/users/{$user->id}", [
+            'name' => $user->name,
+            'email' => $user->email,
+            'nik' => $user->nik,
+            'division_id' => $division->id,
+            'role' => 'Employee',
+            'join_date' => '2026-06-09',
+            'employee_type' => 'Full Time',
+            'gender' => $user->gender,
+        ]);
+        $response->assertRedirect('/users');
+        $user = $user->fresh();
+        $this->assertTrue($user->hasRole('Employee'));
+        $this->assertTrue($user->hasDirectPermission('attendance_history')); // Employee gets attendance_history
+
+        // Manually customize permissions (e.g. check/uncheck something)
+        $user->syncPermissions(['view_dashboard', 'weekly_report']);
+
+        // Update user: change only name, keep same role and division
+        $response = $this->actingAs($superadmin)->put("/users/{$user->id}", [
+            'name' => 'Updated Name',
+            'email' => $user->email,
+            'nik' => $user->nik,
+            'division_id' => $division->id,
+            'role' => 'Employee',
+            'join_date' => '2026-06-09',
+            'employee_type' => 'Full Time',
+            'gender' => $user->gender,
+        ]);
+        $response->assertRedirect('/users');
+        $user = $user->fresh();
+        // Custom permissions should NOT be overwritten because role and division did not change
+        $this->assertTrue($user->hasDirectPermission('view_dashboard'));
+        $this->assertTrue($user->hasDirectPermission('weekly_report'));
+        $this->assertFalse($user->hasDirectPermission('attendance_history')); // Custom remains customized
+    }
+
+    public function test_superadmin_cannot_access_restricted_modules_and_recap()
+    {
+        $superadmin = User::factory()->create();
+        $superadmin->assignRole('Superadmin');
+
+        // Blocked from executive-dashboard (Evaluasi Tahunan)
+        $response = $this->actingAs($superadmin)->get('/executive-dashboard');
+        $response->assertStatus(403);
+
+        // Blocked from leave requests
+        $response = $this->actingAs($superadmin)->get('/leave-requests');
+        $response->assertStatus(403);
+
+        // Blocked from leave approvals
+        $response = $this->actingAs($superadmin)->get('/leave-approvals');
+        $response->assertStatus(403);
+
+        // Blocked from daily attendance recap
+        $response = $this->actingAs($superadmin)->get('/daily-attendance-recap');
+        $response->assertStatus(403);
+
+        // Blocked from weekly recap
+        $response = $this->actingAs($superadmin)->get('/weekly-recap');
+        $response->assertStatus(403);
+
+        // Blocked from attendance history
+        $response = $this->actingAs($superadmin)->get('/attendance-history');
+        $response->assertStatus(403);
+
+        // Blocked from weekly history
+        $response = $this->actingAs($superadmin)->get('/weekly-history');
+        $response->assertStatus(403);
+    }
 }

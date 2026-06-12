@@ -120,7 +120,7 @@ class LeaveRequestController extends Controller
             $proofPath = '/assets/proofs/' . $filename;
         }
 
-        LeaveRequest::create([
+        $leaveRequest = LeaveRequest::create([
             'user_id' => Auth::id(),
             'type' => $request->type,
             'start_date' => $request->start_date,
@@ -129,6 +129,32 @@ class LeaveRequestController extends Controller
             'proof_path' => $proofPath,
             'status' => 'pending',
         ]);
+
+        // Send WhatsApp notification to GM / CEO
+        $startDateStr = Carbon::parse($leaveRequest->start_date)->locale('id')->translatedFormat('d M Y');
+        $endDateStr = Carbon::parse($leaveRequest->end_date)->locale('id')->translatedFormat('d M Y');
+        $tanggalCuti = $startDateStr === $endDateStr ? $startDateStr : "{$startDateStr} s/d {$endDateStr}";
+
+        $url = url('/leave-approvals');
+        $message = "📩 [PENGAJUAN IZIN/CUTI BARU]\n\n"
+                 . "Terdapat permintaan persetujuan baru dengan rincian:\n"
+                 . "👤 Nama: {$leaveRequest->user->name}\n"
+                 . "📅 Tanggal: {$tanggalCuti}\n"
+                 . "📝 Alasan: {$leaveRequest->reason}\n\n"
+                 . "Silakan tinjau dan berikan keputusan (Setuju/Tolak) melalui sistem:\n"
+                 . "🔗 {$url}";
+
+        if ($leaveRequest->type === 'cuti') {
+            $managers = \App\Models\User::whereHas('roles', fn($q) => $q->where('name', 'CEO'))->get();
+        } else {
+            $managers = \App\Models\User::whereHas('roles', fn($q) => $q->whereIn('name', ['CEO', 'GM']))->get();
+        }
+
+        foreach ($managers as $manager) {
+            if (!empty($manager->phone)) {
+                \App\Services\FonnteService::send($manager->phone, $message);
+            }
+        }
 
         return redirect()->route('leave-requests.index')->with('success', 'Pengajuan izin/cuti berhasil dikirim.');
     }
@@ -194,6 +220,20 @@ class LeaveRequestController extends Controller
             'approved_by_id' => $user->id,
         ]);
 
+        // Send WhatsApp notification to requester
+        $startDateStr = Carbon::parse($leaveRequest->start_date)->locale('id')->translatedFormat('d M Y');
+        $endDateStr = Carbon::parse($leaveRequest->end_date)->locale('id')->translatedFormat('d M Y');
+        $tanggalCuti = $startDateStr === $endDateStr ? $startDateStr : "{$startDateStr} s/d {$endDateStr}";
+
+        $message = "✅ [STATUS CUTI: DISETUJUI]\n\n"
+                 . "Halo {$leaveRequest->user->name},\n"
+                 . "Pengajuan izin/cuti kamu untuk tanggal {$tanggalCuti} telah DISETUJUI oleh manajemen.\n\n"
+                 . "Selamat menikmati waktu istirahatmu! 🎉";
+
+        if (!empty($leaveRequest->user->phone)) {
+            \App\Services\FonnteService::send($leaveRequest->user->phone, $message);
+        }
+
         return redirect()->back()->with('success', 'Pengajuan izin/cuti berhasil disetujui.');
     }
 
@@ -214,6 +254,22 @@ class LeaveRequestController extends Controller
             'status' => 'rejected',
             'approved_by_id' => $user->id,
         ]);
+
+        // Send WhatsApp notification to requester
+        $startDateStr = Carbon::parse($leaveRequest->start_date)->locale('id')->translatedFormat('d M Y');
+        $endDateStr = Carbon::parse($leaveRequest->end_date)->locale('id')->translatedFormat('d M Y');
+        $tanggalCuti = $startDateStr === $endDateStr ? $startDateStr : "{$startDateStr} s/d {$endDateStr}";
+
+        $url = url('/leave-requests');
+        $message = "❌ [STATUS CUTI: DITOLAK]\n\n"
+                 . "Mohon maaf {$leaveRequest->user->name},\n"
+                 . "Pengajuan izin/cuti kamu untuk tanggal {$tanggalCuti} DITOLAK oleh manajemen.\n\n"
+                 . "Silakan cek sistem untuk melihat catatan atau alasan penolakan lebih lanjut:\n"
+                 . "🔗 {$url}";
+
+        if (!empty($leaveRequest->user->phone)) {
+            \App\Services\FonnteService::send($leaveRequest->user->phone, $message);
+        }
 
         return redirect()->back()->with('success', 'Pengajuan izin/cuti telah ditolak.');
     }

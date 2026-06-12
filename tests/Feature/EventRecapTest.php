@@ -120,5 +120,130 @@ class EventRecapTest extends TestCase
         $response = $this->actingAs($finance)->get('/event-recaps');
         $response->assertStatus(200);
     }
+
+    public function test_pic_cannot_manually_add_forbidden_categories_or_automatic_name()
+    {
+        $pic = User::factory()->create();
+        $event = Event::create(['name' => 'Event PIC Test']);
+        $event->participants()->attach($pic->id, ['is_pic' => true]);
+        
+        EventRecap::create([
+            'event_id' => $event->id,
+            'initial_nominal' => 1000000,
+            'status' => 'dalam_rekap',
+        ]);
+
+        // 1. Try to add Pemasukan category
+        $response1 = $this->actingAs($pic)->post("/event-recaps/{$event->id}/items", [
+            'date' => '2026-06-05',
+            'category' => 'Pemasukan',
+            'vendor' => 'Test Vendor',
+            'item_name' => 'Manual Topup',
+            'quantity' => 1,
+            'unit_price' => 100000,
+            'receipt' => \Illuminate\Http\UploadedFile::fake()->image('receipt.jpg'),
+        ]);
+        $response1->assertRedirect();
+        $response1->assertSessionHas('error', 'Kategori ini hanya dapat ditambahkan secara otomatis oleh sistem/Finance.');
+
+        // 2. Try to add Pengurangan Anggaran category
+        $response2 = $this->actingAs($pic)->post("/event-recaps/{$event->id}/items", [
+            'date' => '2026-06-05',
+            'category' => 'Pengurangan Anggaran',
+            'vendor' => 'Test Vendor',
+            'item_name' => 'Manual Deduction',
+            'quantity' => 1,
+            'unit_price' => 100000,
+            'receipt' => \Illuminate\Http\UploadedFile::fake()->image('receipt.jpg'),
+        ]);
+        $response2->assertRedirect();
+        $response2->assertSessionHas('error', 'Kategori ini hanya dapat ditambahkan secara otomatis oleh sistem/Finance.');
+
+        // 3. Try to add Penyesuaian Anggaran (Otomatis) item name
+        $response3 = $this->actingAs($pic)->post("/event-recaps/{$event->id}/items", [
+            'date' => '2026-06-05',
+            'category' => 'Konsumsi',
+            'vendor' => 'Test Vendor',
+            'item_name' => 'Penyesuaian Anggaran (Otomatis)',
+            'quantity' => 1,
+            'unit_price' => 100000,
+            'receipt' => \Illuminate\Http\UploadedFile::fake()->image('receipt.jpg'),
+        ]);
+        $response3->assertRedirect();
+        $response3->assertSessionHas('error', 'Nama item ini dicadangkan untuk penyesuaian anggaran otomatis.');
+    }
+
+    public function test_pic_cannot_delete_automatic_adjustments()
+    {
+        $pic = User::factory()->create();
+        $event = Event::create(['name' => 'Event PIC Delete Test']);
+        $event->participants()->attach($pic->id, ['is_pic' => true]);
+
+        EventRecap::create([
+            'event_id' => $event->id,
+            'initial_nominal' => 1000000,
+            'status' => 'dalam_rekap',
+        ]);
+
+        $item = EventRecapItem::create([
+            'event_id' => $event->id,
+            'date' => '2026-06-05',
+            'category' => 'Pemasukan',
+            'item_name' => 'Penyesuaian Anggaran (Otomatis)',
+            'vendor' => 'Finance',
+            'quantity' => 1,
+            'unit_price' => 200000,
+            'nominal' => 200000,
+            'receipt_path' => '',
+            'uploader_id' => $pic->id,
+        ]);
+
+        $response = $this->actingAs($pic)->delete("/event-recaps/{$event->id}/items/{$item->id}");
+        $response->assertRedirect();
+        $response->assertSessionHas('error', 'Tidak dapat menghapus item penyesuaian anggaran otomatis.');
+        $this->assertDatabaseHas('event_recap_items', ['id' => $item->id]);
+    }
+
+    public function test_xls_export_calculates_correct_saldo_awal_with_adjustments()
+    {
+        $division = Division::create(['name' => 'Finance']);
+        $finance = User::factory()->create([
+            'division_id' => $division->id,
+        ]);
+        $finance->givePermissionTo('rekap_event');
+
+        $event = Event::create([
+            'name' => 'XLS Export Test Event',
+        ]);
+
+        $recap = EventRecap::create([
+            'event_id' => $event->id,
+            'initial_nominal' => 1000000, // Saldo awal
+            'status' => 'dalam_rekap',
+        ]);
+
+        // Finance increases the budget by 200000 (recap initial_nominal becomes 1200000)
+        $this->actingAs($finance)->post("/event-recaps/{$event->id}/budget", [
+            'initial_nominal' => 1200000,
+        ]);
+
+        // Eager load items and assert database changes
+        $recap->refresh();
+        $this->assertEquals(1200000, (float)$recap->initial_nominal);
+
+        // Fetch the export route
+        $response = $this->actingAs($finance)->get("/event-recaps/{$event->id}/export");
+        $response->assertStatus(200);
+
+        // Assert view data contains the correct variables
+        $viewData = $response->original->getData();
+        $this->assertArrayHasKey('recap', $viewData);
+        $this->assertArrayHasKey('items', $viewData);
+
+        // Render view HTML and check if "Saldo Awal" remains 1000000
+        $html = $response->getContent();
+        $this->assertStringContainsString('Rp 1.000.000', $html);
+        $this->assertStringContainsString('Rp 1.200.000', $html); // Grand total debet
+    }
 }
 

@@ -53,22 +53,26 @@
         align-items: center;
         gap: 8px;
         padding: 10px 20px;
-        background: var(--card-bg);
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
+        background: #FFFFFF;
+        color: #003B7A; /* Warna teks biru gelap premium */
+        border: 1px solid #E2E8F0; /* Border abu-abu terang */
+        border-radius: 14px; /* Sudut membulat seperti di gambar */
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
     .btn-export:hover {
-        background: var(--hover-bg);
+        background: #F8FAFC;
+        border-color: #CBD5E1;
+        color: #003B7A;
     }
     .btn-export svg {
         width: 16px;
         height: 16px;
+        color: inherit;
     }
 
     /* ── Stats Cards Grid ── */

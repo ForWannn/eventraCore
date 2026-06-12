@@ -3,6 +3,15 @@
 @section('title', 'Reset Password')
 
 @section('content')
+@php
+    $emailVal = $email ?? old('email');
+    $hasCode = \Illuminate\Support\Facades\Cache::has('password_reset_code_' . $emailVal);
+    $secondsLeft = 0;
+    if ($hasCode && session('code_sent_at')) {
+        $elapsed = time() - session('code_sent_at');
+        $secondsLeft = max(0, 300 - $elapsed);
+    }
+@endphp
 <style>
     .container {
         width: 100%;
@@ -151,6 +160,12 @@
         <p class="subtitle">Setel ulang password Anda.</p>
     </div>
 
+    @if (session('status'))
+        <div style="background-color: #ecfdf5; color: #059669; padding: 12px; border-radius: 12px; font-size: 13px; margin-bottom: 20px;">
+            {{ session('status') }}
+        </div>
+    @endif
+
     @if($errors->any())
         <div class="alert">
             {{ $errors->first() }}
@@ -177,6 +192,10 @@
                 <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
             </div>
             <input type="hidden" name="code" id="hiddenCode">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <span id="countdownTimer" style="font-size: 13px; color: var(--text-muted); font-weight: 500;"></span>
+                <button type="button" id="resendBtn" style="background: none; border: none; font-size: 13px; cursor: pointer; color: var(--primary); display: none; padding: 0; font-weight: 600; text-decoration: underline;" onclick="document.getElementById('resendForm').submit();">Kirim ulang kode</button>
+            </div>
         </div>
 
         <div class="form-group">
@@ -190,6 +209,11 @@
         </div>
 
         <button type="submit" class="btn">Update Password</button>
+    </form>
+
+    <form id="resendForm" action="{{ route('password.resend') }}" method="POST" style="display: none;">
+        @csrf
+        <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
     </form>
 
     <div class="footer">
@@ -255,5 +279,29 @@
             alert('Silakan masukkan keseluruhan 6 digit kode reset.');
         }
     });
+
+    // Countdown Timer logic
+    let timeLeft = {{ $secondsLeft }};
+    const timerElement = document.getElementById('countdownTimer');
+    const resendBtn = document.getElementById('resendBtn');
+
+    function updateTimer() {
+        if (timeLeft <= 0) {
+            timerElement.innerHTML = 'Kode telah kadaluwarsa.';
+            timerElement.style.color = 'var(--error)';
+            resendBtn.style.display = 'inline-block';
+            clearInterval(timerInterval);
+        } else {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.innerHTML = `Kode kadaluwarsa dalam ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerElement.style.color = 'var(--text-muted)';
+            resendBtn.style.display = 'none';
+            timeLeft--;
+        }
+    }
+
+    updateTimer();
+    const timerInterval = setInterval(updateTimer, 1000);
 </script>
 @endsection

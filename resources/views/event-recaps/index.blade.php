@@ -346,6 +346,32 @@
         height: 14px;
     }
 
+    .btn-export-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px; /* Dibuat sedikit lebih ringkas untuk tabel */
+        background: #FFFFFF;
+        color: #003B7A; /* Warna teks biru gelap premium */
+        border: 1px solid #E2E8F0; 
+        border-radius: 12px; /* Sudut membulat */
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .btn-export-outline:hover {
+        background: #F8FAFC;
+        border-color: #CBD5E1;
+        color: #003B7A;
+    }
+    .btn-export-outline svg {
+        width: 14px;
+        height: 14px;
+        color: inherit;
+    }
     /* ── Footer & Pagination ── */
     .recap-footer {
         display: flex;
@@ -860,6 +886,9 @@
                     <td>
                         <a href="{{ route('event-recaps.show', $event->id) }}" class="btn-review-action">
                             Kelola Rekap <i data-feather="chevron-right"></i>
+                        </a>
+                        <a href="{{ route('event-recaps.export', $event->id) }}" class="btn-export-outline" title="Download Excel">
+                            <i data-feather="download"></i> Ekspor
                         </a>
                     </td>
                 </tr>

@@ -21,16 +21,17 @@ Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequest
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/reset-password', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+Route::post('/resend-password-code', [PasswordResetController::class, 'resendCode'])->name('password.resend');
 
 Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware(['permission:view_dashboard'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::middleware(['role:CEO|Superadmin|GM'])->get('/executive-dashboard', [ExecutiveDashboardController::class, 'index'])->name('executive-dashboard');
+    Route::middleware(['role:CEO|GM'])->get('/executive-dashboard', [ExecutiveDashboardController::class, 'index'])->name('executive-dashboard');
 
     // Daily Attendance (Web Geotagging)
     Route::post('/daily-attendance/store-luar', [DailyAttendanceController::class, 'storeLuar'])->name('attendance.storeLuar');
-
+    Route::post('/attendance/recap/update-status', [DailyAttendanceController::class, 'updateStatus'])->name('attendance.recap.update_status');
     Route::middleware(['permission:crud_users'])->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -67,6 +68,8 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
 
     Route::middleware(['permission:crud_events'])->group(function () {
         Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+        Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
         Route::post('/events', [EventController::class, 'store'])->name('events.store');
         Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
     });
@@ -94,6 +97,7 @@ Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->gr
         Route::get('/daily-attendance-recap', [DailyAttendanceController::class, 'recap'])->name('attendance.recap');
         Route::get('/daily-attendance-recap/export', [DailyAttendanceController::class, 'exportRecap'])->name('attendance.recap.export');
         Route::get('/daily-attendance-recap/export-pdf-monthly', [DailyAttendanceController::class, 'exportPdfMonthly'])->name('attendance.recap.export_pdf_monthly');
+        Route::get('/daily-attendance-recap/export-excel-monthly', [DailyAttendanceController::class, 'exportExcelMonthly'])->name('attendance.recap.export_excel_monthly');
     });
 
     Route::middleware(['role:Superadmin'])->group(function () {
