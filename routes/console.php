@@ -99,8 +99,7 @@ Artisan::command('attendance:daily-reminder', function () {
     $today = Carbon::today();
     $dateStr = $today->toDateString();
     
-    $calendar = WorkCalendar::where('date', $dateStr)->first();
-    $isWorkDay = $calendar ? (bool)$calendar->is_working_day : !$today->isWeekend();
+    $isWorkDay = WorkCalendar::isWorkingDay($dateStr);
     
     if (!$isWorkDay) return;
 
@@ -138,8 +137,7 @@ Artisan::command('attendance:daily-warning', function () {
     $today = Carbon::today();
     $dateStr = $today->toDateString();
     
-    $calendar = WorkCalendar::where('date', $dateStr)->first();
-    $isWorkDay = $calendar ? (bool)$calendar->is_working_day : !$today->isWeekend();
+    $isWorkDay = WorkCalendar::isWorkingDay($dateStr);
     
     if (!$isWorkDay) return;
 

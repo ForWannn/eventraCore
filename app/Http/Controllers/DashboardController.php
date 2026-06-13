@@ -198,16 +198,7 @@ class DashboardController extends Controller
             ->get();
 
         // Check if today is a working day
-        $dateStr = $now->format('Y-m-d');
-        $calendar = WorkCalendar::where('date', $dateStr)->first();
-        $isWorkingDayToday = true;
-        if ($calendar) {
-            $isWorkingDayToday = (bool)$calendar->is_working_day;
-        } else {
-            if ($now->dayOfWeek === Carbon::SATURDAY || $now->dayOfWeek === Carbon::SUNDAY) {
-                $isWorkingDayToday = false;
-            }
-        }
+        $isWorkingDayToday = WorkCalendar::isWorkingDay($now->format('Y-m-d'));
 
         return [
             'totalAssignments'         => $totalAssignments,
@@ -447,14 +438,7 @@ class DashboardController extends Controller
             'todayAttendance'     => DailyAttendance::where('user_id', Auth::id())
                                         ->where('date', Carbon::now()->format('Y-m-d'))
                                         ->first(),
-            'isWorkingDayToday'   => (function() use ($now) {
-                $dateStr = $now->format('Y-m-d');
-                $calendar = WorkCalendar::where('date', $dateStr)->first();
-                if ($calendar) {
-                    return (bool)$calendar->is_working_day;
-                }
-                return $now->dayOfWeek !== Carbon::SATURDAY && $now->dayOfWeek !== Carbon::SUNDAY;
-            })(),
+            'isWorkingDayToday'   => WorkCalendar::isWorkingDay($now->format('Y-m-d')),
             'isAttendanceClosed'  => $now->format('H:i:s') >= config('attendance.attendance_close_time', '12:00:00'),
         ];
     }
@@ -481,6 +465,14 @@ class DashboardController extends Controller
             $now->format('Y-m-d')
         ])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
 
+        // Fetch holidays for range
+        $startYear = $now->copy()->subDays(30)->year;
+        $endYear = $now->year;
+        $holidays = [];
+        for ($yr = $startYear; $yr <= $endYear; $yr++) {
+            $holidays = array_merge($holidays, WorkCalendar::getHolidaysForYear($yr));
+        }
+
         while ($daysCounted < 7) {
             $dateStr = $tempDate->format('Y-m-d');
             $calendar = $calendarOverrides->get($dateStr);
@@ -488,7 +480,8 @@ class DashboardController extends Controller
             if ($calendar) {
                 $isWork = (bool)$calendar->is_working_day;
             } else {
-                if ($tempDate->dayOfWeek === Carbon::SATURDAY || $tempDate->dayOfWeek === Carbon::SUNDAY) {
+                $isHoliday = isset($holidays[$dateStr]);
+                if ($tempDate->dayOfWeek === Carbon::SATURDAY || $tempDate->dayOfWeek === Carbon::SUNDAY || $isHoliday) {
                     $isWork = false;
                 }
             }

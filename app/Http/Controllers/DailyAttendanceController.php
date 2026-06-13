@@ -46,15 +46,7 @@ class DailyAttendanceController extends Controller
         $date = $now->format('Y-m-d');
 
         // Block check-in on non-working days
-        $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
-        $isWorkDay = true;
-        if ($calendar) {
-            $isWorkDay = (bool)$calendar->is_working_day;
-        } else {
-            if ($now->dayOfWeek === Carbon::SATURDAY || $now->dayOfWeek === Carbon::SUNDAY) {
-                $isWorkDay = false;
-            }
-        }
+        $isWorkDay = \App\Models\WorkCalendar::isWorkingDay($date);
 
         if (!$isWorkDay) {
             return response()->json(['message' => 'Hari ini libur.'], 400);
@@ -156,6 +148,14 @@ class DailyAttendanceController extends Controller
             $endDate->format('Y-m-d')
         ])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
 
+        // Fetch holidays for the years in the range
+        $startYear = $startDate->year;
+        $endYear = $endDate->year;
+        $holidays = [];
+        for ($yr = $startYear; $yr <= $endYear; $yr++) {
+            $holidays = array_merge($holidays, \App\Models\WorkCalendar::getHolidaysForYear($yr));
+        }
+
         // Get all weekdays or overridden dates in this range
         $workdays = [];
         $temp = $startDate->copy();
@@ -165,7 +165,8 @@ class DailyAttendanceController extends Controller
             if (isset($overrides[$dateStr])) {
                 $isWork = $overrides[$dateStr]->is_working_day;
             } else {
-                if ($temp->dayOfWeek === Carbon::SATURDAY || $temp->dayOfWeek === Carbon::SUNDAY) {
+                $isHoliday = isset($holidays[$dateStr]);
+                if ($temp->dayOfWeek === Carbon::SATURDAY || $temp->dayOfWeek === Carbon::SUNDAY || $isHoliday) {
                     $isWork = false;
                 }
             }
@@ -433,15 +434,7 @@ class DailyAttendanceController extends Controller
         }
 
         // Check if the recap date is a working day
-        $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
-        $isWorkDay = true;
-        if ($calendar) {
-            $isWorkDay = (bool)$calendar->is_working_day;
-        } else {
-            if ($dateObj->dayOfWeek === Carbon::SATURDAY || $dateObj->dayOfWeek === Carbon::SUNDAY) {
-                $isWorkDay = false;
-            }
-        }
+        $isWorkDay = \App\Models\WorkCalendar::isWorkingDay($date);
 
         // Map and compute status details for all users
         // Map and compute status details for all users
@@ -624,15 +617,7 @@ class DailyAttendanceController extends Controller
         }
 
         // Check if the recap date is a working day
-        $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
-        $isWorkDay = true;
-        if ($calendar) {
-            $isWorkDay = (bool)$calendar->is_working_day;
-        } else {
-            if ($dateObj->dayOfWeek === Carbon::SATURDAY || $dateObj->dayOfWeek === Carbon::SUNDAY) {
-                $isWorkDay = false;
-            }
-        }
+        $isWorkDay = \App\Models\WorkCalendar::isWorkingDay($date);
 
         $usersData = $users->map(function ($u) use ($leaves, $isClosed, $date, $isWorkDay) {
             $attendance = $u->dailyAttendances->first();
@@ -789,15 +774,7 @@ class DailyAttendanceController extends Controller
                 ->get()
                 ->keyBy('user_id');
 
-            $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
-            $isWorkDay = true;
-            if ($calendar) {
-                $isWorkDay = (bool)$calendar->is_working_day;
-            } else {
-                if ($dateObj->dayOfWeek === Carbon::SATURDAY || $dateObj->dayOfWeek === Carbon::SUNDAY) {
-                    $isWorkDay = false;
-                }
-            }
+            $isWorkDay = \App\Models\WorkCalendar::isWorkingDay($date);
 
             $limit = config('attendance.attendance_close_time', '12:00:00');
             $threshold = Carbon::parse($date . ' ' . $limit);
@@ -836,6 +813,9 @@ class DailyAttendanceController extends Controller
             $startOfMonth->format('Y-m-d'),
             $endOfMonth->format('Y-m-d')
         ])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
+
+        // Fetch holidays for the year
+        $holidays = \App\Models\WorkCalendar::getHolidaysForYear($year);
 
         // Fetch all approved leaves for these users during the month
         $userIds = $users->pluck('id');
@@ -900,7 +880,8 @@ class DailyAttendanceController extends Controller
                 if ($workCalendar) {
                     $isWorkDay = (bool)$workCalendar->is_working_day;
                 } else {
-                    $isWorkDay = !$isWeekend;
+                    $isHoliday = isset($holidays[$dateStr]);
+                    $isWorkDay = !$isWeekend && !$isHoliday;
                 }
                 
                 $leave = $leavesMap[$user->id][$dateStr] ?? null;
@@ -922,7 +903,17 @@ class DailyAttendanceController extends Controller
                     $rowClass = '';
                     $checkInTimeStr = '';
                     $terlambatStr = '0 Menit';
-                    $catatan = 'LIBUR';
+                    
+                    $holidayDesc = 'LIBUR';
+                    if ($workCalendar && $workCalendar->description) {
+                        $holidayDesc = strtoupper($workCalendar->description);
+                    } else {
+                        $isHoliday = isset($holidays[$dateStr]);
+                        if ($isHoliday) {
+                            $holidayDesc = strtoupper($holidays[$dateStr]['name']);
+                        }
+                    }
+                    $catatan = $holidayDesc;
                 } elseif ($leave) {
                     // Approved leave: white, note IZIN/CUTI
                     $rowClass = '';
@@ -1036,9 +1027,7 @@ class DailyAttendanceController extends Controller
             $dateAttendances = \App\Models\DailyAttendance::where('date', $date)->get()->keyBy('user_id');
             $dateLeaves = \App\Models\LeaveRequest::where('status', 'approved')
                 ->where('start_date', '<=', $date)->where('end_date', '>=', $date)->get()->keyBy('user_id');
-            $calendar = \App\Models\WorkCalendar::where('date', $date)->first();
-            
-            $isWorkDay = $calendar ? (bool)$calendar->is_working_day : !in_array($dateObj->dayOfWeek, [\Carbon\Carbon::SATURDAY, \Carbon\Carbon::SUNDAY]);
+            $isWorkDay = \App\Models\WorkCalendar::isWorkingDay($date);
             
             $threshold = \Carbon\Carbon::parse($date . ' ' . config('attendance.attendance_close_time', '12:00:00'));
             $isClosed = ($dateObj->isPast() && !$dateObj->isToday()) || ($dateObj->isToday() && \Carbon\Carbon::now()->gt($threshold));
@@ -1061,6 +1050,9 @@ class DailyAttendanceController extends Controller
 
         // Ambil Kalender dan Cuti
         $overrides = \App\Models\WorkCalendar::whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
+
+        // Fetch holidays for the year
+        $holidays = \App\Models\WorkCalendar::getHolidaysForYear($year);
         $userIds = $users->pluck('id');
         
         $approvedLeaves = \App\Models\LeaveRequest::whereIn('user_id', $userIds)
@@ -1111,7 +1103,12 @@ class DailyAttendanceController extends Controller
                 
                 $isWeekend = ($tempDay->dayOfWeek === \Carbon\Carbon::SATURDAY || $tempDay->dayOfWeek === \Carbon\Carbon::SUNDAY);
                 $workCalendar = $overrides->get($dateStr);
-                $isWorkDay = $workCalendar ? (bool)$workCalendar->is_working_day : !$isWeekend;
+                if ($workCalendar) {
+                    $isWorkDay = (bool)$workCalendar->is_working_day;
+                } else {
+                    $isHoliday = isset($holidays[$dateStr]);
+                    $isWorkDay = !$isWeekend && !$isHoliday;
+                }
                 
                 $leave = $leavesMap[$user->id][$dateStr] ?? null;
                 $attendance = $attendanceMap[$user->id][$dateStr] ?? null;
@@ -1130,7 +1127,16 @@ class DailyAttendanceController extends Controller
                     $statusSistem = 'Weekend';
                     $bgColor = '#f3f4f6'; // Abu-abu muda
                 } elseif (!$isWorkDay) {
-                    $catatan = 'LIBUR';
+                    $holidayDesc = 'LIBUR';
+                    if ($workCalendar && $workCalendar->description) {
+                        $holidayDesc = $workCalendar->description;
+                    } else {
+                        $isHoliday = isset($holidays[$dateStr]);
+                        if ($isHoliday) {
+                            $holidayDesc = $holidays[$dateStr]['name'];
+                        }
+                    }
+                    $catatan = $holidayDesc;
                     $statusSistem = 'Libur Nasional';
                     $bgColor = '#f3f4f6';
                 } elseif ($leave) {

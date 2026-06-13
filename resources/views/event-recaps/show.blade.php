@@ -1280,7 +1280,7 @@
     }
 </style>
 
-{{-- Premium Custom Alert/Confirm Modal --}}
+{{--Confirm Modal--}}
 <div id="customConfirmModal" class="alert-modal-overlay">
     <div class="alert-modal-content">
         <div id="confirm-icon-circle" class="alert-success-circle">
@@ -1295,7 +1295,7 @@
     </div>
 </div>
 
-{{-- ═══ NOTIFICATION ALERTS ═══ --}}
+{{--NOTIFICATION--}}
 @if(session('success'))
     <div class="notice-card" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); color: #047857; margin-bottom: 20px; padding: 14px 18px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
         <i data-feather="check-circle" style="width: 16px; height: 16px;"></i>
@@ -1310,14 +1310,14 @@
     </div>
 @endif
 
-{{-- ═══ BACK BUTTON ═══ --}}
+{{--BACK BUTTON--}}
 <div style="margin-bottom: 16px;">
     <a href="{{ route('event-recaps.index') }}" class="btn-back">
         <i data-feather="arrow-left"></i> Kembali ke Daftar Rekap
     </a>
 </div>
 
-{{-- ═══ 1. EVENT INFO HEADER CARD ═══ --}}
+{{--EVENT INFO HEADER CARD--}}
 <div class="event-info-card">
     <div class="event-info-left">
         
@@ -1906,7 +1906,7 @@
     </div>
 </div>
 
-{{-- ═══ MODAL: EDIT ANGGARAN (FINANCE ONLY) ── --}}
+{{--MODAL: EDIT ANGGARAN (FINANCE ONLY) ── --}}
 @if($isFinance)
 <div class="modal-overlay" id="budgetModal">
     <div class="modal-box">
@@ -1931,7 +1931,7 @@
 </div>
 @endif
 
-{{-- ═══ MODAL: TAMBAH PENGELUARAN (PIC ONLY) ── --}}
+{{--MODAL: TAMBAH PENGELUARAN (PIC ONLY) ── --}}
 @if($isPic)
 <div class="modal-overlay" id="uploadModal">
     <div class="modal-box upload-modal-box">
@@ -2046,7 +2046,7 @@
 </div>
 @endif
 
-{{-- ═══ MODAL: PREVIEW NOTA PREVIEW ── --}}
+{{--MODAL: PREVIEW NOTA PREVIEW ── --}}
 <div class="modal-overlay" id="previewModal">
     <div class="modal-box preview-modal-box">
         <div class="modal-header">

@@ -22,15 +22,20 @@ class WorkCalendarController extends Controller
             $endOfMonth->format('Y-m-d')
         ])->get()->keyBy(fn($item) => $item->date->format('Y-m-d'));
 
+        // Fetch holidays for this year
+        $holidays = WorkCalendar::getHolidaysForYear($year);
+
         // Generate all dates in this month
         $dates = [];
         $temp = $startOfMonth->copy();
         while ($temp->lte($endOfMonth)) {
             $dateStr = $temp->format('Y-m-d');
             $isWeekend = $temp->dayOfWeek === Carbon::SATURDAY || $temp->dayOfWeek === Carbon::SUNDAY;
+            $isHoliday = isset($holidays[$dateStr]);
+            $holidayName = $isHoliday ? $holidays[$dateStr]['name'] : '';
             
-            $isWorkingDay = !$isWeekend;
-            $description = '';
+            $isWorkingDay = !$isWeekend && !$isHoliday;
+            $description = $isHoliday ? $holidayName : '';
 
             if (isset($overrides[$dateStr])) {
                 $isWorkingDay = $overrides[$dateStr]->is_working_day;
@@ -55,6 +60,10 @@ class WorkCalendarController extends Controller
     {
         $datesData = $request->input('dates', []); // array of [date => [is_working_day, description]]
 
+        $firstDateKey = !empty($datesData) ? array_key_first($datesData) : null;
+        $year = $firstDateKey ? Carbon::parse($firstDateKey)->year : date('Y');
+        $holidays = WorkCalendar::getHolidaysForYear($year);
+
         foreach ($datesData as $dateStr => $data) {
             $isWorking = isset($data['is_working_day']) ? (bool) $data['is_working_day'] : false;
             $desc = isset($data['description']) ? trim($data['description']) : null;
@@ -62,9 +71,10 @@ class WorkCalendarController extends Controller
             // Check if it's changing from non-working to working
             $carbon = Carbon::parse($dateStr);
             $isWeekend = $carbon->isWeekend();
+            $isHoliday = isset($holidays[$dateStr]);
             
             $existing = WorkCalendar::where('date', $dateStr)->first();
-            $wasWorking = $existing ? (bool)$existing->is_working_day : !$isWeekend;
+            $wasWorking = $existing ? (bool)$existing->is_working_day : (!$isWeekend && !$isHoliday);
 
             WorkCalendar::updateOrCreate(
                 ['date' => $dateStr],
@@ -85,9 +95,9 @@ class WorkCalendarController extends Controller
 
                 foreach ($users as $user) {
                     if (!empty($user->phone)) {
-                        $message = "📅 [INFO KALENDER KERJA]\n\n"
+                        $message = "INFO KALENDER KERJA\n\n"
                                  . "Hai {$user->name}, ada pemberitahuan penting!\n"
-                                 . "Hari {$namaHari}, tanggal {$tanggal} berstatus TETAP MASUK KERJA operasional ya.\n\n"
+                                 . "Hari {$namaHari}, tanggal {$tanggal} tetap masuk kerja ya.\n\n"
                                  . "Jangan lupa untuk tetap melakukan absen pada tanggal tersebut. Terima kasih!";
                         \App\Services\FonnteService::send($user->phone, $message);
                     }
