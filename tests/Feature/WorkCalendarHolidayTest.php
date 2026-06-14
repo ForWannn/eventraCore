@@ -26,7 +26,6 @@ class WorkCalendarHolidayTest extends TestCase
 
     public function test_is_working_day_with_national_holiday_auto_detection()
     {
-        // Mock holiday API response for year 2026
         Http::fake([
             'https://libur.deno.dev/api?year=2026' => Http::response([
                 [

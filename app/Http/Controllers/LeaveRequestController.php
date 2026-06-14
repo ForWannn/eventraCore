@@ -144,11 +144,7 @@ class LeaveRequestController extends Controller
                  . "Silakan tinjau dan berikan keputusan (Setuju/Tolak) melalui sistem:\n"
                  . "🔗 {$url}";
 
-        if ($leaveRequest->type === 'cuti') {
-            $managers = \App\Models\User::whereHas('roles', fn($q) => $q->where('name', 'CEO'))->get();
-        } else {
-            $managers = \App\Models\User::whereHas('roles', fn($q) => $q->whereIn('name', ['CEO', 'GM']))->get();
-        }
+        $managers = \App\Models\User::whereHas('roles', fn($q) => $q->whereIn('name', ['CEO', 'GM']))->get();
 
         foreach ($managers as $manager) {
             if (!empty($manager->phone)) {
@@ -162,19 +158,52 @@ class LeaveRequestController extends Controller
     public function approvals(Request $request)
     {
         $user = Auth::user();
-        
-        // CEO can approve cuti & izin
-        // GM can only approve izin
+
+        if (!$user->hasRole(['CEO', 'GM'])) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $queryPending = LeaveRequest::with('user')->where('status', 'pending');
-        $queryHistory = LeaveRequest::with(['user', 'approvedBy'])->where('status', '!=', 'pending');
+        $queryHistory = LeaveRequest::with(['user', 'approvedBy']);
 
         if ($user->hasRole('CEO')) {
-            // Can see all
+            // Pending: izin (pending) OR cuti (pending and not approved by CEO yet)
+            $queryPending->where(function ($q) {
+                $q->where('type', 'izin')
+                  ->orWhere(function ($sq) {
+                      $sq->where('type', 'cuti')
+                         ->whereNull('approved_by_ceo_id');
+                  });
+            });
+
+            // History: completed (status != pending) OR cuti approved by CEO
+            $queryHistory->where(function ($q) use ($user) {
+                $q->where('status', '!=', 'pending')
+                  ->orWhere(function ($sq) use ($user) {
+                      $sq->where('type', 'cuti')
+                         ->where('approved_by_ceo_id', $user->id);
+                  });
+            });
         } elseif ($user->hasRole('GM')) {
-            $queryPending->where('type', 'izin');
-            $queryHistory->where('type', 'izin');
-        } else {
-            abort(403, 'Unauthorized access.');
+            // Pending: izin (pending) OR cuti (pending and not approved by GM yet)
+            $queryPending->where(function ($q) {
+                $q->where('type', 'izin')
+                  ->orWhere(function ($sq) {
+                      $sq->where('type', 'cuti')
+                         ->whereNull('approved_by_gm_id');
+                  });
+            });
+
+            // History: izin (completed) OR cuti approved by GM
+            $queryHistory->where(function ($q) use ($user) {
+                $q->where(function ($sq) {
+                    $sq->where('type', 'izin')
+                      ->where('status', '!=', 'pending');
+                })->orWhere(function ($sq) use ($user) {
+                    $sq->where('type', 'cuti')
+                      ->where('approved_by_gm_id', $user->id);
+                });
+            });
         }
 
         if ($request->filled('filter_start_date')) {
@@ -199,52 +228,86 @@ class LeaveRequestController extends Controller
     {
         $user = Auth::user();
 
-        // Authorization checks
-        if ($leaveRequest->type === 'cuti' && !$user->hasRole('CEO')) {
-            return redirect()->back()->with('error', 'Persetujuan cuti hanya dapat disetujui oleh CEO.');
-        }
-
         if (!$user->hasRole(['CEO', 'GM'])) {
             abort(403);
         }
 
+        if ($leaveRequest->type === 'izin') {
+            $leaveRequest->update([
+                'status' => 'approved',
+                'approved_by_id' => $user->id,
+            ]);
+
+            // Send WhatsApp notification to requester
+            $startDateStr = Carbon::parse($leaveRequest->start_date)->locale('id')->translatedFormat('d M Y');
+            $endDateStr = Carbon::parse($leaveRequest->end_date)->locale('id')->translatedFormat('d M Y');
+            $tanggalIzin = $startDateStr === $endDateStr ? $startDateStr : "{$startDateStr} s/d {$endDateStr}";
+
+            $message = "✅ [STATUS IZIN: DISETUJUI]\n\n"
+                     . "Halo {$leaveRequest->user->name},\n"
+                     . "Pengajuan izin kamu untuk tanggal {$tanggalIzin} telah DISETUJUI oleh manajemen.\n\n"
+                     . "Terima kasih! 🎉";
+
+            if (!empty($leaveRequest->user->phone)) {
+                \App\Services\FonnteService::send($leaveRequest->user->phone, $message);
+            }
+
+            return redirect()->back()->with('success', 'Pengajuan izin berhasil disetujui.');
+        }
+
         if ($leaveRequest->type === 'cuti') {
+            // Check cuti limit first
             $limitError = $this->checkCutiLimit($leaveRequest->user, $leaveRequest->start_date, $leaveRequest->end_date, $leaveRequest->id);
             if ($limitError) {
                 return redirect()->back()->with('error', 'Tidak dapat menyetujui. ' . $limitError);
             }
+
+            if ($user->hasRole('GM')) {
+                if ($leaveRequest->approved_by_gm_id) {
+                    return redirect()->back()->with('error', 'Anda sudah menyetujui pengajuan cuti ini.');
+                }
+                $leaveRequest->approved_by_gm_id = $user->id;
+            } elseif ($user->hasRole('CEO')) {
+                if ($leaveRequest->approved_by_ceo_id) {
+                    return redirect()->back()->with('error', 'Anda sudah menyetujui pengajuan cuti ini.');
+                }
+                $leaveRequest->approved_by_ceo_id = $user->id;
+            }
+
+            $leaveRequest->save();
+
+            // If both approved, finalize
+            if ($leaveRequest->approved_by_gm_id && $leaveRequest->approved_by_ceo_id) {
+                $leaveRequest->update([
+                    'status' => 'approved',
+                    'approved_by_id' => $leaveRequest->approved_by_ceo_id, // Default approved_by_id to CEO
+                ]);
+
+                // Send WhatsApp notification to requester
+                $startDateStr = Carbon::parse($leaveRequest->start_date)->locale('id')->translatedFormat('d M Y');
+                $endDateStr = Carbon::parse($leaveRequest->end_date)->locale('id')->translatedFormat('d M Y');
+                $tanggalCuti = $startDateStr === $endDateStr ? $startDateStr : "{$startDateStr} s/d {$endDateStr}";
+
+                $message = "STATUS CUTI: DISETUJUI\n\n"
+                         . "Halo {$leaveRequest->user->name},\n"
+                         . "Pengajuan cuti kamu untuk tanggal {$tanggalCuti} telah disetujui.\n\n"
+                         . "Surat cuti kamu sudah dapat diunduh di sistem. Selamat beristirahat! 🎉";
+
+                if (!empty($leaveRequest->user->phone)) {
+                    \App\Services\FonnteService::send($leaveRequest->user->phone, $message);
+                }
+
+                return redirect()->back()->with('success', 'Pengajuan cuti berhasil disetujui sepenuhnya oleh GM & CEO.');
+            }
+
+            $otherRole = $user->hasRole('GM') ? 'CEO' : 'GM';
+            return redirect()->back()->with('success', "Pengajuan cuti disetujui oleh Anda. Menunggu persetujuan dari {$otherRole}.");
         }
-
-        $leaveRequest->update([
-            'status' => 'approved',
-            'approved_by_id' => $user->id,
-        ]);
-
-        // Send WhatsApp notification to requester
-        $startDateStr = Carbon::parse($leaveRequest->start_date)->locale('id')->translatedFormat('d M Y');
-        $endDateStr = Carbon::parse($leaveRequest->end_date)->locale('id')->translatedFormat('d M Y');
-        $tanggalCuti = $startDateStr === $endDateStr ? $startDateStr : "{$startDateStr} s/d {$endDateStr}";
-
-        $message = "✅ [STATUS CUTI: DISETUJUI]\n\n"
-                 . "Halo {$leaveRequest->user->name},\n"
-                 . "Pengajuan izin/cuti kamu untuk tanggal {$tanggalCuti} telah DISETUJUI oleh manajemen.\n\n"
-                 . "Selamat menikmati waktu istirahatmu! 🎉";
-
-        if (!empty($leaveRequest->user->phone)) {
-            \App\Services\FonnteService::send($leaveRequest->user->phone, $message);
-        }
-
-        return redirect()->back()->with('success', 'Pengajuan izin/cuti berhasil disetujui.');
     }
 
     public function reject(LeaveRequest $leaveRequest)
     {
         $user = Auth::user();
-
-        // Authorization checks
-        if ($leaveRequest->type === 'cuti' && !$user->hasRole('CEO')) {
-            return redirect()->back()->with('error', 'Penolakan cuti hanya dapat dilakukan oleh CEO.');
-        }
 
         if (!$user->hasRole(['CEO', 'GM'])) {
             abort(403);
@@ -261,10 +324,10 @@ class LeaveRequestController extends Controller
         $tanggalCuti = $startDateStr === $endDateStr ? $startDateStr : "{$startDateStr} s/d {$endDateStr}";
 
         $url = url('/leave-requests');
-        $message = "❌ [STATUS CUTI: DITOLAK]\n\n"
-                 . "Mohon maaf {$leaveRequest->user->name},\n"
+        $message = "❌ [STATUS PENGAJUAN: DITOLAK]\n\n"
+                 . "Halo {$leaveRequest->user->name},\n"
                  . "Pengajuan izin/cuti kamu untuk tanggal {$tanggalCuti} DITOLAK oleh manajemen.\n\n"
-                 . "Silakan cek sistem untuk melihat catatan atau alasan penolakan lebih lanjut:\n"
+                 . "Silakan cek sistem untuk info lebih lanjut:\n"
                  . "🔗 {$url}";
 
         if (!empty($leaveRequest->user->phone)) {
@@ -362,11 +425,10 @@ class LeaveRequestController extends Controller
         // Set locale to ID for Carbon translations in PDF
         \Carbon\Carbon::setLocale('id');
 
-        // Fetch CEO and GM roles safely without throwing exceptions if roles are not created
-        $ceo = \App\Models\User::whereHas('roles', function ($q) {
+        $ceo = $leaveRequest->approvedByCeo ?? \App\Models\User::whereHas('roles', function ($q) {
             $q->where('name', 'CEO');
         })->first();
-        $gm = \App\Models\User::whereHas('roles', function ($q) {
+        $gm = $leaveRequest->approvedByGm ?? \App\Models\User::whereHas('roles', function ($q) {
             $q->where('name', 'GM');
         })->first();
 

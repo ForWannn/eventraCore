@@ -212,7 +212,7 @@ class WhatsAppNotificationTest extends TestCase
         Http::assertSentCount(1);
         Http::assertSent(function ($request) {
             return str_contains($request['target'], '628111111111') &&
-                str_contains($request['message'], 'TUGAS BARU DITAMBAHKAN') &&
+                str_contains($request['message'], 'INFO PENUGASAN EVENT') &&
                 str_contains($request['message'], 'Festival');
         });
     }
@@ -231,22 +231,23 @@ class WhatsAppNotificationTest extends TestCase
         $ceo->assignRole('CEO');
         $ceo->givePermissionTo('leave_approvals');
 
-        // 1. Submit leave request
+        // 1. Submit leave request (type 'izin' for single approval flow testing)
         $response = $this->actingAs($employee)->post('/leave-requests', [
-            'type' => 'cuti',
+            'type' => 'izin',
             'start_date' => '2026-08-01',
-            'end_date' => '2026-08-03',
-            'reason' => 'Family vacation'
+            'end_date' => '2026-08-01',
+            'reason' => 'Sakit gigi',
+            'proof' => \Illuminate\Http\UploadedFile::fake()->create('proof.jpg', 100)
         ]);
 
         $response->assertRedirect('/leave-requests');
 
-        // CEO notified
+        // CEO/GM notified
         Http::assertSent(function ($request) {
             return str_contains($request['target'], '628111111111') &&
                 str_contains($request['message'], 'PENGAJUAN IZIN/CUTI BARU') &&
                 str_contains($request['message'], 'Sherlock') &&
-                str_contains($request['message'], 'Family vacation');
+                str_contains($request['message'], 'Sakit gigi');
         });
 
         // Clear Http calls count
@@ -256,14 +257,14 @@ class WhatsAppNotificationTest extends TestCase
 
         $leave = LeaveRequest::where('user_id', $employee->id)->firstOrFail();
 
-        // 2. Approve request by CEO
+        // 2. Approve request by CEO (single approval immediately approves 'izin')
         $response = $this->actingAs($ceo)->post("/leave-approvals/{$leave->id}/approve");
         $response->assertRedirect();
 
         // Employee notified of approval
         Http::assertSent(function ($request) {
             return str_contains($request['target'], '628222222222') &&
-                str_contains($request['message'], 'STATUS CUTI: DISETUJUI') &&
+                str_contains($request['message'], 'STATUS IZIN: DISETUJUI') &&
                 str_contains($request['message'], 'DISETUJUI');
         });
 
@@ -280,8 +281,65 @@ class WhatsAppNotificationTest extends TestCase
         // Employee notified of rejection
         Http::assertSent(function ($request) {
             return str_contains($request['target'], '628222222222') &&
-                str_contains($request['message'], 'STATUS CUTI: DITOLAK') &&
+                str_contains($request['message'], 'STATUS PENGAJUAN: DITOLAK') &&
                 str_contains($request['message'], 'DITOLAK');
+        });
+    }
+
+    public function test_cuti_leave_request_dual_approval_triggers_notifications()
+    {
+        Http::fake([
+            'api.fonnte.com/send' => Http::response(['status' => true], 200)
+        ]);
+
+        $employee = User::factory()->create(['phone' => '08222222222', 'name' => 'Sherlock']);
+        $employee->assignRole('Employee');
+        $employee->givePermissionTo('leave_request');
+
+        $gm = User::factory()->create(['phone' => '08333333333', 'name' => 'GM Gary']);
+        $gm->assignRole('GM');
+        $gm->givePermissionTo('leave_approvals');
+
+        $ceo = User::factory()->create(['phone' => '08111111111', 'name' => 'CEO Bobby']);
+        $ceo->assignRole('CEO');
+        $ceo->givePermissionTo('leave_approvals');
+
+        // 1. Submit cuti request
+        $response = $this->actingAs($employee)->post('/leave-requests', [
+            'type' => 'cuti',
+            'start_date' => '2026-08-01',
+            'end_date' => '2026-08-03',
+            'reason' => 'Family vacation'
+        ]);
+
+        $response->assertRedirect('/leave-requests');
+
+        $leave = LeaveRequest::where('user_id', $employee->id)->firstOrFail();
+
+        // 2. Approve by GM (still pending, no notification of final approval to employee yet)
+        Http::fake([
+            'api.fonnte.com/send' => Http::response(['status' => true], 200)
+        ]);
+        $response = $this->actingAs($gm)->post("/leave-approvals/{$leave->id}/approve");
+        $response->assertRedirect();
+
+        // Confirm employee has not been notified of final approval yet
+        Http::assertNotSent(function ($request) {
+            return str_contains($request['target'], '628222222222') &&
+                str_contains($request['message'], 'STATUS CUTI: DISETUJUI');
+        });
+
+        // 3. Approve by CEO (now fully approved, sends notification to employee)
+        Http::fake([
+            'api.fonnte.com/send' => Http::response(['status' => true], 200)
+        ]);
+        $response = $this->actingAs($ceo)->post("/leave-approvals/{$leave->id}/approve");
+        $response->assertRedirect();
+
+        Http::assertSent(function ($request) {
+            return str_contains($request['target'], '628222222222') &&
+                str_contains($request['message'], 'STATUS CUTI: DISETUJUI') &&
+                str_contains($request['message'], 'disetujui sepenuhnya oleh GM & CEO');
         });
     }
 
@@ -311,11 +369,14 @@ class WhatsAppNotificationTest extends TestCase
 
         // Employee notified
         Http::assertSent(function ($request) {
+            if (!str_contains($request->url(), 'api.fonnte.com/send')) {
+                return false;
+            }
             return str_contains($request['target'], '628222222222') &&
                 str_contains($request['message'], 'pemberitahuan penting') &&
                 str_contains($request['message'], 'Sabtu') &&
                 str_contains($request['message'], '13 Juni 2026') &&
-                str_contains($request['message'], 'TETAP MASUK KERJA');
+                str_contains($request['message'], 'tetap masuk kerja');
         });
     }
 

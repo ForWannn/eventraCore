@@ -85,7 +85,6 @@ class WorkCalendarController extends Controller
             );
 
             if (!$wasWorking && $isWorking) {
-                // Send WhatsApp notification
                 $namaHari = $carbon->locale('id')->translatedFormat('l');
                 $tanggal = $carbon->locale('id')->translatedFormat('d F Y');
 

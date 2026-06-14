@@ -18,6 +18,8 @@ class LeaveRequest extends Model
         'proof_path',
         'status',
         'approved_by_id',
+        'approved_by_gm_id',
+        'approved_by_ceo_id',
     ];
 
     protected $casts = [
@@ -33,5 +35,15 @@ class LeaveRequest extends Model
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by_id');
+    }
+
+    public function approvedByGm()
+    {
+        return $this->belongsTo(User::class, 'approved_by_gm_id');
+    }
+
+    public function approvedByCeo()
+    {
+        return $this->belongsTo(User::class, 'approved_by_ceo_id');
     }
 }

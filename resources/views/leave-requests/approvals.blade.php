@@ -514,6 +514,16 @@
                         </td>
                         <td>
                             <span class="badge-type">{{ $req->type }}</span>
+                            @if($req->type === 'cuti')
+                                <div style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 11px;">
+                                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                                        GM: {!! $req->approved_by_gm_id ? '<span style="color:#10b981; font-weight:700;">Disetujui</span>' : '<span style="color:#d97706; font-weight:600;">Menunggu</span>' !!}
+                                    </span>
+                                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                                        CEO: {!! $req->approved_by_ceo_id ? '<span style="color:#10b981; font-weight:700;">Disetujui</span>' : '<span style="color:#d97706; font-weight:600;">Menunggu</span>' !!}
+                                    </span>
+                                </div>
+                            @endif
                         </td>
                         <td style="color: var(--text-main); font-weight: 500;">
                             {{ $req->reason }}
@@ -527,18 +537,28 @@
                         </td>
                         <td>
                             <div class="btn-action-group">
-                                <form action="{{ route('leave-approvals.approve', $req->id) }}" method="POST" style="margin:0;">
-                                    @csrf
-                                    <button type="submit" class="btn-approve">
-                                        Setuju
-                                    </button>
-                                </form>
-                                <form action="{{ route('leave-approvals.reject', $req->id) }}" method="POST" style="margin:0;">
-                                    @csrf
-                                    <button type="submit" class="btn-reject">
-                                         Tolak
-                                    </button>
-                                </form>
+                                @if($req->type === 'cuti' && Auth::user()->hasRole('GM') && $req->approved_by_gm_id)
+                                    <span style="font-size: 12.5px; color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-feather="check-circle" style="width: 14px; height: 14px;"></i> Anda menyetujui
+                                    </span>
+                                @elseif($req->type === 'cuti' && Auth::user()->hasRole('CEO') && $req->approved_by_ceo_id)
+                                    <span style="font-size: 12.5px; color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-feather="check-circle" style="width: 14px; height: 14px;"></i> Anda menyetujui
+                                    </span>
+                                @else
+                                    <form action="{{ route('leave-approvals.approve', $req->id) }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        <button type="submit" class="btn-approve">
+                                            Setuju
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('leave-approvals.reject', $req->id) }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        <button type="submit" class="btn-reject">
+                                             Tolak
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -728,7 +748,16 @@
                                 @endif
                             </td>
                             <td style="color: var(--text-muted); font-weight: 600;">
-                                {{ $req->approvedBy->name ?? '-' }}
+                                @if($req->status === 'approved')
+                                    <div style="font-size: 11.5px; display: flex; flex-direction: column; gap: 2px;">
+                                        <span>GM: {{ $req->approvedByGm->name ?? '-' }}</span>
+                                        <span>CEO: {{ $req->approvedByCeo->name ?? '-' }}</span>
+                                    </div>
+                                @elseif($req->status === 'rejected')
+                                    <span>{{ $req->approvedBy->name ?? '-' }}</span>
+                                @else
+                                    -
+                                @endif
                             </td>
                         </tr>
                     @empty
