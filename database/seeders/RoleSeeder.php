@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
     {
         // Define system roles
         $roles = [
-            'CEO',
+            'Direktur',
             'GM',
             'Head',
             'PIC Event',

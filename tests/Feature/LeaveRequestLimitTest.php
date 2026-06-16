@@ -21,7 +21,7 @@ class LeaveRequestLimitTest extends TestCase
         
         // Setup Roles and Permissions
         Role::firstOrCreate(['name' => 'Employee']);
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
         Permission::firstOrCreate(['name' => 'leave_request']);
         Permission::firstOrCreate(['name' => 'leave_approvals']);
     }
@@ -199,11 +199,11 @@ class LeaveRequestLimitTest extends TestCase
         $response->assertSessionHas('success');
     }
 
-    public function test_ceo_cannot_approve_cuti_exceeding_annual_limit()
+    public function test_Direktur_cannot_approve_cuti_exceeding_annual_limit()
     {
-        $ceo = User::factory()->create();
-        $ceo->assignRole('CEO');
-        $ceo->givePermissionTo('leave_approvals');
+        $Direktur = User::factory()->create();
+        $Direktur->assignRole('Direktur');
+        $Direktur->givePermissionTo('leave_approvals');
 
         $employee = User::factory()->create();
 
@@ -227,8 +227,8 @@ class LeaveRequestLimitTest extends TestCase
             'status' => 'pending',
         ]);
 
-        // 3. CEO tries to approve the pending request -> should fail because it will exceed limit (5 + 3 = 8)
-        $response = $this->actingAs($ceo)->post("/leave-approvals/{$pending->id}/approve");
+        // 3. Direktur tries to approve the pending request -> should fail because it will exceed limit (5 + 3 = 8)
+        $response = $this->actingAs($Direktur)->post("/leave-approvals/{$pending->id}/approve");
         $response->assertRedirect();
         $response->assertSessionHas('error');
         $this->assertEquals('pending', $pending->fresh()->status);

@@ -110,8 +110,8 @@ class EventRecapController extends Controller
             abort(403, 'Anda tidak memiliki akses ke rekapitulasi event ini.');
         }
 
-        // Treat users with permission who are not Finance as read-only (like CEO/GM)
-        $isLeader = $user->hasAnyRole(['CEO', 'GM']) || ($hasPermission && !$isFinance);
+        // Treat users with permission who are not Finance as read-only (like Direktur/GM)
+        $isLeader = $user->hasAnyRole(['Direktur', 'GM']) || ($hasPermission && !$isFinance);
 
         // Initialize recap if not exists
         $recap = $event->recap;
@@ -456,13 +456,13 @@ class EventRecapController extends Controller
     }
 
     /**
-     * Export recap to Excel format (Finance and CEO/GM only).
+     * Export recap to Excel format (Finance and Director/GM only).
      */
     // public function export(Event $event)
     // {
     //     $user = Auth::user();
     //     $isFinance = $this->isFinance($user);
-    //     $isLeader = $user->hasAnyRole(['CEO', 'GM']);
+    //     $isLeader = $user->hasAnyRole(['Director', 'GM']);
     //     $hasPermission = $user->can('rekap_event') || $isFinance;
 
     //     if ((!$isFinance && !$isLeader) || !$hasPermission) {

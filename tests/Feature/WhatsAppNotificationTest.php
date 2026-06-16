@@ -27,7 +27,7 @@ class WhatsAppNotificationTest extends TestCase
         parent::setUp();
 
         // Create roles
-        $roles = ['CEO', 'GM', 'Head', 'PIC Event', 'Employee', 'Intern', 'Admin', 'Superadmin'];
+        $roles = ['Direktur', 'GM', 'Head', 'PIC Event', 'Employee', 'Intern', 'Admin', 'Superadmin'];
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
         }
@@ -227,9 +227,9 @@ class WhatsAppNotificationTest extends TestCase
         $employee->assignRole('Employee');
         $employee->givePermissionTo('leave_request');
 
-        $ceo = User::factory()->create(['phone' => '08111111111', 'name' => 'CEO Bobby']);
-        $ceo->assignRole('CEO');
-        $ceo->givePermissionTo('leave_approvals');
+        $direktur = User::factory()->create(['phone' => '08111111111', 'name' => 'Direktur Bobby']);
+        $direktur->assignRole('Direktur');
+        $direktur->givePermissionTo('leave_approvals');
 
         // 1. Submit leave request (type 'izin' for single approval flow testing)
         $response = $this->actingAs($employee)->post('/leave-requests', [
@@ -242,7 +242,7 @@ class WhatsAppNotificationTest extends TestCase
 
         $response->assertRedirect('/leave-requests');
 
-        // CEO/GM notified
+        // Director/GM notified
         Http::assertSent(function ($request) {
             return str_contains($request['target'], '628111111111') &&
                 str_contains($request['message'], 'PENGAJUAN IZIN/CUTI BARU') &&
@@ -257,8 +257,8 @@ class WhatsAppNotificationTest extends TestCase
 
         $leave = LeaveRequest::where('user_id', $employee->id)->firstOrFail();
 
-        // 2. Approve request by CEO (single approval immediately approves 'izin')
-        $response = $this->actingAs($ceo)->post("/leave-approvals/{$leave->id}/approve");
+        // 2. Approve request by Direktur (single approval immediately approves 'izin')
+        $response = $this->actingAs($direktur)->post("/leave-approvals/{$leave->id}/approve");
         $response->assertRedirect();
 
         // Employee notified of approval
@@ -274,8 +274,8 @@ class WhatsAppNotificationTest extends TestCase
             'api.fonnte.com/send' => Http::response(['status' => true], 200)
         ]);
 
-        // 3. Reject request by CEO
-        $response = $this->actingAs($ceo)->post("/leave-approvals/{$leave->id}/reject");
+        // 3. Reject request by Direktur
+        $response = $this->actingAs($direktur)->post("/leave-approvals/{$leave->id}/reject");
         $response->assertRedirect();
 
         // Employee notified of rejection
@@ -300,9 +300,9 @@ class WhatsAppNotificationTest extends TestCase
         $gm->assignRole('GM');
         $gm->givePermissionTo('leave_approvals');
 
-        $ceo = User::factory()->create(['phone' => '08111111111', 'name' => 'CEO Bobby']);
-        $ceo->assignRole('CEO');
-        $ceo->givePermissionTo('leave_approvals');
+        $direktur = User::factory()->create(['phone' => '08111111111', 'name' => 'Direktur Bobby']);
+        $direktur->assignRole('Direktur');
+        $direktur->givePermissionTo('leave_approvals');
 
         // 1. Submit cuti request
         $response = $this->actingAs($employee)->post('/leave-requests', [
@@ -329,17 +329,17 @@ class WhatsAppNotificationTest extends TestCase
                 str_contains($request['message'], 'STATUS CUTI: DISETUJUI');
         });
 
-        // 3. Approve by CEO (now fully approved, sends notification to employee)
+        // 3. Approve by Direktur (now fully approved, sends notification to employee)
         Http::fake([
             'api.fonnte.com/send' => Http::response(['status' => true], 200)
         ]);
-        $response = $this->actingAs($ceo)->post("/leave-approvals/{$leave->id}/approve");
+        $response = $this->actingAs($direktur)->post("/leave-approvals/{$leave->id}/approve");
         $response->assertRedirect();
 
         Http::assertSent(function ($request) {
             return str_contains($request['target'], '628222222222') &&
                 str_contains($request['message'], 'STATUS CUTI: DISETUJUI') &&
-                str_contains($request['message'], 'disetujui sepenuhnya oleh GM & CEO');
+                str_contains($request['message'], 'disetujui sepenuhnya oleh GM & Direktur');
         });
     }
 

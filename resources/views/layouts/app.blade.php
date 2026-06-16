@@ -616,7 +616,7 @@
                </a>
                @endcan
 
-               @if(Auth::user()->hasAnyRole(['CEO', 'GM']))
+               @if(Auth::user()->hasAnyRole(['Director', 'GM']))
                <a href="{{ route('executive-dashboard') }}"
                    class="nav-link {{ request()->routeIs('executive-dashboard') ? 'active' : '' }}">
                    <i data-feather="pie-chart"></i> <span>Evaluasi Tahunan</span>

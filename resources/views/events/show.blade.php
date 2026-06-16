@@ -985,7 +985,7 @@
                                                 @endforelse
                                             </div>
  
-                                            <!-- Create Task Input (Role Restricted: CEO/GM/PIC can add for anyone, Crew for self) -->
+                                            <!-- Create Task Input (Role Restricted: Director/GM/PIC can add for anyone, Crew for self) -->
                                             @if($isLeader || $isPic || auth()->id() == $member->id)
                                                 <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
                                                     <div style="position: relative; flex: 1;">

@@ -45,8 +45,8 @@ class User extends Authenticatable
         'birth_date',
         'gender',
         'employee_type',
-
         'join_date',
+        'last_seen_at',
     ];
 
     /**
@@ -71,6 +71,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'birth_date' => 'date',
             'join_date' => 'date',
+            'last_seen_at' => 'datetime',
         ];
     }
 
@@ -94,5 +95,10 @@ class User extends Authenticatable
     public function dailyAttendances()
     {
         return $this->hasMany(DailyAttendance::class);
+    }
+
+    public function isOnline(): bool
+    {
+        return \Illuminate\Support\Facades\Cache::has('user-is-online-' . $this->id);
     }
 }

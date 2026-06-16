@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $isDirector = Auth::user()->hasRole(['CEO', 'GM']);
+    $isDirector = Auth::user()->hasRole(['Direktur', 'GM']);
 @endphp
 
 @section('title', $isDirector ? 'Review Laporan Karyawan' : 'Detail Laporan Mingguan')
@@ -105,31 +105,43 @@
         <div class="section-box">
             <div class="section-header">Weekly Objective</div>
             <div class="section-body show-objective-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px;">
-                @for($i = 0; $i < 10; $i++)
-                    @php $item = $report->items->where('type', 'objective')->values()->get($i); @endphp
-                    @if($item)
-                    <div style="display: flex; align-items: center;">
-                        <div class="status-toggle">
-                            <div class="status-btn {{ $item->is_completed ? 'active-check' : 'active-cross' }}">
-                                <i data-feather="{{ $item->is_completed ? 'check' : 'x' }}" style="width: 14px; height: 14px;"></i>
+                @if($canViewPlan)
+                    @for($i = 0; $i < 10; $i++)
+                        @php $item = $report->items->where('type', 'objective')->values()->get($i); @endphp
+                        @if($item)
+                        <div style="display: flex; align-items: center;">
+                            <div class="status-toggle">
+                                <div class="status-btn {{ $item->is_completed ? 'active-check' : 'active-cross' }}">
+                                    <i data-feather="{{ $item->is_completed ? 'check' : 'x' }}" style="width: 14px; height: 14px;"></i>
+                                </div>
                             </div>
+                            <input type="text" class="input-read" value="{{ $item->content }}" readonly>
                         </div>
-                        <input type="text" class="input-read" value="{{ $item->content }}" readonly>
+                        @endif
+                    @endfor
+                @else
+                    <div style="grid-column: span 2; color: var(--text-muted); font-style: italic; font-size: 13px; padding: 8px 0;">
+                        Weekly Plan belum dikirim oleh karyawan.
                     </div>
-                    @endif
-                @endfor
+                @endif
             </div>
         </div>
 
         <div class="section-box">
             <div class="section-header">Deadline Bulan Ini</div>
             <div class="section-body" style="display: flex; flex-direction: column; gap: 8px;">
-                @for($i = 0; $i < 5; $i++)
-                    @php $item = $report->items->where('type', 'deadline')->values()->get($i); @endphp
-                    @if($item)
-                        <input type="text" class="input-read" value="{{ $item->content }}" readonly>
-                    @endif
-                @endfor
+                @if($canViewPlan)
+                    @for($i = 0; $i < 5; $i++)
+                        @php $item = $report->items->where('type', 'deadline')->values()->get($i); @endphp
+                        @if($item)
+                            <input type="text" class="input-read" value="{{ $item->content }}" readonly>
+                        @endif
+                    @endfor
+                @else
+                    <div style="color: var(--text-muted); font-style: italic; font-size: 13px; padding: 8px 0;">
+                        Weekly Plan belum dikirim oleh karyawan.
+                    </div>
+                @endif
             </div>
         </div>
     </div>

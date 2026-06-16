@@ -18,7 +18,7 @@ class LeaveRequestFilterTest extends TestCase
         parent::setUp();
         // Create roles
         Role::firstOrCreate(['name' => 'Employee']);
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
 
         // Create permissions
         Permission::firstOrCreate(['name' => 'leave_request']);
@@ -77,7 +77,7 @@ class LeaveRequestFilterTest extends TestCase
     public function test_admin_can_filter_approvals_action_history_by_date_range()
     {
         $admin = User::factory()->create();
-        $admin->assignRole('CEO');
+        $admin->assignRole('Direktur');
         $admin->givePermissionTo('leave_approvals');
 
         $employee = User::factory()->create();

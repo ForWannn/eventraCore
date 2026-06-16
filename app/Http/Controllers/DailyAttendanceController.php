@@ -88,7 +88,7 @@ class DailyAttendanceController extends Controller
         // Coordinates configuration: Palembang (-2.9507, 104.7454) and Jakarta (-6.2088, 106.8456)
         $offices = [
             ['lat' => -2.9507, 'lng' => 104.7454], // Palembang Office
-            ['lat' => -6.2088, 'lng' => 106.8456], // Jakarta Office
+            ['lat' => -6.2088, 'lng' => 106.8456],
         ];
 
         foreach ($offices as $office) {
@@ -927,7 +927,7 @@ class DailyAttendanceController extends Controller
                         $checkInTimeStr = $attendance->check_in_time ? $checkInObj->format('H:i') : '-';
                         $checkInTimeOnly = $attendance->check_in_time ? $checkInObj->format('H:i:s') : '00:00:00';
                         
-                        $isLate = ($checkInTimeOnly > '09:00:00');
+                        $isLate = ($checkInTimeOnly > config('attendance.checkout_threshold', '09:00:00'));
                         
                         // Cek status akhir (manual maupun otomatis)
                         $effectiveStatus = $attendance->manual_status ?? ($isLate ? 'terlambat' : 'hadir');
@@ -1149,7 +1149,7 @@ class DailyAttendanceController extends Controller
                         $checkInTimeStr = $attendance->check_in_time ? $checkInObj->format('H:i') : '-';
                         $checkInTimeOnly = $attendance->check_in_time ? $checkInObj->format('H:i:s') : '00:00:00';
                         
-                        $isLate = ($checkInTimeOnly > '09:00:00');
+                        $isLate = ($checkInTimeOnly > config('attendance.checkout_threshold', '09:00:00'));
                         $effectiveStatus = $attendance->manual_status ?? ($isLate ? 'terlambat' : 'hadir');
 
                         // Pewarnaan Sesuai Status (Mirip PDF)

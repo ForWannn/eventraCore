@@ -67,10 +67,10 @@ class WeeklyReportController extends Controller
         return view('weekly-reports.index', compact('report', 'now'));
     }
 
-    // ── FITUR BARU: HALAMAN REKAP UNTUK CEO & GM ──────────────────────
+    // ── FITUR BARU: HALAMAN REKAP UNTUK Direktur & GM ──────────────────────
     public function recap(Request $request)
     {
-        if (!Auth::user()->hasRole(['CEO', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
+        if (!Auth::user()->hasRole(['Direktur', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
 
         $now = Carbon::now();
         $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
@@ -80,7 +80,7 @@ class WeeklyReportController extends Controller
 
         // Ambil semua user bersama data laporan minggunya pada tanggal yang dipilih
         $users = User::whereDoesntHave('roles', function($q){
-            $q->whereIn('name', ['CEO', 'Direktur']);
+            $q->whereIn('name', ['Direktur']);
         })->with(['weeklyReports' => function($q) use ($weekStart) {
             $q->where('week_start_date', $weekStart);
         }, 'division'])->orderBy('name')->get();
@@ -199,7 +199,7 @@ class WeeklyReportController extends Controller
 
     public function exportRecap(Request $request)
     {
-        if (!Auth::user()->hasRole(['CEO', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
+        if (!Auth::user()->hasRole(['Direktur', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
 
         $now = Carbon::now();
         $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
@@ -208,7 +208,7 @@ class WeeklyReportController extends Controller
         $statusFilter = $request->query('status', 'all');
 
         $users = User::whereDoesntHave('roles', function($q){
-            $q->whereIn('name', ['CEO', 'Direktur']);
+            $q->whereIn('name', ['Direktur']);
         })->with(['weeklyReports' => function($q) use ($weekStart) {
             $q->where('week_start_date', $weekStart);
         }, 'division'])->orderBy('name')->get();
@@ -317,7 +317,7 @@ class WeeklyReportController extends Controller
         if ($user->hasRole('Superadmin')) {
             abort(403);
         }
-        $isDirector = $user->hasRole(['CEO', 'GM']) || $user->can('weekly_history');
+        $isDirector = $user->hasRole(['Direktur', 'GM']) || $user->can('weekly_history');
         if ($user->hasRole(['Employee', 'Intern'])) {
             $isDirector = false;
         }
@@ -423,7 +423,7 @@ class WeeklyReportController extends Controller
         if ($currentUser->hasRole(['Employee', 'Intern']) && $currentUser->id != $userId) {
             abort(403);
         }
-        if (!$currentUser->hasRole(['CEO', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
+        if (!$currentUser->hasRole(['Direktur', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
             abort(403);
         }
 
@@ -433,7 +433,9 @@ class WeeklyReportController extends Controller
             ->with(['items', 'dailyLogs'])
             ->firstOrFail();
 
-        return view('weekly-reports.show', compact('report', 'user'));
+        $canViewPlan = (Auth::id() == $userId || !is_null($report->plan_submitted_at));
+
+        return view('weekly-reports.show', compact('report', 'user', 'canViewPlan'));
     }
 
     public function exportPdf($userId, $weekStart)
@@ -442,7 +444,7 @@ class WeeklyReportController extends Controller
         if ($currentUser->hasRole(['Employee', 'Intern']) && $currentUser->id != $userId) {
             abort(403);
         }
-        if (!$currentUser->hasRole(['CEO', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
+        if (!$currentUser->hasRole(['Direktur', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
             abort(403);
         }
 
@@ -458,7 +460,9 @@ class WeeklyReportController extends Controller
         // Formatted range in Indonesian
         $dateRangeString = $weekStartDate->locale('id')->translatedFormat('d F Y') . ' - ' . $weekEndDate->locale('id')->translatedFormat('d F Y');
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('weekly-reports.pdf', compact('report', 'user', 'dateRangeString'));
+        $canViewPlan = (Auth::id() == $userId || !is_null($report->plan_submitted_at));
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('weekly-reports.pdf', compact('report', 'user', 'dateRangeString', 'canViewPlan'));
 
         $filename = 'weekly_report_' . strtolower(str_replace(' ', '_', $user->name)) . '_' . $report->week_start_date->format('Y-m-d') . '.pdf';
         
@@ -467,25 +471,69 @@ class WeeklyReportController extends Controller
 
     public function updatePlan(Request $request, WeeklyReport $report)
     {
+        if ($report->plan_submitted_at) {
+            return back()->with('error', 'Weekly Plan sudah dikirim dan tidak dapat diubah.');
+        }
+
+        $existingObjectives = $report->items()->where('type', 'objective')->orderBy('id')->pluck('content')->toArray();
+        $existingDeadlines = $report->items()->where('type', 'deadline')->orderBy('id')->pluck('content')->toArray();
+
+        $newObjectives = array_values(array_filter($request->input('objectives', []), fn($val) => !is_null($val) && trim($val) !== ''));
+        $newDeadlines = array_values(array_filter($request->input('deadlines', []), fn($val) => !is_null($val) && trim($val) !== ''));
+
+        $hasChanges = ($existingObjectives !== $newObjectives) || ($existingDeadlines !== $newDeadlines);
+
+        if ($hasChanges) {
+            $report->items()->delete();
+            foreach ($newObjectives as $content) {
+                WeeklyItem::create(['weekly_report_id' => $report->id, 'type' => 'objective', 'content' => $content]);
+            }
+            foreach ($newDeadlines as $content) {
+                WeeklyItem::create(['weekly_report_id' => $report->id, 'type' => 'deadline', 'content' => $content]);
+            }
+            $report->update(['plan_saved_at' => now()]);
+            return back()->with('success', 'Weekly Plan berhasil disimpan.');
+        }
+
+        return back()->with('info', 'Tidak ada perubahan pada Weekly Plan.');
+    }
+
+    public function submitPlan(Request $request, WeeklyReport $report)
+    {
+        if ($report->plan_submitted_at) {
+            return back()->with('error', 'Weekly Plan sudah dikirim.');
+        }
+
         $now = now();
         $deadline = Carbon::parse($report->week_start_date)->addHours(9);
         $isLate = $now->greaterThan($deadline);
 
+        $newObjectives = array_values(array_filter($request->input('objectives', []), fn($val) => !is_null($val) && trim($val) !== ''));
+        $newDeadlines = array_values(array_filter($request->input('deadlines', []), fn($val) => !is_null($val) && trim($val) !== ''));
+
+        $existingObjectives = $report->items()->where('type', 'objective')->orderBy('id')->pluck('content')->toArray();
+        $existingDeadlines = $report->items()->where('type', 'deadline')->orderBy('id')->pluck('content')->toArray();
+        $hasChanges = ($existingObjectives !== $newObjectives) || ($existingDeadlines !== $newDeadlines);
+
         $report->items()->delete();
-        
-        if ($request->has('objectives')) {
-            foreach ($request->objectives as $content) {
-                if ($content) WeeklyItem::create(['weekly_report_id' => $report->id, 'type' => 'objective', 'content' => $content]);
-            }
+        foreach ($newObjectives as $content) {
+            WeeklyItem::create(['weekly_report_id' => $report->id, 'type' => 'objective', 'content' => $content]);
         }
-        if ($request->has('deadlines')) {
-            foreach ($request->deadlines as $content) {
-                if ($content) WeeklyItem::create(['weekly_report_id' => $report->id, 'type' => 'deadline', 'content' => $content]);
-            }
+        foreach ($newDeadlines as $content) {
+            WeeklyItem::create(['weekly_report_id' => $report->id, 'type' => 'deadline', 'content' => $content]);
         }
 
-        $report->update(['plan_submitted_at' => $now, 'is_late_plan' => $isLate]);
-        return back()->with('success', 'Plan & Deadline berhasil disimpan.');
+        $updateData = [
+            'plan_submitted_at' => $now,
+            'is_late_plan' => $isLate
+        ];
+        if ($hasChanges || is_null($report->plan_saved_at)) {
+            $updateData['plan_saved_at'] = $now;
+        }
+
+        $report->update($updateData);
+
+        return back()->with('success', 'Weekly Plan berhasil dikirim.');
     }
 
     public function submitFinal(Request $request, WeeklyReport $report)

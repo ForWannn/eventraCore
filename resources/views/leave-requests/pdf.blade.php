@@ -117,7 +117,7 @@
         $end_day = $leaveRequest->end_date->translatedFormat('l');
         $end_date_formatted = $leaveRequest->end_date->translatedFormat('d F Y');
         
-        $ceoName = $ceo ? $ceo->name : 'Bobby Hendra Saputra';
+        $direkturName = $direktur ? $direktur->name : 'Bobby Hendra Saputra';
         $gmName = $gm ? $gm->name : 'M. Agus Idham';
         $userDivision = $leaveRequest->user->division->name ?? 'Staff';
     @endphp
@@ -135,7 +135,7 @@
     </table>
 
     <div class="recipient-section">
-        Yth. General Manager dan Director<br>
+        Yth. General Manager dan Direktur<br>
         CV.Beststar Sumatera (Reel Seven Organizer)<br>
         Ditempat
     </div>
@@ -176,11 +176,11 @@
                 <div class="signature-name" style="font-weight: bold; text-decoration: underline;">{{ $gmName }}</div>
                 <div class="signature-role">General Manager</div>
             </td>
-            <!-- Right Signature: Director -->
+            <!-- Right Signature: Direktur -->
             <td style="width: 50%;">
                 <div class="signature-title">Menyetujui,</div>
-                <div class="signature-name" style="font-weight: bold; text-decoration: underline;">{{ $ceoName }}</div>
-                <div class="signature-role">Director</div>
+                <div class="signature-name" style="font-weight: bold; text-decoration: underline;">{{ $direkturName }}</div>
+                <div class="signature-role">Direktur</div>
             </td>
         </tr>
         <tr>

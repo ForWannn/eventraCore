@@ -1019,7 +1019,7 @@
                         <td class="geo-location-cell" style="padding: 16px; color: var(--text-main); font-weight: 500;" data-lat="{{ $att['latitude'] }}" data-lng="{{ $att['longitude'] }}" data-type="{{ $att['attendance_type'] }}">
                             @if($att['attendance_type'] === 'kantor')
                                 <span style="display: inline-flex; align-items: center; gap: 8px;">
-                                    <i data-feather="map-pin" style="width: 14px; height: 14px; color: var(--text-muted);"></i> Jakarta
+                                    <i data-feather="map-pin" style="width: 14px; height: 14px; color: var(--text-muted);"></i> Palembang
                                 </span>
                             @elseif($att['attendance_type'] === 'luar' && $att['latitude'])
                                 <span style="display: inline-flex; align-items: center; gap: 8px;">

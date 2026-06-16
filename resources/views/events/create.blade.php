@@ -1126,7 +1126,7 @@
     <script>
         const ALL_USERS = {!! json_encode($usersJson) !!};
         const USER_SCHEDULES = {!! $usersSchedules->toJson() !!};
-        const IS_CEO = @if(Auth::user()->hasAnyRole(['CEO', 'GM']) || Auth::user()->can('crud_events')) true @else false @endif;
+        const IS_Director = @if(Auth::user()->hasAnyRole(['Director', 'GM']) || Auth::user()->can('crud_events')) true @else false @endif;
         let posCount = 0;
         let currentPic = null;
         let showAllEmployees = false;

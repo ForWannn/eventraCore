@@ -186,62 +186,70 @@
             <!-- Left Column: Weekly Objectives (65% width) -->
             <td style="width: 65%; vertical-align: top; padding-right: 20px;">
                 <div class="section-title">Weekly Objectives</div>
-                <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
-                    <tr>
-                        <!-- Sub-column 1: Items 1-5 -->
-                        <td style="width: 50%; vertical-align: top; padding-right: 10px;">
-                            @php $objectivesVal = $report->items->where('type', 'objective')->values(); @endphp
-                            @for($i = 0; $i < 5; $i++)
-                                @php $item = $objectivesVal->get($i); @endphp
-                                @if($item)
-                                    <div class="objective-item">
-                                        <span class="checkbox-container">
-                                            @if($item->is_completed)
-                                                &#x2611;
-                                            @else
-                                                &#x2610;
-                                            @endif
-                                        </span>
-                                        <span class="objective-text">{{ $item->content }}</span>
-                                    </div>
+                @if($canViewPlan)
+                    <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+                        <tr>
+                            <!-- Sub-column 1: Items 1-5 -->
+                            <td style="width: 50%; vertical-align: top; padding-right: 10px;">
+                                @php $objectivesVal = $report->items->where('type', 'objective')->values(); @endphp
+                                @for($i = 0; $i < 5; $i++)
+                                    @php $item = $objectivesVal->get($i); @endphp
+                                    @if($item)
+                                        <div class="objective-item">
+                                            <span class="checkbox-container">
+                                                @if($item->is_completed)
+                                                    &#x2611;
+                                                @else
+                                                    &#x2610;
+                                                @endif
+                                            </span>
+                                            <span class="objective-text">{{ $item->content }}</span>
+                                        </div>
+                                    @endif
+                                @endfor
+                                @if($objectivesVal->count() == 0)
+                                    <div style="font-style: italic; color: #9ca3af; font-size: 11px;">Tidak ada objective minggu ini</div>
                                 @endif
-                            @endfor
-                            @if($objectivesVal->count() == 0)
-                                <div style="font-style: italic; color: #9ca3af; font-size: 11px;">Tidak ada objective minggu ini</div>
-                            @endif
-                        </td>
-                        <!-- Sub-column 2: Items 6-10 -->
-                        <td style="width: 50%; vertical-align: top; padding-left: 10px;">
-                            @for($i = 5; $i < 10; $i++)
-                                @php $item = $objectivesVal->get($i); @endphp
-                                @if($item)
-                                    <div class="objective-item">
-                                        <span class="checkbox-container">
-                                            @if($item->is_completed)
-                                                &#x2611;
-                                            @else
-                                                &#x2610;
-                                            @endif
-                                        </span>
-                                        <span class="objective-text">{{ $item->content }}</span>
-                                    </div>
-                                @endif
-                            @endfor
-                        </td>
-                    </tr>
-                </table>
+                            </td>
+                            <!-- Sub-column 2: Items 6-10 -->
+                            <td style="width: 50%; vertical-align: top; padding-left: 10px;">
+                                @for($i = 5; $i < 10; $i++)
+                                    @php $item = $objectivesVal->get($i); @endphp
+                                    @if($item)
+                                        <div class="objective-item">
+                                            <span class="checkbox-container">
+                                                @if($item->is_completed)
+                                                    &#x2611;
+                                                @else
+                                                    &#x2610;
+                                                @endif
+                                            </span>
+                                            <span class="objective-text">{{ $item->content }}</span>
+                                        </div>
+                                    @endif
+                                @endfor
+                            </td>
+                        </tr>
+                    </table>
+                @else
+                    <div style="font-style: italic; color: #9ca3af; font-size: 11px; padding: 5px 0;">Weekly Plan belum dikirim.</div>
+                @endif
             </td>
             <!-- Right Column: Deadline Bulan Ini (35% width) -->
             <td style="width: 35%; vertical-align: top;">
                 <div class="section-title">Deadline Bulan Ini</div>
-                <ul class="deadlines-list">
-                    @php $deadlines = $report->items->where('type', 'deadline'); @endphp
-                    @forelse($deadlines as $item)
-                        <li class="deadline-item">{{ $item->content }}</li>
-                    @empty
-                        <li style="font-style: italic; color: #9ca3af; font-size: 11px;">Tidak ada deadline bulan ini</li>
-                    @endforelse
-                </ul>
+                @if($canViewPlan)
+                    <ul class="deadlines-list">
+                        @php $deadlines = $report->items->where('type', 'deadline'); @endphp
+                        @forelse($deadlines as $item)
+                            <li class="deadline-item">{{ $item->content }}</li>
+                        @empty
+                            <li style="font-style: italic; color: #9ca3af; font-size: 11px;">Tidak ada deadline bulan ini</li>
+                        @endforelse
+                    </ul>
+                @else
+                    <div style="font-style: italic; color: #9ca3af; font-size: 11px; padding: 5px 0;">Weekly Plan belum dikirim.</div>
+                @endif
             </td>
         </tr>
     </table>

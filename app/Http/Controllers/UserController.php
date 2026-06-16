@@ -332,7 +332,7 @@ class UserController extends Controller
                 'crud_users',
                 'rekap_event',
             ],
-            'CEO' => [
+            'Direktur' => [
                 'view_dashboard',
                 'weekly_report',
                 'weekly_history',

@@ -694,7 +694,7 @@
                                     @if($req->status === 'approved')
                                         <div style="font-size: 11px; display: flex; flex-direction: column; gap: 2px;">
                                             <span>GM: {{ $req->approvedByGm->name ?? '-' }}</span>
-                                            <span>CEO: {{ $req->approvedByCeo->name ?? '-' }}</span>
+                                            <span>Direktur: {{ $req->approvedByDirektur->name ?? '-' }}</span>
                                         </div>
                                     @elseif($req->status === 'pending')
                                         <div style="font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
@@ -702,7 +702,7 @@
                                                 GM: {!! $req->approved_by_gm_id ? '<span style="color:#10b981; font-weight:700;">Setuju</span>' : '<span style="color:#d97706; font-weight:500;">Menunggu</span>' !!}
                                             </span>
                                             <span style="display: inline-flex; align-items: center; gap: 4px;">
-                                                CEO: {!! $req->approved_by_ceo_id ? '<span style="color:#10b981; font-weight:700;">Setuju</span>' : '<span style="color:#d97706; font-weight:500;">Menunggu</span>' !!}
+                                                Direktur: {!! $req->approved_by_direktur_id ? '<span style="color:#10b981; font-weight:700;">Setuju</span>' : '<span style="color:#d97706; font-weight:500;">Menunggu</span>' !!}
                                             </span>
                                         </div>
                                     @elseif($req->status === 'rejected')

@@ -11,6 +11,7 @@ class WeeklyReport extends Model
     protected $casts = [
         'week_start_date' => 'date',
         'plan_submitted_at' => 'datetime',
+        'plan_saved_at' => 'datetime',
         'final_submitted_at' => 'datetime',
     ];
 

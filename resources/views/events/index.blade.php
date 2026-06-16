@@ -422,7 +422,7 @@
         <div>
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin: 0;">Daftar Event</h2>
             <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px; font-weight: 500; margin-bottom: 0;">
-                @if(Auth::user()->can('crud_events') || Auth::user()->hasAnyRole(['CEO', 'GM']))
+                @if(Auth::user()->can('crud_events') || Auth::user()->hasAnyRole(['Director', 'GM']))
                     <!-- Daftar event berdasarkan bulan yang dipilih. -->
                 @else
                     <!-- Event yang Anda ditugaskan pada bulan ini. -->
@@ -457,7 +457,7 @@
         <div class="empty-state">
             <i data-feather="calendar" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; color: var(--text-muted);"></i>
             <p style="font-size: 13.5px; font-weight: 500; color: var(--text-muted);">
-                @if(Auth::user()->can('crud_events') || Auth::user()->hasAnyRole(['CEO', 'GM']))
+                @if(Auth::user()->can('crud_events') || Auth::user()->hasAnyRole(['Director', 'GM']))
                     Belum ada event. Mulai dengan membuat event baru.
                 @else
                     Anda belum ditugaskan pada event apapun.

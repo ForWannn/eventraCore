@@ -520,7 +520,7 @@
                                         GM: {!! $req->approved_by_gm_id ? '<span style="color:#10b981; font-weight:700;">Disetujui</span>' : '<span style="color:#d97706; font-weight:600;">Menunggu</span>' !!}
                                     </span>
                                     <span style="display: inline-flex; align-items: center; gap: 4px;">
-                                        CEO: {!! $req->approved_by_ceo_id ? '<span style="color:#10b981; font-weight:700;">Disetujui</span>' : '<span style="color:#d97706; font-weight:600;">Menunggu</span>' !!}
+                                        Direktur: {!! $req->approved_by_direktur_id ? '<span style="color:#10b981; font-weight:700;">Disetujui</span>' : '<span style="color:#d97706; font-weight:600;">Menunggu</span>' !!}
                                     </span>
                                 </div>
                             @endif
@@ -541,7 +541,7 @@
                                     <span style="font-size: 12.5px; color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                                         <i data-feather="check-circle" style="width: 14px; height: 14px;"></i> Anda menyetujui
                                     </span>
-                                @elseif($req->type === 'cuti' && Auth::user()->hasRole('CEO') && $req->approved_by_ceo_id)
+                                @elseif($req->type === 'cuti' && Auth::user()->hasRole('Direktur') && $req->approved_by_direktur_id)
                                     <span style="font-size: 12.5px; color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                                         <i data-feather="check-circle" style="width: 14px; height: 14px;"></i> Anda menyetujui
                                     </span>
@@ -751,7 +751,7 @@
                                 @if($req->status === 'approved')
                                     <div style="font-size: 11.5px; display: flex; flex-direction: column; gap: 2px;">
                                         <span>GM: {{ $req->approvedByGm->name ?? '-' }}</span>
-                                        <span>CEO: {{ $req->approvedByCeo->name ?? '-' }}</span>
+                                        <span>Direktur: {{ $req->approvedByDirektur->name ?? '-' }}</span>
                                     </div>
                                 @elseif($req->status === 'rejected')
                                     <span>{{ $req->approvedBy->name ?? '-' }}</span>

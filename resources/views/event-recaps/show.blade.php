@@ -1677,9 +1677,9 @@
 
             <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border-radius: 12px; border: 1px solid var(--border-color);">
                 <div style="padding: 32px; background: #fff; color: #000; font-family: 'Arial', sans-serif; min-width: 800px;">
-                    <div style="text-align: center; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">EVENTRA CORE</div>
+                    <div style="text-align: center; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Reel Seven Organizer</div>
                     <div style="text-align: center; font-size: 10px; color: #64748b; margin-top: 4px; border-bottom: 2px solid #000; padding-bottom: 12px;">
-                        Jl. Raya Kenangan No. 7, Jakarta Selatan | Telp: (021) 1234567 | Email: finance@eventracore.com
+                        <!-- Jl. Raya Kenangan No. 7, Jakarta Selatan | Telp: (021) 1234567 | Email: finance@eventracore.com -->
                     </div>
                     
                     <h4 style="text-align: center; font-size: 13px; text-transform: uppercase; font-weight: 700; margin: 20px 0 10px 0;">LAPORAN REKAPITULASI KEUANGAN EVENT</h4>

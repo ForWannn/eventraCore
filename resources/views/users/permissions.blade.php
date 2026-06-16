@@ -448,6 +448,20 @@
             font-size: 9px !important;
         }
     }
+    @keyframes pulse {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+        }
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
 </style>
 
 <div style="margin-bottom: 20px;">
@@ -463,6 +477,36 @@
             <h1 class="settings-title">Hak Akses Pengguna</h1>
             <p class="settings-subtitle">Atur modul dan fitur yang dapat diakses oleh masing-masing pengguna secara langsung.</p>
         </div>
+    </div>
+
+    <!-- Online Users Summary Card -->
+    @php
+        $onlineUsers = $users->filter(fn($u) => $u->isOnline());
+    @endphp
+    <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite;"></div>
+                <span style="font-weight: 700; font-size: 14px; color: var(--text-main);">
+                    Pengguna Online Saat Ini ({{ $onlineUsers->count() }})
+                </span>
+            </div>
+        </div>
+        @if($onlineUsers->isEmpty())
+            <p style="font-size: 13px; color: var(--text-muted); margin: 0; font-style: italic;">Tidak ada pengguna lain yang sedang aktif saat ini.</p>
+        @else
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                @foreach($onlineUsers as $ou)
+                    <div style="display: flex; align-items: center; gap: 8px; background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 10px;" title="Terakhir aktif: {{ $ou->last_seen_at ? $ou->last_seen_at->locale('id')->diffForHumans() : 'Sedang Aktif' }}">
+                        <img src="{{ $ou->photo_url }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" alt="{{ $ou->name }}">
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 12px; font-weight: 700; color: var(--text-main);">{{ $ou->name }}</span>
+                            <span style="font-size: 10px; color: var(--text-muted);">{{ $ou->roles->where('name', '!=', 'PIC Event')->first()?->name ?? 'Crew' }}</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     @if(session('success'))
@@ -520,6 +564,11 @@
                                     <div class="user-details">
                                         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                                             <span class="user-name">{{ $user->name }}</span>
+                                            @if($user->isOnline())
+                                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);" title="Online"></span>
+                                            @else
+                                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; display: inline-block;" title="Offline"></span>
+                                            @endif
                                             @if($isSelf)
                                                 <span class="badge-status active-user">Anda</span>
                                             @endif
@@ -527,7 +576,14 @@
                                                 <span class="badge-status superadmin-user" title="Akses penuh bypass gate">Superadmin</span>
                                             @endif
                                         </div>
-                                        <span class="user-email">{{ $user->email }} · {{ $user->roles->where('name', '!=', 'PIC Event')->first()?->name ?? 'Crew' }}</span>
+                                        <span class="user-email">
+                                            {{ $user->email }} · {{ $user->roles->where('name', '!=', 'PIC Event')->first()?->name ?? 'Crew' }}
+                                            @if($user->isOnline())
+                                                <span style="color: #10b981; font-weight: 600;">(Online)</span>
+                                            @elseif($user->last_seen_at)
+                                                <span style="color: var(--text-muted);" title="{{ $user->last_seen_at->format('d/m/Y H:i') }}">· Aktif {{ $user->last_seen_at->locale('id')->diffForHumans() }}</span>
+                                            @endif
+                                        </span>
                                     </div>
                                     <button type="button" class="mobile-dropdown-toggle">
                                         <i data-feather="chevron-down"></i>

@@ -16,7 +16,7 @@ class WeeklyReportAccessTest extends TestCase
     {
         parent::setUp();
         // Create roles
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
         Role::firstOrCreate(['name' => 'Employee']);
     }
 

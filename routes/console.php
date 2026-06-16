@@ -20,7 +20,7 @@ Artisan::command('weekly:sunday-plan-reminder', function () {
     $nextMonday = Carbon::now()->next(Carbon::MONDAY)->toDateString();
     
     $users = User::whereDoesntHave('roles', function($q) {
-        $q->whereIn('name', ['CEO', 'GM', 'Admin', 'Superadmin']);
+        $q->whereIn('name', ['Director', 'GM', 'Admin', 'Superadmin']);
     })->get();
 
     foreach ($users as $user) {
@@ -46,7 +46,7 @@ Artisan::command('weekly:monday-plan-warning', function () {
     $thisMonday = Carbon::today()->toDateString();
     
     $users = User::whereDoesntHave('roles', function($q) {
-        $q->whereIn('name', ['CEO', 'GM', 'Admin', 'Superadmin']);
+        $q->whereIn('name', ['Director', 'GM', 'Admin', 'Superadmin']);
     })->get();
 
     foreach ($users as $user) {
@@ -72,7 +72,7 @@ Artisan::command('weekly:friday-report-reminder', function () {
     $thisMonday = Carbon::now()->startOfWeek(Carbon::MONDAY)->toDateString();
     
     $users = User::whereDoesntHave('roles', function($q) {
-        $q->whereIn('name', ['CEO', 'GM', 'Admin', 'Superadmin']);
+        $q->whereIn('name', ['Director', 'GM', 'Admin', 'Superadmin']);
     })->get();
 
     foreach ($users as $user) {

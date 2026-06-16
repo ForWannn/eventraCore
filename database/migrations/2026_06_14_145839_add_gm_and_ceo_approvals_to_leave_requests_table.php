@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('leave_requests', function (Blueprint $table) {
             $table->foreignId('approved_by_gm_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('approved_by_ceo_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('approved_by_Director_id')->nullable()->constrained('users')->nullOnDelete();
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
         Schema::table('leave_requests', function (Blueprint $table) {
             $table->dropForeign(['approved_by_gm_id']);
             $table->dropColumn('approved_by_gm_id');
-            $table->dropForeign(['approved_by_ceo_id']);
-            $table->dropColumn('approved_by_ceo_id');
+            $table->dropForeign(['approved_by_Director_id']);
+            $table->dropColumn('approved_by_Director_id');
         });
     }
 };

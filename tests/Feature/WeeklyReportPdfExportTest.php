@@ -16,7 +16,7 @@ class WeeklyReportPdfExportTest extends TestCase
     {
         parent::setUp();
         // Create roles
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
         Role::firstOrCreate(['name' => 'Employee']);
     }
 
@@ -60,10 +60,10 @@ class WeeklyReportPdfExportTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_ceo_can_export_any_employee_weekly_report_to_pdf()
+    public function test_Direktur_can_export_any_employee_weekly_report_to_pdf()
     {
-        $ceo = User::factory()->create();
-        $ceo->assignRole('CEO');
+        $Direktur = User::factory()->create();
+        $Direktur->assignRole('Direktur');
 
         $employee = User::factory()->create();
         $employee->assignRole('Employee');
@@ -76,7 +76,7 @@ class WeeklyReportPdfExportTest extends TestCase
             'final_submitted_at' => now(),
         ]);
 
-        $response = $this->actingAs($ceo)->get("/weekly-recap/user/{$employee->id}/2026-05-25/export-pdf");
+        $response = $this->actingAs($Direktur)->get("/weekly-recap/user/{$employee->id}/2026-05-25/export-pdf");
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/pdf');

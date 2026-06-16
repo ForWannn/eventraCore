@@ -83,7 +83,7 @@ class UserSeeder extends Seeder
                 'id_num' => '2',
                 'name' => 'Bobby Hendra Saputra',
                 'email' => 'bobby@eventracore.com',
-                'role' => 'CEO',
+                'role' => 'Direktur',
                 'division' => 'Leader',
                 'salary' => 50000000,
                 'gender' => 'Laki-laki',

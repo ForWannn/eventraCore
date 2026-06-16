@@ -395,6 +395,23 @@
                     <i data-feather="calendar" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
                     Minggu, {{ \Carbon\Carbon::parse($report->week_start_date)->locale('id')->translatedFormat('d M Y') }} – {{ \Carbon\Carbon::parse($report->week_start_date)->addDays(4)->locale('id')->translatedFormat('d M Y') }}
                 </p>
+                @php
+                    $timestamps = [];
+                    if ($report->plan_saved_at) {
+                        $timestamps[] = 'dibuat pada ' . $report->plan_saved_at->format('d/m/Y H:i');
+                    }
+                    if ($report->plan_submitted_at) {
+                        $timestamps[] = 'dikirim pada ' . $report->plan_submitted_at->format('d/m/Y H:i');
+                    }
+                    if ($report->final_submitted_at) {
+                        $timestamps[] = 'di submit pada ' . $report->final_submitted_at->format('d/m/Y H:i');
+                    }
+                @endphp
+                @if(!empty($timestamps))
+                    <p style="font-size: 11px; color: var(--text-muted); margin: 4px 0 0 0; font-weight: 500;">
+                        {!! implode(' &nbsp;&bull;&nbsp; ', $timestamps) !!}
+                    </p>
+                @endif
             </div>
         </div>
 
@@ -403,10 +420,19 @@
                 {{ $report->status }}
             </div>
             
-            <button type="submit" form="mainReportForm" formaction="{{ route('weekly.plan', $report->id) }}" class="btn-save-plan">
-                <!-- <i data-feather="save"></i> -->
-                <span>Simpan Weekly</span>
-            </button>
+            @if(is_null($report->plan_submitted_at))
+                <button type="submit" form="mainReportForm" formaction="{{ route('weekly.plan', $report->id) }}" class="btn-save-plan" style="background: var(--hover-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: none;">
+                    <span>Simpan Weekly Plan</span>
+                </button>
+                <button type="submit" form="mainReportForm" formaction="{{ route('weekly.submit_plan', $report->id) }}" class="btn-save-plan">
+                    <span>Kirim Weekly Plan</span>
+                </button>
+            @else
+                <div style="font-size: 11px; padding: 6px 14px; border-radius: 8px; background: #dcfce7; border: 1px solid #86efac; color: #166534; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                    <i data-feather="check" style="width: 12px; height: 12px;"></i>
+                    Plan Dikirim
+                </div>
+            @endif
         </div>
     </div>
 

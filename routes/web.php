@@ -23,11 +23,11 @@ Route::get('/reset-password', [PasswordResetController::class, 'showResetForm'])
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
 Route::post('/resend-password-code', [PasswordResetController::class, 'resendCode'])->name('password.resend');
 
-Route::middleware(['auth', \App\Http\Middleware\RestrictAdminAccess::class])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\UpdateUserOnlineStatus::class, \App\Http\Middleware\RestrictAdminAccess::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware(['permission:view_dashboard'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::middleware(['role:CEO|GM'])->get('/executive-dashboard', [ExecutiveDashboardController::class, 'index'])->name('executive-dashboard');
+    Route::middleware(['role:Director|GM'])->get('/executive-dashboard', [ExecutiveDashboardController::class, 'index'])->name('executive-dashboard');
 
     // Daily Attendance (Web Geotagging)
     Route::post('/daily-attendance/store-luar', [DailyAttendanceController::class, 'storeLuar'])->name('attendance.storeLuar');
@@ -80,6 +80,7 @@ Route::put('/events/{event}', [EventController::class, 'update'])->name('events.
     Route::middleware(['permission:weekly_report'])->group(function () {
         Route::get('/weekly-report', [WeeklyReportController::class, 'index'])->name('weekly.index');
         Route::post('/weekly-report/{report}/plan', [WeeklyReportController::class, 'updatePlan'])->name('weekly.plan');
+        Route::post('/weekly-report/{report}/submit-plan', [WeeklyReportController::class, 'submitPlan'])->name('weekly.submit_plan');
         Route::post('/weekly-report/{report}/final', [WeeklyReportController::class, 'submitFinal'])->name('weekly.final');
         Route::post('/weekly-report/autosave', [WeeklyReportController::class, 'autoSaveLog'])->name('weekly.autosave');
     });

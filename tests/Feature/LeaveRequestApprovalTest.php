@@ -21,7 +21,7 @@ class LeaveRequestApprovalTest extends TestCase
         Role::firstOrCreate(['name' => 'Admin']);
         Role::firstOrCreate(['name' => 'Employee']);
         Role::firstOrCreate(['name' => 'GM']);
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
         Role::firstOrCreate(['name' => 'Superadmin']);
 
         // Create permissions
@@ -56,15 +56,15 @@ class LeaveRequestApprovalTest extends TestCase
         $this->assertEquals($gm->id, $leaveRequest->fresh()->approved_by_id);
     }
 
-    public function test_izin_approval_by_ceo_only_is_immediately_approved()
+    public function test_izin_approval_by_direktur_only_is_immediately_approved()
     {
         $employee = User::factory()->create();
         $employee->assignRole('Employee');
         $employee->givePermissionTo('leave_request');
 
-        $ceo = User::factory()->create();
-        $ceo->assignRole('CEO');
-        $ceo->givePermissionTo('leave_approvals');
+        $direktur = User::factory()->create();
+        $direktur->assignRole('Direktur');
+        $direktur->givePermissionTo('leave_approvals');
 
         $leaveRequest = LeaveRequest::create([
             'user_id' => $employee->id,
@@ -75,14 +75,14 @@ class LeaveRequestApprovalTest extends TestCase
             'status' => 'pending',
         ]);
 
-        $response = $this->actingAs($ceo)->post("/leave-approvals/{$leaveRequest->id}/approve");
+        $response = $this->actingAs($direktur)->post("/leave-approvals/{$leaveRequest->id}/approve");
 
         $response->assertRedirect();
         $this->assertEquals('approved', $leaveRequest->fresh()->status);
-        $this->assertEquals($ceo->id, $leaveRequest->fresh()->approved_by_id);
+        $this->assertEquals($direktur->id, $leaveRequest->fresh()->approved_by_id);
     }
 
-    public function test_cuti_approval_requires_both_gm_and_ceo()
+    public function test_cuti_approval_requires_both_gm_and_direktur()
     {
         $employee = User::factory()->create();
         $employee->assignRole('Employee');
@@ -92,9 +92,9 @@ class LeaveRequestApprovalTest extends TestCase
         $gm->assignRole('GM');
         $gm->givePermissionTo('leave_approvals');
 
-        $ceo = User::factory()->create();
-        $ceo->assignRole('CEO');
-        $ceo->givePermissionTo('leave_approvals');
+        $direktur = User::factory()->create();
+        $direktur->assignRole('Direktur');
+        $direktur->givePermissionTo('leave_approvals');
 
         $leaveRequest = LeaveRequest::create([
             'user_id' => $employee->id,
@@ -112,21 +112,21 @@ class LeaveRequestApprovalTest extends TestCase
         $leaveRequest = $leaveRequest->fresh();
         $this->assertEquals('pending', $leaveRequest->status); // Still pending
         $this->assertEquals($gm->id, $leaveRequest->approved_by_gm_id);
-        $this->assertNull($leaveRequest->approved_by_ceo_id);
+        $this->assertNull($leaveRequest->approved_by_direktur_id);
 
         // 2. Try to download PDF (should fail with 400 since not fully approved yet)
         $pdfResponse1 = $this->actingAs($employee)->get("/leave-requests/{$leaveRequest->id}/download-pdf");
         $pdfResponse1->assertStatus(400);
 
-        // 3. CEO Approves
-        $response2 = $this->actingAs($ceo)->post("/leave-approvals/{$leaveRequest->id}/approve");
+        // 3. Direktur Approves
+        $response2 = $this->actingAs($direktur)->post("/leave-approvals/{$leaveRequest->id}/approve");
         $response2->assertRedirect();
 
         $leaveRequest = $leaveRequest->fresh();
         $this->assertEquals('approved', $leaveRequest->status); // Now approved!
         $this->assertEquals($gm->id, $leaveRequest->approved_by_gm_id);
-        $this->assertEquals($ceo->id, $leaveRequest->approved_by_ceo_id);
-        $this->assertEquals($ceo->id, $leaveRequest->approved_by_id); // final approved_by_id is CEO
+        $this->assertEquals($direktur->id, $leaveRequest->approved_by_direktur_id);
+        $this->assertEquals($direktur->id, $leaveRequest->approved_by_id); // final approved_by_id is Direktur
 
         // 4. Download PDF (should succeed with 200)
         $pdfResponse2 = $this->actingAs($employee)->get("/leave-requests/{$leaveRequest->id}/download-pdf");
@@ -134,7 +134,7 @@ class LeaveRequestApprovalTest extends TestCase
         $pdfResponse2->assertHeader('Content-Type', 'application/pdf');
     }
 
-    public function test_cuti_rejection_by_either_gm_or_ceo_is_immediate()
+    public function test_cuti_rejection_by_either_gm_or_direktur_is_immediate()
     {
         $employee = User::factory()->create();
         $employee->assignRole('Employee');

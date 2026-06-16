@@ -19,7 +19,7 @@ class EventTaskController extends Controller
 
         $user = Auth::user();
         $isPic = $event->participants()->where('user_id', $user->id)->where('is_pic', true)->exists();
-        $isAdmin = $user->hasRole(['CEO', 'GM']);
+        $isAdmin = $user->hasRole(['Direktur', 'GM']);
 
         if ($request->assigned_to != $user->id && !$isPic && !$isAdmin) {
             return response()->json(['error' => 'Anda hanya bisa menambahkan To Do untuk diri sendiri.'], 403);
@@ -60,7 +60,7 @@ class EventTaskController extends Controller
         $user = Auth::user();
         $event = $task->event;
         $isPic = $event->participants()->where('user_id', $user->id)->where('is_pic', true)->exists();
-        $isAdmin = $user->hasRole(['CEO', 'GM']);
+        $isAdmin = $user->hasRole(['Direktur', 'GM']);
 
         // PIC, Admin, or the assignee can toggle
         if ($user->id !== $task->assigned_to && !$isPic && !$isAdmin) {
@@ -82,7 +82,7 @@ class EventTaskController extends Controller
         $user = Auth::user();
         $event = $task->event;
         $isPic = $event->participants()->where('user_id', $user->id)->where('is_pic', true)->exists();
-        $isAdmin = $user->hasRole(['CEO', 'GM']);
+        $isAdmin = $user->hasRole(['Direktur', 'GM']);
 
         if ($task->created_by !== $user->id && $task->assigned_to !== $user->id && !$isPic && !$isAdmin) {
             return response()->json(['error' => 'Unauthorized'], 403);

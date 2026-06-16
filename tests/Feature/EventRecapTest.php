@@ -87,26 +87,26 @@ class EventRecapTest extends TestCase
         $this->assertEquals(55, $recap->completion_score);
     }
 
-    public function test_ceo_with_rekap_event_permission_can_access_event_recaps()
+    public function test_Direktur_with_rekap_event_permission_can_access_event_recaps()
     {
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
         
-        $ceo = User::factory()->create();
-        $ceo->assignRole('CEO');
-        $ceo->givePermissionTo('rekap_event');
+        $Direktur = User::factory()->create();
+        $Direktur->assignRole('Direktur');
+        $Direktur->givePermissionTo('rekap_event');
 
-        $response = $this->actingAs($ceo)->get('/event-recaps');
+        $response = $this->actingAs($Direktur)->get('/event-recaps');
         $response->assertStatus(200);
     }
 
-    public function test_ceo_without_rekap_event_permission_cannot_access_event_recaps()
+    public function test_Direktur_without_rekap_event_permission_cannot_access_event_recaps()
     {
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
         
-        $ceo = User::factory()->create();
-        $ceo->assignRole('CEO');
+        $Direktur = User::factory()->create();
+        $Direktur->assignRole('Direktur');
 
-        $response = $this->actingAs($ceo)->get('/event-recaps');
+        $response = $this->actingAs($Direktur)->get('/event-recaps');
         $response->assertStatus(403);
     }
 

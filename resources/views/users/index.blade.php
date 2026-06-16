@@ -57,7 +57,6 @@
         font-size: 12px;
         color: var(--text-muted);
         font-weight: 600;
-        text-transform: uppercase;
         letter-spacing: 0.5px;
     }
     .stat-card .stat-value {
@@ -517,7 +516,7 @@
         <div class="stat-icon slate"><i data-feather="briefcase"></i></div>
         <div class="stat-card-content">
             <span class="stat-label">Direksi & Head</span>
-            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasAnyRole(['CEO', 'GM', 'Head']))->count() }}</span>
+            <span class="stat-value">{{ $users->filter(fn($u) => $u->hasAnyRole(['Director', 'GM', 'Head']))->count() }}</span>
             <span class="stat-sub">Orang</span>
         </div>
     </div>
@@ -587,7 +586,7 @@
             <!-- Role Filter -->
             <select id="filterRole" class="filter-select">
                 <option value="">Semua Role</option>
-                <option value="CEO">CEO</option>
+                <option value="Director">Director</option>
                 <option value="GM">GM</option>
                 <option value="Head">Head</option>
                 <option value="Employee">Employee</option>

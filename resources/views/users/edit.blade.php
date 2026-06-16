@@ -710,7 +710,7 @@
                         @if($role->name === 'PIC Event') @continue @endif
                         @php
                             $icon = 'user';
-                            if ($role->name === 'CEO') $icon = 'award';
+                            if ($role->name === 'Director') $icon = 'award';
                             elseif ($role->name === 'GM') $icon = 'users';
                             elseif ($role->name === 'Head') $icon = 'shield';
                             elseif ($role->name === 'Employee') $icon = 'user';

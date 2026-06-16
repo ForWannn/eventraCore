@@ -17,7 +17,7 @@ class ExecutiveDashboardSeeder extends Seeder
     {
         // Fetch users to act as crew
         $users = User::whereDoesntHave('roles', function($q) {
-            $q->whereIn('name', ['CEO', 'Superadmin']); // Don't assign CEO to regular tasks
+            $q->whereIn('name', ['Direktur', 'Superadmin']); // Don't assign Direktur to regular tasks
         })->get();
 
         if ($users->count() < 3) {

@@ -241,16 +241,16 @@ class AdminAccessRestrictionTest extends TestCase
         $response->assertDontSee($otherEmployee->name);
     }
 
-    public function test_ceo_with_admin_role_can_access_employee_restricted_routes()
+    public function test_Direktur_with_admin_role_can_access_employee_restricted_routes()
     {
-        Role::firstOrCreate(['name' => 'CEO']);
+        Role::firstOrCreate(['name' => 'Direktur']);
         
-        $ceo = User::factory()->create();
-        $ceo->assignRole('CEO');
-        $ceo->assignRole('Admin');
+        $Direktur = User::factory()->create();
+        $Direktur->assignRole('Direktur');
+        $Direktur->assignRole('Admin');
 
-        // CEO should be able to access profile because they bypass the Admin restrictions
-        $response = $this->actingAs($ceo)->get('/profile');
+        // Direktur should be able to access profile because they bypass the Admin restrictions
+        $response = $this->actingAs($Direktur)->get('/profile');
         $response->assertStatus(200);
     }
 

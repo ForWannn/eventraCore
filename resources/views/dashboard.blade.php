@@ -2390,7 +2390,7 @@
     }
 </style>
 
-@role('CEO|GM')
+@role('Director|GM')
     <!-- Custom Dashboard Header -->
     <div class="dashboard-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
         <div>
@@ -2556,7 +2556,7 @@
         </div>
     </div>
 
-    <!-- Redesigned Absensi Hari Ini Widget (Full Width) for CEO/GM -->
+    <!-- Redesigned Absensi Hari Ini Widget (Full Width) for Director/GM -->
     <div class="section-card" style="margin-bottom: 28px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -3784,16 +3784,16 @@ function initCameraAndGps() {
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-@role('CEO|GM')
+@role('Director|GM')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Clock for CEO/GM
+        // Clock for Director/GM
         setInterval(() => {
             const el = document.getElementById('digitalClock');
             if(el) el.textContent = new Date().toLocaleTimeString('id-ID', {hour12:false});
         }, 1000);
 
-        // Work Timer for CEO/GM
+        // Work Timer for Director/GM
         @if($todayAttendance)
         (function() {
             const checkInStr = "{{ $todayAttendance->check_in_time }}";
