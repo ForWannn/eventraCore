@@ -151,6 +151,50 @@
     [data-theme="dark"] .moon-icon {
         display: none;
     }
+
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 16px;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s;
+        height: 100%;
+        z-index: 10;
+    }
+
+    .password-toggle:hover {
+        color: var(--text-main);
+    }
+
+    .password-toggle svg, .password-toggle i {
+        width: 18px;
+        height: 18px;
+    }
+
+    .password-toggle .eye-off-icon {
+        display: none;
+    }
+
+    .password-toggle.show-password .eye-icon {
+        display: none;
+    }
+
+    .password-toggle.show-password .eye-off-icon {
+        display: block;
+    }
 </style>
 
 <div class="container">
@@ -183,7 +227,13 @@
 
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required autocomplete="current-password" style="border-radius: 20px; padding: 12px 16px;">
+            <div class="password-wrapper">
+                <input type="password" id="password" name="password" required autocomplete="current-password" style="border-radius: 20px; padding: 12px 48px 12px 16px;">
+                <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle Password Visibility">
+                    <i data-feather="eye" class="eye-icon"></i>
+                    <i data-feather="eye-off" class="eye-off-icon"></i>
+                </button>
+            </div>
         </div>
 
         <div class="form-options">
@@ -219,4 +269,23 @@
         </button>   
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('password');
+        const passwordToggle = document.getElementById('passwordToggle');
+        if (passwordToggle && passwordInput) {
+            passwordToggle.addEventListener('click', function() {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                if (isPassword) {
+                    passwordInput.setAttribute('type', 'text');
+                    passwordToggle.classList.add('show-password');
+                } else {
+                    passwordInput.setAttribute('type', 'password');
+                    passwordToggle.classList.remove('show-password');
+                }
+            });
+        }
+    });
+</script>
 @endsection
