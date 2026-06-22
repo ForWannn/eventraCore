@@ -563,7 +563,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Grafik Presensi Karyawan
     const ctxTrend = document.getElementById('attendanceTrendChart');
     if (ctxTrend) {
         new Chart(ctxTrend, {
@@ -601,7 +600,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 2. Grafik Jumlah Karyawan per Divisi (Doughnut Chart)
     const ctxDiv = document.getElementById('divisionDoughnutChart');
     if (ctxDiv) {
         const cardBgColor = getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim() || '#ffffff';

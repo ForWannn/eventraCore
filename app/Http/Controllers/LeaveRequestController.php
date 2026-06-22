@@ -144,7 +144,7 @@ class LeaveRequestController extends Controller
                  . "Silakan tinjau dan berikan keputusan (Setuju/Tolak) melalui sistem:\n"
                  . "🔗 {$url}";
 
-        $managers = \App\Models\User::whereHas('roles', fn($q) => $q->whereIn('name', ['Direktur', 'GM']))->get();
+        $managers = \App\Models\User::whereHas('roles', fn($q) => $q->whereIn('name', ['Director', 'Direktur', 'GM']))->get();
 
         foreach ($managers as $manager) {
             if (!empty($manager->phone)) {
@@ -159,14 +159,14 @@ class LeaveRequestController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasRole(['Direktur', 'GM'])) {
+        if (!$user->hasRole(['Director', 'Direktur', 'GM'])) {
             abort(403, 'Unauthorized access.');
         }
 
         $queryPending = LeaveRequest::with('user')->where('status', 'pending');
         $queryHistory = LeaveRequest::with(['user', 'approvedBy']);
 
-        if ($user->hasRole('Direktur')) {
+        if ($user->hasRole('Director') || $user->hasRole('Direktur')) {
             // Pending: izin (pending) OR cuti (pending and not approved by Direktur yet)
             $queryPending->where(function ($q) {
                 $q->where('type', 'izin')
@@ -228,7 +228,7 @@ class LeaveRequestController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasRole(['Direktur', 'GM'])) {
+        if (!$user->hasRole(['Director', 'Direktur', 'GM'])) {
             abort(403);
         }
 
@@ -267,7 +267,7 @@ class LeaveRequestController extends Controller
                     return redirect()->back()->with('error', 'Anda sudah menyetujui pengajuan cuti ini.');
                 }
                 $leaveRequest->approved_by_gm_id = $user->id;
-            } elseif ($user->hasRole('Direktur')) {
+            } elseif ($user->hasRole('Director') || $user->hasRole('Direktur')) {
                 if ($leaveRequest->approved_by_direktur_id) {
                     return redirect()->back()->with('error', 'Anda sudah menyetujui pengajuan cuti ini.');
                 }
@@ -309,7 +309,7 @@ class LeaveRequestController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasRole(['Direktur', 'GM'])) {
+        if (!$user->hasRole(['Director', 'Direktur', 'GM'])) {
             abort(403);
         }
 
@@ -414,7 +414,7 @@ class LeaveRequestController extends Controller
     public function downloadPdf(LeaveRequest $leaveRequest)
     {
         $user = Auth::user();
-        if ($leaveRequest->user_id !== $user->id && !$user->hasAnyRole(['Direktur', 'GM', 'Admin', 'Superadmin'])) {
+        if ($leaveRequest->user_id !== $user->id && !$user->hasAnyRole(['Director', 'Direktur', 'GM', 'Admin', 'Superadmin'])) {
             abort(403);
         }
 
@@ -426,7 +426,7 @@ class LeaveRequestController extends Controller
         \Carbon\Carbon::setLocale('id');
 
         $direktur = $leaveRequest->approvedByDirektur ?? \App\Models\User::whereHas('roles', function ($q) {
-            $q->where('name', 'Direktur');
+            $q->whereIn('name', ['Director', 'Direktur']);
         })->first();
         $gm = $leaveRequest->approvedByGm ?? \App\Models\User::whereHas('roles', function ($q) {
             $q->where('name', 'GM');

@@ -11,7 +11,7 @@ class RestrictAdminAccess
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->hasRole('Admin') && !Auth::user()->hasRole('Superadmin') && !Auth::user()->hasAnyRole(['Direktur', 'GM'])) {
+        if (Auth::check() && Auth::user()->hasRole('Admin') && !Auth::user()->hasRole('Superadmin') && !Auth::user()->hasAnyRole(['Director', 'Direktur', 'GM'])) {
             $allowedRoutesWithoutPermission = [
                 'logout',
                 'events.index',
@@ -56,6 +56,8 @@ class RestrictAdminAccess
 
                     'events.create' => 'crud_events',
                     'events.store' => 'crud_events',
+                    'events.edit' => 'crud_events',
+                    'events.update' => 'crud_events',
                     'events.destroy' => 'crud_events',
 
                     'event-recaps.index' => 'rekap_event',

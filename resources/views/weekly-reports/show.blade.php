@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $isDirector = Auth::user()->hasRole(['Direktur', 'GM']);
+    $isDirector = Auth::user()->hasRole(['Director', 'GM']);
 @endphp
 
 @section('title', $isDirector ? 'Review Laporan Karyawan' : 'Detail Laporan Mingguan')

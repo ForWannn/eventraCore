@@ -292,6 +292,10 @@ class UserController extends Controller
      */
     private function getDefaultPermissionsForRole(string $role, ?int $divisionId): array
     {
+        if ($role === 'Direktur') {
+            $role = 'Director';
+        }
+
         $permissions = [
             'Intern' => [
                 'view_dashboard',
@@ -332,7 +336,7 @@ class UserController extends Controller
                 'crud_users',
                 'rekap_event',
             ],
-            'Direktur' => [
+            'Director' => [
                 'view_dashboard',
                 'weekly_report',
                 'weekly_history',

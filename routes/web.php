@@ -27,7 +27,7 @@ Route::middleware(['auth', \App\Http\Middleware\UpdateUserOnlineStatus::class, \
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware(['permission:view_dashboard'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::middleware(['role:Director|GM'])->get('/executive-dashboard', [ExecutiveDashboardController::class, 'index'])->name('executive-dashboard');
+    Route::middleware(['role:Director|Direktur|GM'])->get('/executive-dashboard', [ExecutiveDashboardController::class, 'index'])->name('executive-dashboard');
 
     // Daily Attendance (Web Geotagging)
     Route::post('/daily-attendance/store-luar', [DailyAttendanceController::class, 'storeLuar'])->name('attendance.storeLuar');

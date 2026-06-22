@@ -2749,7 +2749,7 @@
 
     <!-- Main Columns: Comparison Trend & Upcoming Events List -->
     <div class="dashboard-cols">
-        <!-- <div class="section-card" style="display: flex; flex-direction: column;">
+        {{-- <div class="section-card" style="display: flex; flex-direction: column;">
             <div class="section-header" style="align-items: center; margin-bottom: 20px;">
                 <span class="section-title" style="display: flex; align-items: center; gap: 8px;">
                     <i data-feather="trending-up" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
@@ -2775,7 +2775,7 @@
                     <span>{{ $trendYear - 1 }}</span>
                 </div>
             </div>
-        </div> -->
+        </div> --}}
 
         <!-- Column 2: Event Mendatang -->
         <div class="section-card" style="display: flex; flex-direction: column;">

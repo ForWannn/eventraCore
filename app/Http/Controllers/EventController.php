@@ -20,7 +20,7 @@ class EventController extends Controller
         
         $searchPattern = '%"' . $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-%';
 
-        if ($user->hasRole(['Direktur', 'GM'])) {
+        if ($user->hasRole(['Director', 'Direktur', 'GM', 'Admin', 'Superadmin'])) {
             $events = Event::with(['participants', 'positions'])
                 ->where('event_dates', 'like', $searchPattern)
                 ->orderBy('id', 'desc')->get();
@@ -46,7 +46,7 @@ class EventController extends Controller
     public function create()
     {
         $users = User::whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['Direktur']);
+            $query->whereIn('name', ['Director', 'Direktur']);
         })->with(['roles', 'division'])->orderBy('name')->get();
 
         $activeEvents = Event::with(['participants', 'positions.members'])->get()->filter(function ($event) {
@@ -224,7 +224,7 @@ class EventController extends Controller
     public function edit(Event $event)
     {
         $users = User::whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['Direktur']);
+            $query->whereIn('name', ['Director', 'Direktur']);
         })->with(['roles', 'division'])->orderBy('name')->get();
 
         // Load relasi yang diperlukan agar bisa ditampilkan di form edit
@@ -401,7 +401,7 @@ class EventController extends Controller
         $authUser = Auth::user();
         $pic = $event->participants->where('pivot.is_pic', true)->first();
         $isPic = $pic && $pic->id === $authUser->id;
-        $isLeader = $authUser->hasAnyRole(['Direktur', 'GM']);
+        $isLeader = $authUser->hasAnyRole(['Director', 'Direktur', 'GM']);
 
         // All users assigned to this event (PIC + position members)
         $assignedUsers = collect();

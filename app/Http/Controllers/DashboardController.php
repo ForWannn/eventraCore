@@ -23,7 +23,7 @@ class DashboardController extends Controller
         if ($user->hasRole(['Admin', 'Superadmin'])) {
             $data = $this->getAdminData($request);
             return view('dashboard_admin', $data);
-        } elseif ($user->hasRole(['Direktur', 'GM'])) {
+        } elseif ($user->hasRole(['Director', 'Direktur', 'GM'])) {
             $data = $this->getDirectorData($request);
             return view('dashboard', $data);
         } else {
@@ -243,17 +243,17 @@ class DashboardController extends Controller
         }
         $activeEmployeesCount = $activeEmployeeIds->unique()->count();
 
-        // Total unique employees attended today (excluding Direktur, GM, Admin, Superadmin, and Intern)
+        // Total unique employees attended today (excluding Director, GM, Admin, Superadmin, and Intern)
         $todayAttendancesCount = DailyAttendance::whereDate('date', $now->toDateString())
             ->whereHas('user.roles', function($q) {
-                $q->whereNotIn('name', ['Direktur', 'GM', 'Admin', 'Superadmin', 'Intern']);
+                $q->whereNotIn('name', ['Director', 'Direktur', 'GM', 'Admin', 'Superadmin', 'Intern']);
             })
             ->distinct('user_id')
             ->count();
         
-        // Total unique staff (excluding Direktur, GM, Admin, Superadmin, and Intern)
+        // Total unique staff (excluding Director, GM, Admin, Superadmin, and Intern)
         $totalStaff = User::whereHas('roles', function($q) {
-            $q->whereNotIn('name', ['Direktur', 'GM', 'Admin', 'Superadmin', 'Intern']);
+            $q->whereNotIn('name', ['Director', 'Direktur', 'GM', 'Admin', 'Superadmin', 'Intern']);
         })->count();
         $attendanceRate = $totalStaff > 0 ? round(($todayAttendancesCount / $totalStaff) * 100) : 0;
 

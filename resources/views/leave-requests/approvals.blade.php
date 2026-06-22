@@ -541,7 +541,7 @@
                                     <span style="font-size: 12.5px; color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                                         <i data-feather="check-circle" style="width: 14px; height: 14px;"></i> Anda menyetujui
                                     </span>
-                                @elseif($req->type === 'cuti' && Auth::user()->hasRole('Direktur') && $req->approved_by_direktur_id)
+                                @elseif($req->type === 'cuti' && Auth::user()->hasRole('Director') && $req->approved_by_direktur_id)
                                     <span style="font-size: 12.5px; color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                                         <i data-feather="check-circle" style="width: 14px; height: 14px;"></i> Anda menyetujui
                                     </span>

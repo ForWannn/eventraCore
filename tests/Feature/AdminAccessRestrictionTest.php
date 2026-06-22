@@ -403,4 +403,58 @@ class AdminAccessRestrictionTest extends TestCase
         $response = $this->actingAs($superadmin)->get('/weekly-history');
         $response->assertStatus(403);
     }
+
+    public function test_admin_with_crud_events_permission_can_manage_events()
+    {
+        Role::firstOrCreate(['name' => 'PIC Event']);
+
+        $admin = User::factory()->create();
+        $admin->assignRole('Admin');
+        $admin->givePermissionTo(['crud_events']);
+
+        $picUser = User::factory()->create();
+
+        // 1. Test events create page access
+        $response = $this->actingAs($admin)->get('/events/create');
+        $response->assertStatus(200);
+
+        // 2. Test events store
+        $response = $this->actingAs($admin)->post('/events', [
+            'name' => 'Test Event',
+            'description' => 'Test Description',
+            'location' => 'Test Location',
+            'event_dates' => '2026-06-20',
+            'start_time' => '08:00',
+            'end_time' => '17:00',
+            'attendance_start' => '07:30',
+            'attendance_end' => '08:30',
+            'pic_id' => $picUser->id,
+        ]);
+        $response->assertRedirect('/events');
+
+        $event = \App\Models\Event::where('name', 'Test Event')->firstOrFail();
+
+        // 3. Test edit page access
+        $response = $this->actingAs($admin)->get("/events/{$event->id}/edit");
+        $response->assertStatus(200);
+
+        // 4. Test update
+        $response = $this->actingAs($admin)->put("/events/{$event->id}", [
+            'name' => 'Updated Event Name',
+            'description' => 'Test Description',
+            'location' => 'Test Location',
+            'event_dates' => '2026-06-20',
+            'start_time' => '08:00',
+            'end_time' => '17:00',
+            'attendance_start' => '07:30',
+            'attendance_end' => '08:30',
+            'pic_id' => $picUser->id,
+        ]);
+        $response->assertRedirect('/events');
+
+        // 5. Test delete
+        $response = $this->actingAs($admin)->delete("/events/{$event->id}");
+        $response->assertRedirect('/events');
+        $this->assertDatabaseMissing('events', ['id' => $event->id]);
+    }
 }

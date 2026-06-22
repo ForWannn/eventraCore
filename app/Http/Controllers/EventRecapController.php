@@ -111,7 +111,7 @@ class EventRecapController extends Controller
         }
 
         // Treat users with permission who are not Finance as read-only (like Direktur/GM)
-        $isLeader = $user->hasAnyRole(['Direktur', 'GM']) || ($hasPermission && !$isFinance);
+        $isLeader = $user->hasAnyRole(['Director', 'Direktur', 'GM']) || ($hasPermission && !$isFinance);
 
         // Initialize recap if not exists
         $recap = $event->recap;

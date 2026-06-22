@@ -70,7 +70,7 @@ class WeeklyReportController extends Controller
     // ── FITUR BARU: HALAMAN REKAP UNTUK Direktur & GM ──────────────────────
     public function recap(Request $request)
     {
-        if (!Auth::user()->hasRole(['Direktur', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
+        if (!Auth::user()->hasRole(['Director', 'Direktur', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
 
         $now = Carbon::now();
         $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
@@ -80,7 +80,7 @@ class WeeklyReportController extends Controller
 
         // Ambil semua user bersama data laporan minggunya pada tanggal yang dipilih
         $users = User::whereDoesntHave('roles', function($q){
-            $q->whereIn('name', ['Direktur']);
+            $q->whereIn('name', ['Director', 'Direktur']);
         })->with(['weeklyReports' => function($q) use ($weekStart) {
             $q->where('week_start_date', $weekStart);
         }, 'division'])->orderBy('name')->get();
@@ -199,7 +199,7 @@ class WeeklyReportController extends Controller
 
     public function exportRecap(Request $request)
     {
-        if (!Auth::user()->hasRole(['Direktur', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
+        if (!Auth::user()->hasRole(['Director', 'Direktur', 'GM']) && !Auth::user()->can('rekap_weekly')) abort(403);
 
         $now = Carbon::now();
         $weekStart = $request->query('week', $now->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'));
@@ -208,7 +208,7 @@ class WeeklyReportController extends Controller
         $statusFilter = $request->query('status', 'all');
 
         $users = User::whereDoesntHave('roles', function($q){
-            $q->whereIn('name', ['Direktur']);
+            $q->whereIn('name', ['Director', 'Direktur']);
         })->with(['weeklyReports' => function($q) use ($weekStart) {
             $q->where('week_start_date', $weekStart);
         }, 'division'])->orderBy('name')->get();
@@ -317,7 +317,7 @@ class WeeklyReportController extends Controller
         if ($user->hasRole('Superadmin')) {
             abort(403);
         }
-        $isDirector = $user->hasRole(['Direktur', 'GM']) || $user->can('weekly_history');
+        $isDirector = $user->hasRole(['Director', 'Direktur', 'GM']) || $user->can('weekly_history');
         if ($user->hasRole(['Employee', 'Intern'])) {
             $isDirector = false;
         }
@@ -423,7 +423,7 @@ class WeeklyReportController extends Controller
         if ($currentUser->hasRole(['Employee', 'Intern']) && $currentUser->id != $userId) {
             abort(403);
         }
-        if (!$currentUser->hasRole(['Direktur', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
+        if (!$currentUser->hasRole(['Director', 'Direktur', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
             abort(403);
         }
 
@@ -444,7 +444,7 @@ class WeeklyReportController extends Controller
         if ($currentUser->hasRole(['Employee', 'Intern']) && $currentUser->id != $userId) {
             abort(403);
         }
-        if (!$currentUser->hasRole(['Direktur', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
+        if (!$currentUser->hasRole(['Director', 'Direktur', 'GM']) && !$currentUser->can('rekap_weekly') && !$currentUser->can('weekly_history') && $currentUser->id != $userId) {
             abort(403);
         }
 
